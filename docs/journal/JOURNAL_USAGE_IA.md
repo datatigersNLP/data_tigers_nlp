@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 19 septembre 2026, session 7
+**Dernière mise à jour** 19 septembre 2026, session 8
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -143,6 +143,20 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Temps d'appropriation.** Faible pour les commandes, l'essentiel du temps allant aux contrôles après chaque écriture.
 
+### Session 8, 19 septembre 2026, Mahé BEGNIS, Claude Opus 5 via Claude Code
+
+**Objet.** Deux questions soulevées par l'équipe à la relecture du rapport. Le sujet valorise un modèle entraîné par nous, or le volet A repose sur un encodeur préexistant. Et l'équipe souhaite intégrer un modèle français au volet B.
+
+**Mesure exécutée.** Faisabilité d'un ajustement fin contrastif de l'encodeur sur la machine de référence. Chargement du modèle, construction d'un lot de 32 paires question-passage, passe avant et arrière avec optimiseur, dix pas chronométrés après chauffe, sur le processeur graphique.
+
+**Résultat.** Un pas prend 89 ms. Trois époques sur 17 106 paires demandent 2,4 minutes. Le coût de calcul ne fait pas obstacle, ce qui ouvre une voie que nous pensions fermée. Le relevé confirme au passage un calcul antérieur : 117,7 millions de paramètres mesurés contre 117,3 prédits, soit 0,3 pour cent d'écart.
+
+**Second point, le modèle français.** Quatre modèles Mistral ont été comparés sur leur licence, leur taille quantifiée et leur cache par token. `Mistral-7B-Instruct-v0.3` est retenu comme second modèle : même classe de taille que le principal, ce qui rend la comparaison valide, et tient dans le budget mémoire à toutes les longueurs de contexte. `Mistral-Nemo-Instruct-2407`, au français probablement meilleur, atteint 12,6 Gio à 32 768 tokens et sort du budget.
+
+**Difficulté rencontrée.** Le premier lancement du banc d'essai s'est terminé sans aucune sortie, le tube vers une commande de filtrage ayant retenu l'affichage jusqu'à la fin du processus, lequel a été interrompu. Relancé en écriture directe vers un fichier, avec vidage explicite du tampon, il a produit le résultat. **Un banc d'essai long ne doit jamais écrire à travers un tube.**
+
+**Ce que l'équipe a validé.** L'ajustement fin comme réponse à la valorisation du sujet, et l'ajout du modèle français en comparaison.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -166,8 +180,9 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 19/09 | `gh api` basculant de GET en POST dès qu'un champ `-f` est fourni | échec en 422 sur un titre manquant | requêtes de lecture écrites sans `-f` |
 | 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
 | 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
+| 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage | fichier de sortie vide alors que le processus était terminé | écriture directe vers un fichier, tampon vidé explicitement |
 
-**Bilan intermédiaire.** Quinze erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
+**Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 

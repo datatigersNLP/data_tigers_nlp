@@ -183,6 +183,22 @@ Taille de l'index pour 5 702 passages en 384 dimensions : 8,35 Mio en float32, 2
 
 **Référence de comparaison.** Un index TF-IDF est construit en JavaScript pur, entièrement maîtrisé, et sert de référence à battre. Cette comparaison alimente directement l'analyse technique demandée au rapport final.
 
+**Réponse à la valorisation demandée par le sujet.** Le sujet indique que « le modèle servi doit préférentiellement être celui que vous avez entraîné ». Pour un cas de recherche sémantique, entraîner un encodeur depuis zéro n'est pas réaliste : cela supposerait un corpus et une supervision hors de portée en onze semaines. Trois voies cumulables rendent néanmoins le modèle servi réellement nôtre.
+
+| Voie | Nature | Coût mesuré |
+|---|---|---|
+| Ajustement fin contrastif sur notre corpus | le modèle est réentraîné sur nos données | 89 ms par pas, lot de 32 paires |
+| Réduction du vocabulaire aux tokens du corpus | l'artefact servi est produit par nous | à mesurer |
+| Index TF-IDF et BM25 écrits en JavaScript | modèle entièrement maîtrisé, sans dépendance | quelques dizaines de kilo-octets |
+
+**L'ajustement fin est le point central, et son coût a été mesuré.** Des paires question-passage sont générées à partir du corpus par le modèle local du volet B, puis l'encodeur est ajusté par apprentissage contrastif. Sur la machine de référence, un pas d'entraînement sur un lot de 32 paires prend 89 ms. Trois époques sur 17 106 paires, soit trois questions par passage, demandent 2,4 minutes. Le temps de calcul n'est donc pas un obstacle.
+
+Le relevé confirme au passage le calcul du paragraphe précédent : le modèle chargé compte 117,7 millions de paramètres, contre 117,3 millions prédits, soit un écart de 0,3 pour cent.
+
+**Ce que cela produit comme mesure.** Recall@5 avant et après ajustement, sur le même jeu de référence. C'est un avant-après sur le volet A, symétrique de celui que le sujet exige sur le volet B.
+
+**Précaution à prendre.** Les paires d'entraînement étant générées par un modèle, le jeu de référence doit être rédigé par des humains. Sans cette séparation, la mesure porterait sur la capacité de l'encodeur à retrouver le style de questions du générateur, et non sur sa pertinence réelle.
+
 ### 3.4 Faisabilité de l'exécution navigateur
 
 La faisabilité a été vérifiée par la mesure, et non par estimation. Protocole : page statique servie en local, bibliothèque `@huggingface/transformers` 4.3.0 chargée depuis un CDN, modèle quantifié en 8 bits, encodage d'une question en français, 20 passes après chauffe, navigateur Chromium piloté par Playwright sur la machine de référence.
@@ -250,7 +266,17 @@ La licence Apache 2.0 n'impose aucune restriction d'usage.
 
 `Llama-3.1-8B-Instruct` est soumis à une approbation manuelle de délai inconnu. À douze jours du jalon de mi-parcours, ce risque de calendrier n'est pas justifié. `Ministral-8B` est écarté pour sa licence de recherche.
 
-`Qwen3-8B` est retenu comme second candidat de comparaison.
+**Second modèle retenu pour comparaison : `Mistral-7B-Instruct-v0.3`.** Le choix est délibéré et repose sur trois arguments.
+
+Il s'agit d'un modèle conçu par un éditeur français, sur un corpus normatif francophone. Le rapport final devra traiter la dépendance à un fournisseur : comparer un modèle chinois et un modèle français sur la même tâche donne à cette question une réponse mesurée plutôt qu'une opinion.
+
+Il appartient à la même classe de taille que le modèle principal, 7 milliards de paramètres, et sera quantifié de la même façon. La comparaison ne fait donc varier que le modèle, ce qui est la condition pour qu'elle mesure quelque chose.
+
+Il tient dans le budget mémoire à toutes les longueurs de contexte, y compris 32 768 tokens, ce que `Mistral-Nemo-Instruct-2407` ne permet pas malgré un meilleur français attendu : ses 6,96 Gio de poids et ses 160 Kio de cache par token portent le total à 12,6 Gio à 32 768 tokens, au-delà de la mémoire disponible.
+
+**Ce que la comparaison mettra en évidence.** Le cache KV de Mistral est 2,3 fois plus gros que celui du modèle principal. À 32 768 tokens de contexte, cela représente 4,00 Gio contre 1,75. Autrement dit, un modèle aux poids plus légers coûte plus cher dès que le contexte s'allonge, ce qui est exactement le régime d'un RAG avec citations. Ce point sera mesuré, pas supposé.
+
+`Qwen3-8B` est conservé en réserve si l'un des deux modèles se révèle insuffisant.
 
 Les valeurs de cache KV sont calculées comme deux fois le nombre de couches, multiplié par le nombre de têtes clé-valeur, par la dimension de tête, par deux octets, à partir des fichiers de configuration officiels de chaque modèle.
 
@@ -285,7 +311,22 @@ Empreinte de `Qwen2.5-7B-Instruct` en Q4_K_M, selon la longueur de contexte, enc
 | 16 384 | 4,36 | 0,88 | 0,15 | 0,50 | 5,89 Gio | 4,41 Gio |
 | 32 768 | 4,36 | 1,75 | 0,15 | 0,50 | 6,76 Gio | 3,54 Gio |
 
-Le modèle passe confortablement, y compris à 32 768 tokens de contexte. À titre de comparaison, `Qwen2.5-14B-Instruct` demanderait 10,5 Gio à 8 192 tokens, donc au-delà de la mémoire disponible sans fermer les applications. Il reste une option à tester si la qualité du modèle retenu s'avère insuffisante, mais il ne peut pas être le choix par défaut.
+Le modèle passe confortablement, y compris à 32 768 tokens de contexte.
+
+Même calcul pour le second modèle, `Mistral-7B-Instruct-v0.3`, dont le cache KV est 2,3 fois plus lourd.
+
+| Contexte | Poids | Cache KV | Encodeur et index | Exécution | Total | Marge sur 10,3 Gio |
+|---:|---:|---:|---:|---:|---:|---:|
+| 4 096 | 4,07 | 0,50 | 0,15 | 0,50 | 5,22 Gio | 5,08 Gio |
+| 8 192 | 4,07 | 1,00 | 0,15 | 0,50 | 5,72 Gio | 4,58 Gio |
+| 16 384 | 4,07 | 2,00 | 0,15 | 0,50 | 6,72 Gio | 3,58 Gio |
+| 32 768 | 4,07 | 4,00 | 0,15 | 0,50 | 8,72 Gio | 1,58 Gio |
+
+Les deux modèles tiennent donc à toutes les longueurs de contexte prévues, mais l'écart se creuse à mesure que le contexte s'allonge : 1,58 Gio de marge pour Mistral contre 3,54 pour Qwen à 32 768 tokens. C'est le résultat que la comparaison doit rendre visible.
+
+Deux écarts sont à signaler. `Qwen2.5-14B-Instruct` demanderait 10,5 Gio à 8 192 tokens, donc au-delà de la mémoire disponible sans fermer les applications. `Mistral-Nemo-Instruct-2407`, dont le français est attendu meilleur, atteint 12,6 Gio à 32 768 tokens et sort du budget. Tous deux restent des options à tester si la qualité des modèles retenus s'avère insuffisante, mais aucun ne peut être un choix par défaut.
+
+Côté disque, les deux modèles retenus occupent ensemble 8,43 Gio, ce qui confirme la nécessité de libérer de l'espace avant de les télécharger.
 
 La contrainte réellement bloquante est le disque et non la mémoire. Vingt et un Gio libres doivent accueillir le modèle retenu à 4,36 Gio, le modèle de comparaison à 4,68 Gio, le corpus et les index. Libérer 40 Gio est inscrit comme première tâche du volet B.
 
