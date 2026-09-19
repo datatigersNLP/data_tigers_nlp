@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 19 septembre 2026, session 6
+**Dernière mise à jour** 19 septembre 2026, session 7
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -125,6 +125,24 @@ Le second : la commande `gh api` bascule silencieusement de GET en POST dès qu'
 
 **Temps d'appropriation.** Quelques minutes pour la syntaxe, vérifiée sur l'aide en ligne avant exécution. L'essentiel du temps est allé aux contrôles après écriture.
 
+### Session 7, 19 septembre 2026, Mahé BEGNIS, Claude Opus 5 via Claude Code
+
+**Objet.** Mise en place de la structure du dépôt, publication des livrables du jalon J2.
+
+**Vérification préalable.** Identité du jeton contrôlée avant toute écriture. Les commits portent l'auteur et le validateur Mahé Begnis, avec l'adresse sans réponse du compte GitHub, ce qui les rattache au compte sans exposer d'adresse personnelle. L'identité a été passée commande par commande, sans modifier la configuration git de la machine.
+
+**Produit.** Répertoire `docs/` organisé en jalons, journal, suivi, études et chaîne LaTeX. Fichier `README.md` décrivant l'organisation, les branches et les conventions de commit. Trois branches publiées, `main`, `dev` et `docs/5-rapport-jalon-j2`, et le tag `jalon-j2`.
+
+**Deux difficultés rencontrées.**
+
+Le système de fichiers de macOS est insensible à la casse. La commande destinée à supprimer l'ancien `readme.md` a détruit le `README.md` écrit quelques secondes plus tôt, les deux noms désignant le même fichier. Détecté par le contrôle systématique qui suit chaque écriture, le fichier a été réécrit, et le changement de casse forcé en deux étapes avec `git mv`, seule méthode fiable sur ce type de système.
+
+Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, périmée depuis son transfert à l'organisation. GitHub redirige silencieusement, ce qui rend l'erreur invisible à l'usage. L'adresse a été corrigée avant toute publication.
+
+**Ce que l'équipe a validé.** La structure du dépôt, la stratégie de branches, et le choix de ne pas créer de branche de documentation permanente.
+
+**Temps d'appropriation.** Faible pour les commandes, l'essentiel du temps allant aux contrôles après chaque écriture.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -146,8 +164,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 19/09 | Rapport annonçant trois milestones et dix labels inexistants | consultation du dépôt | section 2 alignée sur l'état vérifié |
 | 19/09 | Lecture immédiatement consécutive à une écriture renvoyant un état périmé | garde-fou conditionnant la suppression à un décompte nul | suppression refusée puis reprise après contrôle direct |
 | 19/09 | `gh api` basculant de GET en POST dès qu'un champ `-f` est fourni | échec en 422 sur un titre manquant | requêtes de lecture écrites sans `-f` |
+| 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
+| 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
 
-**Bilan intermédiaire.** Treize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
+**Bilan intermédiaire.** Quinze erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
