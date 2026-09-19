@@ -1,0 +1,150 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------------------------------------------------------------- langue & fontes
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\frenchsetup{SmallCapsFigTabCaptions=false,ThinSpaceInFrenchNumbers=true}
+\setmainfont{LibertinusSerif-Regular.otf}[
+  BoldFont=LibertinusSerif-Bold.otf, ItalicFont=LibertinusSerif-Italic.otf,
+  BoldItalicFont=LibertinusSerif-BoldItalic.otf, Numbers=OldStyle]
+\setsansfont{Inter-Regular.otf}[
+  BoldFont=Inter-Bold.otf, ItalicFont=Inter-Italic.otf,
+  BoldItalicFont=Inter-BoldItalic.otf, Scale=0.94]
+\setmonofont{FiraMono-Regular.otf}[BoldFont=FiraMono-Bold.otf, Scale=0.84]
+\newfontfamily\tabfont{Inter-Regular.otf}[BoldFont=Inter-Bold.otf,
+  ItalicFont=Inter-Italic.otf, BoldItalicFont=Inter-BoldItalic.otf,
+  Scale=0.94, Numbers=Lining]
+
+% ---------------------------------------------------------------- mise en page
+\usepackage[a4paper,top=2.5cm,bottom=2.3cm,left=2.1cm,right=2.1cm,
+            headheight=17pt,headsep=13pt,footskip=20pt]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,tabularx,longtable,array,colortbl,multirow}
+\usepackage{titlesec,titletoc}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyvrb}
+\usepackage{pifont}
+\usepackage{fontawesome5}
+\usepackage{needspace}
+\usepackage{ragged2e}
+\usepackage[hidelinks]{hyperref}
+
+% ---------------------------------------------------------------- palette
+\definecolor{encre}   {HTML}{16181D}
+\definecolor{accent}  {HTML}{1F4E5F}
+\definecolor{accent2} {HTML}{8C4A2F}
+\definecolor{gris}    {HTML}{6B7280}
+\definecolor{filet}   {HTML}{D5DADE}
+\definecolor{fondclair}{HTML}{F3F6F7}
+\definecolor{fondcode}{HTML}{F7F7F4}
+\definecolor{vert}    {HTML}{17693F}
+\definecolor{rouge}   {HTML}{9B2C2C}
+\definecolor{ambre}   {HTML}{A86A12}
+\color{encre}
+
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent,
+  pdftitle={Reunion de cadrage - Projet NLP 2},
+  pdfsubject={Jalon J2 - choix des cas d'usage, cadrage, outils novateurs},
+  pdfauthor={Equipe projet NLP 2 - M2 Data et IA, FGES}}
+
+% ---------------------------------------------------------------- symboles
+\newcommand{\okmark}   {\textcolor{vert}{\ding{51}}}
+\newcommand{\komark}   {\textcolor{rouge}{\ding{55}}}
+\newcommand{\warnmark} {\textcolor{ambre}{\faExclamationTriangle}}
+\newcommand{\checkbox} {\textcolor{gris}{\ding{113}}}
+\newcommand{\cutmark}  {\textcolor{accent2}{\ding{34}}}
+\newcommand{\starmark} {\textcolor{ambre}{\ding{72}}}
+\newcommand{\wipmark}  {\textcolor{ambre}{\faTools}}
+\newcommand{\code}[1]  {{\ttfamily #1}}
+\newcommand{\rulebreak}{}
+
+% ---------------------------------------------------------------- titres
+\titleformat{\section}[hang]
+  {\sffamily\bfseries\LARGE\color{accent}}{\thesection}{13pt}{}
+  [\vspace{2pt}{\color{filet}\titlerule[0.9pt]}]
+\titlespacing*{\section}{0pt}{24pt plus 4pt minus 2pt}{11pt}
+\titleformat{\subsection}
+  {\sffamily\bfseries\large\color{encre}}{\thesubsection}{9pt}{}
+\titlespacing*{\subsection}{0pt}{16pt plus 3pt minus 1pt}{6pt}
+\titleformat{\subsubsection}
+  {\sffamily\bfseries\normalsize\color{accent2}}{}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{12pt plus 2pt minus 1pt}{4pt}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+% ---------------------------------------------------------------- en-têtes
+\pagestyle{fancy}\fancyhf{}
+% en-tête courant, redéfini par build.py selon le document
+\newcommand{\entetecourant}{Projet NLP 2}
+\fancyhead[L]{\sffamily\scriptsize\color{gris}\entetecourant}
+\fancyhead[R]{\sffamily\scriptsize\color{gris}\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\headrule}{\vspace{-4pt}{\color{filet}\rule{\headwidth}{0.4pt}}}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrule}{}%
+  \fancyfoot[C]{\sffamily\scriptsize\color{gris}\thepage}}
+
+% ---------------------------------------------------------------- paragraphes & listes
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5.5pt plus 1.5pt minus 0.5pt}
+\linespread{1.05}
+\raggedbottom
+\widowpenalty=10000 \clubpenalty=10000
+\setlist[itemize]{leftmargin=1.15em,itemsep=2pt,topsep=3pt,parsep=0pt,label=\textcolor{accent}{\textbullet}}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2.5pt,topsep=3pt,parsep=0pt,
+  label=\textcolor{accent}{\sffamily\bfseries\arabic*.}}
+
+% ---------------------------------------------------------------- tableaux
+% \hspace{0pt} : glue initiale, sans quoi TeX refuse de couper le premier
+% mot de la cellule — cause de débordements en colonne étroite.
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash
+  \rightskip=0pt plus 1fil\relax\hspace{0pt}}p{#1}}
+% \hspace{0pt} : sans cette glue, le whatsit de \color empêche TeX
+% de couper le premier mot de la cellule (débordements en en-tête).
+\newcommand{\thead}[1]{{\tabfont\bfseries\color{accent}\hspace{0pt}#1}}
+\newenvironment{tabletype}
+  {\par\addvspace{7pt}\begingroup
+   \tabfont\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.26}
+   \setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}
+   \setlength{\extrarowheight}{1pt}
+   % élasticité infinie à droite : TeX ne coupe plus un mot pour « remplir »,
+   % mais coupe encore lorsque c'est le seul moyen d'éviter un débordement.
+   % césure interdite : les largeurs minimales sont mesurées, chaque mot tient.
+   % Un débordement, s'il en restait un, serait signalé par le journal.
+   \hyphenpenalty=9000\exhyphenpenalty=9000
+   \emergencystretch=0pt\hbadness=10000\relax}
+  {\endgroup\par\addvspace{9pt}}
+\setlength{\aboverulesep}{0.5pt}\setlength{\belowrulesep}{0.6pt}
+\arrayrulecolor{filet}
+\setlength{\heavyrulewidth}{0.9pt}\setlength{\lightrulewidth}{0.45pt}
+
+% ---------------------------------------------------------------- encadrés
+\newtcolorbox{callout}{enhanced,breakable,
+  colback=fondclair,colframe=accent,boxrule=0pt,leftrule=2.6pt,
+  sharp corners,left=11pt,right=11pt,top=8pt,bottom=8pt,
+  before skip=10pt,after skip=11pt,parbox=false}
+\newtcolorbox{codebox}{enhanced,breakable,
+  colback=fondcode,colframe=filet,boxrule=0.5pt,arc=2pt,
+  left=9pt,right=9pt,top=7pt,bottom=7pt,
+  before skip=10pt,after skip=11pt}
+
+% ---------------------------------------------------------------- sommaire
+\renewcommand{\contentsname}{Sommaire}
+\titlecontents{section}[0pt]
+  {\addvspace{4pt}\sffamily\bfseries\color{encre}}
+  {\contentslabel[\thecontentslabel]{1.6em}}{}
+  {\titlerule*[0.7pc]{\color{filet}.}\contentspage}
+\titlecontents{subsection}[1.9em]
+  {\sffamily\small\color{gris}}
+  {\contentslabel[\thecontentslabel]{2.3em}}{}
+  {\titlerule*[0.7pc]{\color{filet}.}\contentspage}
+
+% ---------------------------------------------------------------- divers
+\newlength{\metalab}
+\newlength{\tw}\setlength{\tw}{\textwidth}
+\newcommand{\settw}[1]{\setlength{\tw}{\dimexpr\textwidth-#1pt\relax}}
+% tolérance relâchée : sans elle, TeX préfère déborder de quelques points
+% plutôt que de desserrer une ligne contenant un long jeton en chasse fixe.
+\emergencystretch=1.6em

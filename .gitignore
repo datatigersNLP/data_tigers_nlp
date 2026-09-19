@@ -1,0 +1,12 @@
+# artefacts LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.xdv
+probe.*
+# systeme
+.DS_Store
+__pycache__/
