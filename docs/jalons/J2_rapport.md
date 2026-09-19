@@ -21,18 +21,18 @@ Sauf mention contraire, tous les chiffres de ce rapport proviennent d'une mesure
 
 ### 1.1 Socle commun
 
-L'équipe converge sur un socle unique. Les versions ci-dessous sont celles relevées sur la machine de référence.
+L'équipe converge sur un socle unique. Python est déclaré en version minimale, les autres outils dans la version effectivement relevée sur la machine de référence.
 
 | Outil | Version | Usage |
 |---|---|---|
 | VS Code | 1.137.0 | éditeur commun |
-| Python | 3.12.11 (environnement virtuel dédié) | volet B, préparation du corpus, export ONNX |
+| Python | 3.12 ou supérieur (environnement virtuel dédié) | volet B, préparation du corpus, export ONNX |
 | PyTorch | 2.14.0 | encodeur, bancs d'essai |
 | Node.js et npm | 25.9.0 et 11.12.1 | volet A, Transformers.js, chaîne de construction du site |
 | Git et GitHub CLI | 2.50.1 et 2.92.0 | versionnage, board, intégration continue |
 | uv | 0.11.0 | gestion des dépendances Python |
 
-Point de vigilance relevé : le Python du système est en version 3.9.6. Tout le travail passe par l'environnement virtuel en 3.12.11. Un script lancé avec l'interpréteur système échoue sur des dépendances absentes.
+Point de vigilance relevé : le Python du système est en version 3.9.6 sur la machine de référence. Tout le travail passe par l'environnement virtuel. Un script lancé avec l'interpréteur système échoue sur des dépendances absentes.
 
 ### 1.2 Divergence déclarée
 
@@ -152,6 +152,7 @@ Nous partons sur le jeu de données public **`AgentPublic/travail-emploi`**, pub
 | Licence | Etalab 2.0 |
 | Dernière mise à jour | 11 septembre 2026 |
 | Colonnes | `title`, `url`, `text` |
+| Adresse | `https://huggingface.co/datasets/AgentPublic/travail-emploi` |
 
 Trois raisons à ce choix. La volumétrie correspond à la cible fixée. Le corpus est déjà découpé en passages porteurs de leur URL source, ce qui fournit directement les trois éléments de sortie exigés par le cas A3. Le contenu est normatif et francophone, et la recherche par mot-clé y est notoirement inefficace, ce qui rend le gain de la recherche sémantique démontrable.
 
