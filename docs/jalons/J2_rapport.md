@@ -85,9 +85,22 @@ Tous sont assignés nominativement. Les cinq tickets postérieurs à la créatio
 
 Le label `documentation`, fourni par défaut, est réutilisé plutôt que dupliqué. Les cinq labels de domaine portent les mêmes noms que les domaines de la répartition des tâches, ce qui permet de vérifier directement la cohérence entre organisation déclarée et travail réalisé.
 
-**Colonnes et champs du board.** Les tickets, labels et milestones décrits ci-dessus sont en place et directement vérifiables sur le dépôt. Le board GitHub Projects les agrège selon les colonnes Backlog, Ready, In progress, In review, Done, Abandonné, avec les champs personnalisés Volet, Jalon, Charge estimée, Responsable et Binôme.
+**Colonnes du board.** Les tickets, labels et milestones décrits ci-dessus sont en place et directement vérifiables sur le dépôt. Le board GitHub Projects les agrège selon six colonnes, retenues pour coller au déroulement réel du travail plutôt qu'à un modèle générique.
 
-La colonne Abandonné est volontaire. Elle sert à fermer une fonctionnalité écartée en conservant le motif écrit, plutôt qu'à la faire disparaître du board.
+| Colonne | Ce qu'elle contient |
+|---|---|
+| Todo | tâche identifiée, pas encore commencée |
+| In progress | tâche en cours |
+| Besoin d'aide | tâche bloquée, à reprendre en binôme ou en réunion |
+| A discuter | tâche dont le périmètre ou la méthode ne fait pas consensus |
+| Test | travail terminé, en attente de vérification par un autre membre |
+| Done | tâche terminée et vérifiée |
+
+Deux colonnes méritent un mot. **Besoin d'aide** et **A discuter** rendent visibles les blocages et les désaccords, qui sont précisément ce que le sujet demande de traiter dans le retour d'expérience. Une tâche qui y stationne est un point d'ordre du jour pour la réunion hebdomadaire. **Test** matérialise la revue par un tiers : une tâche ne passe pas directement de In progress à Done, ce qui applique la règle selon laquelle toute production est relue par le binôme du domaine.
+
+Le board porte un champ **Estimate**, utilisé pour la charge estimée et repris dans le classeur de suivi.
+
+**Traçabilité des abandons.** Le sujet valorise le fait de documenter les arbitrages, y compris les abandons de fonctionnalité. Plutôt qu'une colonne dédiée, nous utilisons le label `arbitrage` posé sur le ticket, fermé avec son motif écrit. La décision reste ainsi retrouvable par recherche, sans encombrer le board.
 
 Règle de tenue adoptée : aucune tâche n'est engagée sans ticket créé au préalable. Le contrôle est fait en revue hebdomadaire.
 
@@ -412,8 +425,6 @@ Le sujet laisse la forme libre mais demande que la séquence soit pensée et exp
 | 29/09 | jeu de 60 questions rédigé, dont 30 pour cent hors corpus | D1 et D5 |
 | 01/10 | jalon de mi-parcours, tag Git et branche d'observation figée | tous |
 | 16/10 | jalon J3, rédaction du rapport final engagée | tous |
-
-
 
 ---
 
