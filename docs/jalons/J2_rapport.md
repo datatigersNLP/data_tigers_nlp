@@ -228,7 +228,7 @@ Aucune génération n'étant produite, l'évaluation porte sur la récupération
 
 **Métriques.** Recall@k et MRR, pour k valant 1, 3, 5 et 10.
 
-**Jeu de référence à deux étages.** Le jeu `AgentPublic/piaf`, qui compte 3 835 questions-réponses françaises avec leurs contextes sous licence MIT, sert à valider la chaîne et à calibrer les attentes. Un jeu de référence construit par l'équipe sur notre propre corpus sert à l'évaluation qui compte.
+**Jeu de référence à deux étages.** Le jeu `AgentPublic/piaf`, qui compte 3 835 questions-réponses françaises avec leurs contextes sous licence MIT, sert à valider la chaîne et à calibrer les attentes. Il est disponible à l'adresse `https://huggingface.co/datasets/AgentPublic/piaf`. Un jeu de référence construit par l'équipe sur notre propre corpus sert à l'évaluation qui compte.
 
 **Dimensionnement.** Le calcul de puissance statistique impose une contrainte que nous prenons en compte dès maintenant. Sur une proportion observée de 0,80, l'intervalle de confiance à 95 pour cent vaut plus ou moins 10,1 points avec 60 questions, et plus ou moins 6,4 points avec 150. Autrement dit, 60 questions ne permettent pas de distinguer 0,80 de 0,85.
 
