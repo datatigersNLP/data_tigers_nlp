@@ -29,10 +29,15 @@ L'équipe converge sur un socle unique. Python est déclaré en version minimale
 | Python | 3.12 ou supérieur (environnement virtuel dédié) | volet B, préparation du corpus, export ONNX |
 | PyTorch | 2.14.0 | encodeur, bancs d'essai |
 | Node.js et npm | 25.9.0 et 11.12.1 | volet A, Transformers.js, chaîne de construction du site |
+| Vite | 8.3.0 | volet A, construction du site et serveur de développement |
+| React | 19.3.0 | volet A, interface et gestion de l'état de l'application |
+| Tailwind CSS | 4.3.3 | volet A, système visuel de l'interface |
 | Git et GitHub CLI | 2.50.1 et 2.92.0 | versionnage, board, intégration continue |
 | uv | 0.11.0 | gestion des dépendances Python |
 
 Point de vigilance relevé : le Python du système est en version 3.9.6 sur la machine de référence. Tout le travail passe par l'environnement virtuel. Un script lancé avec l'interpréteur système échoue sur des dépendances absentes.
+
+Les trois outils du volet A ont été retenus après une construction d'essai. React, Tailwind et le code applicatif représentent 69,5 Kio compressés dans le site livré, et l'application construite charge l'encodeur puis produit un résultat sans erreur. Le choix suppose une configuration explicite du chemin de base du site, faute de quoi la construction réussit mais la page reste vide une fois déployée.
 
 ### 1.2 Divergence déclarée
 
