@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 19 septembre 2026, session 8
+**Dernière mise à jour** 25 septembre 2026, session 9
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -32,11 +32,13 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 ## 2. Outils déclarés
 
-| Outil | Nature | Membres | Usage |
-|---|---|---|---|
-| Claude Opus 5 | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
-| Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
-| Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
+| Outil              | Nature                                                                   | Membres                            | Usage                                                                |
+| ------------------ | ------------------------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------- |
+| Claude Opus 5      | modèle de langage, fenêtre de contexte de 1 million de tokens          | Mahé BEGNIS                       | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Code        | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement  | exécution de commandes, lecture de fichiers, mesures                |
+| Google Antigravity | plateforme d'agents, alternative gratuite                                | Rémy RAYANE                       | même usage, divergence déclarée au jalon J2                       |
+| Gemini 3.8 Flash   | modèle de langage multimodal rapide, exécuté sous Google Antigravity  | Rmy RAYANE                         | raisonnement, génération de scripts, analyse de contextes          |
+| ChatGPT            | interface conversationnelle web (modèles GPT-4o / o1)                   | membres disposant d'un abonnement | brainstorming, reformulations, documentation ponctuelle              |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
 
@@ -86,12 +88,12 @@ La divergence entre Claude Code et Google Antigravity est déclarée dans le rap
 
 **Mesures exécutées.**
 
-| Mesure | Méthode | Résultat retenu |
-|---|---|---|
-| Faisabilité de l'exécution navigateur | page statique servie en local, Chromium piloté par Playwright, 20 passes après chauffe | 19,8 ms par requête, 3 052 ms au premier chargement, 568 ms en cache, 135,6 Mio de charge utile |
-| Empreinte mémoire des modèles locaux | calcul du cache KV à partir des fichiers de configuration officiels | Qwen2.5-7B à 56,0 Kio par token, soit 2,3 à 3,4 fois moins que les autres candidats |
-| Recherche de corpus | interrogation des API Hugging Face et data.gouv.fr, contrôle d'accessibilité de dix sources | `AgentPublic/travail-emploi`, 5 702 passages, 29,6 Mio, licence Etalab 2.0 |
-| Dimensionnement du jeu de référence | calcul de puissance statistique | 60 questions donnent un intervalle de plus ou moins 10,1 points, insuffisant pour distinguer 0,80 de 0,85 |
+| Mesure                                  | Méthode                                                                                      | Résultat retenu                                                                                          |
+| --------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Faisabilité de l'exécution navigateur | page statique servie en local, Chromium piloté par Playwright, 20 passes après chauffe      | 19,8 ms par requête, 3 052 ms au premier chargement, 568 ms en cache, 135,6 Mio de charge utile          |
+| Empreinte mémoire des modèles locaux  | calcul du cache KV à partir des fichiers de configuration officiels                          | Qwen2.5-7B à 56,0 Kio par token, soit 2,3 à 3,4 fois moins que les autres candidats                     |
+| Recherche de corpus                     | interrogation des API Hugging Face et data.gouv.fr, contrôle d'accessibilité de dix sources | `AgentPublic/travail-emploi`, 5 702 passages, 29,6 Mio, licence Etalab 2.0                              |
+| Dimensionnement du jeu de référence   | calcul de puissance statistique                                                               | 60 questions donnent un intervalle de plus ou moins 10,1 points, insuffisant pour distinguer 0,80 de 0,85 |
 
 **Apport le plus net.** La recherche de corpus. Dix sources publiques ont été testées pour leur accessibilité réelle, leur volumétrie, leur licence et leur fraîcheur, en quelques minutes. Cette recherche a écarté les documents internes de la formation, absents du sitemap public, et fait émerger un jeu de données administratif français dont la structure correspond exactement aux besoins du cas A3.
 
@@ -157,32 +159,69 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Ce que l'équipe a validé.** L'ajustement fin comme réponse à la valorisation du sujet, et l'ajout du modèle français en comparaison.
 
+### Session 9, 25 septembre 2026, Remy RAYANE, Google Antigravity
+
+**Objet.** Élaboration du plan d'action opérationnel pour le Domaine 2 (Encodeur et Indexation) dans le cadre de la résolution de l'Issue #30 (milestone Mi-parcours), ciblant l'indexation vectorielle sur le corpus réduit de référence PIAF.
+
+**Produit.** `Plan_Action_Index.md` (286 lignes, ~2 400 mots) détaillant les spécifications techniques, les fondements NLP (asymétrie E5, normalisation $L_2$), l'architecture de découplage binaire/JSON, ainsi que les spécifications des scripts d'indexation (`build_reduced_index.py`), de recherche (`query_reduced_index.py`) et d'évaluation quantitative (`evaluate_reduced_index.py`).
+
+**Mesures exécutées.**
+
+- Analyse du jeu de données Hugging Face `AgentPublic/piaf` : 3 835 questions, 761 contextes uniques (paragraphes Wikipédia francophones), 191 articles distincts. Longueur moyenne de 688,4 caractères par contexte (~130 à 150 sous-mots).
+- Calcul théorique de l'empreinte de la matrice d'embeddings pour 761 passages en dimension 384 : $761 \times 384 \times 4 \text{ octets} = 1\,168\,896 \text{ octets}$ (~1,17 Mio en Float32, ~293 Kio en Int8), respectant strictement le budget réseau et mémoire du navigateur (< 5 Mio).
+- Contrôle de la complexité algorithmique côté client : la normalisation $L_2$ appliquée dès l'indexation permet de réduire la similarité cosinus à un simple produit scalaire en $O(d)$ opérations, vectorisable en WebAssembly / SIMD sans surcoût.
+
+**Résultats retenus.**
+
+- Choix de PIAF comme jeu réduit de calibration grâce à la présence d'une vérité terrain humaine (*Ground Truth* paires questions-contextes).
+- Adoption stricte des préfixes asymétriques E5 (`passage: ` pour les contextes, `query: ` pour les requêtes) pour prévenir une chute documentée de 10 à 25 % du Recall@k.
+- Découplage strict entre la matrice dense brute (`piaf_reduced_index.bin`) et les métadonnées (`piaf_reduced_meta.json`) pour éviter la surcharge de sérialisation JSON en mémoire navigateur.
+- Définition d'un protocole d'évaluation quantitatif objectif fondé sur Recall@k (k=1, 3, 5, 10), MRR et latence d'inférence.
+
+**Ce qui a été écarté, et pourquoi.**
+
+- Stockage de l'index dans un JSON monolithique incluant texte et vecteurs : écarté car l'encodage de tableaux de flottants en texte alourdit la charge utile d'un facteur 2,5 à 3 et bloque le thread principal du navigateur lors de l'exécution de `JSON.parse()`.
+- Démarrage direct sur le corpus final volumineux sans passage par un corpus réduit contrôlé : écarté afin de valider et figer les formats d'échange et la chaîne d'évaluation avant le passage à l'échelle.
+
+**Ce que l'équipe a validé, et par qui.**
+
+- Soumis à la relecture de Mahé Begnis (binôme sur le Domaine D2 Encodeur et Index).
+
+**Temps d'appropriation constaté.**
+
+- 30 minutes pour formaliser l'architecture de stockage binaire Float32 et valider la compatibilité avec l'API `TypedArray` (`Float32Array`) côté navigateur.
+
+**Difficultés rencontrées.**
+
+- Format binaire multi-plateforme : obligation de spécifier explicitement l'ordre des octets en Little-Endian (standard x86/ARM/WebAssembly) pour permettre un mapping mémoire direct sans réordonnancement d'octets.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
 
 Cette section est tenue volontairement. Elle documente ce que la relecture systématique a permis de rattraper, et constitue le principal argument en faveur de notre méthode.
 
-| Date | Erreur | Détection | Correction |
-|---|---|---|---|
-| 18/09 | Comptage des notions faussé par une recherche en sous-chaîne, qui comptait « rag » dans « paragraphe » | incohérence des ordres de grandeur | comptage refait avec frontières de mots |
-| 18/09 | Expression régulière renvoyant zéro occurrence de LSTM alors qu'il y en avait 133 | contradiction avec un autre compteur | passage à une implémentation Python vérifiée |
-| 18/09 | Nombre de fichiers audités annoncé à 12, réel 14 dont 3 quasi-doublons | recomptage explicite | corpus de référence ramené à 11 fichiers dédoublonnés |
-| 18/09 | Classification des paquets Python ignorant les roues `universal2`, donc deux paquets déclarés à tort incompatibles | contrôle manuel des étiquettes | reclassement complet |
-| 18/09 | Rang mondial du dépôt ECC annoncé au 13e, réel 16e | comptage des dépôts plus étoilés | corrigé, et l'argument en est sorti renforcé |
-| 18/09 | Tirets cadratins rendus en « --- » dans les tableaux du PDF | relecture visuelle du rendu | caractères Unicode utilisés directement |
-| 19/09 | Taille d'un modèle annoncée par l'API à 0,5 Mio, réelle 294,6 Mio, les poids étant dans des fichiers externes | invraisemblance pour un modèle de 300 millions de paramètres | mesure des fichiers externes |
-| 19/09 | Charge utile du navigateur relevée à 5,5 Mio pour un modèle de 112,8 Mio | invraisemblance | les ressources d'origine tierce ne déclarent pas leur taille, mesure refaite fichier par fichier, résultat 135,6 Mio |
-| 19/09 | Seuil de réussite Recall@5 proposé à 0,80 sans fondement | recherche des résultats publiés du modèle : 23 mesures de récupération, toutes en anglais | seuils reformulés en écarts appariés face à une baseline |
-| 19/09 | Conclusion hâtive sur l'absence de board, tirée d'une sortie vide | la sortie vide masquait une erreur de périmètre d'autorisation | aucune conclusion tirée, limite déclarée dans le rapport |
-| 19/09 | Rapport annonçant trois milestones et dix labels inexistants | consultation du dépôt | section 2 alignée sur l'état vérifié |
-| 19/09 | Lecture immédiatement consécutive à une écriture renvoyant un état périmé | garde-fou conditionnant la suppression à un décompte nul | suppression refusée puis reprise après contrôle direct |
-| 19/09 | `gh api` basculant de GET en POST dès qu'un champ `-f` est fourni | échec en 422 sur un titre manquant | requêtes de lecture écrites sans `-f` |
-| 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
-| 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
-| 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage | fichier de sortie vide alors que le processus était terminé | écriture directe vers un fichier, tampon vidé explicitement |
+| Date  | Erreur                                                                                                                             | Détection                                                                                     | Correction                                                                                                                        |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 18/09 | Comptage des notions faussé par une recherche en sous-chaîne, qui comptait « rag » dans « paragraphe »                       | incohérence des ordres de grandeur                                                            | comptage refait avec frontières de mots                                                                                          |
+| 18/09 | Expression régulière renvoyant zéro occurrence de LSTM alors qu'il y en avait 133                                               | contradiction avec un autre compteur                                                           | passage à une implémentation Python vérifiée                                                                                  |
+| 18/09 | Nombre de fichiers audités annoncé à 12, réel 14 dont 3 quasi-doublons                                                         | recomptage explicite                                                                           | corpus de référence ramené à 11 fichiers dédoublonnés                                                                       |
+| 18/09 | Classification des paquets Python ignorant les roues`universal2`, donc deux paquets déclarés à tort incompatibles             | contrôle manuel des étiquettes                                                               | reclassement complet                                                                                                              |
+| 18/09 | Rang mondial du dépôt ECC annoncé au 13e, réel 16e                                                                             | comptage des dépôts plus étoilés                                                           | corrigé, et l'argument en est sorti renforcé                                                                                    |
+| 18/09 | Tirets cadratins rendus en « --- » dans les tableaux du PDF                                                                      | relecture visuelle du rendu                                                                    | caractères Unicode utilisés directement                                                                                         |
+| 19/09 | Taille d'un modèle annoncée par l'API à 0,5 Mio, réelle 294,6 Mio, les poids étant dans des fichiers externes                 | invraisemblance pour un modèle de 300 millions de paramètres                                 | mesure des fichiers externes                                                                                                      |
+| 19/09 | Charge utile du navigateur relevée à 5,5 Mio pour un modèle de 112,8 Mio                                                        | invraisemblance                                                                                | les ressources d'origine tierce ne déclarent pas leur taille, mesure refaite fichier par fichier, résultat 135,6 Mio            |
+| 19/09 | Seuil de réussite Recall@5 proposé à 0,80 sans fondement                                                                        | recherche des résultats publiés du modèle : 23 mesures de récupération, toutes en anglais | seuils reformulés en écarts appariés face à une baseline                                                                      |
+| 19/09 | Conclusion hâtive sur l'absence de board, tirée d'une sortie vide                                                                | la sortie vide masquait une erreur de périmètre d'autorisation                               | aucune conclusion tirée, limite déclarée dans le rapport                                                                       |
+| 19/09 | Rapport annonçant trois milestones et dix labels inexistants                                                                      | consultation du dépôt                                                                        | section 2 alignée sur l'état vérifié                                                                                          |
+| 19/09 | Lecture immédiatement consécutive à une écriture renvoyant un état périmé                                                   | garde-fou conditionnant la suppression à un décompte nul                                     | suppression refusée puis reprise après contrôle direct                                                                         |
+| 19/09 | `gh api` basculant de GET en POST dès qu'un champ `-f` est fourni                                                             | échec en 422 sur un titre manquant                                                            | requêtes de lecture écrites sans`-f`                                                                                          |
+| 19/09 | Suppression de`readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture                                                       | fichier réécrit, casse forcée en deux étapes avec`git mv`                                                                   |
+| 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation                          | lecture de l'adresse distante avant publication                                                | adresse corrigée avant tout envoi                                                                                                |
+| 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage                                                 | fichier de sortie vide alors que le processus était terminé                                  | écriture directe vers un fichier, tampon vidé explicitement                                                                     |
+| 25/09 | Risque d'omission des préfixes « query: » et « passage: » lors de l'encodage avec`multilingual-e5-small`                    | confrontation avec la documentation constructeur et les benchmarks MTEB du modèle             | obligation formelle d'ajouter les préfixes intégrée dans le plan d'action (évite 10 à 25 % de chute silencieuse de Recall@k) |
 
-**Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
+**Bilan intermédiaire.** Dix-sept erreurs ou pièges détectés et traités. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
