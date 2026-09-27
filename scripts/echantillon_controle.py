@@ -9,6 +9,7 @@ contrôlé sous ses deux formes, text et chunk_text, avec un verdict pour chacun
 
 Le tirage utilise une graine fixe : il est identique à chaque exécution.
 Prérequis : avoir lancé scripts/prepare_corpus.py.
+Dépendances : pandas, pyarrow, openpyxl.
 
 Usage, depuis la racine du dépôt :
     python scripts/echantillon_controle.py            # refuse d'écraser une grille existante
