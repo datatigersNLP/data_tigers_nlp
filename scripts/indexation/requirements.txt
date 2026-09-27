@@ -1,0 +1,19 @@
+# Dépendances de l'indexation du corpus (ticket #30, notebook 02), Python 3.12.
+#
+# Reprend celles du découpage et ajoute ONNX Runtime, qui exécute en Python les mêmes fichiers ONNX que le
+# navigateur (Xenova/multilingual-e5-small). requirements-lock.txt fige toutes les versions, en imposant celles
+# du fichier figé du découpage : un seul environnement exécute les deux notebooks. Depuis la racine du dépôt :
+#
+#   uv venv --seed --python 3.12 .venv
+#   uv pip sync --python .venv/bin/python scripts/indexation/requirements-lock.txt
+#
+# Après modification de ce fichier, régénérer le fichier figé :
+#   uv pip compile scripts/indexation/requirements.txt --universal --python-version 3.12 -c scripts/decoupage/requirements-lock.txt -o scripts/indexation/requirements-lock.txt
+#
+# Premier lancement : le notebook télécharge model.onnx (448,5 Mio) et model_quantized.onnx (112,8 Mio) dans le
+# cache Hugging Face de l'utilisateur, hors du dépôt.
+
+-r ../decoupage/requirements.txt
+
+# exécution des modèles ONNX, comme dans le navigateur
+onnxruntime==1.30.0
