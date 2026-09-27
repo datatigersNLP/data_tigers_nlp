@@ -12,5 +12,3 @@ probe.*
 __pycache__/
 # donnees : corpus brut et prepare, reconstruits par script (ticket #27)
 data/
-# source LaTeX de la documentation du corpus : seul le PDF est versionne
-docs/corpus/*.tex

@@ -1,0 +1,899 @@
+% Corpus travail-emploi : source, version et structure (ticket #27, domaine D1).
+% Compilation depuis docs/corpus : latexmk -xelatex CORPUS.tex
+\input{../latex/preambule.tex}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
+
+\hypersetup{pdftitle={Corpus travail-emploi - source, version et structure},
+  pdfsubject={Ticket 27 - domaine D1, corpus et segmentation},
+  pdfauthor={Equipe Data Tigers - M2 Data et IA, FGES}}
+\renewcommand{\entetecourant}{Corpus travail-emploi \textbullet{} Équipe Data Tigers}
+
+% ---------------------------------------------------------------- figures
+\tikzset{
+  sf/.style={font=\sffamily\fontsize{7.6}{9.2}\selectfont, text=encre},
+  fl/.style={-{Stealth[length=4.2pt,width=3.4pt]}, line width=0.65pt, draw=encre!80},
+  etape/.style={sf, rectangle, rounded corners=2pt, draw=accent, fill=white,
+    line width=0.6pt, align=center, text width=3.0cm, minimum height=1.35cm, inner sep=4pt},
+  bandeau/.style={sf, rectangle, fill=accent, text=white, anchor=north west,
+    font=\sffamily\bfseries\fontsize{7.8}{9.4}\selectfont, inner xsep=6pt, inner ysep=4pt},
+  section/.style={rectangle, rounded corners=2pt, draw=filet, fill=fondclair, line width=0.5pt},
+  pastille/.style={sf, rectangle, rounded corners=1.5pt, draw=accent, fill=white,
+    minimum width=0.44cm, minimum height=0.44cm, inner sep=0pt,
+    font=\sffamily\bfseries\fontsize{7}{8}\selectfont},
+  choisie/.style={pastille, fill=accent2, draw=accent2, text=white},
+  morceau/.style={sf, rectangle, rounded corners=2pt, line width=0.6pt, align=left,
+    anchor=north west, inner sep=5pt},
+}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash\rightskip=0pt plus 1fil\relax\hspace{0pt}}X}
+\newcommand{\var}[1]{{\ttfamily\bfseries\color{accent2}#1}}
+\newcommand{\ex}[1]{{\color{encre}#1}}
+
+\begin{document}
+\thispagestyle{empty}
+\begingroup\sffamily
+{\color{accent}\rule{\textwidth}{2.6pt}}\par\vspace{13pt}
+{\fontsize{27}{31}\selectfont\bfseries\color{encre} Corpus travail-emploi}\par\vspace{7pt}
+{\fontsize{13.5}{17}\selectfont\color{gris} Équipe Data Tigers \textbullet{} NLP~2 \textbullet{} M2 Data \& IA \textbullet{} FGES}\par\vspace{5pt}
+{\fontsize{11}{14}\selectfont\color{accent2}\bfseries Source, version et structure des données}\par\vspace{12pt}
+{\color{filet}\rule{\textwidth}{0.6pt}}\par\vspace{14pt}
+\endgroup
+
+\begingroup\setlength{\parskip}{0pt}
+\settowidth{\metalab}{\tabfont\bfseries Responsables}
+\begin{tabular}{@{}>{\tabfont\bfseries\color{accent}}l@{\hspace{16pt}}p{\dimexpr\textwidth-\metalab-18pt\relax}@{}}
+Ticket & \#27, télécharger, filtrer et contrôler le corpus \\[3.5pt]
+Domaine & D1, corpus et segmentation \\[3.5pt]
+Responsables & Maïmouna SIGNATE et Vaneck DAGAR, soutien Jibril BENSALEM \\[3.5pt]
+Statut & document de travail, tâches 2 à 8 du ticket \\[3.5pt]
+\end{tabular}\par\vspace{16pt}\endgroup
+
+\begingroup\small\color{gris}
+Ce document couvre les tâches 2 et 3 du ticket : documenter la source, la version et la méthode
+d'obtention du corpus, puis identifier son format et sa structure. La section~\ref{sec:filtrage}
+décrit le filtrage, le nombre de passages conservés et la volumétrie après filtrage (tâches 4 à 6). La
+section~\ref{sec:controle} présente le contrôle manuel d'un échantillon (tâche 7), et la
+section~\ref{sec:anomalies} recense les anomalies et les limites observées (tâche 8). Sauf mention
+contraire, tous les chiffres proviennent d'une mesure effectuée le 26 septembre 2026 sur le fichier
+décrit en section~\ref{sec:fichier}.
+\par\endgroup
+\vspace{10pt}{\color{filet}\rule{\textwidth}{0.4pt}}\par\vspace{6pt}
+
+% ====================================================================
+\section{Source, version et méthode d'obtention}
+
+\subsection{Provenance}
+
+Le corpus retenu au jalon J2 est le jeu de données public \code{AgentPublic/travail-emploi}, publié
+sur Hugging Face par l'administration française. Son contenu provient d'un seul site source, celui
+du ministère du Travail. Il nous parvient au terme d'une chaîne de trois maillons, représentée en
+figure~\ref{fig:provenance}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+  \node[etape] (site) at (0,0)
+    {{\bfseries Site du ministère}\\[2pt]{\color{gris}travail-emploi.gouv.fr\\fiches pratiques}};
+  \node[etape] (sg) at (4.4,0)
+    {{\bfseries SocialGouv}\\[2pt]{\color{gris}dépôt GitHub\\\ttfamily fiches-travail-data}};
+  \node[etape] (mt) at (8.8,0)
+    {{\bfseries MediaTech (Etalab)}\\[2pt]{\color{gris}découpage en passages\\et vectorisation}};
+  \node[etape, fill=accent!9] (hf) at (13.2,0)
+    {{\bfseries Hugging Face}\\[2pt]{\color{gris}\ttfamily AgentPublic/\\travail-emploi}};
+  \draw[fl] (site) -- (sg);
+  \draw[fl] (sg) -- (mt);
+  \draw[fl] (mt) -- (hf);
+\end{tikzpicture}
+\caption{Chaîne de provenance du corpus. Nous utilisons le dernier maillon, sans retraitement à ce stade.}
+\label{fig:provenance}
+\end{figure}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{4cm}Y@{}}
+\toprule
+\thead{Élément} & \thead{Valeur} \\
+\midrule
+Jeu de données & \code{AgentPublic/travail-emploi} \\
+Adresse & \url{https://huggingface.co/datasets/AgentPublic/travail-emploi} \\
+Éditeur & AgentPublic, collection MediaTech (Etalab) \\
+Licence & Etalab 2.0, licence ouverte \\
+Contenu d'origine & fiches pratiques de \url{https://travail-emploi.gouv.fr/} \\
+Code de production & \url{https://github.com/etalab-ia/mediatech} \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsection{Versions disponibles et version retenue}
+
+Le dépôt Hugging Face ne publie pas un fichier unique mais une série d'instantanés datés, un par mise
+à jour, rangés sous \code{data/travail-emploi-AAAAMMJJ/}. Au 26 septembre 2026, il en contient 28, du
+24 octobre 2025 au 11 septembre 2026, plus un dossier \code{data/travail-emploi-latest/} qui suit la
+dernière version et change à chaque mise à jour.
+
+\textbf{Version retenue : l'instantané du 11 septembre 2026.} C'est la version mesurée au jalon J2,
+dont elle reproduit exactement la volumétrie de 5\,702 passages. Un instantané daté ne change plus,
+contrairement au dossier \code{latest}, ce qui garantit que tous les domaines travaillent sur les mêmes
+données.
+
+L'historique du dépôt confirme la correspondance : jusqu'au 25 septembre 2026, le dossier \code{latest}
+contenait cet instantané. Il a été renommé \code{travail-emploi-20260911} le 25 septembre, au moment de la
+publication d'une nouvelle version.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{5.6cm}L{2cm}L{2cm}Y@{}}
+\toprule
+\thead{Version} & \thead{Passages} & \thead{Documents} & \thead{Écart} \\
+\midrule
+\code{travail-emploi-20260911}, retenue & 5\,702 & 261 & référence \\
+\code{travail-emploi-latest} au 26/09/2026 & 5\,703 & 261 & 1 passage ajouté, 57 modifiés \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsection{Fichier de référence}\label{sec:fichier}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{4cm}Y@{}}
+\toprule
+\thead{Élément} & \thead{Valeur} \\
+\midrule
+Chemin sur Hugging Face & \code{data/travail-emploi-20260911/travail\_emploi\_part\_0.parquet} \\
+Commit figé & \code{98744a63d40d982ff8b5345ca635ad543a412163}, du 25/09/2026 \\
+Taille & 31\,031\,404 octets, soit 29,6 Mio \\
+Empreinte SHA-256 & \code{b76ab4c4408b737fadaade549dfa7734}\newline\code{ec9b3343b7c19f0285cf3c6cd858ef4f} \\
+Date d'obtention & 26 septembre 2026 \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsection{Méthode d'obtention}
+
+Le fichier est téléchargé directement par HTTPS, en désignant le commit plutôt que la branche
+\code{main}. L'adresse reste ainsi valable même si le dépôt évolue. Les commandes suivantes, lancées
+depuis la racine du dépôt, reconstruisent le fichier à l'identique.
+
+\begin{codebox}
+\begin{Verbatim}[fontsize=\footnotesize]
+mkdir -p data/raw/travail-emploi-20260911
+curl -L -o data/raw/travail-emploi-20260911/travail_emploi_part_0.parquet \
+  "https://huggingface.co/datasets/AgentPublic/travail-emploi/resolve/\
+98744a63d40d982ff8b5345ca635ad543a412163/\
+data/travail-emploi-20260911/travail_emploi_part_0.parquet"
+sha256sum data/raw/travail-emploi-20260911/travail_emploi_part_0.parquet
+\end{Verbatim}
+\end{codebox}
+
+L'empreinte obtenue doit être identique à celle de la section~\ref{sec:fichier}. Une empreinte
+différente signale un fichier corrompu ou une autre version.
+
+Le dossier \code{data/} est exclu du dépôt Git par le \code{.gitignore} : le fichier pèse 29,6 Mio et se
+reconstruit par les commandes ci-dessus. Aucune bibliothèque spécifique n'est requise pour le
+téléchargement. La lecture utilise \code{pandas} et \code{pyarrow}.
+
+\textbf{Reproduction complète en une commande.} Le script \code{scripts/prepare\_corpus.py} enchaîne
+toutes les étapes : il télécharge le fichier s'il est absent, vérifie son empreinte, applique les
+règles de filtrage (section~\ref{sec:filtrage}), compte les tokens de chaque passage et écrit ses
+résultats. Lancé depuis la racine du dépôt, il produit toujours le même corpus. Il requiert les
+bibliothèques \code{pandas}, \code{pyarrow} et \code{tokenizers} ; le script de tirage de l'échantillon
+de contrôle (section~\ref{sec:controle}) requiert en outre \code{openpyxl}.
+
+\begin{codebox}
+\begin{Verbatim}[fontsize=\footnotesize]
+python scripts/prepare_corpus.py                  # doublons de R4 marqués
+python scripts/prepare_corpus.py --sans-doublons  # doublons de R4 retirés
+\end{Verbatim}
+\end{codebox}
+
+Il écrit trois fichiers dans \code{data/processed/} :
+
+\begin{itemize}
+\item \code{travail\_emploi\_filtre.parquet} : le corpus filtré ;
+\item \code{passages\_retires.csv} : la liste des passages retirés, avec la règle appliquée ;
+\item \code{stats\_filtrage.json} : les mesures avant et après filtrage.
+\end{itemize}
+
+% ====================================================================
+\section{Format et structure des données}
+
+\subsection{Format}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{4cm}Y@{}}
+\toprule
+\thead{Élément} & \thead{Valeur} \\
+\midrule
+Format & Apache Parquet, un seul fichier \\
+Compression & ZSTD \\
+Organisation & un seul groupe de lignes, trié par \code{doc\_id} puis \code{chunk\_index} \\
+Granularité & une ligne par passage (\emph{chunk}) \\
+Volumétrie & 5\,702 passages issus de 261 documents, 14 colonnes \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsection{Organisation des textes}
+
+Le corpus s'organise en trois niveaux emboîtés, représentés en figure~\ref{fig:hierarchie} sur un
+exemple réel, la fiche « Le bulletin de paie ».
+
+\begin{description}[leftmargin=0pt, itemsep=3pt, font=\sffamily\bfseries\color{accent}]
+\item[Fiche.] Une fiche est une page du site travail-emploi.gouv.fr qui explique un sujet précis du
+droit du travail : le CDD, le bulletin de paie, le burn-out. Le corpus en compte 261. Chaque fiche est un
+\emph{document}, identifié par \code{doc\_id}.
+\item[Section.] Une fiche est organisée en sections, qui sont ses intertitres, par exemple « Et les
+mentions interdites ? ». L'intitulé de la section figure dans la colonne \code{context}. Le corpus compte
+2\,115 sections.
+\item[Passage.] Chaque section est découpée en un ou plusieurs passages (\emph{chunks}) selon sa
+longueur. Un passage correspond à une ligne du fichier, et son contenu se trouve dans la colonne
+\code{text}. Un passage n'appartient jamais à deux sections.
+\end{description}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+  % ------------------------------------------------ site
+  \begin{scope}[on background layer]
+    \node[rectangle, rounded corners=4pt, fill=fondclair, draw=filet, line width=0.5pt,
+          fit={(0,0.35) (16.8,-12.15)}, inner sep=0pt] {};
+  \end{scope}
+  \node[sf, anchor=north west, font=\sffamily\bfseries\fontsize{8.4}{10}\selectfont, text=accent]
+    at (0.25,0.25) {SITE SOURCE \quad travail-emploi.gouv.fr};
+  \node[sf, anchor=north east, text=gris] at (16.55,0.25) {un seul site, 261 fiches};
+
+  % ------------------------------------------------ fiche
+  \draw[accent, line width=0.8pt, fill=white, rounded corners=3pt] (0.3,-0.45) rectangle (9.95,-11.85);
+  \node[bandeau, minimum width=9.65cm] at (0.3,-0.45)
+    {FICHE = une page du site \hfill identifiée par \texttt{doc\_id}};
+  \foreach \y/\nom/\role/\exemple in {
+      -1.5/doc\_id/identifiant de la fiche/{\ttfamily article374540},
+      -2.05/title/titre de la page/{Le bulletin de paie},
+      -2.65/url/adresse de la page/{\ttfamily\fontsize{6.8}{8}\selectfont travail-emploi.gouv.fr/\\le-bulletin-de-paie},
+      -3.25/date/dernière mise à jour/{02/03/2026},
+      -3.9/introduction/{paragraphe d'en-tête,\\résumé de la fiche}/{« Au moment du versement de son salaire, un bulletin de paie doit être remis… »}} {
+    \node[sf, anchor=west, inner sep=0pt] at (0.55,\y) {\var{\nom}};
+    \node[sf, anchor=west, inner sep=0pt, align=left, text=gris] at (2.55,\y) {\role};
+    \node[sf, anchor=west, inner sep=0pt, align=left, text width=4.25cm] at (5.45,\y) {\exemple};
+  }
+  \node[sf, anchor=north west, text=gris, text width=9.2cm, font=\sffamily\itshape\fontsize{7}{8.4}\selectfont]
+    at (0.55,-4.55) {Ces champs décrivent la fiche et sont recopiés sur chacun de ses passages.};
+
+  \node[sf, anchor=north west, font=\sffamily\bfseries\fontsize{7.6}{9}\selectfont, text=accent]
+    at (0.55,-5.1) {SECTIONS \quad\mdseries\color{gris}colonne \texttt{context}};
+  \node[sf, anchor=north west, font=\sffamily\bfseries\fontsize{7.6}{9}\selectfont, text=accent]
+    at (6.1,-5.1) {PASSAGES \quad\mdseries\color{gris}\texttt{chunk\_index}};
+
+  % bandes de sections : y centre, intitulé, liste des passages
+  \foreach \y/\titre/\liste in {
+      -6.0/{« Le bulletin de paie »}/{1},
+      -6.9/{« Quelles sont les mentions obligatoires ? »}/{2,3,4,5,6,7},
+      -7.8/{« Documents annexés au bulletin de paie »}/{8,9},
+      -8.7/{« Et les mentions interdites ? »}/{10},
+      -10.5/{« À lire sur service-public.gouv.fr »}/{27}} {
+    \draw[section] (0.55,\y+0.36) rectangle (9.75,\y-0.36);
+    \node[sf, anchor=west, text width=5.1cm, font=\sffamily\itshape\fontsize{7.4}{8.8}\selectfont] at (0.7,\y) {\titre};
+    \foreach \n [count=\i] in \liste {
+      \node[pastille] at ({6.35+0.55*(\i-1)},\y) {\n};
+    }
+  }
+  \draw[section, dashed] (0.55,-9.6+0.36) rectangle (9.75,-9.6-0.36);
+  \node[sf, anchor=west, text=gris, font=\sffamily\itshape\fontsize{7.4}{8.8}\selectfont] at (0.7,-9.6)
+    {8 autres sections, passages 11 à 26};
+  \node[choisie] (p10) at (6.35,-8.7) {10};
+
+  \node[sf, anchor=north west, text=gris, text width=9.2cm, font=\sffamily\itshape\fontsize{7}{8.4}\selectfont]
+    at (0.55,-11.05) {Cette fiche compte 13 sections et 27 passages. Une section courte tient en un passage,
+    une section longue est coupée en plusieurs.};
+
+  % ------------------------------------------------ passage
+  \draw[accent2, line width=0.8pt, fill=white, rounded corners=3pt] (10.45,-0.45) rectangle (16.5,-11.85);
+  \node[bandeau, fill=accent2, minimum width=6.05cm] at (10.45,-0.45) {PASSAGE n° 10 = une ligne du fichier};
+  \node[sf, anchor=north west, text width=5.6cm, inner sep=0pt] at (10.7,-1.2) {%
+    \setlength{\parskip}{0pt}%
+    \var{chunk\_id}\\ {\color{gris}identifiant unique du passage}\\
+    \ex{\ttfamily article374540\_10}\\ {\color{gris}\fontsize{6.8}{8}\selectfont = \texttt{doc\_id} + « \_ » + \texttt{chunk\_index}}\\[6pt]
+    \var{chunk\_index}\\ {\color{gris}position du passage dans la fiche}\\ \ex{10}\\[6pt]
+    \var{context}\\ {\color{gris}section d'où vient le passage}\\ \ex{« Et les mentions interdites ? »}\\[6pt]
+    \var{text}\\ {\color{gris}contenu du passage, 304 caractères}\\
+    \ex{« Aucune mention relative à l'exercice du droit de grève et à l'activité de représentation des salariés ne doit figurer… »}\\[6pt]
+    \var{chunk\_text}\\ {\color{gris}\texttt{title} + \texttt{introduction} + \texttt{text}, 619 caractères}\\[6pt]
+    \var{chunk\_xxh64}\\ {\color{gris}empreinte de \texttt{chunk\_text}}\\ \ex{\ttfamily 3e31bce72789afd2}\\[6pt]
+    \var{embeddings\_bge-m3}\\ {\color{gris}vecteur de 1\,024 nombres calculé par bge-m3}\\ \ex{\ttfamily [-0.0434, 0.0103, …]}\\[8pt]
+    {\color{gris}\fontsize{6.8}{8}\selectfont Deux colonnes sont constantes : \texttt{surtitle} vaut « Travail-Emploi » et \texttt{source} vaut « travail-emploi ».}};
+
+  \draw[accent2, line width=0.9pt, dashed, -{Stealth[length=4.5pt,width=3.6pt]}] (p10.east) -- (10.45,-8.7);
+\end{tikzpicture}
+\caption{Organisation des textes et rôle de chaque variable, sur l'exemple réel de la fiche
+« Le bulletin de paie ». À gauche, la fiche et ses sections ; chaque pastille est un passage, numéroté
+par \code{chunk\_index}. À droite, le détail du passage n°~10.}
+\label{fig:hierarchie}
+\end{figure}
+
+\subsection{Dictionnaire des variables}
+
+Le fichier compte 14 colonnes. Le tableau les regroupe par niveau : ce que la colonne décrit est
+indiqué par son niveau, fiche ou passage. Les longueurs sont en caractères.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.35cm}L{1.3cm}L{1.6cm}L{2.5cm}Y@{}}
+\toprule
+\thead{Colonne} & \thead{Type} & \thead{Distinctes} & \thead{Long. min/moy/max} & \thead{Signification} \\
+\midrule
+\multicolumn{5}{@{}l}{\textcolor{accent}{\bfseries Niveau fiche, recopié sur chaque passage}} \\
+\code{doc\_id} & texte & 261 & 5 / 13 / 14 & identifiant de la fiche sur le site source \\
+\code{title} & texte & 261 & 8 / 47 / 136 & titre de la fiche \\
+\code{url} & texte & 261 & 39 / 77 / 160 & adresse de la fiche sur travail-emploi.gouv.fr \\
+\code{date} & texte & 140 & 10 & publication ou mise à jour, format \code{JJ/MM/AAAA} \\
+\code{introduction} & texte & 255 & 0 / 572 / 2\,056 & paragraphe d'en-tête de la fiche \\
+\midrule
+\multicolumn{5}{@{}l}{\textcolor{accent}{\bfseries Niveau passage}} \\
+\code{chunk\_id} & texte & 5\,702 & 7 / 16 / 17 & identifiant unique du passage \\
+\code{chunk\_index} & entier & 199 & de 1 à 199 & rang du passage dans sa fiche, à partir de 1 \\
+\code{context} & liste & 1\,267 & 10 / 54 / 267 & intitulé de la section, liste d'un seul élément \\
+\code{text} & texte & 5\,503 & 4 / 929 / 1\,464 & contenu du passage \\
+\code{chunk\_text} & texte & 5\,702 & 140 / 1\,549 / 3\,438 & titre, introduction et contenu réunis (figure~\ref{fig:composition}) \\
+\code{chunk\_xxh64} & texte & 5\,702 & 16 & empreinte XXH64 de \code{chunk\_text} \\
+\code{embeddings\_bge-m3} & texte & 5\,702 & — & vecteur de 1\,024 dimensions, chaîne JSON \\
+\midrule
+\multicolumn{5}{@{}l}{\textcolor{accent}{\bfseries Constantes}} \\
+\code{surtitle} & texte & 1 & — & toujours « Travail-Emploi » \\
+\code{source} & texte & 1 & — & toujours « travail-emploi » \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsection{Relations entre les variables}
+
+\textbf{Fiche et passages.} Chaque fiche a un titre unique et une URL unique. Ses passages sont
+numérotés de 1 à $n$ sans trou par \code{chunk\_index}. Une fiche compte entre 1 et 199 passages, 15 en
+médiane.
+
+\textbf{Identifiant du passage.} \code{chunk\_id} est toujours formé de \code{doc\_id}, d'un tiret bas et de
+\code{chunk\_index}. \code{chunk\_index} seul n'identifie rien : le numéro 10 existe dans de nombreuses
+fiches.
+
+\textbf{Sections et passages.} Les 5\,702 passages se répartissent en 2\,115 sections : 1\,229 tiennent
+en un seul passage, 710 en deux à cinq, et 176 en plus de cinq, jusqu'à 67 pour une même section.
+
+\textbf{Texte brut et texte composé.} \code{text} contient le seul contenu du passage.
+\code{chunk\_text} en est une version enrichie, composée par MediaTech pour l'encodage : sur trois lignes,
+le titre de la fiche, son introduction, puis le contenu du passage (figure~\ref{fig:composition}). Sur les
+7 fiches sans introduction, soit 69 passages, \code{chunk\_text} ne compte que deux lignes. C'est sur
+\code{chunk\_text} qu'est calculée la colonne \code{embeddings\_bge-m3}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+  \node[morceau, draw=accent, fill=accent!9, text width=3.2cm] (t) at (0,0)
+    {\var{title}\\[2pt]{\color{gris}ligne 1}\\[2pt]« Le bulletin de paie »};
+  \node[morceau, draw=accent, fill=accent!9, text width=5.2cm] (i) at (4.25,0)
+    {\var{introduction}\\[2pt]{\color{gris}ligne 2}\\[2pt]« Au moment du versement de son salaire, un bulletin de paie doit être remis à chaque salarié… »};
+  \node[morceau, draw=accent, fill=accent!9, text width=5.5cm] (x) at (10.55,0)
+    {\var{text}\\[2pt]{\color{gris}ligne 3}\\[2pt]« Aucune mention relative à l'exercice du droit de grève… »};
+  \node[sf, font=\sffamily\bfseries\fontsize{12}{12}\selectfont, text=accent] at ($(t.east)!0.5!(i.west)$) {+};
+  \node[sf, font=\sffamily\bfseries\fontsize{12}{12}\selectfont, text=accent] at ($(i.east)!0.5!(x.west)$) {+};
+  \node[morceau, draw=accent2, line width=0.8pt, text width=16.25cm, align=center] (c) at (0,-2.55)
+    {\var{chunk\_text} \quad {\color{gris}= les trois lignes réunies, séparées par un retour à la ligne \textbullet{} 619 caractères pour ce passage}};
+  \draw[fl] (t.south) -- (t.south |- c.north);
+  \draw[fl] (i.south) -- (i.south |- c.north);
+  \draw[fl] (x.south) -- (x.south |- c.north);
+  \node[sf, anchor=north west, text=rouge, font=\sffamily\fontsize{7}{8.4}\selectfont] at (0,-3.35)
+    {La section (\texttt{context}) n'est pas incluse, contrairement à ce qu'annonce la fiche de l'éditeur.};
+\end{tikzpicture}
+\caption{Composition de \code{chunk\_text}, vérifiée sur les 5\,702 passages, avec l'exemple du passage
+n°~10 de la fiche « Le bulletin de paie ».}
+\label{fig:composition}
+\end{figure}
+
+\subsection{Méthode de découpage appliquée par l'éditeur}\label{sec:decoupage}
+
+D'après la fiche du jeu de données, \code{text} résulte d'un découpage par la fonction de LangChain
+\code{Recursive\allowbreak Character\allowbreak Text\allowbreak Splitter}, avec les paramètres suivants.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{4cm}Y@{}}
+\toprule
+\thead{Paramètre} & \thead{Valeur} \\
+\midrule
+\code{chunk\_size} & 1\,024 \\
+\code{chunk\_overlap} & 0 \\
+\code{length\_function} & tokeniseur de \code{bge-m3} \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+L'absence de chevauchement signifie que les passages d'une fiche, mis bout à bout dans l'ordre de
+\code{chunk\_index}, reconstituent son contenu. MediaTech fournit un tutoriel de reconstitution à cet
+effet.
+
+\subsection{Colonnes utiles au projet}
+
+Au regard des sorties exigées par le cas A3 et des besoins du cas B1, les colonnes se répartissent
+ainsi.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{5.2cm}Y@{}}
+\toprule
+\thead{Usage} & \thead{Colonnes} \\
+\midrule
+Identification du passage & \code{chunk\_id}, \code{doc\_id}, \code{chunk\_index} \\
+Contenu à encoder & \code{text} ou \code{chunk\_text}, choix relevant du domaine D2 \\
+Référence de la section d'origine & \code{context} \\
+Lien vers le document complet & \code{url}, \code{title} \\
+Suivi de version & \code{chunk\_xxh64}, \code{date} \\
+Sans usage prévu & \code{surtitle} et \code{source}, constantes ; \code{embeddings\_bge-m3}, modèle différent du nôtre \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+La colonne \code{embeddings\_bge-m3} représente à elle seule 72,8 millions de caractères, contre
+5,3 millions pour la colonne \code{text}. Elle a été calculée avec \code{bge-m3}, que le jalon J2 a écarté
+pour le volet A (543,3 Mio, hors budget), et ne peut pas être comparée aux vecteurs de
+\code{multilingual-e5-small}.
+
+\subsection{Écarts entre la documentation de l'éditeur et le fichier}
+
+Trois écarts ont été constatés entre la fiche du jeu de données et le fichier réel.
+
+\begin{enumerate}
+\item La fiche annonce une colonne \code{surtitre} ; la colonne réelle s'appelle \code{surtitle}.
+\item La fiche présente \code{doc\_id} comme l'identifiant du site source sans en préciser le format. Il en
+existe trois formes : 257 fiches de la forme \code{article} suivi d'un nombre, 3 identifiants purement
+numériques (\code{12399}, \code{12509}, \code{12510}) et 1 identifiant alphanumérique
+(\code{article-ACFg1E}).
+\item La fiche annonce que \code{chunk\_text} inclut les valeurs de \code{context}. Sur les 5\,702 passages,
+\code{chunk\_text} se compose en réalité du titre, de l'introduction et du contenu, sans la section.
+\end{enumerate}
+
+Ces écarts sont sans conséquence sur la lecture du fichier, mais tout script doit s'appuyer sur les noms
+de colonnes réels, et le choix de la colonne à encoder doit tenir compte de la composition réelle de
+\code{chunk\_text}.
+
+% ====================================================================
+\section{Filtrage du corpus}\label{sec:filtrage}
+
+\subsection{Principe}
+
+Le filtrage retire du corpus les passages inutilisables : éléments de navigation du site, listes de
+liens vers d'autres pages et restes de découpe. Aucune fiche n'est retirée pour être hors périmètre :
+les 261 fiches proviennent toutes du site du ministère du Travail et traitent toutes du droit du
+travail ou de l'emploi.
+
+Trois principes guident le filtrage.
+
+\begin{itemize}
+\item \textbf{Retirer, jamais modifier.} Une règle retire une ligne entière ; aucun texte n'est
+corrigé. Le corpus filtré est donc un sous-ensemble exact du fichier d'origine, ce qui le rend simple à
+vérifier.
+\item \textbf{Évaluer sur \code{text}.} Les règles s'appliquent à la colonne \code{text}, qui contient
+le contenu propre du passage. Le titre et l'introduction que \code{chunk\_text} leur ajoute sont communs
+à tous les passages d'une fiche : ils ne rendent pas un passage utile. Évaluée sur \code{chunk\_text}, la
+règle R3 ne détecterait d'ailleurs plus aucun fragment, puisque le plus court \code{chunk\_text} compte
+140 caractères.
+\item \textbf{Convenir aux deux encodages possibles.} Le domaine D2 n'a pas encore choisi la colonne à
+encoder. Une ligne retirée l'est avec ses deux colonnes, et la règle dont l'intérêt dépend de ce choix
+(R4) signale les passages sans les retirer.
+\end{itemize}
+
+\subsection{Règles de filtrage}
+
+\textbf{R1 : bouton de navigation seul.} Retire les passages dont le texte se réduit à « Échanger avec le
+bon conseiller pour votre entreprise sur Conseillers-Entreprises Service Public », ou à sa variante
+« Conseillers Entreprise ». Ce lien de navigation figure au bas de nombreuses fiches et a été extrait
+comme un passage à part entière. Il ne répond à aucune question, et ses exemplaires identiques
+remonteraient ensemble dans les résultats d'une recherche. \emph{139 passages concernés.}
+
+\textbf{R2 : sections de liens vers d'autres pages.} Retire les passages des sections « Services en
+ligne », « À lire sur ce site » et « À lire sur service-public ». Ces sections ne contiennent pas
+d'explications mais des renvois : le début du résumé d'autres fiches, coupé par des points de
+suspension et suivi de sa rubrique et de sa date, par exemple « La prévention des risques psychosociaux
+(RPS) Les risques psychosociaux sont définis comme un risque pour la santé physique et mentale des
+travailleurs. Leurs causes sont à\dots{} Risques professionnels Date de mise à jour le 23 juillet 2024 ».
+Ces aperçus sont tronqués, et les fiches vers lesquelles ils renvoient figurent en entier dans le corpus.
+\emph{343 passages concernés : 171 « Services en ligne », 139 « À lire sur ce site », 33 « À lire sur
+service-public ».}
+
+\textbf{R3 : fragments de moins de 50 caractères.} Retire les passages dont le texte compte moins de
+50 caractères. Ce sont des restes de découpe, dépourvus de sens isolément : « bis. », « 2026 »,
+« de paie », « l'enfant. ». Le seuil résulte d'un compromis : à 30 caractères, des bribes comme
+« rémunération au moins équivalente. » seraient conservées ; à 100 caractères, des références
+juridiques utiles au volet B, telles que « Articles L. 1223-4, L. 1234-9 à L. 1234-11\dots{} du Code du
+travail », seraient retirées. Il est réglable par l'option \code{-{}-seuil} du script.
+\emph{76 passages concernés.}
+
+\textbf{R4 : doublons exacts, signalés sans être retirés.} Parmi les passages conservés, marque dans la
+nouvelle colonne \code{doublon\_text} ceux dont le texte est identique à celui d'un passage précédent,
+dans l'ordre du fichier ; la première occurrence n'est pas marquée. Ces doublons se trouvent tous dans
+des fiches différentes, et sont surtout des aperçus de liens comme « Glossaire des mots et des
+institutions Détachement international | Date de mise à jour le 27 juillet 2020 ». Leur intérêt dépend
+de la colonne encodée : encodés à partir de \code{text}, ils produisent des vecteurs identiques qui
+occupent plusieurs places d'un même classement ; encodés à partir de \code{chunk\_text}, ils restent
+distincts, puisque le titre de leur fiche diffère. Le domaine D2 les écarte ou non selon son choix ;
+l'option \code{-{}-sans-doublons} du script les retire directement, et les ajoute alors, sous la règle R4,
+à la liste des passages retirés.
+\emph{40 passages marqués.}
+
+\subsection{Ce qui est volontairement conservé}
+
+Deux types de sections, proches en apparence des listes de liens, ne sont pas visés par R2.
+
+\begin{itemize}
+\item \textbf{« Textes de référence »} : références d'articles du Code du travail et de textes
+réglementaires. Elles sont utiles au volet B, qui doit citer ses sources. 181 passages sont conservés.
+\item \textbf{« Qui contacter »} : organismes et services à contacter, qui répondent aux questions du
+type « à qui m'adresser ? ». 49 passages sont conservés.
+\end{itemize}
+
+Les passages de ces sections qui comptent moins de 50 caractères sont néanmoins retirés par R3.
+
+\subsection{Nombre de passages conservés et volumétrie}
+
+Un passage peut relever de plusieurs règles : 136 boutons de navigation se trouvent dans la section
+« Services en ligne » (R1 et R2), et 4 fragments courts dans une section de liens (R2 et R3). Chaque
+passage retiré est compté une seule fois, sous la première règle qui le concerne dans l'ordre R1, R2, R3.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}Y L{2.6cm}L{2.9cm}@{}}
+\toprule
+\thead{Règle} & \thead{Concernés, pris isolément} & \thead{Retirés à ce titre} \\
+\midrule
+R1, bouton de navigation seul & 139 & 139 \\
+R2, sections de liens & 343 & 207 \\
+R3, fragments de moins de 50 caractères & 76 & 72 \\
+\midrule
+Total retiré & & \textbf{418} (7,3 \%) \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+La volumétrie est mesurée par trois indicateurs : le nombre de passages, le nombre de fiches
+distinctes, et le nombre total de caractères de la colonne \code{text}, qui représente la quantité de
+contenu exploitable.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}Y L{2cm}L{1.8cm}L{3.6cm}@{}}
+\toprule
+\thead{Corpus} & \thead{Passages} & \thead{Fiches} & \thead{Caractères de \code{text}} \\
+\midrule
+Brut, avant filtrage & 5\,702 & 261 & 5\,295\,169 \\
+Filtré par R1, R2 et R3 & \textbf{5\,284} & \textbf{261} & 5\,159\,728 (−2,6 \%) \\
+Filtré, doublons marqués par R4 écartés & 5\,244 & 261 & 5\,136\,460 (−3,0 \%) \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Le filtrage retire 7,3 \% des passages mais seulement 2,6 \% du texte : ce qu'il enlève est presque
+entièrement constitué de passages très courts ou sans contenu propre. Aucune fiche n'est perdue.
+
+Le corpus filtré conserve 13 des 14 colonnes d'origine : la colonne \code{embeddings\_bge-m3}, calculée
+avec un autre encodeur que celui du projet, n'est pas reprise, ce qui ramène le fichier de 25,9 Mio à
+2,7 Mio. S'y ajoutent trois colonnes :
+\code{doublon\_text} (règle R4), et \code{tokens\_text} et \code{tokens\_chunk\_text}, qui donnent le nombre
+de tokens de chaque forme du passage (section~\ref{sec:troplong}).
+Les 418 passages retirés sont listés, avec la règle appliquée et son motif, dans le fichier
+\code{data/processed/\allowbreak passages\_retires.csv}.
+
+% ====================================================================
+\section{Contrôle manuel d'un échantillon}\label{sec:controle}
+
+\subsection{Méthode}
+
+Deux échantillons ont été tirés au hasard par le script \code{scripts/echantillon\_controle.py}, avec
+une graine fixe (27) qui rend le tirage reproductible :
+
+\begin{itemize}
+\item \textbf{échantillon A} : 50 passages conservés par le filtrage, issus de 40 fiches différentes,
+pour vérifier que le filtrage n'a pas laissé passer de passages inutilisables ;
+\item \textbf{échantillon B} : 20 passages retirés, répartis entre les règles (7 au titre de R1, 7 de R2,
+6 de R3), pour vérifier que chaque retrait était justifié.
+\end{itemize}
+
+La colonne à encoder n'étant pas encore choisie, chaque passage a été examiné sous ses deux formes,
+\code{text} et \code{chunk\_text}, avec un verdict pour chacune. Le verdict porte sur l'utilité du
+passage : un passage coupé en début ou en fin mais dont le contenu reste exploitable est jugé conforme,
+la coupure étant relevée séparément dans la colonne \code{coupure} (section~\ref{sec:coupures}). Le
+verdict de \code{chunk\_text} reprend les défauts de \code{text}, que le titre et l'introduction ne
+corrigent pas, et y ajoute les défauts propres à cette forme, en particulier une longueur supérieure à
+512 tokens, au-delà de laquelle l'encodeur tronquerait le passage (section~\ref{sec:troplong}). Le
+nombre de tokens de chaque passage est compté par \code{scripts/prepare\_corpus.py}.
+
+Le fichier \code{controle\_echantillon.xlsx}, rangé dans \code{docs/corpus/}, contient la grille
+complète, avec un commentaire pour chaque passage. Le contrôle a été réalisé avec l'assistance
+d'un outil d'intelligence artificielle, puis relu et validé par Vaneck DAGAR.
+
+\subsection{Résultats}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}Y L{2.6cm}L{2.6cm}@{}}
+\toprule
+\thead{Échantillon A, passages conservés} & \thead{\code{text}} & \thead{\code{chunk\_text}} \\
+\midrule
+Passages conformes & \textbf{35 sur 50 (70 \%)} & \textbf{30 sur 50 (60 \%)} \\
+Section d'origine erronée & 8 & 8 \\
+Bruit de navigation ou liste de liens & 5 & 5 \\
+Trop long pour l'encodeur & 0 & 6 \\
+Fragment incompréhensible & 1 & 0 \\
+Tableau aplati & 1 & 1 \\
+\midrule
+Passages coupés en début ou en fin & 46 sur 50 & 46 sur 50 \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Deux passages de \code{chunk\_text} jugés non conformes pour une autre raison dépassent aussi la
+longueur limite : 8 passages sur 50 comptent plus de 512 tokens. Un neuvième en compte exactement 512 ;
+il tient dans la limite, mais serait tronqué de 2 tokens si l'on ajoutait le préfixe \code{passage:}
+attendu par les modèles E5.
+
+\textbf{Échantillon B.} 19 retraits sur 20 sont justifiés, pour les deux formes du passage. Le seul
+retrait injustifié concerne un passage de 32 caractères de la section « Qui contacter ? »
+(« France Travail · Votre DREETS-DDETS »), retiré par R3 alors qu'il indique utilement à qui
+s'adresser. C'est une limite du seuil de 50 caractères (section~\ref{sec:limites}).
+
+\subsection{Interprétation}
+
+Les sections erronées dépendent de l'extraction de l'éditeur et non de la colonne encodée. Hors de ce
+défaut commun, 7 passages sur 50 (14 \%) posent problème sous la forme \code{text}, contre 13 sur 50
+(26 \%) sous la forme \code{chunk\_text}. L'écart tient surtout à la longueur : \code{chunk\_text}
+répète l'introduction de la fiche, qui compte jusqu'à 2\,056 caractères. L'avantage attendu de
+\code{chunk\_text}, donner un contexte aux passages qui en manquent, n'a été décisif que pour un passage
+sur 50.
+
+Ces proportions sont à lire comme des ordres de grandeur : sur 50 passages, une proportion de 70 \%
+est connue à environ 13 points près, avec un niveau de confiance de 95 \%.
+
+Le contrôle est donc favorable à l'encodage de \code{text}. Une composition intermédiaire, formée du
+titre de la fiche suivi du texte du passage, conserverait un contexte sans dépasser la limite de
+l'encodeur : elle compte 438 tokens au plus. Le choix revient au domaine D2.
+
+% ====================================================================
+\section{Anomalies et limites}\label{sec:anomalies}
+
+Cette section recense les défauts observés dans le corpus. Les mesures portent sur le corpus filtré
+décrit en section~\ref{sec:filtrage}, soit 5\,284 passages, sauf mention contraire.
+
+\subsection{Passages coupés en milieu de phrase}\label{sec:coupures}
+
+\textbf{Constat.} La plupart des passages ne commencent pas au début d'une phrase ou ne se terminent pas
+à sa fin. Le passage \code{12509\_21} de la fiche « La période de reconversion » en donne un exemple :
+il commence par « que se passe-t-il ? La non-réponse dans le délai vaut décision de refus de prise en
+charge », suite d'une question posée dans le passage précédent, et se termine par « Néanmoins, ».
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}Y L{2.6cm}L{2.2cm}@{}}
+\toprule
+\thead{Indicateur} & \thead{Passages} & \thead{Part} \\
+\midrule
+Début en milieu de phrase (première lettre minuscule) & 3\,113 & 58,9 \% \\
+Fin sans ponctuation forte (point, point d'interrogation ou d'exclamation, deux-points, point-virgule, guillemet ou parenthèse fermants) & 3\,896 & 73,7 \% \\
+Début ou fin coupé & 4\,537 & 85,9 \% \\
+\midrule
+Pour mémoire, début en milieu de phrase dans le corpus brut & 3\,167 sur 5\,702 & 55,5 \% \\
+Pour mémoire, début ou fin coupé dans l'échantillon contrôlé & 46 sur 50 & 92 \% \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Ces indicateurs sont approximatifs. Un passage peut commencer par une majuscule tout en poursuivant une
+phrase entamée dans le passage précédent, par exemple lorsqu'il débute par un sigle : la part réelle des
+coupures est donc au moins égale aux valeurs indiquées.
+
+\textbf{Cause.} Le défaut provient du découpage appliqué par l'éditeur (section~\ref{sec:decoupage}). Lorsqu'une
+section de fiche dépasse la taille maximale d'un passage, elle est coupée en tranches successives sans
+égard aux limites des phrases. Les passages concernés ne sont donc pas du bruit : ce sont les suites des
+passages précédents, et ils portent l'essentiel du contenu juridique.
+
+\textbf{Pourquoi ne pas les retirer.} Retirer ces passages viderait le corpus de la majeure partie de son
+contenu, comme le montre le tableau suivant.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}Y L{2.6cm}L{2.2cm}L{2.4cm}@{}}
+\toprule
+\thead{Passages retirés} & \thead{Passages restants} & \thead{Fiches restantes} & \thead{Texte conservé} \\
+\midrule
+Début en milieu de phrase & 2\,171 (41 \%) & 261 & 37 \% \\
+Début ou fin coupé & 747 (14 \%) & 242 & 9 \% \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Ces passages sont donc conservés, et la coupure est signalée pour chaque passage de l'échantillon de
+contrôle dans la colonne \code{coupure} de \code{docs/corpus/controle\_echantillon.xlsx}.
+
+\subsubsection{Effet sur l'encodage}
+
+La coupure n'empêche pas l'encodage, mais elle en dégrade la qualité sur certains points. Ses effets
+sont de nature et de gravité différentes.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{4.3cm}Y L{2.3cm}@{}}
+\toprule
+\thead{Effet} & \thead{Explication} & \thead{Gravité} \\
+\midrule
+Fragment de phrase en tête de passage & L'encodeur résume l'ensemble du passage en faisant la moyenne des représentations de ses tokens. Quelques mots isolés en début de passage pèsent peu face aux quelque deux cents autres : le sens global du vecteur est préservé. & faible \\
+Idée partagée entre deux passages & Une règle commencée à la fin d'un passage et achevée au début du suivant n'est complètement représentée par aucun des deux vecteurs. Une question portant précisément sur cette règle risque d'être mal rapprochée de l'un comme de l'autre. & moyenne \\
+Sujet absent du passage & Un passage qui commence par « Cette transaction… » ou « à les mettre en concurrence » a perdu ce dont il parle. Son vecteur représente la notion en général, sans son contexte, et se rapproche moins bien d'une question formulée avec ce contexte. La colonne \code{chunk\_text} compense en partie ce défaut, puisqu'elle ajoute le titre et l'introduction de la fiche. & moyenne \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\textbf{Conséquences au-delà de l'encodage.} Dans le volet A, l'utilisateur voit s'afficher un
+résultat qui commence en milieu de phrase, sans savoir à quoi il se rapporte. Dans le volet B, le
+modèle de langage reçoit un passage privé de son début : il peut citer la bonne source tout en se
+trompant sur ce à quoi la règle s'applique.
+
+\textbf{Conclusion.} La coupure n'est pas bloquante pour l'encodage, mais elle devrait réduire le rappel
+sur les questions précises. Son effet peut être mesuré : il suffit de comparer le Recall@k obtenu sur le
+corpus actuel à celui d'un corpus re-segmenté, avec le même jeu de questions.
+
+\textbf{Piste de correction.} Le découpage de l'éditeur étant sans chevauchement, chaque section peut
+être reconstituée en recollant ses passages dans l'ordre de \code{chunk\_index}, puis redécoupée en
+respectant les fins de phrase et la limite de 512 tokens de \code{multilingual-e5-small}. Ce travail
+relève du domaine D1 mais sort du périmètre du ticket \#27, qui porte sur le filtrage. Il modifie le
+nombre de passages et concerne le domaine D2 : il doit être proposé en réunion hebdomadaire et faire
+l'objet d'un ticket dédié avant d'être engagé.
+
+\subsection{Sections d'origine mal attribuées}
+
+\textbf{Constat.} Vingt-cinq fiches comportent une section consacrée à une vidéo, par exemple
+« Le contrat à durée déterminée (CDD) en vidéo (web série droit du travail) ». Ces sections regroupent
+793 passages (15,0 \%). Seuls 79 d'entre eux portent une marque de transcription orale (« Bonjour »,
+« épisode », « retranscription », « cette vidéo ») ; les 714 autres (13,5 \%) sont des textes juridiques
+écrits, sans rapport avec la vidéo. L'extraction de l'éditeur semble avoir rangé la suite de la page sous
+le dernier intertitre rencontré. L'échantillon contrôlé confirme ce défaut pour 8 passages sur 50.
+D'autres passages, à cheval sur plusieurs sous-sections, ne portent que l'intitulé de la première.
+
+\textbf{Conséquences.} La colonne \code{context} n'est pas fiable. Ses effets diffèrent selon l'usage
+qui en est fait.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.6cm}Y@{}}
+\toprule
+\thead{Usage} & \thead{Effet d'une section erronée} \\
+\midrule
+Encodage et recherche & Aucun : \code{context} ne figure ni dans \code{text} ni dans \code{chunk\_text}, et un passage mal attribué est retrouvé comme s'il était bien attribué. L'effet deviendrait réel si le domaine D2 choisissait d'encoder une composition incluant la section. \\
+Volet A, affichage des résultats & Le cas A3 affiche avec chaque résultat la référence de sa section d'origine. Elle serait fausse pour environ 13,5 \% des passages, ce qui induirait l'utilisateur en erreur. \\
+Volet B, citations & L'assistant sourcé peut citer une section qui ne correspond pas au passage. Si la section est fournie au modèle de langage avec chaque passage, une étiquette erronée peut aussi l'orienter à tort. \\
+Volet B, évaluation & La métrique « taux de citations valides » serait faussée si la validité d'une citation était jugée sur la section. Elle doit l'être sur l'identifiant du passage (\code{chunk\_id}) et l'adresse de la fiche (\code{url}). \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Le titre (\code{title}) et l'adresse (\code{url}) de la fiche restent toujours justes : ils sont définis au
+niveau de la fiche et ne dépendent pas de l'extraction des sections. Ils constituent la référence fiable
+à afficher et à citer. La section peut être présentée comme une information indicative, ou masquée pour
+les intitulés de vidéo qui ne portent aucune marque de transcription.
+
+\subsection{Bruit de navigation restant après filtrage}
+
+\textbf{Constat.} 327 passages conservés (6,2 \%) contiennent encore des éléments de navigation :
+183 le bouton « Échanger avec le bon conseiller », 223 des aperçus de liens terminés par « Date de mise à
+jour ». Les règles R1 et R2 ne les ont pas détectés, pour deux raisons : le bouton y est mêlé à d'autres
+textes, alors que R1 ne retire que les passages qui s'y réduisent ; et ces passages sont rangés sous une
+section mal attribuée, que R2 ne reconnaît pas comme une liste de liens. Des listes de documents
+téléchargeables, rangées sous « Pour aller plus loin », relèvent du même cas. L'échantillon contrôlé en
+compte 5 sur 50.
+
+\textbf{Effet sur l'encodage.} Le bruit dilue le vecteur du passage : une partie de sa représentation
+porte sur des titres d'autres fiches plutôt que sur son propre contenu. Le passage peut alors remonter
+pour des questions qui relèvent d'autres fiches.
+
+\subsection{Longueur excessive de chunk\_text}\label{sec:troplong}
+
+\textbf{Mesure.} Le script \code{scripts/prepare\_corpus.py} compte les tokens de chaque passage avec le
+tokeniseur de l'encodeur retenu au jalon J2, \code{Xenova/multilingual-e5-small}, figé sur un commit.
+Le décompte inclut les deux tokens spéciaux de début et de fin ; il est enregistré dans les colonnes
+\code{tokens\_text} et \code{tokens\_chunk\_text} du corpus filtré.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}Y L{1.8cm}L{1.8cm}L{3.9cm}@{}}
+\toprule
+\thead{Forme du passage} & \thead{Médiane} & \thead{Maximum} & \thead{Au-delà de 512 tokens} \\
+\midrule
+\code{text} & 281 & 431 & 0 \\
+\code{chunk\_text} & 394 & 804 & \textbf{619 (11,7 \%)} \\
+\code{chunk\_text} avec le préfixe \code{passage:} & & & 637 (12,1 \%) \\
+Titre de la fiche et \code{text} & 292 & 438 & 0 \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+L'écart vient de l'introduction de la fiche, répétée dans chaque \code{chunk\_text} : elle dépasse
+1\,000 caractères pour 21 fiches, et atteint 2\,056 caractères. Les modèles E5 attendent que chaque
+passage soit précédé du préfixe \code{passage:}, qui ajoute 2 tokens : pris seul, il en compte 3, mais
+collé au texte, son dernier token fusionne avec le premier mot. La troisième ligne du tableau en tient
+compte ; le décompte est fait directement sur le texte préfixé.
+
+\textbf{Effet sur l'encodage.} L'encodeur \code{multilingual-e5-small} ne traite que les 512 premiers
+tokens d'une entrée et ignore la suite. Le titre et l'introduction venant en tête de \code{chunk\_text},
+c'est la fin du passage, c'est-à-dire son contenu propre, qui serait perdue. Pour les 619 passages
+concernés, la troncature supprime 55 tokens en médiane, et jusqu'à 292, soit en médiane 19 \% du
+contenu propre du passage.
+
+La première mesure de ce défaut reposait sur une estimation de quatre caractères par token, qui
+désignait 849 passages de plus de 2\,000 caractères. Le décompte exact la corrige : l'estimation
+surévaluait de 37 \% le nombre de passages concernés.
+
+\subsection{Défauts de mise en forme du texte}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{4.4cm}Y L{2.6cm}@{}}
+\toprule
+\thead{Défaut} & \thead{Exemple} & \thead{Passages} \\
+\midrule
+Intertitre collé au texte & « prise en charge.Systèmes d'informationUn dépôt du CERFA » & environ 3\,439 (65,1 \%) \\
+Adresse web coupée par une espace & « ameli. fr », « epide. fr » & 146 (2,8 \%) \\
+Transcription orale d'une vidéo & « Bonjour, c'est Honorine et aujourd'hui je vais vous présenter\dots{} » & 79 (1,5 \%) \\
+Espace avant un point ou une virgule & « un bulletin de paie doit être remis à chaque salarié . » & 30 (0,6 \%) \\
+Entité HTML non décodée & « d\&\#8217;un congé » au lieu de « d'un congé » & 5 \\
+Tableau aplati & « CVECDIPublic viséOuvert aux demandeurs d'emploi\dots{} » & 2 sur 50 dans l'échantillon \\
+Texte de lien dans l'introduction & « (Lien vers « La définition du CSE et cadre de mise en place ») » & 2 fiches \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Les mesures reposent sur des expressions régulières et sont approximatives, en particulier pour les
+intertitres collés. Les tableaux aplatis n'ont pas pu être mesurés sur l'ensemble du corpus faute
+d'indicateur fiable.
+
+\textbf{Effet sur l'encodage.} La plupart de ces défauts sont mineurs : le tokeniseur découpe les mots
+en sous-unités et tolère une espace mal placée. Les intertitres collés n'ont qu'un effet négligeable sur
+l'encodeur, qui découpe « informationUn » en « information » puis « Un », comme il le ferait avec une
+espace ; ils empêchent en revanche de séparer un intertitre de la phrase qui le suit lors d'un découpage
+en phrases. Les tableaux aplatis sont plus gênants : l'association entre les cellules et leurs colonnes
+est perdue, et le passage devient ambigu.
+
+\subsection{Structure et contenu du corpus}
+
+\begin{itemize}
+\item \textbf{Déséquilibre entre fiches.} Une fiche compte de 1 à 196 passages conservés, 13 en médiane.
+Les dix fiches les plus longues représentent 20,2 \% du corpus : les sujets qu'elles traitent, comme
+l'activité partielle de longue durée, seront surreprésentés dans les résultats de recherche.
+\item \textbf{Doublons entre fiches.} 40 passages reprennent à l'identique le texte d'un passage d'une
+autre fiche ; ils sont signalés par R4 (section~\ref{sec:filtrage}).
+\item \textbf{Fiches sans introduction.} 7 fiches, soit 65 passages conservés, n'ont pas d'introduction.
+Le \code{chunk\_text} de leurs passages ne compte alors que deux lignes et apporte moins de contexte.
+\item \textbf{Contenus d'actualité inégale.} Les fiches ont été publiées ou mises à jour entre le
+17 novembre 2008 et le 27 août 2026 ; 34 datent d'avant 2020. Certaines conservent des éléments
+historiques, comme les constats de 2008 dans la fiche du plan santé au travail 2026-2030.
+\end{itemize}
+
+\subsection{Limites}\label{sec:limites}
+
+\textbf{Limites du corpus.}
+
+\begin{itemize}
+\item Le corpus provient d'une seule source, le site du ministère du Travail : il ne couvre ni les
+conventions collectives, ni la jurisprudence au-delà de ce que les fiches en citent.
+\item Il reflète l'état des fiches au 11 septembre 2026. Les évolutions réglementaires postérieures, et
+les mises à jour publiées depuis par l'éditeur, ne sont pas prises en compte.
+\item La colonne \code{context} n'est pas fiable, et la colonne \code{embeddings\_bge-m3} n'est pas
+utilisable par le projet, puisqu'elle a été calculée avec un autre encodeur.
+\end{itemize}
+
+\textbf{Limites du filtrage.}
+
+\begin{itemize}
+\item Les règles R1 et R2 s'appuient sur le texte exact du bouton et sur l'intitulé des sections : elles
+laissent passer le bruit mêlé à d'autres textes ou rangé sous une section mal attribuée, soit 6,2 \% des
+passages conservés.
+\item Le seuil de 50 caractères de R3 retire parfois une information courte mais utile, comme un
+organisme à contacter ou la référence d'un décret : un retrait injustifié sur 20 dans l'échantillon
+contrôlé.
+\item Le filtrage ne corrige pas les coupures en milieu de phrase, qui relèvent d'une re-segmentation
+hors du périmètre du ticket \#27.
+\end{itemize}
+
+\textbf{Limites des mesures.}
+
+\begin{itemize}
+\item Les indicateurs d'anomalie reposent sur des expressions régulières : ce sont des estimations,
+qui peuvent comporter des faux positifs et des faux négatifs.
+\item Les longueurs en tokens sont mesurées avec le tokeniseur du modèle d'origine. Si le vocabulaire
+de l'encodeur est réduit, comme le prévoit le jalon J2, le découpage en tokens changera et le décompte
+devra être refait.
+\item L'échantillon contrôlé compte 70 passages : ses proportions sont des ordres de grandeur, à environ
+13 points près pour l'échantillon A.
+\end{itemize}
+
+\end{document}
