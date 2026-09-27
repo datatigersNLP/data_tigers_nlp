@@ -1,0 +1,661 @@
+\input{../../latex/preambule.tex}
+% Document autonome : il reprend le préambule de l'équipe (fontes, palette, encadrés) et ajoute
+% ce que la chaîne Markdown ne sait pas produire : formules, schémas TikZ et graphiques pgfplots.
+% Compilation depuis ce dossier : latexmk -xelatex 01_encodeur_e5_small.tex
+
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{LibertinusMath-Regular.otf}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,babel,shapes.geometric}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\hypersetup{pdftitle={Comprendre l'encodeur multilingual-e5-small},
+  pdfsubject={Support d'apprentissage pour l'indexation du corpus},
+  pdfauthor={Equipe Data Tigers - NLP 2 - M2 Data et IA, FGES}}
+\renewcommand{\entetecourant}{Comprendre l'encodeur multilingual-e5-small \textbullet{} Équipe Data Tigers}
+
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash\hspace{0pt}}p{#1}}
+% colonne extensible avec glue initiale : sans elle, le changement de couleur de \thead fait passer
+% l'en-tête à la ligne suivante (même mécanisme que celui décrit dans le préambule)
+\newcolumntype{Y}{>{\raggedright\arraybackslash\hspace{0pt}}X}
+\newcommand{\tok}[1]{\tikz[baseline=(t.base)]\node[draw=filet,fill=fondcode,rounded corners=1.5pt,
+  inner xsep=2.2pt,inner ysep=1.6pt,font=\ttfamily\small](t){\strut #1};}
+\newcommand{\sep}{\hspace{1.6pt plus 1pt}\allowbreak}
+\newcommand{\debutmot}{\textcolor{accent2}{\_}}
+\newcommand{\mesure}{\textcolor{vert}{\faRuler}\,}
+\newcommand{\source}{\textcolor{accent}{\faBook}\,}
+
+\tikzset{
+  boite/.style={draw=accent,fill=fondclair,rounded corners=2pt,align=center,
+    font=\sffamily\small,inner sep=5pt,minimum height=9mm},
+  boite2/.style={boite,draw=accent2,fill=white},
+  fleche/.style={-{Stealth[length=2.4mm]},draw=encre,line width=0.7pt},
+  etiquette/.style={font=\sffamily\scriptsize,text=gris,align=center},
+}
+
+\addto\captionsfrench{\renewcommand{\contentsname}{Sommaire}}
+\begin{document}
+\thispagestyle{empty}
+\begingroup\sffamily
+{\color{accent}\rule{\textwidth}{2.6pt}}\par\vspace{13pt}
+{\fontsize{27}{31}\selectfont\bfseries\color{encre}\raggedright Comprendre l'encodeur\\multilingual-e5-small\par}\vspace{7pt}
+{\fontsize{13.5}{17}\selectfont\color{gris} Équipe Data Tigers \textbullet{} NLP~2 \textbullet{} M2 Data \& IA \textbullet{} FGES}\par\vspace{5pt}
+{\fontsize{11}{14}\selectfont\color{accent2}\bfseries Support d'apprentissage pour l'indexation du corpus (notebook 02)}\par\vspace{12pt}
+{\color{filet}\rule{\textwidth}{0.6pt}}\par\vspace{14pt}
+\endgroup
+
+\begingroup\setlength{\parskip}{0pt}
+\settowidth{\metalab}{\tabfont\bfseries Vérifications}
+\begin{tabular}{@{}>{\tabfont\bfseries\color{accent}}l@{\hspace{16pt}}p{\dimexpr\textwidth-\metalab-18pt\relax}@{}}
+Objet & Expliquer comment l'encodeur transforme un texte en vecteur, ce qu'il faut respecter pour l'utiliser, et comment lire ses résultats \\[3.5pt]
+Public & Toute l'équipe, sans prérequis au-delà du module NLP~2 \\[3.5pt]
+Version & 27 septembre 2026, révisée après la correction du découpage M2 et l'exécution du notebook 02 \\[3.5pt]
+Vérifications & Chaque chiffre est soit cité d'une source primaire (\source), soit mesuré sur notre corpus (\mesure) \\[3.5pt]
+\end{tabular}\par\vspace{16pt}\endgroup
+
+\begin{callout}
+Les exemples de ce document ont été calculés le 27 septembre 2026 sur les 4\,240 passages du découpage M2, avec
+le modèle \code{intfloat/multilingual-e5-small} en précision fp32. Ce sont des \textbf{illustrations} : quatre
+requêtes écrites pour l'occasion ne mesurent pas la qualité d'un système. L'évaluation se fera au notebook 03, sur
+un jeu de questions rédigé par des membres de l'équipe qui ne construisent pas l'index.
+\end{callout}
+
+\vspace{10pt}{\color{filet}\rule{\textwidth}{0.4pt}}\par\vspace{16pt}
+\begingroup\setlength{\parskip}{0pt}\tableofcontents\endgroup
+\clearpage
+
+% =====================================================================================
+\section{Le problème que l'encodeur résout}
+
+Le cas A3 demande de retrouver, pour une question en langage naturel, les passages du corpus qui y répondent, de
+les classer, et d'afficher pour chacun un score, la référence de sa section et un lien vers la fiche. Aucun texte
+n'est généré : le système retrouve des passages existants.
+
+Deux familles de méthodes savent le faire.
+
+\begin{itemize}
+\item La \textbf{recherche lexicale} (TF-IDF, BM25) compare des mots. Un passage remonte s'il contient les mots
+  de la question, pondérés par leur rareté. Elle est rapide, transparente, et échoue dès que la question n'emploie
+  pas les mots du texte.
+\item La \textbf{recherche dense} compare des sens. Un encodeur transforme la question et chaque passage en un
+  vecteur de nombres ; deux textes de sens proche ont des vecteurs proches, même sans mot commun.
+\end{itemize}
+
+\subsubsection{Un exemple sur notre corpus}
+
+Pour la question familière \emph{«~Peut-on être viré quand on est en arrêt de travail ?~»}, le mot «~viré~»
+n'apparaît dans aucun passage \mesure. Un TF-IDF construit sur les passages M2 renvoie en tête une retranscription
+sur le métier d'inspecteur, un passage sur la cause réelle et sérieuse, et un passage sur des prélèvements
+atmosphériques (scores 0,277, 0,255 et 0,217). L'encodeur renvoie trois passages consacrés à l'arrêt de travail et
+à ses effets sur le contrat (section \ref{sec:exemples}).
+
+Une question ne prouve rien. Elle montre seulement ce que chaque famille sait faire. La recherche lexicale reste la
+référence à battre : le rapport J2 a fixé comme critère que l'encodeur ne fasse pas moins bien que BM25 sur le même
+jeu de questions.
+
+% =====================================================================================
+\section{Représenter un texte par un vecteur}
+
+\subsection{Représentation creuse et représentation dense}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.2cm}YY@{}}
+\toprule
+& \thead{TF-IDF (creuse)} & \thead{Encodeur e5 (dense)} \\
+\midrule
+Dimension & une par mot du vocabulaire : 15\,314 sur nos passages \mesure & 384, fixée par le modèle \\
+Valeurs & presque toutes nulles : 75 valeurs non nulles en médiane par passage, soit 0,49\,\% \mesure & toutes non nulles \\
+Sens d'une dimension & le poids d'un mot précis & aucun, pris isolément \\
+Mots absents & invisibles : un mot inconnu ne compte pas & découpés en morceaux connus, et interprétés dans leur contexte \\
+Apprentissage & aucun, sinon le calcul des fréquences & appris sur environ un milliard de paires de textes \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsection{La similarité cosinus}
+
+La proximité de deux vecteurs $\mathbf{u}$ et $\mathbf{v}$ se mesure par le cosinus de l'angle qu'ils forment :
+\[
+  \cos(\mathbf{u},\mathbf{v}) \;=\; \frac{\mathbf{u}\cdot\mathbf{v}}{\lVert\mathbf{u}\rVert\,\lVert\mathbf{v}\rVert}
+  \;=\; \frac{\sum_{i=1}^{384} u_i\,v_i}{\sqrt{\sum_i u_i^2}\,\sqrt{\sum_i v_i^2}} .
+\]
+Il vaut 1 pour deux vecteurs de même direction, 0 pour deux vecteurs orthogonaux. Si les vecteurs sont
+\textbf{normalisés}, c'est-à-dire de longueur 1, le cosinus se réduit au produit scalaire $\mathbf{u}\cdot\mathbf{v}$.
+C'est pourquoi on normalise tous les vecteurs : chercher les passages les plus proches revient alors à multiplier
+une matrice par un vecteur.
+
+\begin{center}
+\begin{tikzpicture}[scale=2.1]
+  \draw[filet,line width=0.6pt] (0,0) circle (1);
+  \draw[gris,->] (-1.25,0) -- (1.3,0); \draw[gris,->] (0,-1.15) -- (0,1.25);
+  \coordinate (q) at (22:1); \coordinate (p1) at (48:1); \coordinate (p2) at (150:1);
+  \draw[fleche,accent] (0,0) -- (q); \node[font=\sffamily\small,text=accent,anchor=west] at (22:1.04) {question $\mathbf{q}$};
+  \draw[fleche,vert] (0,0) -- (p1); \node[font=\sffamily\small,text=vert,anchor=south west] at (48:1.03) {passage pertinent $\mathbf{p}_1$};
+  \draw[fleche,rouge] (0,0) -- (p2); \node[font=\sffamily\small,text=rouge,anchor=south east] at (150:1.03) {passage éloigné $\mathbf{p}_2$};
+  \draw[accent2] (22:0.55) arc (22:48:0.55); \node[font=\sffamily\scriptsize,text=accent2] at (35:0.68) {$\theta_1$};
+  \draw[gris] (22:0.3) arc (22:150:0.3); \node[font=\sffamily\scriptsize,text=gris] at (100:0.42) {$\theta_2$};
+  \node[etiquette,anchor=west] at (1.35,-0.6) {vecteurs de longueur 1\\sur la sphère unité\\$\cos\theta_1 > \cos\theta_2$};
+\end{tikzpicture}\\[2pt]
+{\sffamily\scriptsize\color{gris} Schéma en deux dimensions ; les vecteurs réels en ont 384.}
+\end{center}
+
+% =====================================================================================
+\section{Du texte au vecteur : l'architecture du modèle}
+
+\begin{center}
+\begin{tikzpicture}[node distance=5.5mm]
+  \node[boite2,text width=3.1cm] (txt) {\code{query: Le salarié démissionnaire...}};
+  \node[boite,right=of txt,text width=2.5cm] (tk) {Tokeniseur\\Unigram\\250\,002 tokens};
+  \node[boite,right=of tk,text width=2.6cm] (emb) {Table\\d'embeddings\\250\,037 $\times$ 384\\+ positions};
+  \node[boite,below=9mm of emb,text width=2.6cm] (enc) {12 couches\\Transformer\\(attention, 12 têtes)};
+  \node[boite,left=of enc,text width=2.5cm] (pool) {Moyenne des\\tokens réels\\(masque)};
+  \node[boite,left=of pool,text width=3.1cm] (norm) {Normalisation L2\\vecteur de 384\\nombres, longueur 1};
+  \draw[fleche] (txt) -- (tk); \draw[fleche] (tk) -- (emb); \draw[fleche] (emb) -- (enc);
+  \draw[fleche] (enc) -- (pool); \draw[fleche] (pool) -- (norm);
+  \node[etiquette,above=1mm of tk] {jusqu'à 512 tokens};
+  \node[etiquette,below=1mm of enc] {un vecteur de 384 par token};
+  \node[etiquette,below=1mm of norm] {un seul vecteur par texte};
+\end{tikzpicture}
+\end{center}
+
+\subsection{La tokenisation}
+
+Le modèle ne lit pas des mots mais des \textbf{tokens}, morceaux de texte tirés d'un vocabulaire de 250\,002 unités
+construit par l'algorithme Unigram de SentencePiece \source. Les mots fréquents sont un seul token, les mots rares
+sont découpés en morceaux connus. Voici la tokenisation réelle de deux entrées \mesure ; le trait souligné
+\debutmot{} marque un début de mot.
+
+\begin{center}\begin{minipage}{\textwidth}\centering
+\setlength{\fboxsep}{0pt}
+\tok{<s>}\sep\tok{\debutmot que}\sep\tok{ry}\sep\tok{:}\sep\tok{\debutmot Le}\sep\tok{\debutmot salarié}\sep\tok{\debutmot d}\sep\tok{émission}\sep\tok{naire}\sep\tok{\debutmot per}\sep\tok{ço}\sep\tok{it}\sep\tok{-}\sep\tok{il}\sep\tok{\debutmot l}\sep\tok{'}\sep\tok{al}\sep\tok{location}\sep\tok{\debutmot chômage}\sep\tok{\debutmot ?}\sep\tok{</s>}\\[5pt]
+\tok{<s>}\sep\tok{\debutmot passage}\sep\tok{:}\sep\tok{\debutmot Article}\sep\tok{\debutmot L}\sep\tok{.}\sep\tok{\debutmot}\sep\tok{1234}\sep\tok{-9}\sep\tok{\debutmot du}\sep\tok{\debutmot Code}\sep\tok{\debutmot du}\sep\tok{\debutmot travail}\sep\tok{</s>}
+\end{minipage}\end{center}
+
+Trois observations utiles.
+\begin{itemize}
+\item «~démissionnaire~» devient \code{d}, \code{émission}, \code{naire} : le modèle reconstruit le sens d'un mot
+  rare à partir de ses morceaux et du contexte. Seul un caractère absent du vocabulaire deviendrait le
+  token inconnu \code{<unk>} : il n'y en a aucun dans nos 4\,240 passages \mesure.
+\item Le préfixe \code{query:} coûte 3 tokens, le préfixe \code{passage:} en coûte 2 \mesure. Ces tokens comptent
+  dans la limite de 512 et participent à la moyenne finale.
+\item Chaque texte est encadré par les tokens spéciaux \code{<s>} et \code{</s>}, eux aussi comptés dans la limite.
+\end{itemize}
+
+\subsection{La table d'embeddings et les positions}
+
+Chaque token est remplacé par une ligne d'une table de 250\,037 lignes et 384 colonnes, à laquelle on ajoute un
+vecteur de position (512 positions au plus). La table compte 35 lignes de plus que le vocabulaire du tokeniseur :
+ces lignes ne sont jamais utilisées \mesure.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}YR{3.2cm}R{2.2cm}@{}}
+\toprule
+\thead{Composant} & \thead{Paramètres} & \thead{Part} \\
+\midrule
+Table d'embeddings des tokens (250\,037 $\times$ 384) & 96\,014\,208 & 81,6\,\% \\
+12 couches Transformer & 21\,293\,568 & 18,1\,\% \\
+\quad dont, par couche, l'attention & 592\,128 & \\
+\quad dont, par couche, le réseau à propagation avant & 1\,182\,336 & \\
+Positions (512 $\times$ 384) et types de segment & 197\,376 & 0,2\,\% \\
+Couche de sortie «~pooler~», inutilisée ici & 147\,840 & 0,1\,\% \\
+Normalisation des embeddings & 768 & \\
+\midrule
+\textbf{Total} & \textbf{117\,653\,760} & 100\,\% \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+{\sffamily\scriptsize\color{gris} Paramètres comptés sur le modèle chargé \mesure ; architecture lue dans son fichier de configuration \source.}
+
+Plus des quatre cinquièmes du modèle sont la table d'embeddings, qui couvre une centaine de langues. Nos passages
+n'en utilisent que 10\,081 lignes sur 250\,002, soit 4,0\,\% \mesure. C'est ce qui rend possible la réduction du
+vocabulaire envisagée au jalon J2 pour alléger le modèle servi.
+
+\subsection{Les 12 couches Transformer}
+
+Chaque couche transforme la suite de vecteurs en une nouvelle suite de vecteurs, en deux temps.
+
+\begin{enumerate}
+\item \textbf{L'attention} permet à chaque token de regarder tous les autres. Pour chaque token, le modèle calcule
+  une requête $Q$, une clé $K$ et une valeur $V$ ; le nouveau vecteur est une moyenne des valeurs, pondérée par la
+  ressemblance entre sa requête et les clés des autres :
+  \[
+    \operatorname{Attention}(Q,K,V) \;=\; \operatorname{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d}}\right)V ,
+    \qquad d = 32 .
+  \]
+  Le calcul est fait 12 fois en parallèle (12 «~têtes~» de 32 dimensions, $12 \times 32 = 384$), chaque tête pouvant
+  suivre un type de relation différent.
+\item \textbf{Le réseau à propagation avant} transforme chaque vecteur isolément : 384 vers 1\,536 dimensions,
+  activation GELU, puis retour à 384.
+\end{enumerate}
+Des connexions résiduelles et des normalisations entourent ces deux étapes. À la sortie de la douzième couche,
+chaque token a un vecteur de 384 nombres qui dépend de toute la phrase : le «~salarié~» d'une phrase sur le
+licenciement n'a pas le même vecteur que celui d'une phrase sur les congés.
+
+\subsection{De plusieurs vecteurs à un seul : moyenne et normalisation}
+
+Pour obtenir un vecteur par texte, on fait la \textbf{moyenne des vecteurs des tokens réels}, en ignorant les
+tokens de remplissage ajoutés quand on encode plusieurs textes de longueurs différentes en même temps. Avec
+$\mathbf{h}_t$ le vecteur du token $t$ et $m_t$ valant 1 pour un token réel et 0 pour un remplissage :
+\[
+  \mathbf{e} \;=\; \frac{\sum_t m_t\,\mathbf{h}_t}{\sum_t m_t},
+  \qquad
+  \hat{\mathbf{e}} \;=\; \frac{\mathbf{e}}{\lVert\mathbf{e}\rVert} .
+\]
+Le masque rend le résultat indépendant du remplissage : un passage encodé seul ou au milieu d'un lot de passages
+plus longs donne le même vecteur, à $8{,}8\times10^{-8}$ près \mesure. Après normalisation, les 4\,240 vecteurs
+ont une longueur comprise entre $0{,}99999982$ et $1{,}0000001$ \mesure.
+
+% =====================================================================================
+\section{Comment le modèle a appris}
+
+\subsection{Trois étapes}
+
+\begin{enumerate}
+\item \textbf{Initialisation} à partir de \code{microsoft/Multilingual-MiniLM-L12-H384}, un modèle multilingue
+  compact obtenu par distillation d'un modèle plus grand \source.
+\item \textbf{Pré-entraînement contrastif faiblement supervisé} sur environ un milliard de paires de textes
+  multilingues, sans annotation humaine : titre et contenu de pages web, titre et contenu d'articles de presse,
+  paires de traductions, \textbf{titre de section et passage de Wikipédia}, question et réponse de forums. Lots de
+  32\,000 paires, 30\,000 pas d'entraînement \source.
+\item \textbf{Ajustement fin supervisé} sur environ 1,6 million de paires annotées de recherche d'information :
+  MS~MARCO, Natural Questions, TriviaQA, SQuAD, Mr.~TyDi, MIRACL, entre autres. Lots de 512, deux époques, avec des
+  négatifs difficiles et une distillation depuis un modèle croisé plus précis \source.
+\end{enumerate}
+
+Les paires «~titre de section, passage~» du pré-entraînement ressemblent à nos entrées, qui commencent par
+«~fiche > section~». C'est une raison de penser que l'en-tête aide, pas une preuve : le notebook 03 mesurera
+son effet en comparant les passages avec et sans en-tête.
+
+\subsection{La perte contrastive InfoNCE}
+
+L'apprentissage rapproche le vecteur d'une question de celui de son passage et l'éloigne de ceux des autres passages
+du même lot, qui servent de négatifs. Pour un lot de $n$ paires $(q_i, p_i)$ :
+\[
+  \mathcal{L} \;=\; -\frac{1}{n}\sum_{i=1}^{n}
+  \log \frac{\exp\big(\cos(q_i,p_i)/\tau\big)}{\sum_{j=1}^{n}\exp\big(\cos(q_i,p_j)/\tau\big)},
+  \qquad \tau = 0{,}01 .
+\]
+C'est une classification : parmi les $n$ passages du lot, retrouver le bon. La température $\tau$ règle la sévérité
+de la comparaison \source.
+
+\needspace{13\baselineskip}
+\begin{center}
+\begin{tikzpicture}[x=8.5mm,y=8.5mm]
+  \foreach \i in {1,...,5} {
+    \node[font=\sffamily\scriptsize,text=accent] at (0.3,-\i+0.5) {$q_{\i}$};
+    \node[font=\sffamily\scriptsize,text=accent2] at (\i+0.5,0.35) {$p_{\i}$};
+    \foreach \j in {1,...,5} {
+      \ifnum\i=\j
+        \fill[vert!55] (\j,-\i) rectangle (\j+1,-\i+1);
+      \else
+        \fill[rouge!12] (\j,-\i) rectangle (\j+1,-\i+1);
+      \fi
+      \draw[white,line width=1pt] (\j,-\i) rectangle (\j+1,-\i+1);
+    }
+  }
+  \node[etiquette,anchor=west,text width=6.6cm] at (6.6,-2.5) {Chaque ligne est une question du lot, chaque colonne
+    un passage. La perte pousse la case verte (la bonne paire) à dominer toute sa ligne : les autres passages du lot
+    jouent le rôle de mauvaises réponses, gratuitement.};
+\end{tikzpicture}
+\end{center}
+
+\subsection{Pourquoi deux préfixes}
+
+Le même encodeur sert pour les questions et les passages. Les auteurs brisent la symétrie en ajoutant
+\code{query:} devant les questions et \code{passage:} devant les passages, chacun suivi d'une espace. Ils observent que cette asymétrie
+compte surtout quand le corpus contient des paraphrases de la question \source. La documentation du
+modèle précise : \code{query:} et \code{passage:} pour une recherche, \code{query:} des deux côtés pour une
+similarité entre textes de même nature, comme le découpage sémantique M3 \source.
+
+\subsection{Une conséquence : des scores resserrés}
+
+Avec une température aussi basse, seul l'ordre des scores compte pendant l'apprentissage, pas leur valeur. Les
+cosinus se concentrent donc dans une bande étroite, un comportement que la documentation annonce entre 0,7 et
+1,0 \source. Sur notre corpus, deux passages pris au hasard ont un cosinus médian de 0,834 ; 90\,\% des paires sont
+entre 0,790 et 0,873 \mesure. Un score de 0,83 ne signifie donc \textbf{pas} «~assez proche~».
+
+% =====================================================================================
+\section{Le bi-encodeur et l'architecture de notre site}
+
+\subsection{Bi-encodeur contre modèle croisé}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.2cm}YY@{}}
+\toprule
+& \thead{Bi-encodeur (notre choix)} & \thead{Modèle croisé} \\
+\midrule
+Principe & question et passage encodés séparément, puis comparés par produit scalaire & question et passage lus ensemble, un score par paire \\
+Passages & encodés une seule fois, hors ligne & relus à chaque question \\
+Coût par question & un encodage et un produit matrice-vecteur & un passage complet dans le modèle pour chaque candidat \\
+Précision & bonne & meilleure, mais inapplicable dans un navigateur à cette échelle \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+Le bi-encodeur est ce qui rend le cas A3 possible sans serveur : tout le travail lourd se fait une fois, chez nous.
+
+\subsection{Ce qui se passe hors ligne et en ligne}
+
+\begin{center}
+\begin{tikzpicture}[node distance=5mm and 6mm]
+  \node[boite2,text width=2.6cm] (fiches) {Passages M2\\4\,240 textes};
+  \node[boite,right=of fiches,text width=3.0cm] (encpy) {Encodeur fp32\\Python, PyTorch\\\code{passage:} + texte};
+  \node[boite,right=of encpy,text width=3.0cm] (index) {Index statique\\matrice 4\,240 $\times$ 384\\+ métadonnées};
+  \node[boite2,below=19mm of fiches,text width=2.6cm] (question) {Question\\du visiteur};
+  \node[boite,right=of question,text width=3.0cm] (encjs) {Encodeur ONNX q8\\navigateur\\\code{query:} + question};
+  \node[boite,right=of encjs,text width=3.0cm] (score) {Produit scalaire\\avec les 4\,240\\vecteurs};
+  \node[boite2,right=of score,text width=2.4cm] (res) {Top $k$ : score,\\section, lien};
+  \draw[fleche] (fiches) -- (encpy); \draw[fleche] (encpy) -- (index);
+  \draw[fleche] (question) -- (encjs); \draw[fleche] (encjs) -- (score); \draw[fleche] (score) -- (res);
+  \draw[fleche,dashed] (index) -- (score);
+  \begin{scope}[on background layer]
+    \node[fit=(fiches)(encpy)(index),fill=fondcode,rounded corners=3pt,inner sep=7pt,
+      label={[etiquette,anchor=south west]north west:hors ligne, une fois (notebook 02)}] {};
+    \node[fit=(question)(encjs)(score)(res),fill=fondcode,rounded corners=3pt,inner sep=7pt,
+      label={[etiquette,anchor=north west]south west:en ligne, à chaque question, sur la machine du visiteur}] {};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+La recherche est \textbf{exhaustive} : la question est comparée aux 4\,240 vecteurs, soit environ 1,6 million de
+multiplications, négligeables pour un navigateur. L'index pèse 6,21~Mio en fp32 et 1,55~Mio en entiers de 8 bits
+\mesure. Aucune «~base vectorielle~» n'est nécessaire : ces outils et leurs index approchés servent à interroger des
+corpus bien plus grands, sans parcourir tous les vecteurs ; la plupart fonctionnent comme un serveur, et le sujet exclut tout serveur d'inférence.
+
+\subsection{Les fichiers du modèle et la quantification}
+
+Le dépôt \code{Xenova/multilingual-e5-small} fournit le même modèle au format ONNX, en plusieurs précisions \source :
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{2.2cm}L{4.4cm}R{2.0cm}Y@{}}
+\toprule
+\thead{Type} & \thead{Fichier} & \thead{Taille} & \thead{Remarque} \\
+\midrule
+fp32 & \code{model.onnx} & 448,5~Mio & chargé par défaut hors WASM, y compris en WebGPU \\
+fp16 & \code{model\_fp16.onnx} & 224,4~Mio & demi-précision \\
+q8 & \code{model\_quantized.onnx} & 112,8~Mio & \textbf{chargé par défaut en WASM} \\
+int8, uint8 & \code{model\_int8.onnx}, \code{model\_uint8.onnx} & 112,6~Mio & autres variantes 8 bits \\
+q4 & \code{model\_q4.onnx} & 380,2~Mio & plus lourd que q8 \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+{\sffamily\scriptsize\color{gris} Tailles lues sur le Hub \source ; types par défaut lus dans le code de Transformers.js 4.3.0, fichier \code{src/utils/dtypes.js} \source.}
+
+Quantifier, c'est stocker chaque poids sur moins de bits : 8 au lieu de 32 divise la taille par quatre, au prix d'une
+petite erreur sur chaque calcul. Le fichier q4 pèse plus que le q8 parce que, d'après les tailles, la quantification
+4 bits ne touche que les couches de calcul et laisse la table d'embeddings en fp32 : $96{,}0$ millions de poids
+de 4 octets font à eux seuls 366~Mio. Cette explication est déduite des tailles, pas vérifiée dans le graphe ONNX.
+
+\begin{callout}
+\textbf{Point de vigilance majeur, mesuré au notebook 02.} L'index est calculé en fp32 avec PyTorch, mais les
+questions sont encodées dans le navigateur avec le modèle q8. Sur 822 requêtes de contrôle, le navigateur retrouve le
+même premier résultat que le calcul exact pour 91,8\,\% d'entre elles, et ce premier résultat reste parmi les 5
+premiers pour 821 requêtes sur 822 \mesure. Une simulation du q8 en Python annonçait 96,5\,\% : elle sous-estimait
+l'écart, parce qu'ONNX Runtime Web n'exécute pas le fichier q8 exactement comme ONNX Runtime en Python. La mesure qui
+fait foi se fait donc dans le navigateur. En fp32, le navigateur reproduit exactement le calcul de référence.
+\end{callout}
+
+% =====================================================================================
+\section{Les contraintes à respecter}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.6cm}YL{4.6cm}@{}}
+\toprule
+\thead{Contrainte} & \thead{Pourquoi} & \thead{Comment le vérifier} \\
+\midrule
+\code{passage:} devant chaque passage, \code{query:} devant chaque question & le modèle a appris ainsi ; sur nos quatre requêtes, mettre \code{passage:} devant la question fait tomber le premier résultat de référence aux rangs 1, 4, 5 et 9 \mesure & colonne \code{entree\_encodeur} de l'export, qui contient déjà le préfixe \\
+512 tokens au plus, préfixe et tokens spéciaux compris & au-delà, la fin du texte est coupée sans avertissement & le notebook 01 garantit un maximum de 512 ; contrôler aussi la longueur des questions \\
+Même tokeniseur des deux côtés & sinon les deux vecteurs ne parlent pas la même langue & tokenisations \code{intfloat} et \code{Xenova} identiques sur 500 blocs sur 500 \mesure \\
+Moyenne des tokens et normalisation, des deux côtés & le modèle a été entraîné avec la moyenne & dans Transformers.js, options \code{pooling: "mean"} et \code{normalize: true} \\
+Type de poids explicite dans le navigateur & le type par défaut dépend du périphérique : q8 en WASM, fp32 ailleurs & passer \code{dtype: "q8"} et vérifier les octets téléchargés \\
+Alignement de l'index et des métadonnées & la ligne $i$ de la matrice doit correspondre au passage $i$ & empreinte commune dans le manifeste \\
+Même texte que l'export & recomposer l'entrée risque de changer le préfixe ou l'en-tête & encoder \code{entree\_encodeur} tel quel \\
+Versions figées & un autre modèle ou une autre révision donne d'autres vecteurs & révisions des dépôts et fichier \code{requirements-lock.txt} \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\begin{callout}
+\textbf{Piège de la documentation.} L'exemple de la carte \code{Xenova/multilingual-e5-small} appelle l'extracteur
+sans préfixe et sans option. Or, par défaut, Transformers.js ne fait \textbf{ni moyenne ni normalisation}
+(\code{pooling: "none"}, \code{normalize: false}) \source : cet exemple renvoie un vecteur par token et non un
+vecteur par texte. L'appel correct est :
+
+\code{await extracteur("query: " + question, \{ pooling: "mean", normalize: true \})}
+\end{callout}
+
+% =====================================================================================
+\needspace{10\baselineskip}
+\section{Pourquoi nous ne retirons pas les mots vides}
+
+Retirer les mots vides («~le~», «~de~», «~ne~», «~pas~», etc.) est une étape classique des méthodes par sac de mots
+comme TF-IDF : ces mots, très fréquents, n'aident pas à distinguer les documents et bruitent le décompte. Nous ne
+le faisons pas pour l'encodeur, pour quatre raisons.
+
+\begin{enumerate}
+\item \textbf{Le modèle a appris sur du texte naturel}, avec ses mots grammaticaux. Lui donner un texte amputé
+  l'éloigne de ce qu'il a vu à l'entraînement, sur les passages comme sur les questions.
+\item \textbf{La littérature va dans ce sens.} Dai et Callan (SIGIR~2019, tableau 3) retirent mots vides et ponctuation
+  de requêtes de description, longues de 14 mots en moyenne : un modèle BERT perd en qualité (nDCG@20 de 0,529 à 0,503), tandis qu'un modèle par sac de mots
+  gagne (de 0,404 à 0,427) \source. Leur modèle lit question et document ensemble, en anglais : c'est une indication
+  pour notre encodeur, pas une preuve.
+\item \textbf{Sur notre corpus, ces mots portent du droit} \mesure. La liste française du projet Snowball (154 mots)
+  retire «~ne~», «~pas~», «~sans~», «~pour~», «~sur~» et «~par~» ; la liste stopwords-iso
+  (691 mots) retire en plus «~plus~», «~moins~», «~avant~», «~après~», «~pendant~», «~sauf~», «~aucun~», «~peut~»
+  et «~doit~». Or 28,3\,\% de nos passages contiennent une négation, 523 contiennent «~au moins~», 478 «~sans~».
+  Avec l'une comme l'autre liste, «~Licenciement sans cause réelle et sérieuse~» et «~Licenciement pour cause
+  réelle et sérieuse~» deviennent le même texte.
+\item \textbf{Il n'y a rien à gagner.} Le retrait économiserait 33 à 39\,\% des tokens, mais aucun passage n'est
+  tronqué : la limite de 512 est déjà respectée.
+\end{enumerate}
+
+Une liste construite sur la fréquence dans le corpus ne fait pas mieux : au-delà d'une fréquence documentaire de
+0,3, elle retire «~employeur~», «~salarié~», «~salariés~», «~entreprise~», «~code~» et «~travail~» \mesure, qui
+distinguent précisément «~l'employeur peut-il~» de «~le salarié peut-il~». Pour les références lexicales TF-IDF et
+BM25, en revanche, la question se pose : le notebook 03 comparera BM25 sans liste, avec Snowball, avec Snowball
+sans les négations, et avec une coupure par fréquence, avec et sans racinisation française.
+
+% =====================================================================================
+\section{Lire et interpréter les résultats}
+
+\subsection{Un score n'est pas une probabilité}
+
+Le graphique ci-dessous donne les scores des 4\,240 passages pour la question «~Quelles mentions sont interdites
+sur le bulletin de paie ?~» \mesure. Le meilleur passage obtient 0,902, la médiane est à 0,801, et le plus mauvais
+passage du corpus obtient encore 0,726.
+
+\begin{center}\begin{minipage}{\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.93\textwidth,height=5.6cm,ybar,bar width=0.0042,xmin=0.70,xmax=0.92,ymin=0,ymax=620,
+  axis x line*=bottom,axis y line*=left,axis line style={gris},tick style={gris},
+  xticklabel style={font=\sffamily\scriptsize,text=gris,/pgf/number format/.cd,use comma,fixed,fixed zerofill,precision=2},
+  yticklabel style={font=\sffamily\scriptsize,text=gris},
+  xlabel={\sffamily\scriptsize cosinus entre la question et le passage},ylabel={\sffamily\scriptsize passages},
+  xlabel style={text=gris},ylabel style={text=gris},
+  xtick={0.70,0.74,0.78,0.82,0.86,0.90},ytick={0,200,400,600},
+  ymajorgrids,grid style={filet,line width=0.4pt},enlargelimits=false,clip=false]
+\addplot[fill=accent!80,draw=none] coordinates {(0.7025,0) (0.7075,0) (0.7125,0) (0.7175,0) (0.7225,0) (0.7275,1) (0.7325,2) (0.7375,4) (0.7425,8) (0.7475,17) (0.7525,21) (0.7575,34) (0.7625,47) (0.7675,71) (0.7725,120) (0.7775,162) (0.7825,229) (0.7875,357) (0.7925,395) (0.7975,482) (0.8025,535) (0.8075,521) (0.8125,439) (0.8175,329) (0.8225,203) (0.8275,113) (0.8325,78) (0.8375,25) (0.8425,19) (0.8475,6) (0.8525,3) (0.8575,6) (0.8625,0) (0.8675,1) (0.8725,3) (0.8775,2) (0.8825,5) (0.8875,0) (0.8925,1) (0.8975,0) (0.9025,1) (0.9075,0) (0.9125,0) (0.9175,0)};
+\draw[gris,dashed,line width=0.7pt] (axis cs:0.8015,0) -- (axis cs:0.8015,600);
+\node[font=\sffamily\scriptsize,text=gris,anchor=south west] at (axis cs:0.8025,575) {médiane 0,801};
+\draw[accent2,line width=1pt] (axis cs:0.9022,0) -- (axis cs:0.9022,250);
+\node[font=\sffamily\scriptsize,text=accent2,anchor=south east,align=right] at (axis cs:0.9195,255)
+  {meilleur passage 0,902\\7 passages au-dessus de 0,88};
+\end{axis}
+\end{tikzpicture}\\[-2pt]
+{\sffamily\scriptsize\color{gris} Une barre par tranche de 0,005. Les passages utiles sont dans la queue de droite, presque invisible à cette échelle.}
+\end{minipage}\end{center}
+
+Trois règles de lecture en découlent.
+\begin{itemize}
+\item \textbf{Seul l'ordre compte.} Un score n'est comparable qu'aux autres scores de la même question.
+\item \textbf{Il n'existe pas de seuil universel.} Pour masquer les résultats trop faibles ou décider une abstention
+  (cas B1), un seuil doit être calibré sur le jeu de questions, et vérifié sur des questions hors corpus.
+\item \textbf{Les écarts sont petits.} Entre le premier et le deuxième résultat, l'écart va de 0,0008 à 0,0095 sur
+  nos quatre requêtes \mesure : le classement fin est fragile, d'où l'importance de mesurer l'écart fp32 et q8.
+\end{itemize}
+
+\subsection{Exemples réels, dont un échec}\label{sec:exemples}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}R{1.0cm}R{1.35cm}L{5.1cm}Y@{}}
+\toprule
+\thead{Rang} & \thead{Score} & \thead{Fiche > section} & \thead{Début du passage} \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{«~Quelles mentions sont interdites sur le bulletin de paie ?~»}} \\
+1 & 0,9022 & Le bulletin de paie > Et les mentions interdites ? & Aucune mention relative à l'exercice du droit de grève... \\
+2 & 0,8927 & Le bulletin de paie > Chapô & Au moment du versement de son salaire, un bulletin de paie... \\
+3 & 0,8839 & Le bulletin de paie > Quelles sont les mentions obligatoires ? & Les mentions suivantes doivent obligatoirement figurer... \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{«~Mon employeur peut-il me licencier pendant un arrêt maladie ?~»}} \\
+1 & 0,8846 & Les absences liées à la maladie... > Peut-il y avoir licenciement pour maladie ? & L'état de santé du salarié ne peut pas constituer en soi un motif de licenciement... \\
+2 & 0,8835 & Les absences liées à la maladie... > Chapô & En cas d'accident ou de maladie non professionnel, le salarié peut bénéficier d'un arrêt de travail... \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{«~Peut-on être viré quand on est en arrêt de travail ?~»}} \\
+1 & 0,8764 & Les absences liées à la maladie... > Chapô & En cas d'accident ou de maladie non professionnel... \\
+2 & 0,8755 & L'arrêt de travail pour accident du travail... > Que se passe-t-il pendant l'arrêt de travail ? & Le contrat de travail du salarié victime d'un accident du travail... \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{«~Combien de temps peut durer la période d'essai d'un CDI ?~»}} \\
+1 & 0,8927 & Le contrat à durée déterminée (CDD) > Quelle est la durée de la période d'essai ? & Le contrat de travail à durée déterminée peut comporter une période d'essai... \\
+5 & 0,8837 & La période d'essai > Quelle est la durée de la période d'essai ? & Au terme de l'article L. 1221-19 du Code du travail, le contrat de travail à durée indéterminée... \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+La dernière requête est un \textbf{échec instructif}. Le passage qui répond, celui qui cite l'article L.~1221-19
+propre au CDI, n'arrive qu'au rang 5, à 0,009 du premier, derrière un passage sur le CDD. Le passage CDD partage
+avec la question l'expression «~période d'essai~» ; le passage CDI écrit «~contrat de travail à durée indéterminée~»
+là où la question dit «~CDI~». Un essai va dans ce sens : en écrivant «~contrat à durée indéterminée~», ce passage
+remonte au rang 2, derrière un autre passage de la même fiche \mesure. Une seule question ne prouve rien, mais le
+jeu de questions devra contenir des sigles. Avec la métrique
+Recall@5, cette question compte comme réussie ; avec Recall@1, comme ratée. Le choix de la métrique fait partie
+de l'interprétation.
+
+\subsection{Mesurer la qualité : les métriques}\label{sec:metriques}
+
+Pour une question dont on connaît le ou les passages qui répondent :
+\begin{itemize}
+\item \textbf{Recall@}$k$ : 1 si un passage qui répond figure parmi les $k$ premiers, 0 sinon, en moyenne sur les
+  questions. C'est la métrique la plus lisible pour un affichage de $k$ résultats.
+\item \textbf{MRR} (rang réciproque moyen) : $\frac{1}{|Q|}\sum_{q} \frac{1}{\operatorname{rang}_q}$. Le premier bon
+  résultat au rang 1 vaut 1, au rang 5 vaut 0,2.
+\item \textbf{nDCG@}$k$ : récompense les bons résultats d'autant plus qu'ils sont hauts, quand plusieurs passages
+  répondent à des degrés divers.
+\end{itemize}
+Deux méthodes se comparent sur les \textbf{mêmes questions}, par un test apparié de McNemar. D'après le calcul du
+jalon J2, détecter un écart de 10 points avec un taux de désaccord de 0,20 demande environ 155 questions.
+
+\subsection{Pièges d'interprétation}
+
+\begin{itemize}
+\item \textbf{Scores élevés partout} : deux passages sans rapport sont à 0,83 en médiane. Comparer des rangs, jamais
+  des valeurs absolues.
+\item \textbf{Doublons} : deux passages identiques ont le même vecteur et occupent deux places du classement. Le
+  découpage M2 en compte 57 à texte identique, mais seulement 3 à entrée identique grâce à l'en-tête \mesure.
+\item \textbf{Comparer deux modèles par leurs scores} n'a pas de sens : chaque modèle a sa propre échelle.
+\item \textbf{Les projections en deux dimensions} (ACP, t-SNE, UMAP) aident à explorer mais déforment les distances :
+  deux points voisins sur le dessin peuvent être éloignés dans les 384 dimensions, et inversement.
+\item \textbf{Une réussite sur quelques questions} ne dit rien de la qualité générale : seules comptent les mesures
+  sur le jeu de questions complet.
+\end{itemize}
+
+% =====================================================================================
+\needspace{20\baselineskip}
+\section{Pourquoi ce modèle}
+
+Le choix a été fait au jalon J2 sous quatre contraintes : exécution dans le navigateur, coût nul, corpus en français,
+poids téléchargé raisonnable. Sept candidats ont été mesurés (poids quantifiés en 8 bits, relevés au J2) :
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{9.0cm}R{2.0cm}Y@{}}
+\toprule
+\thead{Modèle} & \thead{Poids} & \thead{Verdict} \\
+\midrule
+\code{Xenova/multilingual-e5-small} & 112,8~Mio & retenu \\
+\code{Xenova/paraphrase-multilingual-MiniLM-L12-v2} & 112,8~Mio & équivalent, sans avantage \\
+\code{Xenova/distiluse-base-multilingual-cased-v2} & 129,0~Mio & plus lourd \\
+\code{Xenova/multilingual-e5-base} & 265,7~Mio & 2,4 fois plus lourd \\
+\code{onnx-community/embeddinggemma-300m-ONNX} & 294,6~Mio & hors budget \\
+\code{Xenova/bge-m3} & 543,3~Mio & hors budget \\
+\code{Xenova/all-MiniLM-L6-v2} & 21,9~Mio & anglais uniquement \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\subsubsection{Ce qui le justifie}
+\begin{itemize}
+\item \textbf{Entraîné pour la recherche}, avec des paires question-passage et des préfixes dédiés, contrairement
+  aux modèles de paraphrase, entraînés à comparer des phrases de même nature.
+\item \textbf{Multilingue, français compris} : 100 langues, et des résultats publiés en français sur MIRACL, un
+  jeu de recherche sur Wikipédia : nDCG@10 de 47,6 pour la version small, 49,7 pour la base, 54,5 pour la large
+  \source. Le rapport J2 affirmait qu'aucun résultat de recherche en français n'était publié : c'est inexact, et à
+  corriger.
+\item \textbf{Léger} : 384 dimensions pour un index de 6,21~Mio en fp32 ; 19,8~ms pour encoder une question dans
+  le navigateur, mesurés au J2.
+\item \textbf{Licence MIT}, compatible avec un site public.
+\end{itemize}
+
+\subsubsection{Ses limites}
+\begin{itemize}
+\item L'ajustement fin supervisé est surtout anglais, et aucune source d'entraînement n'est spécialisée en droit :
+  le texte juridique n'y figure qu'au hasard des pages web. L'exemple CDD et CDI montre la conséquence possible
+  sur un vocabulaire spécialisé.
+\item Le fichier du modèle pèse 112,8~Mio (135,6~Mio téléchargés à la première visite, mesurés au J2), au-dessus
+  de la limite de 100~Mio par fichier de GitHub : le modèle doit être servi depuis le Hub, ou réduit à son
+  vocabulaire utile.
+\item La limite de 512 tokens impose le découpage, et la moyenne des tokens peut diluer le sens d'un passage long.
+\end{itemize}
+
+Les deux voies d'amélioration déclarées au J2 répondent à ces limites : l'ajustement fin contrastif sur nos propres
+paires question-passage, et la réduction du vocabulaire.
+
+% =====================================================================================
+\needspace{12\baselineskip}
+\section{Glossaire}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.6cm}Y@{}}
+\toprule
+\thead{Terme} & \thead{Définition} \\
+\midrule
+Token & morceau de texte du vocabulaire du modèle : un mot, une partie de mot ou un signe \\
+Embedding, plongement & vecteur de nombres qui représente un token ou un texte \\
+Encodeur & réseau qui transforme un texte en vecteurs \\
+Bi-encodeur & encodeur qui traite question et passage séparément, pour les comparer ensuite \\
+Moyenne masquée & moyenne des vecteurs des seuls tokens réels, sans les tokens de remplissage \\
+Normalisation L2 & division d'un vecteur par sa longueur, pour qu'il soit de longueur 1 \\
+Similarité cosinus & cosinus de l'angle entre deux vecteurs ; produit scalaire s'ils sont normalisés \\
+Perte contrastive & fonction d'entraînement qui rapproche les bonnes paires et éloigne les mauvaises \\
+Température & paramètre qui règle la sévérité de la perte contrastive \\
+Quantification & stockage des poids sur moins de bits, pour réduire la taille du modèle \\
+ONNX & format standard de modèle, exécutable dans le navigateur par ONNX Runtime Web \\
+Recall@$k$, MRR, nDCG & métriques de qualité d'un classement, décrites en section \ref{sec:metriques} \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+% =====================================================================================
+\section{Sources}
+
+\begingroup\raggedright\small
+\begin{itemize}
+\item Modèle \code{intfloat/multilingual-e5-small}, révision \code{614241f}, carte et fichiers de configuration :
+  \url{https://huggingface.co/intfloat/multilingual-e5-small}
+\item Conversion ONNX \code{Xenova/multilingual-e5-small}, révision \code{761b726} :
+  \url{https://huggingface.co/Xenova/multilingual-e5-small}
+\item L. Wang et al., \emph{Text Embeddings by Weakly-Supervised Contrastive Pre-training}, arXiv 2212.03533 :
+  perte InfoNCE, température, préfixes.
+\item L. Wang et al., \emph{Multilingual E5 Text Embeddings: A Technical Report}, arXiv 2402.05672 : données et
+  hyperparamètres d'entraînement, résultats MIRACL par langue (tableau 6).
+\item Z. Dai, J. Callan, \emph{Deeper Text Understanding for IR with Contextual Neural Language Modeling}, SIGIR~2019,
+  arXiv 1905.09217, tableau 3.
+\item Transformers.js 4.3.0, fichiers \code{src/utils/dtypes.js} et \code{src/pipelines/feature-extraction.js},
+  paquet npm \code{@huggingface/transformers}.
+\item Listes de mots vides : Snowball, \url{https://snowballstem.org/algorithms/french/stop.txt} ; stopwords-iso,
+  \url{https://github.com/stopwords-iso/stopwords-fr}.
+\item Mesures sur notre corpus : passages M2 du notebook \nolinkurl{scripts/decoupage/01_corpus_decoupage.ipynb}.
+\end{itemize}
+\endgroup
+
+\end{document}
