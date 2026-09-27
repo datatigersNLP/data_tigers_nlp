@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fidélité de l'encodeur dans le navigateur</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: Canvas; color: CanvasText; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Fidélité de l'encodeur dans le navigateur (notebook 02, section 8)</h1>
+<p>À servir depuis la racine du dépôt, par exemple avec <code>python -m http.server 8765</code>. La page lit la liste
+des requêtes écrite par le notebook 02 (<code>controle/requetes_fidelite.json</code>), les encode dans le navigateur
+avec chaque précision du modèle, et expose les vecteurs dans <code>window.RESULTATS</code>, à enregistrer dans
+<code>data/indexation/controle/fidelite_navigateur.json</code>. Le notebook 02 les compare ensuite à la référence
+PyTorch fp32. Télécharge environ 1 Gio de modèles au premier lancement.</p>
+<pre id="journal">Chargement...</pre>
+<p id="telechargement"></p>
+<script type="module">
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
+
+const journal = document.getElementById("journal");
+const noter = (texte) => { journal.textContent += "\n" + texte; };
+// lien de téléchargement du fichier attendu par le notebook 02, pour rejouer le contrôle sans outil d'automatisation
+const proposer = (nom) => {
+  const lien = document.createElement("a");
+  lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
+  lien.download = nom;
+  lien.textContent = `Télécharger ${nom}, à placer dans data/indexation/controle/`;
+  document.getElementById("telechargement").append(lien);
+};
+env.allowLocalModels = false;
+const DEPOT = "Xenova/multilingual-e5-small";
+const REVISION = "761b726dd34fb83930e26aab4e9ac3899aa1fa78";
+const PRECISIONS = ["q8", "int8", "uint8", "fp16", "fp32"];
+
+try {
+  const { prefixe, requetes } = await (await fetch("../../data/indexation/controle/requetes_fidelite.json")).json();
+  const resultats = {};
+  for (const dtype of PRECISIONS) {
+    const debut = performance.now();
+    const extracteur = await pipeline("feature-extraction", DEPOT, { revision: REVISION, dtype, device: "wasm" });
+    const charge = performance.now() - debut;
+    const vecteurs = [];
+    const debutEncodage = performance.now();
+    for (const q of requetes) {
+      const sortie = await extracteur(prefixe + q, { pooling: "mean", normalize: true });
+      vecteurs.push(Array.from(sortie.data));
+    }
+    const encodage = performance.now() - debutEncodage;
+    resultats[dtype] = { vecteurs, chargement_ms: charge, encodage_ms: encodage };
+    noter(`${dtype} : ${requetes.length} requêtes, chargement ${Math.round(charge)} ms, encodage ${Math.round(encodage)} ms`);
+    await extracteur.dispose();
+  }
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, depot: DEPOT, revision: REVISION,
+    prefixe, requetes, resultats };
+  noter("terminé");
+  proposer("fidelite_navigateur.json");
+} catch (erreur) {
+  window.RESULTATS = { erreur: String(erreur) };
+  noter("ERREUR : " + erreur);
+}
+</script>
+</body>
+</html>
