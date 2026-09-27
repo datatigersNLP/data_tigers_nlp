@@ -11,10 +11,13 @@ Règles, toutes évaluées sur la colonne `text` (le contenu propre du passage) 
   R4  marquer dans `doublon_text` les passages dont le `text` est identique à celui d'un
       passage précédent (première occurrence non marquée) ; avec --sans-doublons, les retirer
 
-Une ligne retirée l'est en entier : `text` et `chunk_text` partent ensemble.
+Une ligne retirée l'est en entier : `text` et `chunk_text` partent ensemble. La colonne
+`embeddings_bge-m3`, calculée avec un autre encodeur que celui du projet, n'est pas conservée.
 
 Le nombre de tokens de `text` et de `chunk_text` est compté avec le tokeniseur de l'encodeur
 retenu au jalon J2 (Xenova/multilingual-e5-small), tokens spéciaux compris, sans préfixe E5.
+Le dépassement avec préfixe est compté sur le texte préfixé lui-même, et non en ajoutant la
+longueur du préfixe seul : collé au texte, son dernier token fusionne avec le premier mot.
 
 Dépendances : pandas, pyarrow, tokenizers.
 
@@ -115,14 +118,21 @@ def filtrer(df, seuil, sans_doublons):
 
 
 def compter_tokens(garde):
-    """Ajoute le nombre de tokens de text et de chunk_text, tokens spéciaux compris."""
+    """Ajoute le nombre de tokens de text et de chunk_text, tokens spéciaux compris.
+
+    Renvoie aussi le nombre de tokens de chaque forme précédée du préfixe E5, compté directement
+    sur le texte préfixé.
+    """
     os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
     from tokenizers import Tokenizer
 
     tokeniseur = Tokenizer.from_pretrained(TOKENISEUR, revision=REVISION_TOKENISEUR)
+    compte = lambda textes: [len(e.ids) for e in tokeniseur.encode_batch(list(textes))]
+    avec_prefixe = {}
     for col in ("text", "chunk_text"):
-        garde[f"tokens_{col}"] = [len(e.ids) for e in tokeniseur.encode_batch(garde[col].tolist())]
-    return len(tokeniseur.encode(PREFIXE_PASSAGE, add_special_tokens=False).ids)
+        garde[f"tokens_{col}"] = compte(garde[col])
+        avec_prefixe[col] = pd.Series(compte(PREFIXE_PASSAGE + garde[col]), index=garde.index)
+    return avec_prefixe
 
 
 def mesurer(df):
@@ -149,7 +159,7 @@ def decrire_mesures(mesures, description):
     }
 
 
-def decrire_tokens(garde, n_prefixe):
+def decrire_tokens(garde, avec_prefixe):
     bloc = {"description": f"nombre de tokens compté avec le tokeniseur {TOKENISEUR} (révision "
                            f"{REVISION_TOKENISEUR[:7]}), tokens spéciaux compris ; l'encodeur tronque au-delà "
                            f"de {LIMITE_TOKENS} tokens"}
@@ -161,9 +171,9 @@ def decrire_tokens(garde, n_prefixe):
             "au_dela_limite": decrit(int((n > LIMITE_TOKENS).sum()),
                                      f"passages dont {col} dépasse {LIMITE_TOKENS} tokens"),
             "au_dela_limite_avec_prefixe": decrit(
-                int((n + n_prefixe > LIMITE_TOKENS).sum()),
-                f"passages dont {col} dépasse {LIMITE_TOKENS} tokens une fois ajouté le préfixe "
-                f"« {PREFIXE_PASSAGE} » ({n_prefixe} tokens) attendu par les modèles E5"),
+                int((avec_prefixe[col] > LIMITE_TOKENS).sum()),
+                f"passages dont {col} dépasse {LIMITE_TOKENS} tokens une fois précédé du préfixe "
+                f"« {PREFIXE_PASSAGE} » attendu par les modèles E5, compté sur le texte préfixé"),
         }
     return bloc
 
@@ -179,11 +189,12 @@ def main():
     telecharger()
     df = pd.read_parquet(BRUT)
     garde, retires, regles = filtrer(df, args.seuil, args.sans_doublons)
-    n_prefixe = compter_tokens(garde)
+    avec_prefixe = compter_tokens(garde)
 
     SORTIE.mkdir(parents=True, exist_ok=True)
     fichier_filtre = SORTIE / "travail_emploi_filtre.parquet"
-    garde.to_parquet(fichier_filtre, index=False, compression="zstd")   # même compression que la source
+    garde.drop(columns=["embeddings_bge-m3"]).to_parquet(   # vecteurs d'un autre encodeur, sans usage
+        fichier_filtre, index=False, compression="zstd")    # même compression que la source
     # séparateur « ; » et BOM UTF-8 : le fichier s'ouvre directement en colonnes dans Excel en français
     retires.to_csv(SORTIE / "passages_retires.csv", index=False, sep=";", encoding="utf-8-sig")
 
@@ -224,10 +235,10 @@ def main():
                                         "sur text ; vaut 0 avec --sans-doublons"),
         "apres_sans_doublons": decrire_mesures(mesurer(garde[~garde["doublon_text"]]),
                                                "corpus filtré sans les doublons de R4"),
-        "tokens": decrire_tokens(garde, n_prefixe),
+        "tokens": decrire_tokens(garde, avec_prefixe),
         "taille_fichier_filtre_octets": decrit(fichier_filtre.stat().st_size,
-                                               "taille sur disque de travail_emploi_filtre.parquet, en octets ; "
-                                               "surtout due à la colonne embeddings_bge-m3, conservée"),
+                                               "taille sur disque de travail_emploi_filtre.parquet, en octets, "
+                                               "sans la colonne embeddings_bge-m3"),
     }
     (SORTIE / "stats_filtrage.json").write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
 
