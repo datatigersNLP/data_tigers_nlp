@@ -36,9 +36,9 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 |---|---|---|---|
 | Claude Opus 5 | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
 | Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
-| Google Antigravity | plateforme d'agents, alternative gratuite | Remy RAYANE | même usage, divergence déclarée au jalon J2 |
-| Gemini 3.8 Flash | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
-| ChatGPT | interface conversationnelle web (modèles GPT-4o / o1) | membres disposant d'un abonnement | brainstorming, reformulations, documentation ponctuelle |
+| Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
+| Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
+| ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
 
@@ -163,7 +163,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Objet.** Élaboration du plan d'action opérationnel pour le Domaine 2 (Encodeur et Indexation) dans le cadre de la résolution de l'Issue #30 (milestone Mi-parcours), ciblant l'indexation vectorielle sur le corpus réduit de référence PIAF.
 
-**Produit.** `Plan_Action_Index.md` (286 lignes, ~2 400 mots) détaillant les spécifications techniques, les fondements NLP (asymétrie E5, normalisation L2), l'architecture de découplage binaire/JSON, ainsi que les spécifications des scripts d'indexation (`build_reduced_index.py`), de recherche (`query_reduced_index.py`) et d'évaluation quantitative (`evaluate_reduced_index.py`).
+**Produit.** `Plan_Action_Index.md` (286 lignes, ~2 400 mots) détaillant les spécifications techniques, les fondements NLP (asymétrie E5, normalisation L2), l'architecture de découplage binaire/JSON, ainsi que l'architecture des scripts du pipeline décrits dans le plan d'action : préparation du corpus (`prepare_piaf_corpus.py`), encodage et export binaire (`build_vector_index.py`), recherche dense (`src/retrieval/dense_search.py`) et banc d'évaluation comparatif (`evaluate_benchmarks.py`).
 
 **Mesures exécutées.**
 
@@ -174,7 +174,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Résultats retenus.**
 
 - Choix de PIAF comme jeu réduit de calibration grâce à la présence d'une vérité terrain humaine (*Ground Truth* paires questions-contextes).
-- Adoption stricte des préfixes asymétriques E5 (`passage: ` pour les contextes, `query: ` pour les requêtes) pour prévenir une chute documentée de 10 à 25 % du Recall@k.
+- Adoption stricte des préfixes asymétriques E5 (`passage: ` pour les contextes, `query: ` pour les requêtes) pour prévenir la dégradation de Recall@k documentée par les auteurs sur les tâches de recherche asymétrique (Wang et al., 2022, arXiv:2212.03533).
 - Découplage strict entre la matrice dense brute (`piaf_reduced_index.bin`) et les métadonnées (`piaf_reduced_meta.json`) pour éviter la surcharge de sérialisation JSON en mémoire navigateur.
 - Définition d'un protocole d'évaluation quantitatif objectif fondé sur Recall@k (k=1, 3, 5, 10), MRR et latence d'inférence.
 
