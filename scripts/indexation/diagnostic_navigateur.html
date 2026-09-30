@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnostic de l'encodeur dans le navigateur</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: Canvas; color: CanvasText; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Diagnostic de l'encodeur dans le navigateur (notebook 02, section 8)</h1>
+<p>À servir depuis la racine du dépôt. Sur les requêtes de <code>controle/attendu.json</code>, la page isole les trois
+étapes de l'encodage dans le navigateur : la tokenisation de Transformers.js, le modèle fp32 avec le pipeline complet,
+et le modèle q8 appelé directement, avec une moyenne des tokens recalculée ici. Résultats dans
+<code>window.RESULTATS</code>, à enregistrer dans <code>data/indexation/controle/diagnostic_navigateur.json</code>.</p>
+<pre id="journal">Chargement...</pre>
+<p id="telechargement"></p>
+<script type="module">
+import { pipeline, AutoTokenizer, AutoModel, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
+
+const journal = document.getElementById("journal");
+const noter = (texte) => { journal.textContent += "\n" + texte; };
+// lien de téléchargement du fichier attendu par le notebook 02, pour rejouer le contrôle sans outil d'automatisation
+const proposer = (nom) => {
+  const lien = document.createElement("a");
+  lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
+  lien.download = nom;
+  lien.textContent = `Télécharger ${nom}, à placer dans data/indexation/controle/`;
+  document.getElementById("telechargement").append(lien);
+};
+env.allowLocalModels = false;
+const DEPOT = "Xenova/multilingual-e5-small";
+const REVISION = "761b726dd34fb83930e26aab4e9ac3899aa1fa78";
+
+try {
+  const attendu = await (await fetch("../../data/indexation/controle/attendu.json")).json();
+  const prefixe = attendu.entete_index.requete.prefixe;
+  const textes = attendu.requetes.map((r) => prefixe + r.question);
+
+  // 1. tokenisation de Transformers.js
+  const tokeniseur = await AutoTokenizer.from_pretrained(DEPOT, { revision: REVISION });
+  const tokens = textes.map((t) => Array.from(tokeniseur.encode(t)));
+  noter(`tokenisation : ${tokens.length} requêtes`);
+
+  // 2. modèle fp32, pipeline complet (moyenne et normalisation de Transformers.js)
+  const fp32 = await pipeline("feature-extraction", DEPOT, { revision: REVISION, dtype: "fp32", device: "wasm" });
+  const vecteurs_fp32 = [];
+  for (const t of textes) vecteurs_fp32.push(Array.from((await fp32(t, { pooling: "mean", normalize: true })).data));
+  noter("fp32 : terminé");
+
+  // 3. modèle q8 appelé directement, moyenne des tokens et normalisation recalculées ici
+  const modele = await AutoModel.from_pretrained(DEPOT, { revision: REVISION, dtype: "q8", device: "wasm" });
+  const vecteurs_q8_manuels = [];
+  for (const t of textes) {
+    const h = (await modele(tokeniseur(t))).last_hidden_state;   // dimensions [1, L, 384]
+    const [, L, D] = h.dims;
+    const m = new Float64Array(D);
+    for (let l = 0; l < L; l++) for (let d = 0; d < D; d++) m[d] += h.data[l * D + d];
+    let n = 0;
+    for (let d = 0; d < D; d++) { m[d] /= L; n += m[d] * m[d]; }
+    n = Math.sqrt(n);
+    vecteurs_q8_manuels.push(Array.from(m, (x) => x / n));
+  }
+  noter("q8 appelé directement : terminé");
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, depot: DEPOT, revision: REVISION,
+    questions: attendu.requetes.map((r) => r.question), tokens, vecteurs_fp32, vecteurs_q8_manuels };
+  noter("terminé");
+  proposer("diagnostic_navigateur.json");
+} catch (erreur) {
+  window.RESULTATS = { erreur: String(erreur) };
+  noter("ERREUR : " + erreur);
+}
+</script>
+</body>
+</html>
