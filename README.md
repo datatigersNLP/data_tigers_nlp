@@ -30,7 +30,7 @@ Les PDF se régénèrent depuis les sources Markdown :
 
 ```bash
 python3 docs/latex/build.py docs/jalons/J2_rapport.md
-latexmk -xelatex docs/jalons/J2_rapport.tex
+latexmk -xelatex -cd docs/jalons/J2_rapport.tex
 ```
 
 ## Branches
