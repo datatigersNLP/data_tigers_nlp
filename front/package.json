@@ -1,0 +1,25 @@
+{
+  "name": "data-tigers-volet-a",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Volet A : recherche sémantique dans les fiches travail-emploi, exécutée dans le navigateur",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@vitejs/plugin-react": "6.1.1",
+    "tailwindcss": "4.3.3",
+    "vite": "8.3.0"
+  }
+}
