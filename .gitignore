@@ -10,3 +10,8 @@ probe.*
 # systeme
 .DS_Store
 __pycache__/
+# donnees : corpus brut et prepare, reconstruits par script (ticket #27)
+data/
+# site du volet A : dépendances et construction, regénérées par npm
+node_modules/
+front/dist/
