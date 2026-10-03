@@ -1,6 +1,8 @@
 # Jeu de questions annotées — issue #44
 
-Ce dossier prépare le jeu de référence utilisé pour évaluer la recherche du volet A et le comportement du volet B. Le fichier `questions_annotees.csv` est prérempli avec 105 propositions considérées comme prévalidées, mais il ne devient le jeu officiel figé qu'après la relecture des trois responsables.
+Ce dossier prépare le jeu de référence humain utilisé pour évaluer la recherche du volet A et le comportement du volet B. Les questions doivent être rédigées par les membres de l'équipe. Les questions générées par une IA, même simplement reformulées ou relues, ne doivent pas être utilisées dans le jeu de test (issue #44).
+
+Le 3 octobre 2026, les formulations et extraits IA précédemment transférés ont été retirés du jeu principal. Le fichier de brouillons a été supprimé de la version courante, sans réécrire l'historique Git. Les rédacteurs déjà exposés aux brouillons le signalent dans `remarque` ; ils ne les consultent pas pendant la nouvelle rédaction.
 
 ## État initial vérifié le 3 octobre 2026
 
@@ -30,23 +32,23 @@ Chacun réalise aussi 7 annotations secondaires sur les questions d'un autre ré
 
 ## Fichiers
 
-- `questions_candidates_ia.csv` : copie de travail conservant les propositions initiales et leurs informations techniques ;
-- `questions_annotees.csv` : jeu principal prérempli, une ligne par question à relire avant le gel ;
+- `questions_annotees.csv` : 105 lignes réservées, avec thème, URL indicative et métadonnées ; les colonnes `question` et `extrait` restent vides jusqu'à la rédaction et l'annotation humaines ;
 - `annotations_secondaires.csv` : annotations indépendantes du sous-échantillon à double annoter.
 
 Les fichiers sont en UTF-8, séparés par des virgules. Les champs contenant une virgule, un guillemet ou un saut de ligne doivent être entourés de guillemets doubles ; un guillemet contenu dans un champ est doublé.
 
-## Relecture avant gel
+## Rédaction indépendante, puis annotation
 
-Chaque responsable relit uniquement les lignes qui lui sont attribuées dans `questions_annotees.csv` :
+1. Prendre uniquement le thème de la ligne et imaginer une situation réaliste. Ne pas consulter les anciennes questions IA, les extraits, les passages découpés ni les résultats du moteur.
+2. Écrire la question avec ses propres mots et enregistrer cette première formulation avant de consulter l'URL ou la fiche.
+3. Ouvrir ensuite la fiche indicative pour rechercher une réponse. L'URL peut être remplacée par celle d'une autre fiche pertinente.
+4. Copier mot pour mot un extrait qui répond réellement à la question, depuis la page du site. Ne pas retoucher la question pour la faire coller à cet extrait.
+5. Si aucune fiche du corpus ne répond, classer la question comme candidate `hors_corpus`, vider URL/extrait et expliquer la vérification dans `remarque`. Le simple échec du moteur ne prouve pas l'absence de réponse.
+6. Confirmer humainement le type et faire relire l'annotation.
 
-- Jibril : Q001 à Q035 ;
-- Maïmouna : Q036 à Q070 ;
-- Vaneck : Q071 à Q105.
+Les 74 lignes `dans_corpus` et 31 lignes `hors_corpus` sont des objectifs de répartition, pas des annotations déjà établies. En cas de reclassement, conserver l'identifiant et le lot ; ajuster avec les responsables d'autres lignes ou en ajouter avant gel pour maintenir au moins 68 questions dans le corpus dans le test. Ne jamais attribuer artificiellement un type pour satisfaire un quota.
 
-La proposition peut être conservée si la question, le type, l'URL et l'extrait sont corrects. Sinon, le responsable modifie directement la ligne concernée. Pour les cas `hors_corpus`, il faut confirmer que la réponse n'est pas présente dans le corpus figé. Après relecture, la remarque de suivi peut être remplacée par `Validé par <identifiant> le <date>`.
-
-Les 74 propositions dans le corpus ont déjà fait l'objet d'un contrôle automatique : document, URL et présence littérale de l'extrait ont été vérifiés sans erreur. Les 31 propositions hors corpus restent à confirmer manuellement. Aucune mesure ne doit être lancée avant la fin de ces relectures et le gel du fichier.
+Les contrôles réussis sur les anciens brouillons ne valident pas le nouveau jeu humain : ils doivent être refaits sur les nouvelles questions et annotations. La génération de questions par IA reste réservée aux paires d'entraînement, hors de ce jeu.
 
 ## Règles de rédaction
 
@@ -62,10 +64,10 @@ Les 74 propositions dans le corpus ont déjà fait l'objet d'un contrôle automa
 
 - `id` : identifiant stable de la forme `Q001`.
 - `lot` : `calibration` ou `test`.
-- `type` : `dans_corpus` ou `hors_corpus`.
+- `type` : `dans_corpus` ou `hors_corpus` ; les valeurs initiales sont des cibles à confirmer après rédaction.
 - `theme` : catégorie fonctionnelle courte, définie par l'équipe.
 - `question` : formulation présentée au système.
-- `url` : URL canonique de la fiche pour une question dans le corpus.
+- `url` : URL indicative avant rédaction, puis URL canonique de la fiche effectivement annotée ; vide pour une question hors corpus.
 - `extrait` : extrait copié mot pour mot depuis la fiche et suffisant pour répondre.
 - `redacteur` : nom ou identifiant GitHub de l'auteur de la question.
 - `double_annotation` : `oui` si la question appartient au sous-échantillon de 20 %, sinon `non`.
@@ -84,6 +86,8 @@ Pour la seconde annotation, l'annotateur ne consulte pas l'annotation principale
 - au moins 68 questions dans le corpus dans le lot de test ;
 - 20 % du jeu en double annotation ;
 - absence de doublons ou de reformulations quasi identiques ;
-- répartition raisonnable des thèmes, des URL et des styles de formulation.
+- répartition raisonnable des thèmes, des URL et des styles de formulation ;
+- origine humaine des questions et éventuelle exposition préalable aux brouillons documentées ;
+- recouvrement lexical question/extrait examiné comme alerte de relecture, jamais comme rejet automatique : les termes juridiques communs ne suffisent pas à prouver un biais. Ne pas utiliser cette alerte pour optimiser les questions d'après les résultats du moteur.
 
 Le jeu est figé par un tag avant la première mesure. Le lot de test ne doit ensuite plus être modifié à la lumière des résultats.
