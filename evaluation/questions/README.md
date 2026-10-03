@@ -4,11 +4,11 @@ Ce dossier contient le jeu de référence humain utilisé pour évaluer la reche
 
 ## État initial vérifié le 3 octobre 2026
 
-Aucun fichier de questions annotées n'était présent dans `dev`, dans les autres branches du dépôt, dans les pull requests ni dans les commentaires de l'issue #44. La partie déjà rédigée signalée par Mahé doit donc être récupérée puis importée dans le gabarit, sans être recréée.
+Aucun jeu spécialisé travail-emploi n'était présent dans `dev`, dans les autres branches du dépôt, dans les pull requests ni dans les commentaires de l'issue #44. Les questions déjà disponibles évoquées par Mahé appartiennent au jeu généraliste PIAF : elles servent à valider la chaîne de mesure dans l'issue #45, mais ne remplacent pas le présent jeu.
 
-## Dimensionnement proposé
+## Dimensionnement retenu
 
-Proposition de travail à valider par l'équipe avant de remplir tout le jeu :
+Répartition retenue avant la rédaction :
 
 - 105 questions au total ;
 - 74 questions dans le corpus et 31 hors corpus (29,5 %) ;
@@ -17,6 +17,16 @@ Proposition de travail à valider par l'équipe avant de remplir tout le jeu :
 - 21 questions tirées au sort pour une seconde annotation indépendante (20 %).
 
 Ce découpage conserve 68 questions dans le corpus dans le lot de test, seuil retenu dans le rapport J2 pour détecter un écart apparié de 15 points, tout en réservant un petit lot de calibration.
+
+## Répartition des rédacteurs
+
+| Rédacteur | Identifiant GitHub | Identifiants | Total | Dans le corpus | Hors corpus |
+|---|---|---|---:|---:|---:|
+| Jibril Bensalem | `JIBZZOU` | Q001 à Q035 | 35 | 25 | 10 |
+| Maïmouna Signate | `msignate` | Q036 à Q070 | 35 | 25 | 10 |
+| Vaneck Dagar | `vanecktiyo` | Q071 à Q105 | 35 | 24 | 11 |
+
+Chacun réalise aussi 7 annotations secondaires sur les questions d'un autre rédacteur. Les 21 lignes concernées et leurs annotateurs sont préremplis dans `annotations_secondaires.csv`.
 
 ## Fichiers
 
