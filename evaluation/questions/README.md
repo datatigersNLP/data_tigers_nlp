@@ -1,6 +1,6 @@
 # Jeu de questions annotées — issue #44
 
-Ce dossier contient le jeu de référence humain utilisé pour évaluer la recherche du volet A et le comportement du volet B. Il ne doit contenir aucune question générée automatiquement.
+Ce dossier prépare le jeu de référence humain utilisé pour évaluer la recherche du volet A et le comportement du volet B. Le fichier officiel `questions_annotees.csv` ne doit contenir aucune question générée automatiquement ni aucune formulation conservée telle quelle depuis un brouillon IA.
 
 ## État initial vérifié le 3 octobre 2026
 
@@ -30,10 +30,23 @@ Chacun réalise aussi 7 annotations secondaires sur les questions d'un autre ré
 
 ## Fichiers
 
-- `questions_annotees.csv` : jeu principal, une ligne par question ;
+- `questions_candidates_ia.csv` : 105 brouillons de travail répartis entre les trois rédacteurs ; ce fichier n'est pas le jeu de test et ne doit jamais être utilisé pour mesurer les systèmes ;
+- `questions_annotees.csv` : jeu principal officiel, une ligne par question validée et reformulée par une personne ;
 - `annotations_secondaires.csv` : annotations indépendantes du sous-échantillon à double annoter.
 
 Les fichiers sont en UTF-8, séparés par des virgules. Les champs contenant une virgule, un guillemet ou un saut de ligne doivent être entourés de guillemets doubles ; un guillemet contenu dans un champ est doublé.
+
+## Traitement obligatoire des brouillons IA
+
+Chaque rédacteur traite uniquement les lignes qui lui sont attribuées dans `questions_candidates_ia.csv`.
+
+1. Ouvrir la source indiquée et vérifier que l'extrait permet réellement de répondre.
+2. Reformuler substantiellement la question avec ses propres mots, sans consulter les résultats du moteur ni une réponse produite par un modèle.
+3. Confirmer le type `dans_corpus` ou `hors_corpus`. Pour un cas hors corpus, vérifier l'absence dans l'ensemble du corpus figé et préciser la justification.
+4. Copier seulement la version humaine validée dans la ligne correspondante de `questions_annotees.csv`.
+5. Ne jamais copier directement un brouillon IA dans le fichier officiel.
+
+Les 74 brouillons dans le corpus ont fait l'objet d'un contrôle automatique contre l'instantané figé : document, URL et présence littérale de l'extrait ont été vérifiés sans erreur. Ce contrôle technique ne remplace ni la vérification du sens ni la reformulation humaine. Les 31 propositions hors corpus restent à confirmer manuellement.
 
 ## Règles de rédaction
 
