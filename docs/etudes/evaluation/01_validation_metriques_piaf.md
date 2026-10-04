@@ -15,6 +15,8 @@ Le sujet impose d'évaluer rigoureusement le système de recherche d'information
 
 Avant d'appliquer ces mesures à notre corpus et à notre propre jeu de questions, l'issue #45 a pour but de **valider la chaîne mathématique et logicielle de mesure sur un jeu public français déjà annoté** : **PIAF** (`AgentPublic/piaf`).
 
+PIAF ne sert qu'à cette validation : il ne fait pas partie du jeu d'évaluation du projet. Ce jeu est celui que l'équipe rédige à la main (issue #44), complété, sur proposition de ses rédacteurs, par les requêtes annotées du CDTN (`SocialGouv/datafiller-data`). Aucun chiffre de ce rapport ne mesure donc notre système : ce qui se transpose, ce sont le code et des leçons de méthode (section 8).
+
 Cette validation préalable poursuit trois objectifs :
 
 1. **Garantir l'exactitude des métriques** (Recall@k et MRR) par des tests unitaires confrontés à des calculs manuels, puis par un recalcul indépendant sur tout le jeu.
@@ -174,7 +176,7 @@ L'écart reste très significatif, mais la valeur p de la première version sure
 * **À Recall@5 et Recall@10,** E5 fait significativement mieux que chacune des quatre variantes, mais l'écart passe de 6,1 à 2,3 points quand BM25 passe des réglages par défaut de rank_bm25 à la formule de Lucene, avec mots vides retirés et racinisation.
 * **À Recall@1,** E5 ne fait pas mieux que BM25 dès que BM25 est réglé de façon usuelle : V3 est même devant de 1,5 point, sans que l'écart soit significatif.
 * **Le réglage de la référence pèse donc autant que l'écart mesuré.** C'est le risque que nomme l'issue #47 : une référence mal réglée flatte l'encodeur.
-* **Rapporté au critère du rapport J2** (l'encodeur ne fait pas moins bien que BM25), PIAF le satisferait à Recall@5 contre toutes les variantes ; à Recall@1, seulement avec une marge de non-infériorité d'au moins 3,5 points, la borne basse de l'intervalle face à V3. La métrique et la marge doivent donc être fixées avant la mesure du notebook 03.
+* **Ce que ces chiffres ne tranchent pas.** Le critère du rapport J2 (l'encodeur ne fait pas moins bien que BM25) se mesurera sur notre jeu, pas sur PIAF. PIAF montre seulement que la conclusion peut dépendre de la métrique : ici, E5 passerait le critère à Recall@5 contre toutes les variantes, mais à Recall@1 seulement avec une marge de non-infériorité d'au moins 3,5 points, la borne basse de l'intervalle face à V3. La métrique et la marge doivent donc être fixées avant la mesure du notebook 03.
 
 ---
 
@@ -248,14 +250,21 @@ Règles d'usage :
 
 * **Passages pertinents :** un ensemble par question, jamais vide. Les questions hors corpus s'évaluent à part, avec l'abstention.
 * **Classements :** toujours par `rank_by_score`, pour la même règle d'ex aequo entre systèmes, et sur au moins 10 passages.
-* **Groupes :** les questions d'une même fiche se ressemblent ; passer la fiche en `groups`, et lire `p_value_groups` et `ci_difference`.
+* **Groupes :** les questions d'une même fiche se ressemblent, et les variantes d'une même requête du CDTN partagent leur jugement ; passer la fiche ou la requête en `groups`, et lire `p_value_groups` et `ci_difference`.
 * **Non-infériorité :** l'encodeur n'est pas inférieur à BM25 avec la marge m si la borne basse de `ci_difference` dépasse -m. La métrique et la marge se fixent avant la première mesure.
 * **Petits effectifs :** avec quelques dizaines de paires discordantes, l'intervalle de Wald de la différence devient approximatif ; la valeur p exacte de McNemar reste valable si les questions sont indépendantes.
 * **Nommage :** le MRR calculé sur des listes de 10 résultats est le MRR@10.
+
+Deux sources, donc deux analyses distinctes :
+
+* **Jeu de l'équipe (issue #44), analyse principale.** Les passages pertinents sont ceux qui contiennent l'extrait annoté, selon une règle écrite avant la mesure (issue #46) ; les questions sont groupées par fiche ; les questions hors corpus s'évaluent à part, avec l'abstention.
+* **Requêtes du CDTN, analyse secondaire.** Elle est rapportée à part, jamais fusionnée avec la principale : la pertinence y est jugée à la section, ce qui donne 4 passages pertinents par requête en médiane (appariement préliminaire du 4 octobre), et les requêtes sont surtout des mots-clés (20 sur 175 sont rédigées en question, variantes non comptées). C'est là que la convention de Recall@k compte le plus : avec l'ancienne définition, une requête dont un seul des 4 passages pertinents est retrouvé aurait compté 0,25.
+* **Variantes du CDTN.** Chaque requête vient avec des variantes (14 en médiane), qui héritent toutes du même jugement : ce sont des reformulations d'une même requête, pas des questions indépendantes. Elles se passent avec la requête en `groups`, et l'effectif utile est le nombre de requêtes, pas le nombre de variantes.
+* **Leçon de PIAF transposée.** Des questions écrites en lisant le texte en reprennent les mots et favorisent BM25 (section 6) ; le protocole de l'issue #44, qui fait écrire la question avant d'ouvrir la fiche, répond à ce biais. Les requêtes du CDTN, à base de mots-clés, peuvent elles aussi favoriser BM25 : raison de plus pour les analyser à part.
 
 ---
 
 ## 9. Historique
 
 * **3 octobre 2026, première version (Remy RAYANE) :** module de métriques, script de validation sur PIAF, BM25 V0 contre E5, McNemar sur Recall@5.
-* **4 octobre 2026, relecture (Mahé BEGNIS) :** chiffres reproduits à l'identique ; convention de Recall@k alignée sur celle de l'équipe ; entrées invalides refusées ; règle d'ex aequo commune ; intervalle de confiance, test d'Obuchowski et intervalle groupé ajoutés au module ; recalcul indépendant des rangs, variantes BM25 V1 à V3, espérance de l'aléatoire, révision du modèle et dépendances figées dans le script ; sections 2 à 8 du rapport révisées en conséquence.
+* **4 octobre 2026, relecture (Mahé BEGNIS) :** chiffres reproduits à l'identique ; convention de Recall@k alignée sur celle de l'équipe ; entrées invalides refusées ; règle d'ex aequo commune ; intervalle de confiance, test d'Obuchowski et intervalle groupé ajoutés au module ; recalcul indépendant des rangs, variantes BM25 V1 à V3, espérance de l'aléatoire, révision du modèle et dépendances figées dans le script ; rapport révisé ; rôle de PIAF et analyse séparée des deux sources précisés.
