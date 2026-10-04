@@ -36,6 +36,7 @@ Charges en heures. La colonne Écart sert à la section retour d'expérience du 
 | 4 | Choix du modèle d'embeddings | D2 | Mahé, Remy | 19/09 | 19/09 | | | |
 | 5 | Livrable J2 | transverse | tous | 19/09 | | | | |
 | 6 | Weekly 2 | transverse | tous | 19/09 | | | | |
+| 45 | Valider la chaîne de mesure sur PIAF | D2 | Remy, Mahé | 03/10 | 03/10 | 4 | 3.5 | -0.5 |
 
 ---
 
