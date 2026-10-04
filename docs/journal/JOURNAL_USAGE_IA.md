@@ -206,13 +206,13 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Mesures exécutées.**
 - Extraction déterministe de 761 contextes uniques (passages Wikipédia) et 3 835 questions annotées depuis `AgentPublic/piaf` (révision figée `bda8c063bc7297180796cd835d1974c0bc71c521`).
-- Encodage normalisé $L_2$ avec `intfloat/multilingual-e5-small` (préfixes `passage: ` et `query: `) et calcul de similarité cosinus par produit scalaire matriciel ($3\,835 \times 761$).
+- Encodage normalisé L2 avec `intfloat/multilingual-e5-small` (préfixes `passage: ` et `query: `) et calcul de similarité cosinus par produit scalaire matriciel (3 835 × 761).
 - Calcul des métriques globales :
   - **Aléatoire :** Recall@1 = 0,08 %, Recall@5 = 0,76 %, MRR = 0,0036
   - **BM25 (`rank_bm25`) :** Recall@1 = 64,25 %, Recall@5 = 81,07 %, MRR = 0,7147
   - **Dense E5 :** Recall@1 = 66,78 %, Recall@5 = 87,20 %, MRR = 0,7567 (+6,13 points de Recall@5 face à BM25).
-- Test de McNemar sur le Recall@5 : 438 victoires exclusives E5 contre 203 pour BM25 sur 641 paires discordantes, $\chi^2 = 85{,}42$, $p = 8{,}84 \cdot 10^{-21}$ (gain hautement significatif).
-- Temps d'inférence CPU moyen mesuré : $6{,}08\text{ ms}$ par requête pour E5 contre $0{,}37\text{ ms}$ pour BM25.
+- Test de McNemar sur le Recall@5 : 438 victoires exclusives E5 contre 203 pour BM25 sur 641 paires discordantes, chi2 = 85,42, p = 8,84e-21 (gain hautement significatif).
+- Temps d'inférence CPU moyen mesuré : 6,08 ms par requête pour E5 contre 0,37 ms pour BM25.
 
 **Résultats retenus.**
 - Validation mathématique complète de la chaîne de métriques via assertions sur calculs manuels préalables.
