@@ -73,7 +73,15 @@ Les contrôles réussis sur les anciens brouillons ne valident pas le nouveau je
 - `double_annotation` : `oui` si la question appartient au sous-échantillon de 20 %, sinon `non`.
 - `remarque` : cas limite, justification hors corpus ou information utile.
 
-Pour la seconde annotation, l'annotateur ne consulte pas l'annotation principale. Il renseigne séparément `annotations_secondaires.csv`. Après gel des deux annotations, l'équipe compare l'URL puis l'extrait et renseigne les colonnes d'accord.
+Pour la seconde annotation, l'annotateur ne consulte pas l'annotation principale. Il renseigne séparément `annotations_secondaires.csv`.
+
+Après leur réalisation indépendante, les 21 annotations secondaires de Jibril, Maïmouna et Vaneck ont été regroupées dans un classeur Excel commun, puis exportées vers `annotations_secondaires.csv`. Le classeur commun sert à la consolidation des résultats ; il ne remplace pas le principe d'indépendance de la seconde annotation.
+
+Après gel des deux annotations, l'équipe compare l'URL puis l'extrait et renseigne les colonnes d'accord selon les règles retenues le 6 octobre 2026 :
+
+- `accord_url = oui` si les deux annotations utilisent la même URL canonique ;
+- `accord_url = non` si les URL sont différentes, ou si une annotation trouve une réponse dans le corpus et l'autre conclut hors corpus ;
+- `accord_extrait = oui` si les extraits sont identiques, ou s'ils sont différents mais correspondent au même passage et répondent tous deux à la question.
 
 ## Contrôles avant gel
 
