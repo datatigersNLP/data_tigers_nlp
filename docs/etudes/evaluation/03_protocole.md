@@ -5,7 +5,7 @@
 **Ticket** Issue #46 · Branche `feat/46-notebook-03`  
 **Responsable principal** Mahé BEGNIS  
 **Soutien** Remy RAYANE  
-**Statut** proposé le 6 octobre 2026, à valider au Weekly 4 du 7 octobre, puis figé avant toute mesure  
+**Statut** proposé le 6 octobre 2026, amendé le même jour après l'audit du jeu (D4), à valider au Weekly 4 du 7 octobre, puis figé avant toute mesure  
 
 ---
 
@@ -16,6 +16,7 @@ Ce protocole fixe, avant toute mesure sur le lot de test, la règle de pertinenc
 * **Figé avant la mesure.** Une fois validé, il est figé par un commit, et son empreinte SHA-256 est inscrite dans le notebook 03. Le notebook refuse de lire le lot de test si l'empreinte ne correspond pas.
 * **Rien d'autre n'est conclusif.** Toute analyse absente de ce document est présentée comme exploratoire.
 * **Déclaration.** Le 6 octobre 2026, un aperçu de l'encodeur sur le jeu de questions a été calculé pendant un audit, hors protocole (journal d'usage de l'IA, section 4). Aucune décision ci-dessous ne s'appuie sur lui : chacune est justifiée par le rapport J2, par la validation sur PIAF (#45), par les annotations seules ou par un calcul de puissance.
+* **Seconde déclaration.** Le 6 octobre 2026, la PR #63 (ajustement de l'encodeur, #49) a mesuré l'encodeur de base et l'encodeur ajusté sur les 72 questions du corpus du lot de test, avec sa propre règle de pertinence, et sa description en donne les résultats. Ces mesures sont hors protocole et ne remplacent pas celle du notebook 03. Les décisions D1 à D8 ont été proposées le 6 octobre à 10 h 02 (commit `fe548ce`), avant l'ouverture de cette PR à 10 h 52 ; l'amendement de D4 (section 3) a été rédigé sans lire ces résultats et ne s'appuie que sur les annotations.
 
 ---
 
@@ -24,10 +25,13 @@ Ce protocole fixe, avant toute mesure sur le lot de test, la règle de pertinenc
 ### 2.1 Jeu de questions (#44)
 
 * **Fichier.** `evaluation/questions/questions_annotees.csv`, dans la version figée par le tag du jeu. Le tag et l'empreinte du fichier sont inscrits ici au moment du gel.
-* **Recherche.** Elle se mesure sur les questions du lot de test classées `dans_corpus` : 72 au 4 octobre, nombre à reconfirmer après le gel.
+* **Recherche.** Elle se mesure sur les questions du lot de test classées `dans_corpus` : 73 dans la version fusionnée dans `dev` le 6 octobre (commit `cdb48c9`), nombre à reconfirmer au gel.
 * **Abstention.** Elle se mesure sur toutes les questions du lot de test, celles du corpus comme celles hors corpus.
 * **Lot de calibration.** Il ne sert qu'à mettre au point le notebook et, à défaut du CDTN, à fixer le seuil d'abstention (section 8.2).
-* **Annotation secondaire.** L'accord entre annotateurs est calculé et publié ; l'annotation principale fait foi.
+* **Annotation secondaire.** L'accord entre annotateurs est calculé et publié ; l'annotation principale fait foi. Il est calculé par `scripts/evaluation/controle_jeu.py` sur l'annotation principale telle qu'elle était au moment de la seconde annotation (commit `187a9f8`), donc avant l'arbitrage de Q062, qui l'aurait gonflé.
+* **Accord sur le type.** Sur les 21 questions doublement annotées, les deux annotations donnent le même type 20 fois ; le kappa de Cohen vaut 0,88, avec un intervalle indicatif à 95 % de 0,59 à 1 par rééchantillonnage des 21 paires.
+* **Accord sur la réponse.** Sur les 15 questions que les deux annotations placent dans le corpus, elles désignent la même fiche 14 fois et les mêmes fiches pertinentes 14 fois, mais les mêmes passages pertinents en M2 seulement 7 fois, avec au moins un passage pertinent commun 9 fois. Dans les 6 autres cas, l'annotateur secondaire a choisi un autre passage de la même fiche, ou, pour Q051, une autre fiche.
+* **Conséquence.** Au niveau du passage, la vérité de terrain dépend de l'annotateur pour 6 des 15 questions comparées : un système qui montre un autre passage valable est compté en échec. Le Recall au niveau du passage est donc un minorant prudent, à lire à côté du niveau de la fiche (D8), bien plus stable entre annotateurs. Les chiffres du README du jeu (accord sur l'URL 19 fois sur 21, sur l'extrait 14 fois sur 16) comptent comme accord deux extraits différents d'une même fiche ; ils concordent avec ceux-ci.
 
 ### 2.2 Corpus et index
 
@@ -43,14 +47,15 @@ Analyse secondaire, rapportée à part (section 8.3).
 ## 3. Règle de pertinence (D4)
 
 * **Normalisation.** Appliquée à l'extrait comme au passage : minuscules, apostrophe typographique remplacée par l'apostrophe droite, puis seuls les lettres, y compris accentuées, et les chiffres sont conservés ; les tirets de liste disparaissent ainsi. La comparaison est faite deux fois, avec et sans retrait des marques de liste numérotées (un nombre suivi d'un point et d'une espace), car la copie depuis le site les perd parfois, mais les retirer partout effacerait aussi une année en fin de phrase. Un passage est pertinent si l'une des deux comparaisons le déclare tel.
-* **Passage pertinent.** Un passage est pertinent pour une question si son texte normalisé contient un fragment contigu de l'extrait normalisé long d'au moins la moitié de l'extrait, arrondie à l'entier supérieur.
+* **Passage pertinent.** Un passage est pertinent pour une question si son texte normalisé et l'extrait normalisé partagent un fragment contigu qui couvre au moins la moitié de l'extrait, ou au moins la moitié du passage avec un minimum de 80 caractères ; chaque moitié est arrondie à l'entier supérieur.
+* **Pourquoi la seconde condition.** Elle ne joue que pour les extraits de plus de 160 caractères normalisés : en deçà, un fragment commun de 80 caractères couvre déjà la moitié de l'extrait. Sans elle, un passage plus court que la moitié de l'extrait ne pourrait jamais être pertinent. Or le plus long passage normalisé compte 897 caractères en M2 à 256 tokens et 1 000 en M1 : un extrait de plus de 1 794 caractères n'aurait aucun passage pertinent en M2 à 256 tokens, quel que soit le système. C'est le cas de deux réponses en liste du jeu, Q046 (formations éligibles au CPF, 2 138 caractères normalisés) et Q052 (conditions de l'assurance chômage, 2 590). La règle avantagerait alors les grands passages par construction, le biais qu'elle doit éviter. Le minimum de 80 caractères, celui d'un extrait, empêche de déclarer pertinent un passage très court sur quelques mots.
 * **Fiche pertinente (D8).** Une fiche est pertinente si elle contient au moins un passage pertinent.
-* **Longueur minimale.** Un extrait normalisé, sans retrait des marques, compte au moins 80 caractères ; au 6 octobre, le plus court en compte 83.
+* **Longueur minimale.** Un extrait normalisé, sans retrait des marques, compte au moins 80 caractères ; dans le jeu fusionné le 6 octobre, le plus court en compte 83.
 * **Contrôle avant la mesure.** Chaque question du corpus doit avoir au moins un passage pertinent dans chaque découpage. Sinon, elle est signalée, comptée comme un échec pour ce découpage, et leur nombre est publié.
 
-Pourquoi un fragment et non l'extrait entier : au 6 octobre, d'après les seules annotations, les 77 extraits tiennent entiers dans un passage M2, mais seulement 74 en M2 à 256 tokens, 70 en M1, et 69 en M0 comme en M3. Exiger l'extrait entier avantagerait M2 par construction.
+Pourquoi un fragment et non l'extrait entier : dans le jeu fusionné le 6 octobre, d'après les seules annotations, 76 des 78 extraits tiennent entiers dans un passage M2, mais 71 en M2 à 256 tokens, 67 en M1, 66 en M0 et 65 en M3. Exiger l'extrait entier avantagerait M2 par construction.
 
-Application au 6 octobre, sur les 77 questions du corpus et d'après les seules annotations : en M2, en M2 à 256 tokens et en M3, chaque question a au moins un passage pertinent, et 64 en ont un seul ; en M1 aussi, avec 53 questions à un seul passage ; en M0, une question n'en a aucun. La règle est implémentée dans `scripts/evaluation/pertinence.py`, dont la présélection est contrôlée contre une recherche exhaustive.
+Application au même jeu, d'après les seules annotations (`scripts/evaluation/controle_jeu.py`) : en M1, M2, M2 à 256 tokens et M3, chaque question du corpus a au moins un passage pertinent ; 64 en ont un seul en M2, 61 en M2 à 256 tokens, 62 en M3 et 53 en M1. En M0, Q051 n'en a aucun : son extrait vient du chapeau de la fiche, absent de ce découpage. Avec la première condition seule, Q046 n'aurait aucun passage pertinent en M0, M1 et M2 à 256 tokens, Q052 aucun en M0, M1, M2 à 256 tokens et M3, et Q062 aucun en M3. La seconde condition ne retire aucun passage pertinent ; elle en ajoute à cinq questions, toutes à extrait long (Q018, Q025, Q046, Q052 et Q062). Les passages ajoutés appartiennent à la fiche annotée, sauf, pour Q018 en M1 et en M2 à 256 tokens, un passage de la fiche « Le salaire : fixation et paiement » qui reprend mot pour mot une partie de l'extrait : la règle juge le texte, non la fiche, comme elle le faisait déjà pour Q086. La règle est implémentée dans `scripts/evaluation/pertinence.py`, dont la présélection est contrôlée contre une recherche exhaustive et contre une réécriture indépendante de la règle.
 
 ---
 
@@ -111,7 +116,7 @@ Les autres métriques (Recall@1, Recall@3, Recall@10, MRR@10, niveau fiche) sont
 
 ### 8.1 Sigles
 
-* **Sous-ensemble.** Les questions du corpus du lot de test qui contiennent un sigle de la liste ci-dessous : 7 au 4 octobre, donc une analyse descriptive seulement.
+* **Sous-ensemble.** Les questions du corpus du lot de test qui contiennent un sigle de la liste ci-dessous : 7 dans le jeu fusionné le 6 octobre, donc une analyse descriptive seulement.
 * **Extension des sigles, fixée ici.** CDI : contrat à durée indéterminée ; CDD : contrat à durée déterminée ; RTT : réduction du temps de travail ; CSE : comité social et économique ; SMIC : salaire minimum interprofessionnel de croissance ; VAE : validation des acquis de l'expérience ; CPF : compte personnel de formation.
 * **Mesure.** Le rang du premier passage pertinent avant et après extension, question par question, sans test.
 
@@ -144,7 +149,7 @@ Analyse secondaire séparée (#56) : pertinence jugée à la section, variantes 
 | D1 | Comparaison principale | Recall@5 au niveau du passage, E5 servi contre BM25 de référence | le site affiche 5 résultats ; c'est la configuration que voit l'utilisateur |
 | D2 | Marge de non-infériorité | 15 points | puissance de 72 à 93 %, contre 40 à 62 % pour 10 points ; dimensionnement du J2 |
 | D3 | Référence BM25 | V3, formule de Lucene | meilleure variante sur PIAF, qui est indépendant de notre jeu |
-| D4 | Règle de pertinence | fragment contigu d'au moins la moitié de l'extrait normalisé | équitable entre découpages |
+| D4 | Règle de pertinence | fragment contigu couvrant la moitié de l'extrait normalisé, ou la moitié du passage avec au moins 80 caractères | équitable entre découpages, réponses en liste comprises |
 | D5 | Question sans résultat lexical | échec | aucun passage n'est montré à l'utilisateur |
 | D6 | Abstention | AUC sans seuil, et seuil tiré du CDTN ou de la calibration | lot de calibration trop petit pour un seuil fiable |
 | D7 | Comparaisons multiples | Holm par famille, sinon exploratoire | une seule analyse principale |
@@ -155,3 +160,4 @@ Analyse secondaire séparée (#56) : pertinence jugée à la section, variantes 
 ## 11. Historique
 
 * **6 octobre 2026 :** version proposée (Mahé BEGNIS).
+* **6 octobre 2026, après l'audit du jeu fusionné (`cdb48c9`) :** seconde condition ajoutée à D4 pour les extraits longs, chiffres mis à jour sur le jeu fusionné, accord entre annotateurs publié, seconde déclaration (Mahé BEGNIS).
