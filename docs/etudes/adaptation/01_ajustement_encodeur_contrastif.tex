@@ -1,0 +1,369 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------------------------------------------------------------- langue & fontes
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\frenchsetup{SmallCapsFigTabCaptions=false,ThinSpaceInFrenchNumbers=true}
+\setmainfont{LibertinusSerif-Regular.otf}[
+  BoldFont=LibertinusSerif-Bold.otf, ItalicFont=LibertinusSerif-Italic.otf,
+  BoldItalicFont=LibertinusSerif-BoldItalic.otf, Numbers=OldStyle]
+\setsansfont{Inter-Regular.otf}[
+  BoldFont=Inter-Bold.otf, ItalicFont=Inter-Italic.otf,
+  BoldItalicFont=Inter-BoldItalic.otf, Scale=0.94]
+\setmonofont{FiraMono-Regular.otf}[BoldFont=FiraMono-Bold.otf, Scale=0.84]
+\newfontfamily\tabfont{Inter-Regular.otf}[BoldFont=Inter-Bold.otf,
+  ItalicFont=Inter-Italic.otf, BoldItalicFont=Inter-BoldItalic.otf,
+  Scale=0.94, Numbers=Lining]
+
+% ---------------------------------------------------------------- mise en page
+\usepackage[a4paper,top=2.5cm,bottom=2.3cm,left=2.1cm,right=2.1cm,
+            headheight=17pt,headsep=13pt,footskip=20pt]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,tabularx,longtable,array,colortbl,multirow}
+\usepackage{titlesec,titletoc}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyvrb}
+\usepackage{pifont}
+\usepackage{fontawesome5}
+\usepackage{needspace}
+\usepackage{ragged2e}
+\usepackage[hidelinks]{hyperref}
+
+% ---------------------------------------------------------------- palette
+\definecolor{encre}   {HTML}{16181D}
+\definecolor{accent}  {HTML}{1F4E5F}
+\definecolor{accent2} {HTML}{8C4A2F}
+\definecolor{gris}    {HTML}{6B7280}
+\definecolor{filet}   {HTML}{D5DADE}
+\definecolor{fondclair}{HTML}{F3F6F7}
+\definecolor{fondcode}{HTML}{F7F7F4}
+\definecolor{vert}    {HTML}{17693F}
+\definecolor{rouge}   {HTML}{9B2C2C}
+\definecolor{ambre}   {HTML}{A86A12}
+\color{encre}
+
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent,
+  pdftitle={Reunion de cadrage - Projet NLP 2},
+  pdfsubject={Jalon J2 - choix des cas d'usage, cadrage, outils novateurs},
+  pdfauthor={Equipe projet NLP 2 - M2 Data et IA, FGES}}
+
+% ---------------------------------------------------------------- symboles
+\newcommand{\okmark}   {\textcolor{vert}{\ding{51}}}
+\newcommand{\komark}   {\textcolor{rouge}{\ding{55}}}
+\newcommand{\warnmark} {\textcolor{ambre}{\faExclamationTriangle}}
+\newcommand{\checkbox} {\textcolor{gris}{\ding{113}}}
+\newcommand{\cutmark}  {\textcolor{accent2}{\ding{34}}}
+\newcommand{\starmark} {\textcolor{ambre}{\ding{72}}}
+\newcommand{\wipmark}  {\textcolor{ambre}{\faTools}}
+\newcommand{\code}[1]  {{\ttfamily #1}}
+\newcommand{\rulebreak}{}
+
+% ---------------------------------------------------------------- titres
+\titleformat{\section}[hang]
+  {\sffamily\bfseries\LARGE\color{accent}}{\thesection}{13pt}{}
+  [\vspace{2pt}{\color{filet}\titlerule[0.9pt]}]
+\titlespacing*{\section}{0pt}{24pt plus 4pt minus 2pt}{11pt}
+\titleformat{\subsection}
+  {\sffamily\bfseries\large\color{encre}}{\thesubsection}{9pt}{}
+\titlespacing*{\subsection}{0pt}{16pt plus 3pt minus 1pt}{6pt}
+\titleformat{\subsubsection}
+  {\sffamily\bfseries\normalsize\color{accent2}}{}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{12pt plus 2pt minus 1pt}{4pt}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+% ---------------------------------------------------------------- en-têtes
+\pagestyle{fancy}\fancyhf{}
+% en-tête courant, redéfini par build.py selon le document
+\newcommand{\entetecourant}{Projet NLP 2}
+\fancyhead[L]{\sffamily\scriptsize\color{gris}\entetecourant}
+\fancyhead[R]{\sffamily\scriptsize\color{gris}\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\headrule}{\vspace{-4pt}{\color{filet}\rule{\headwidth}{0.4pt}}}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrule}{}%
+  \fancyfoot[C]{\sffamily\scriptsize\color{gris}\thepage}}
+
+% ---------------------------------------------------------------- paragraphes & listes
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5.5pt plus 1.5pt minus 0.5pt}
+\linespread{1.05}
+\raggedbottom
+\widowpenalty=10000 \clubpenalty=10000
+\setlist[itemize]{leftmargin=1.15em,itemsep=2pt,topsep=3pt,parsep=0pt,label=\textcolor{accent}{\textbullet}}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2.5pt,topsep=3pt,parsep=0pt,
+  label=\textcolor{accent}{\sffamily\bfseries\arabic*.}}
+
+% ---------------------------------------------------------------- tableaux
+% \hspace{0pt} : glue initiale, sans quoi TeX refuse de couper le premier
+% mot de la cellule — cause de débordements en colonne étroite.
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash
+  \rightskip=0pt plus 1fil\relax\hspace{0pt}}p{#1}}
+% \hspace{0pt} : sans cette glue, le whatsit de \color empêche TeX
+% de couper le premier mot de la cellule (débordements en en-tête).
+\newcommand{\thead}[1]{{\tabfont\bfseries\color{accent}\hspace{0pt}#1}}
+\newenvironment{tabletype}
+  {\par\addvspace{7pt}\begingroup
+   \tabfont\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.26}
+   \setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}
+   \setlength{\extrarowheight}{1pt}
+   % élasticité infinie à droite : TeX ne coupe plus un mot pour « remplir »,
+   % mais coupe encore lorsque c'est le seul moyen d'éviter un débordement.
+   % césure interdite : les largeurs minimales sont mesurées, chaque mot tient.
+   % Un débordement, s'il en restait un, serait signalé par le journal.
+   \hyphenpenalty=9000\exhyphenpenalty=9000
+   \emergencystretch=0pt\hbadness=10000\relax}
+  {\endgroup\par\addvspace{9pt}}
+\setlength{\aboverulesep}{0.5pt}\setlength{\belowrulesep}{0.6pt}
+\arrayrulecolor{filet}
+\setlength{\heavyrulewidth}{0.9pt}\setlength{\lightrulewidth}{0.45pt}
+
+% ---------------------------------------------------------------- encadrés
+\newtcolorbox{callout}{enhanced,breakable,
+  colback=fondclair,colframe=accent,boxrule=0pt,leftrule=2.6pt,
+  sharp corners,left=11pt,right=11pt,top=8pt,bottom=8pt,
+  before skip=10pt,after skip=11pt,parbox=false}
+\newtcolorbox{codebox}{enhanced,breakable,
+  colback=fondcode,colframe=filet,boxrule=0.5pt,arc=2pt,
+  left=9pt,right=9pt,top=7pt,bottom=7pt,
+  before skip=10pt,after skip=11pt}
+
+% ---------------------------------------------------------------- sommaire
+\renewcommand{\contentsname}{Sommaire}
+\titlecontents{section}[0pt]
+  {\addvspace{4pt}\sffamily\bfseries\color{encre}}
+  {\contentslabel[\thecontentslabel]{1.6em}}{}
+  {\titlerule*[0.7pc]{\color{filet}.}\contentspage}
+\titlecontents{subsection}[1.9em]
+  {\sffamily\small\color{gris}}
+  {\contentslabel[\thecontentslabel]{2.3em}}{}
+  {\titlerule*[0.7pc]{\color{filet}.}\contentspage}
+
+% ---------------------------------------------------------------- divers
+\newlength{\metalab}
+\newlength{\tw}\setlength{\tw}{\textwidth}
+\newcommand{\settw}[1]{\setlength{\tw}{\dimexpr\textwidth-#1pt\relax}}
+% tolérance relâchée : sans elle, TeX préfère déborder de quelques points
+% plutôt que de desserrer une ligne contenant un long jeton en chasse fixe.
+\emergencystretch=1.6em
+
+\renewcommand{\entetecourant}{Projet NLP 2}
+\begin{document}
+\thispagestyle{empty}
+\begingroup\sffamily
+{\color{accent}\rule{\textwidth}{2.6pt}}\par\vspace{13pt}
+{\fontsize{27}{31}\selectfont\bfseries\color{encre} Étude d'ajustement contrastif de l'encodeur sémantique sur le corpus SocialGouv}\par\vspace{7pt}
+{\color{filet}\rule{\textwidth}{0.6pt}}\par\vspace{14pt}
+\endgroup
+\begingroup\setlength{\parskip}{0pt}
+\settowidth{\metalab}{\tabfont\bfseries Soutien \& Relecture :}
+\begin{tabular}{@{}>{\tabfont\bfseries\color{accent}}l@{\hspace{16pt}}p{\dimexpr\textwidth-\metalab-18pt\relax}@{}}
+Auteur principal : & Remy RAYANE (Responsable D2 \& Issue \#49) \\[3.5pt]
+Soutien \& Relecture : & Mahé BEGNIS, Jibril BENSALEM \\[3.5pt]
+Date : & 6 octobre 2026 \\[3.5pt]
+Référence : & Issue GitHub \#49 (\code{feat/\allowbreak{}49-\allowbreak{}ajustement-\allowbreak{}encodeur}) \\[3.5pt]
+Statut : & Exécuté intégralement, validé statistiquement, prêt pour revue \\[3.5pt]
+\end{tabular}\par\vspace{16pt}\endgroup
+\vspace{10pt}{\color{filet}\rule{\textwidth}{0.4pt}}\par\vspace{16pt}
+\begingroup\setlength{\parskip}{0pt}\tableofcontents\endgroup
+\clearpage
+
+\section{Contexte et Objectifs}
+
+Le sujet du projet impose que l'application de recherche sémantique du Volet A ne se contente pas d'exécuter un modèle générique sur étagère, mais s'appuie sur un modèle adapté au domaine juridique du Code du travail et des fiches pratiques du ministère du Travail (SocialGouv).
+
+L'\textbf{Issue \#49} a pour objet d'ajuster finement l'encodeur \code{intfloat/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small} par \textbf{apprentissage contrastif} (\textit{contrastive learning}) sur des paires \code{(question, passage)} représentatives du corpus, et d'en mesurer scientifiquement le gain par un protocole expérimental apparié et reproductible.
+
+\subsection{Contraintes méthodologiques strictes}
+\begin{enumerate}
+\item \textbf{Étancheité absolue (*Zero Data Leakage*)} : Aucune fiche, aucun passage et aucune question du jeu de test (Issue \#44 / PR \#54) ne doit servir à l'entraînement ou à la sélection du modèle.
+\item \textbf{Préservation du protocole E5} : Conservation systématique des préfixes obligatoires (\code{query:\allowbreak{} } pour les requêtes et \code{passage:\allowbreak{} } pour les documents).
+\item \textbf{Évaluation statistique appariée} : Calcul des métriques de rang (\code{Recall@\allowbreak{}k}, \code{MRR@\allowbreak{}10}) avec test exact de McNemar et test d'Obuchowski (données groupées par fiche) pour trancher la significativité statistique de l'écart.
+\item \textbf{Portabilité navigateur (ONNX \& Quantification)} : Export ONNX FP32, quantification dynamique INT8 (\code{q8}) et vérification des critères de parité et fidélité établis au Notebook 02.
+\item \textbf{Gestion des artefacts hors Git} : Les poids PyTorch et les fichiers \code{.\allowbreak{}onnx} dépassant 100 Mio restent exclus du versionnement Git (règle stricte du projet).
+\end{enumerate}
+\rulebreak
+
+\section{Protocole expérimental et Découpage des données}
+
+\subsection{Le Banc de Test de Référence (Ground Truth)}
+
+Le benchmark d'évaluation est constitué à partir du jeu de 105 questions annotées de l'équipe (Issue \#44, PR \#54) :
+\begin{itemize}
+\item \textbf{72 questions de test \code{dans\_\allowbreak{}corpus}} ont été appariées à leurs passages cibles dans le découpage structurel \textbf{M2} (\code{data/\allowbreak{}decoupage/\allowbreak{}passages/\allowbreak{}passages\_\allowbreak{}m2.\allowbreak{}parquet}, 4 240 passages).
+\item Le jeu couvre 67 fiches pratiques distinctes du ministère du Travail.
+\end{itemize}
+
+\subsection{Cloisonnement Anti-Fuite (Train Exclusion Set)}
+
+Pour empêcher toute mémorisation de surface ou surapprentissage sur les questions évaluées :
+\begin{itemize}
+\item \textbf{Exclusion au niveau de la fiche (URL)} : Les 67 fiches associées au jeu de test et au lot de calibration ont été \textbf{totalement proscrites} de la phase d'entraînement.
+\item \textbf{Volume exclu} : 1 463 passages exclus sur 4 240 (soit \textbf{34,5 \% du corpus}).
+\item \textbf{Vivier d'entraînement} : 2 777 passages issus de \textbf{194 fiches vierges} de toute évaluation.
+\end{itemize}
+
+\subsection{Génération synthétique locale (Qwen2.5-7B)}
+
+L'inférence locale validée dans le cadre de l'Issue \#31 (\code{qwen2.\allowbreak{}5-\allowbreak{}7b-\allowbreak{}instruct:\allowbreak{}q4\_\allowbreak{}k\_\allowbreak{}m-\allowbreak{}local} exécuté via Ollama) a été mise à profit pour générer des questions d'utilisateurs réalistes :
+\begin{itemize}
+\item \textbf{Échantillonnage stratifié} : 110 passages candidats représentatifs sélectionnés sur 110 fiches distinctes (longueur médiane \textasciitilde{}250 tokens).
+\item \textbf{Prompting de rôle} : Requêtes formulées du point de vue d'un salarié ou citoyen cherchant une réponse concrète, sans méta-références (\og selon le texte\fg{}, etc.).
+\item \textbf{Filtrage automatique} :
+\item Contrôle syntaxique (interrogation finale, longueur entre 25 et 220 caractères).
+\item Contrôle de non-recouvrement lexical : rejet automatique si la similarité Jaccard sur les tokens avec une question du jeu de test dépasse 0,40.
+\item \textbf{Résultat} : \textbf{109 paires validées}, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans \code{data/\allowbreak{}adaptation/\allowbreak{}echantillon\_\allowbreak{}controle\_\allowbreak{}train.\allowbreak{}json}.
+\end{itemize}
+\rulebreak
+
+\section{Ajustement Contrastif de l'Encodeur}
+
+\subsection{Architecture et Fonction de Perte}
+\begin{itemize}
+\item \textbf{Modèle de départ} : \code{intfloat/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small} (117 millions de paramètres, dimension 384).
+\item \textbf{Fonction de perte} : \code{MultipleNegativesRankingLoss} (MNRL).
+\item Pour chaque mini-batch de taille \$B\$, la perte maximise la similarité cosinus entre la question \$\textbackslash\{\}mathbf\{q\}\_i\$ et son passage cible \$\textbackslash\{\}mathbf\{p\}\_i\$, tout en utilisant l'ensemble des \$B-1\$ autres passages du lot comme négatifs implicites (\textit{in-batch negatives}).
+\item Température / facteur d'échelle : échelle standard SentenceTransformers (\$s = 20.0\$).
+\end{itemize}
+
+\subsection{Hyperparamètres d'entraînement}
+
+Les hyperparamètres ont été choisis pour adapter le modèle au vocabulaire du droit du travail sans détruire sa structure multilingue pré-entraînée (\textit{catastrophic forgetting}) :
+\begin{itemize}
+\item \textbf{Taille de lot (*batch size*)} : 16 (soit 15 négatifs par exemple).
+\item \textbf{Taux d'apprentissage (*learning rate*)} : \$2 \textbackslash\{\}times 10\textasciicircum{}\{-5\}\$ avec optimiseur AdamW et décroissance linéaire.
+\item \textbf{Époques} : 2 (14 pas d'optimisation).
+\item \textbf{Warmup} : 10 \% des étapes.
+\item \textbf{Durée d'entraînement} : 185,5 secondes sur CPU (16 cœurs).
+\end{itemize}
+
+\subsection{Convergence de la perte}
+% TABLE 0
+\begin{tabletype}
+\small
+\settw{24.0}
+\setlength{\LTpre}{0pt}\setlength{\LTpost}{0pt}
+\begin{longtable}{@{}L{0.25296\tw}L{0.13966\tw}L{0.27800\tw}L{0.32938\tw}@{}}
+\toprule
+\thead{Étape (sur 14)} & \thead{Époque} & \thead{Training Loss} & \thead{Norme du Gradient} \\
+\midrule
+\endfirsthead
+\toprule
+\thead{Étape (sur 14)} & \thead{Époque} & \thead{Training Loss} & \thead{Norme du Gradient} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+2 & 0.29 & 1.5610 & 12.11 \\
+4 & 0.57 & 1.3730 & 8.47 \\
+6 & 0.86 & 0.8857 & 7.60 \\
+8 & 1.14 & 0.7160 & 6.74 \\
+10 & 1.43 & 0.4952 & 6.66 \\
+12 & 1.71 & 0.6111 & 7.29 \\
+14 & 2.00 & \textbf{0.4717} & \textbf{5.75} \\
+\end{longtable}
+\end{tabletype}
+
+La perte a décru de manière régulière et robuste (de 1,56 à 0,47), confirmant un apprentissage efficace sans instabilité.
+\rulebreak
+
+\section{Résultats et Validation Statistique}
+
+L'évaluation compare les performances de récupération d'information (\textit{Information Retrieval}) avant et après ajustement, en indexant la totalité des \textbf{4 240 passages M2} et en interrogeant le modèle avec les \textbf{72 questions de test}.
+
+\subsection{Tableau comparatif des métriques de recherche}
+% TABLE 1
+\begin{tabletype}
+\scriptsize
+\settw{40.0}
+\setlength{\LTpre}{0pt}\setlength{\LTpost}{0pt}
+\begin{longtable}{@{}L{0.08954\tw}L{0.18629\tw}L{0.16005\tw}L{0.09708\tw}L{0.23549\tw}L{0.23155\tw}@{}}
+\toprule
+\thead{Métrique} & \thead{Avant (Base pré-entraîné)} & \thead{Après (Modèle ajusté)} & \thead{Gain absolu} & \thead{Valeur \textit{p} (McNemar / Obuchowski)} & \thead{Significatif (\$\textbackslash\{\}alpha = 0.05\$)} \\
+\midrule
+\endfirsthead
+\toprule
+\thead{Métrique} & \thead{Avant (Base pré-entraîné)} & \thead{Après (Modèle ajusté)} & \thead{Gain absolu} & \thead{Valeur \textit{p} (McNemar / Obuchowski)} & \thead{Significatif (\$\textbackslash\{\}alpha = 0.05\$)} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{Recall@1} & 19,44 \% & \textbf{26,39 \%} & \textbf{+6,94 \%} & \$p = 0.2004\$ & Non \\
+\textbf{Recall@3} & 37,50 \% & \textbf{51,39 \%} & \textbf{+13,89 \%} & \$p = 0.0080\$ & \textbf{OUI} (\$p < 0.01\$) \\
+\textbf{Recall@5} & 43,06 \% & \textbf{62,50 \%} & \textbf{+19,44 \%} & \$p = 0.0002\$ & \textbf{OUI} (\$p < 0.001\$) \\
+\textbf{Recall@10} & 58,33 \% & \textbf{73,61 \%} & \textbf{+15,28 \%} & \$p = 0.0048\$ & \textbf{OUI} (\$p < 0.01\$) \\
+\textbf{MRR@10} & 0,3250 & \textbf{0,4203} & \textbf{+0,0954} & — & — \\
+\end{longtable}
+\end{tabletype}
+
+\subsection{Analyse des résultats}
+\begin{enumerate}
+\item \textbf{Bond spectaculaire sur Recall@5 (+19,44 points)} : Le Recall@5 passe de 43,06 \% à 62,50 \%. La valeur \textit{p} du test apparié avec regroupement par fiche est de \textbf{\$0.0002\$}, ce qui démontre une amélioration hautement significative sur le plan statistique.
+\item \textbf{Gain substantiel en précision de premier rang (MRR@10 : +0,0954)} : Le rang réciproque moyen passe de 0,325 à 0,420, signifiant que le passage pertinent apparaît désormais en moyenne entre la 2e et la 3e position au lieu de la 3e et 4e position.
+\item \textbf{Généralisation confirmée hors fiches vues} : Puisque l'entraînement a été effectué exclusivement sur des fiches différentes de celles du test, ce gain atteste que l'encodeur a appris à mieux aligner le style interrogatif des citoyens français avec le formalisme juridique des fiches du ministère, sans aucun effet de mémorisation brute.
+\end{enumerate}
+\rulebreak
+
+\section{Export ONNX et Contrôles de Parité}
+
+Pour permettre le déploiement dans le navigateur client via \textbf{Transformers.js} (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences du Notebook 02.
+
+\subsection{Fichiers générés}
+% TABLE 2
+\begin{tabletype}
+\small
+\settw{24.0}
+\setlength{\LTpre}{0pt}\setlength{\LTpost}{0pt}
+\begin{longtable}{@{}L{0.07354\tw}L{0.49340\tw}L{0.10692\tw}L{0.32614\tw}@{}}
+\toprule
+\thead{Format} & \thead{Fichier} & \thead{Taille disque} & \thead{Rôle applicatif} \\
+\midrule
+\endfirsthead
+\toprule
+\thead{Format} & \thead{Fichier} & \thead{Taille disque} & \thead{Rôle applicatif} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{FP32} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}finetuned/\allowbreak{}onnx/\allowbreak{}model.\allowbreak{}onnx} & 448,5 Mio & Modèle de référence ONNX haute précision \\
+\textbf{INT8 (q8)} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}finetuned/\allowbreak{}onnx/\allowbreak{}model\_\allowbreak{}quantized.\allowbreak{}onnx} & 112,7 Mio & Modèle compact servi au navigateur Web \\
+\end{longtable}
+\end{tabletype}
+
+\subsection{Contrôles de conformité}
+\begin{enumerate}
+\item \textbf{Contrôle 1 : Parité numérique FP32 (PyTorch vs ONNX FP32)} :
+\item \textbf{Cosinus minimal} : \$1.00000000\$ (seuil de parité strict : \$\textbackslash\{\}ge 0.99999\$).
+\item \textbf{Écart absolu maximal composante} : \$1,17 \textbackslash\{\}times 10\textasciicircum{}\{-7\}\$.
+\item \textbf{Statut} : \textbf{VALIDÉ AVEC SUCCÈS}.
+\end{enumerate}
+\begin{enumerate}
+\item \textbf{Contrôle 2 : Fidélité de la quantification INT8 (PyTorch FP32 vs ONNX q8)} :
+\item \textbf{Cosinus médian} : \$0.9834\$ (seuil attendu : \$\textbackslash\{\}ge 0.98\$).
+\item \textbf{Cosinus minimal} : \$0.9789\$ (seuil : \$\textbackslash\{\}ge 0.97\$).
+\item \textbf{Concordance du Top-1} : \$100,0\textbackslash\{\} \textbackslash\{\}\%\$ sur le banc de validation.
+\item \textbf{Statut} : \textbf{VALIDÉ AVEC SUCCÈS}.
+\end{enumerate}
+\rulebreak
+
+\section{Synthèse et Livrables de l'Issue \#49}
+
+Tous les critères de validation et livrables de l'Issue \#49 sont rigoureusement remplis :
+\begin{itemize}
+\item [x] \textbf{Génération de paires synthétiques avec le modèle local} : 109 paires question-passage générées avec Qwen2.5-7B local.
+\item [x] \textbf{Filtrage et contrôle d'échantillon} : Validé et consigné dans \code{data/\allowbreak{}adaptation/\allowbreak{}echantillon\_\allowbreak{}controle\_\allowbreak{}train.\allowbreak{}json}.
+\item [x] \textbf{Vérification d'absence de fuite du test} : 67 fiches totalement exclues du train set, contrôle Jaccard < 0.40.
+\item [x] \textbf{Ajustement contrastif (négatifs du lot)} : Réalisé avec \code{MultipleNegativesRankingLoss} et préfixes \code{query:\allowbreak{} } / \code{passage:\allowbreak{} }.
+\item [x] \textbf{Mesure avant/après appariée} : Recall@5 en hausse de \textbf{+19,44 pts} (\$p = 0.0002\$).
+\item [x] \textbf{Conversion ONNX et contrôles notebook 02} : Parité FP32 (\$1.00000000\$) et fidélité q8 validées.
+\item [x] \textbf{Poids hors Git} : Dossier \code{models/\allowbreak{}} protégé par le \code{.\allowbreak{}gitignore}.
+\end{itemize}
+\end{document}

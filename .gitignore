@@ -12,6 +12,12 @@ probe.*
 __pycache__/
 # donnees : corpus brut et prepare, reconstruits par script (ticket #27)
 data/
+# modeles et poids volumineux (>100 Mio hors Git)
+models/
+*.onnx
+*.safetensors
+*.pt
+*.bin
 # site du volet A : dépendances et construction, regénérées par npm
 node_modules/
 front/dist/
