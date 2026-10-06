@@ -20,6 +20,22 @@ Répartition retenue avant la rédaction :
 
 Ce découpage conserve 68 questions dans le corpus dans le lot de test, seuil retenu dans le rapport J2 pour détecter un écart apparié de 15 points, tout en réservant un petit lot de calibration.
 
+## État vérifié avant gel — 6 octobre 2026
+
+Après rédaction, annotation, validation commune et arbitrage des doubles annotations :
+
+- 105 questions au total ;
+- 78 questions `dans_corpus` et 27 `hors_corpus` (25,7 %) ;
+- 8 questions de calibration : 5 `dans_corpus` et 3 `hors_corpus` ;
+- 97 questions de test : 73 `dans_corpus` et 24 `hors_corpus`, soit plus que le minimum de 68 questions `dans_corpus` prévu pour le test ;
+- 21 doubles annotations indépendantes, 7 par annotateur ;
+- accord sur l'URL : 19/21 (90,5 %) ;
+- accord sur l'extrait : 14/16 cas applicables (87,5 %) ; pour 5 questions où les deux annotateurs concluent `hors_corpus`, `accord_extrait = n/a` ;
+- Q051 conserve l'annotation principale comme référence après arbitrage ;
+- Q062 a été reclassée `dans_corpus` après identification d'un passage suffisant lors de la seconde annotation.
+
+La cible initiale de 31 questions `hors_corpus` n'est pas forcée : le type final dépend de la présence ou non d'une réponse suffisante dans le corpus.
+
 ## Répartition des rédacteurs
 
 | Rédacteur | Identifiant GitHub | Identifiants | Total | Dans le corpus | Hors corpus |
@@ -32,8 +48,8 @@ Chacun réalise aussi 7 annotations secondaires sur les questions d'un autre ré
 
 ## Fichiers
 
-- `questions_annotees.csv` : 105 lignes réservées, avec thème, URL indicative et métadonnées ; les colonnes `question` et `extrait` restent vides jusqu'à la rédaction et l'annotation humaines ;
-- `annotations_secondaires.csv` : annotations indépendantes du sous-échantillon à double annoter.
+- `questions_annotees.csv` : jeu principal finalisé de 105 questions avec lot, type, thème, formulation, URL, extrait, rédacteur, indicateur de double annotation et remarque ;
+- `annotations_secondaires.csv` : 21 annotations secondaires indépendantes avec mesure d'accord sur l'URL et l'extrait.
 
 Les fichiers sont en UTF-8, séparés par des virgules. Les champs contenant une virgule, un guillemet ou un saut de ligne doivent être entourés de guillemets doubles ; un guillemet contenu dans un champ est doublé.
 
