@@ -42,13 +42,15 @@ Analyse secondaire, rapportée à part (section 8.3).
 
 ## 3. Règle de pertinence (D4)
 
-* **Normalisation.** Appliquée à l'extrait comme au passage : minuscules, apostrophe typographique remplacée par l'apostrophe droite, marques de liste « - » et « 1. » retirées, puis seuls les lettres, y compris accentuées, et les chiffres sont conservés.
+* **Normalisation.** Appliquée à l'extrait comme au passage : minuscules, apostrophe typographique remplacée par l'apostrophe droite, puis seuls les lettres, y compris accentuées, et les chiffres sont conservés ; les tirets de liste disparaissent ainsi. La comparaison est faite deux fois, avec et sans retrait des marques de liste numérotées (un nombre suivi d'un point et d'une espace), car la copie depuis le site les perd parfois, mais les retirer partout effacerait aussi une année en fin de phrase. Un passage est pertinent si l'une des deux comparaisons le déclare tel.
 * **Passage pertinent.** Un passage est pertinent pour une question si son texte normalisé contient un fragment contigu de l'extrait normalisé long d'au moins la moitié de l'extrait, arrondie à l'entier supérieur.
 * **Fiche pertinente (D8).** Une fiche est pertinente si elle contient au moins un passage pertinent.
-* **Longueur minimale.** Un extrait normalisé compte au moins 80 caractères ; au 6 octobre, le plus court en compte 83.
+* **Longueur minimale.** Un extrait normalisé, sans retrait des marques, compte au moins 80 caractères ; au 6 octobre, le plus court en compte 83.
 * **Contrôle avant la mesure.** Chaque question du corpus doit avoir au moins un passage pertinent dans chaque découpage. Sinon, elle est signalée, comptée comme un échec pour ce découpage, et leur nombre est publié.
 
 Pourquoi un fragment et non l'extrait entier : au 6 octobre, d'après les seules annotations, les 77 extraits tiennent entiers dans un passage M2, mais seulement 74 en M2 à 256 tokens, 70 en M1, et 69 en M0 comme en M3. Exiger l'extrait entier avantagerait M2 par construction.
+
+Application au 6 octobre, sur les 77 questions du corpus et d'après les seules annotations : en M2, en M2 à 256 tokens et en M3, chaque question a au moins un passage pertinent, et 64 en ont un seul ; en M1 aussi, avec 53 questions à un seul passage ; en M0, une question n'en a aucun. La règle est implémentée dans `scripts/evaluation/pertinence.py`, dont la présélection est contrôlée contre une recherche exhaustive.
 
 ---
 
