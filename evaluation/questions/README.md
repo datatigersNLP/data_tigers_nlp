@@ -81,7 +81,7 @@ Après gel des deux annotations, l'équipe compare l'URL puis l'extrait et rense
 
 - `accord_url = oui` si les deux annotations utilisent la même URL canonique ;
 - `accord_url = non` si les URL sont différentes, ou si une annotation trouve une réponse dans le corpus et l'autre conclut hors corpus ;
-- `accord_extrait = oui` si les extraits sont identiques, ou s'ils sont différents mais correspondent au même passage et répondent tous deux à la question.
+- `accord_extrait = oui` si les extraits sont identiques, ou s'ils sont différents mais proviennent de la même fiche (même texte source) et répondent tous deux à la question.
 - si les deux annotations concluent `hors_corpus`, `accord_url = oui` et `accord_extrait = n/a`, puisqu'aucun extrait n'est applicable.
 
 ## Contrôles avant gel
