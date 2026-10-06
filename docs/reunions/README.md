@@ -6,6 +6,8 @@ Index des réunions de l'équipe et de leurs supports. Le rapport final doit tra
 |---|---|---|---|---|
 | 14/09/2026 | Weekly 1 | #2 | aucun | lancement, lecture du sujet |
 | 19/09/2026 | Weekly 2, réunion de cadrage | #6 | `03_SUPPORT_REUNION_J2.md` et son PDF | cas A3 et B1, environnement, corpus, machine cible, répartition ; consignées dans `docs/jalons/J2_decisions.md`, puis dans le rapport J2 |
+| 23/09/2026 | Réunion d'avancement | #26 | aucun | cinq premières actions de la section 5.6 du rapport J2 confirmées, responsables et échéances révisés (tickets #27 à #31) |
+| 30/09/2026 | Weekly 3 | #9 | aucun | compte rendu à compléter dans #9 |
 
 ## Le support du 19/09
 
