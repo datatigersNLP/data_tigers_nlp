@@ -195,6 +195,41 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 - Format binaire multi-plateforme : obligation de spécifier explicitement l'ordre des octets en Little-Endian (standard x86/ARM/WebAssembly) pour permettre un mapping mémoire direct sans réordonnancement d'octets.
 
+### Session 10, 3 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Résolution intégrale de l'Issue #45 (milestone J3 / mi-parcours) : implémentation, test unitaire et exécution du banc d'évaluation comparatif (Aléatoire vs BM25 vs Dense E5) sur le jeu public français PIAF (`AgentPublic/piaf`), avec test de significativité statistique apparié (McNemar).
+
+**Produit.**
+- `scripts/evaluation/metrics.py` (190 lignes) : module autonome de métriques IR (`recall_at_k`, `reciprocal_rank`, `evaluate_retrieval`, `compute_mcnemar_test`) incluant un banc de tests unitaires par assertions.
+- `scripts/evaluation/01_valider_sur_piaf.py` (220 lignes) : pipeline d'évaluation reproductible de bout en bout avec sauvegarde des résultats structurés dans `data/evaluation/piaf/`.
+- `docs/etudes/evaluation/01_validation_metriques_piaf.md` : note de synthèse méthodologique, tableau comparatif, analyse qualitative et guide de réutilisation pour le Notebook 03.
+
+**Mesures exécutées.**
+- Extraction déterministe de 761 contextes uniques (passages Wikipédia) et 3 835 questions annotées depuis `AgentPublic/piaf` (révision figée `bda8c063bc7297180796cd835d1974c0bc71c521`).
+- Encodage normalisé L2 avec `intfloat/multilingual-e5-small` (préfixes `passage: ` et `query: `) et calcul de similarité cosinus par produit scalaire matriciel (3 835 × 761).
+- Calcul des métriques globales :
+  - **Aléatoire :** Recall@1 = 0,08 %, Recall@5 = 0,76 %, MRR = 0,0036
+  - **BM25 (`rank_bm25`) :** Recall@1 = 64,25 %, Recall@5 = 81,07 %, MRR = 0,7147
+  - **Dense E5 :** Recall@1 = 66,78 %, Recall@5 = 87,20 %, MRR = 0,7567 (+6,13 points de Recall@5 face à BM25).
+- Test de McNemar sur le Recall@5 : 438 victoires exclusives E5 contre 203 pour BM25 sur 641 paires discordantes, chi2 = 85,42, p = 8,84e-21 (gain hautement significatif).
+- Temps d'inférence CPU moyen mesuré : 6,08 ms par requête pour E5 contre 0,37 ms pour BM25.
+
+**Résultats retenus.**
+- Validation mathématique complète de la chaîne de métriques via assertions sur calculs manuels préalables.
+- Le module `metrics.py` est certifié prêt pour l'évaluation sur le corpus SocialGouv (Notebook 03).
+
+**Ce qui a été écarté, et pourquoi.**
+- Généralisation hâtive des performances au corpus réglementaire : explicitement rejetée dans le rapport, PIAF étant encyclopédique et ne reflétant pas la complexité des articles de loi ni des sigles métiers (CDI, CDD).
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la relecture de Mahé BEGNIS (binôme Domaine D2).
+
+**Temps d'appropriation constaté.**
+- 20 minutes pour formaliser le module de métriques pures et le test exact de McNemar.
+
+**Difficultés rencontrées.**
+- Gestion des versions de paquets : installation et configuration requises de `transformers`, `sentence-transformers` et `rank-bm25` dans l'environnement local.
+
 ### Session 11, 4 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
 
 **Objet.** Résolution intégrale de l'Issue #47 (milestone J3) : conception, implémentation et benchmarking des références lexicales TF-IDF et BM25 sur les 4 240 passages M2 du corpus travail-emploi SocialGouv, étude de 5 variantes de prétraitement et évaluation du portage client.
