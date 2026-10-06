@@ -204,14 +204,36 @@ def compute_mcnemar_test(
         raise ValueError("Il faut une étiquette de groupe par question.")
 
     # 1 si succès à Recall@k, 0 sinon
-    success_a = np.array([recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_a, ground_truth)])
-    success_b = np.array([recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_b, ground_truth)])
+    success_a = [recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_a, ground_truth)]
+    success_b = [recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_b, ground_truth)]
+    return {"k": k, **paired_success_test(success_a, success_b, groups=groups, level=level)}
+
+
+def paired_success_test(
+    success_a: Sequence[bool],
+    success_b: Sequence[bool],
+    groups: Optional[Sequence[Any]] = None,
+    level: float = 0.95
+) -> Dict[str, Any]:
+    """
+    Cœur du test apparié de compute_mcnemar_test, à partir des succès question par question de deux systèmes.
+
+    Sert quand les deux systèmes n'ont pas la même vérité terrain, par exemple deux découpages dont les passages
+    pertinents diffèrent : chaque succès est alors calculé avec la vérité terrain de son propre système. Mêmes
+    sorties que compute_mcnemar_test, sans la clé "k".
+    """
+    if len(success_a) != len(success_b):
+        raise ValueError("Les deux vecteurs de succès doivent avoir la même longueur.")
+    if groups is not None and len(groups) != len(success_a):
+        raise ValueError("Il faut une étiquette de groupe par question.")
+    success_a = np.asarray(success_a, dtype=bool)
+    success_b = np.asarray(success_b, dtype=bool)
 
     n_00 = int(np.sum(~success_a & ~success_b))  # Échec A, Échec B
     n_01 = int(np.sum(~success_a & success_b))   # Échec A, Succès B
     n_10 = int(np.sum(success_a & ~success_b))   # Succès A, Échec B
     n_11 = int(np.sum(success_a & success_b))    # Succès A, Succès B
-    n_total = len(ground_truth)
+    n_total = len(success_a)
 
     discordant = n_01 + n_10
     if discordant == 0:
@@ -231,7 +253,6 @@ def compute_mcnemar_test(
     z = stats.norm.ppf(0.5 + level / 2)
 
     result = {
-        "k": k,
         "n_total": n_total,
         "contingency_table": {
             "n_00": n_00,  # Deux échecs
@@ -255,6 +276,49 @@ def compute_mcnemar_test(
         result.update({"n_groups": n_groups, "chi2_obuchowski": chi2_groups, "p_value_groups": decision_p})
     result["significant_5pct"] = bool(decision_p < 0.05)
     return result
+
+
+def holm(p_values: Sequence[float]) -> List[float]:
+    """
+    Valeurs p ajustées par la méthode de Holm (1979), dans l'ordre des entrées.
+
+    Triées par ordre croissant, la i-ième (à partir de 0) est multipliée par m - i, puis on impose la monotonie par
+    un maximum cumulé, et l'on plafonne à 1. Une hypothèse est rejetée au seuil alpha si sa valeur ajustée est
+    inférieure à alpha ; le risque de rejeter à tort au moins une hypothèse de la famille reste alors sous alpha.
+    """
+    m = len(p_values)
+    order = sorted(range(m), key=lambda i: p_values[i])
+    adjusted, running = [0.0] * m, 0.0
+    for rank, i in enumerate(order):
+        running = max(running, min(1.0, (m - rank) * p_values[i]))
+        adjusted[i] = running
+    return adjusted
+
+
+def random_expectations(
+    n_relevant: int,
+    n_docs: int,
+    k_values: Tuple[int, ...] = (1, 3, 5, 10),
+    depth: int = 10
+) -> Dict[str, float]:
+    """
+    Espérance exacte de Recall@k et du MRR@depth pour un classement tiré uniformément au hasard, quand une question
+    a n_relevant passages pertinents parmi n_docs (loi hypergéométrique).
+
+    Avec q_j la probabilité qu'aucun pertinent ne figure dans les j - 1 premiers rangs,
+    q_j = produit pour t de 0 à j - 2 de (N - r - t) / (N - t), le premier pertinent est au rang j avec la
+    probabilité q_j * r / (N - j + 1). Recall@k vaut 1 - q_(k+1), et MRR@depth la somme, pour j de 1 à depth, de
+    q_j * r / (N - j + 1) / j.
+    """
+    if not 1 <= n_relevant <= n_docs:
+        raise ValueError("Il faut au moins un passage pertinent, et pas plus que de passages.")
+    r, n = n_relevant, n_docs
+    no_hit = [1.0]   # no_hit[j - 1] = q_j
+    for t in range(max(max(k_values), depth) + 1):
+        no_hit.append(no_hit[-1] * max(0.0, (n - r - t) / (n - t)) if n - t > 0 else 0.0)
+    out = {f"recall@{k}": 1.0 - no_hit[k] for k in k_values}
+    out["mrr"] = sum(no_hit[j - 1] * r / (n - j + 1) / j for j in range(1, depth + 1) if n - j + 1 > 0)
+    return out
 
 
 def sanity_check_manual_examples() -> bool:
@@ -350,6 +414,20 @@ def sanity_check_manual_examples() -> bool:
     assert np.isclose(mcn["chi2_obuchowski"], 4.0 / 9.0)
     se = math.sqrt(7.0) / 6.0
     assert np.allclose(mcn["ci_difference"], (1.0 / 3.0 - 1.959964 * se, 1.0 / 3.0 + 1.959964 * se))
+
+    # Exemple 10 : le test sur vecteurs de succès redonne exactement compute_mcnemar_test
+    direct = paired_success_test([1, 1, 1, 0, 1, 0], [0, 0, 1, 1, 0, 0], groups=["g1", "g1", "g2", "g2", "g3", "g3"])
+    assert {"k": 1, **direct} == mcn
+
+    # Exemple 11 : Holm sur (0,01 ; 0,04 ; 0,03) : triées 0,01 x 3, 0,03 x 2, 0,04 x 1, puis maximum cumulé
+    assert np.allclose(holm([0.01, 0.04, 0.03]), [0.03, 0.06, 0.06])
+
+    # Exemple 12 : tirage aléatoire, 4 passages
+    one = random_expectations(1, 4, k_values=(1, 2))      # un pertinent : k / N, et MRR = (1 + 1/2 + 1/3 + 1/4) / 4
+    assert np.allclose([one["recall@1"], one["recall@2"], one["mrr"]], [0.25, 0.5, 25 / 48])
+    two = random_expectations(2, 4, k_values=(1, 2))      # deux pertinents : 1/2, 1 - C(2,2)/C(4,2) = 5/6, MRR = 13/18
+    assert np.allclose([two["recall@1"], two["recall@2"], two["mrr"]], [0.5, 5 / 6, 13 / 18])
+    assert np.isclose(random_expectations(1, 761)["recall@5"], 5 / 761)   # valeur de PIAF
 
     return True
 

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encodage des questions dans le navigateur</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: Canvas; color: CanvasText; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Encodage des questions dans le navigateur (notebook 03, section 4)</h1>
+<p>À servir depuis la racine du dépôt, sur la seule interface locale, par exemple avec
+<code>python -m http.server 8765 --bind 127.0.0.1</code>, puis ouvrir
+<code>http://127.0.0.1:8765/scripts/evaluation/encodage_navigateur.html</code>. La page lit les questions écrites par le
+notebook 03 (<code>data/evaluation/notebook03/questions_navigateur.json</code>), vérifie leur empreinte, les encode avec
+le modèle et la précision que sert le site (q8), et expose les vecteurs dans <code>window.RESULTATS</code>, à enregistrer
+dans <code>data/evaluation/notebook03/vecteurs_navigateur.json</code>.</p>
+<pre id="journal">Chargement...</pre>
+<p id="telechargement"></p>
+<script type="module">
+// Même bibliothèque, même version, même dépôt, même révision et même précision que le site (en-tête de l'index)
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
+
+const journal = document.getElementById("journal");
+const noter = (texte) => { journal.textContent += "\n" + texte; };
+// lien de téléchargement du fichier attendu par le notebook 03, pour rejouer l'encodage sans outil d'automatisation
+const proposer = (nom) => {
+  const lien = document.createElement("a");
+  lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
+  lien.download = nom;
+  lien.textContent = `Télécharger ${nom}, à placer dans data/evaluation/notebook03/`;
+  document.getElementById("telechargement").append(lien);
+};
+// empreinte SHA-256, en hexadécimal, d'un texte encodé en UTF-8
+const sha256 = async (texte) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",
+  new TextEncoder().encode(texte))), (octet) => octet.toString(16).padStart(2, "0")).join("");
+env.allowLocalModels = false;
+
+try {
+  const entete = await (await fetch("../../data/indexation/site/index_m2.json")).json();
+  const lot = await (await fetch("../../data/evaluation/notebook03/questions_navigateur.json")).json();
+  // la liste des questions est contrôlée par son empreinte, calculée par le notebook sur le même texte JSON
+  const empreinte = await sha256(JSON.stringify(lot.questions));
+  if (empreinte !== lot.empreinte) throw new Error("empreinte des questions différente de celle écrite par le notebook");
+  if (entete.requete.prefixe !== lot.prefixe) throw new Error("préfixe différent de celui de l'en-tête du site");
+  const extracteur = await pipeline("feature-extraction", entete.modele.depot,
+    { revision: entete.modele.revision, dtype: entete.modele.dtype, device: "wasm" });
+  noter(`modèle chargé : ${entete.modele.depot}, ${entete.modele.revision.slice(0, 8)}, ${entete.modele.dtype}`);
+  const vecteurs = [];
+  const debut = performance.now();
+  for (const q of lot.questions) {
+    const sortie = await extracteur(lot.prefixe + q.texte,
+      { pooling: entete.requete.pooling, normalize: entete.requete.normalize });
+    vecteurs.push(Array.from(sortie.data));
+  }
+  const encodage_ms = performance.now() - debut;
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, depot: entete.modele.depot,
+    revision: entete.modele.revision, dtype: entete.modele.dtype, prefixe: lot.prefixe, empreinte_questions: empreinte,
+    identifiants: lot.questions.map((q) => q.id), vecteurs, encodage_ms };
+  noter(`terminé : ${vecteurs.length} questions en ${Math.round(encodage_ms)} ms`);
+  proposer("vecteurs_navigateur.json");
+} catch (erreur) {
+  window.RESULTATS = { erreur: String(erreur) };
+  noter("ERREUR : " + erreur);
+}
+</script>
+</body>
+</html>
