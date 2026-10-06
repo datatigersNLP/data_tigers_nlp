@@ -36,6 +36,7 @@ Charges en heures. La colonne Écart sert à la section retour d'expérience du 
 | 4 | Choix du modèle d'embeddings | D2 | Mahé, Remy | 19/09 | 19/09 | | | |
 | 5 | Livrable J2 | transverse | tous | 19/09 | | | | |
 | 6 | Weekly 2 | transverse | tous | 19/09 | | | | |
+| 47 | Construire les références lexicales TF-IDF et BM25 | D2 | Remy, Mahé | 04/10 | 04/10 | 4 | 3.5 | -0.5 |
 
 ---
 
