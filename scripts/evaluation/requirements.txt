@@ -1,4 +1,4 @@
-# Dépendances de la validation des métriques sur PIAF (ticket #45), Python 3.12.
+# Dépendances de l'évaluation : validation des métriques sur PIAF (#45) et références lexicales (#47), Python 3.12.
 #
 # Ce fichier liste les dépendances directes. requirements-lock.txt, généré depuis ce fichier, fige aussi toutes
 # les dépendances indirectes : c'est lui qu'on installe. Depuis la racine du dépôt :
@@ -6,6 +6,7 @@
 #   uv venv --seed --python 3.12 .venv
 #   uv pip sync --python .venv/bin/python scripts/evaluation/requirements-lock.txt
 #   .venv/bin/python scripts/evaluation/01_valider_sur_piaf.py
+#   .venv/bin/python scripts/evaluation/02_references_lexicales.py
 #
 # Après modification de ce fichier, régénérer le fichier figé :
 #   uv pip compile scripts/evaluation/requirements.txt --universal --python-version 3.12 -o scripts/evaluation/requirements-lock.txt
@@ -14,6 +15,7 @@
 # donc mêmes plateformes : macOS 14 ou plus sur puce Apple, Linux (x86-64, ARM), Windows x86-64.
 # Premier lancement : le script télécharge le jeu PIAF et le modèle intfloat/multilingual-e5-small (470 Mio)
 # dans le cache Hugging Face de l'utilisateur, hors du dépôt, et la liste de mots vides Snowball dans data/.
+# Le script des références lexicales lit les passages M2 écrits par le notebook 01 (data/decoupage/passages/).
 
 # jeu PIAF et accès au Hub
 datasets==5.0.1
@@ -23,9 +25,14 @@ huggingface-hub==1.33.0
 numpy==2.5.3
 scipy==1.18.1
 
-# références lexicales : BM25 de rank_bm25, racinisation Snowball
+# références lexicales : TF-IDF de scikit-learn, BM25 de rank_bm25 (recoupement), racinisation Snowball
+scikit-learn==1.9.1
 rank-bm25==0.2.2
 snowballstemmer==3.1.1
+
+# lecture des passages du notebook 01
+pandas==3.0.6
+pyarrow==25.0.1
 
 # encodeur intfloat/multilingual-e5-small sur CPU
 sentence-transformers==6.1.0
