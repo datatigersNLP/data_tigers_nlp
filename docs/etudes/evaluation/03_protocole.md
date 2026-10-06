@@ -76,7 +76,7 @@ Règles communes :
 
 * **Au niveau du passage :** Recall@k pour k = 1, 3, 5 et 10, et MRR@10. Une question est réussie à k si au moins un passage pertinent figure parmi les k premiers.
 * **Au niveau de la fiche (D8) :** Recall@5, une question étant réussie si l'un des 5 premiers passages appartient à une fiche pertinente.
-* **Intervalles à 95 % :** robustes au regroupement des questions par fiche annotée (`proportion_ci` et `compute_mcnemar_test` de `scripts/evaluation/metrics.py`, avec la fiche en `groups`).
+* **Intervalles à 95 % :** robustes au regroupement des questions par fiche annotée. Pour une proportion, intervalle de Wilson calculé sur l'effectif corrigé de l'effet de plan, qui reste dans [0, 1] (`proportion_ci`, méthode `wilson`) ; pour un écart apparié, intervalle de Wald à erreur type robuste (`paired_success_test`), sauf s'il y a moins de 10 paires discordantes : le Wald dégénère alors, jusqu'à une largeur nulle sans aucune discordance, et l'on retient l'intervalle d'Agresti et Min (Statistics in Medicine, 2005), qui ajoute une demi-observation à chaque case de la table. Les deux viennent de `scripts/evaluation/metrics.py`, avec la fiche en `groups`.
 
 ---
 

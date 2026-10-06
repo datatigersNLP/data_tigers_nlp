@@ -155,25 +155,45 @@ def _clustered_se(residuals: np.ndarray, groups: Sequence[Any]) -> Tuple[float, 
     return math.sqrt(n_groups / (n_groups - 1) * np.sum(sums ** 2)) / len(residuals), n_groups
 
 
+def _wilson(p: float, n: float, z: float) -> Tuple[float, float]:
+    """Intervalle de Wilson d'une proportion p observée sur un effectif n, éventuellement non entier."""
+    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
+    demi = z / (1 + z * z / n) * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return float(max(0.0, centre - demi)), float(min(1.0, centre + demi))
+
+
 def proportion_ci(
     successes: Sequence[Union[bool, float]],
     groups: Optional[Sequence[Any]] = None,
-    level: float = 0.95
+    level: float = 0.95,
+    method: str = "wald"
 ) -> Tuple[float, float]:
     """
     Intervalle de confiance d'une proportion de succès (par exemple Recall@5 : un succès par question).
 
     Sans groupes : intervalle de Wilson, qui suppose les questions indépendantes. Avec groups (une étiquette par
-    question : fiche, article, contexte) : intervalle de Wald à erreur type robuste aux groupes, car des questions
-    d'un même groupe se ressemblent et l'intervalle de Wilson serait alors trop étroit.
+    question : fiche, article, contexte), des questions d'un même groupe se ressemblent, et l'intervalle de Wilson
+    serait trop étroit :
+    - method="wald" : intervalle de Wald à erreur type robuste aux groupes (celui de la validation sur PIAF) ;
+      il peut sortir de [0, 1] quand la proportion est proche d'une borne ou l'effectif petit ;
+    - method="wilson" : intervalle de Wilson calculé sur l'effectif corrigé de l'effet de plan,
+      n / (variance robuste aux groupes / variance sans groupes), la variance sans groupes valant p(1 - p) / (n - 1).
+      Il reste dans [0, 1], et se réduit exactement au Wilson classique quand chaque groupe compte une question.
+      Quand p vaut 0 ou 1, l'effet de plan n'est pas défini : on prend le Wilson classique.
     """
     s = np.asarray(successes, dtype=float)
-    if groups is None:
-        ci = stats.binomtest(int(s.sum()), len(s)).proportion_ci(confidence_level=level, method="wilson")
-        return float(ci.low), float(ci.high)
-    se, _ = _clustered_se(s - s.mean(), groups)
+    n, p = len(s), float(s.mean())
     z = stats.norm.ppf(0.5 + level / 2)
-    return float(s.mean() - z * se), float(s.mean() + z * se)
+    if groups is None or (method == "wilson" and p in (0.0, 1.0)):
+        ci = stats.binomtest(int(s.sum()), n).proportion_ci(confidence_level=level, method="wilson")
+        return float(ci.low), float(ci.high)
+    se, _ = _clustered_se(s - p, groups)
+    if method == "wald":
+        return float(p - z * se), float(p + z * se)
+    if method == "wilson":
+        effet_de_plan = se ** 2 / (p * (1 - p) / (n - 1))
+        return _wilson(p, n / effet_de_plan, z)
+    raise ValueError(f"Méthode inconnue : {method}")
 
 
 def compute_mcnemar_test(
@@ -207,6 +227,20 @@ def compute_mcnemar_test(
     success_a = [recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_a, ground_truth)]
     success_b = [recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_b, ground_truth)]
     return {"k": k, **paired_success_test(success_a, success_b, groups=groups, level=level)}
+
+
+def _agresti_min(n_10: int, n_01: int, n_total: int, z: float) -> Tuple[float, float]:
+    """
+    Intervalle d'Agresti et Min (Statistics in Medicine, 2005) pour l'écart de deux proportions appariées : une
+    demi-observation est ajoutée à chacune des quatre cases, puis l'intervalle de Wald est calculé sur ces effectifs.
+    Il ne dégénère pas quand les paires discordantes sont rares ou absentes, contrairement au Wald ; il suppose les
+    questions indépendantes.
+    """
+    m = n_total + 2
+    p10, p01 = (n_10 + 0.5) / m, (n_01 + 0.5) / m
+    d = p10 - p01
+    se = math.sqrt(max(0.0, (p10 + p01) - d * d) / m)
+    return float(d - z * se), float(d + z * se)
 
 
 def paired_success_test(
@@ -265,6 +299,7 @@ def paired_success_test(
         "p_value": p_value,
         "difference": difference,
         "ci_difference": (float(difference - z * se), float(difference + z * se)),
+        "ci_difference_agresti_min": _agresti_min(n_10, n_01, n_total, z),
     }
     decision_p = p_value
     if groups is not None:
@@ -428,6 +463,23 @@ def sanity_check_manual_examples() -> bool:
     two = random_expectations(2, 4, k_values=(1, 2))      # deux pertinents : 1/2, 1 - C(2,2)/C(4,2) = 5/6, MRR = 13/18
     assert np.allclose([two["recall@1"], two["recall@2"], two["mrr"]], [0.5, 5 / 6, 13 / 18])
     assert np.isclose(random_expectations(1, 761)["recall@5"], 5 / 761)   # valeur de PIAF
+
+    # Exemple 13 : Wilson à effectif corrigé ; un groupe par question redonne le Wilson classique
+    succes = [1] * 81 + [0] * 182
+    assert np.allclose(proportion_ci(succes, groups=list(range(263)), method="wilson"), proportion_ci(succes))
+    # six questions en trois groupes, succès 1 1 0 0 1 0 : p = 1/2, variance robuste 3/2 * 2 / 36 = 1/12,
+    # variance sans groupes 0,25 / 5 = 1/20, effet de plan 5/3, effectif 3,6 ; Wilson(1/2 ; 3,6) = [0,1408 ; 0,8592]
+    bas, haut = proportion_ci([1, 1, 0, 0, 1, 0], groups=["g1", "g1", "g2", "g2", "g3", "g3"], method="wilson")
+    assert (round(bas, 4), round(haut, 4)) == (0.1408, 0.8592)
+    assert proportion_ci([1, 1, 1], groups=["a", "b", "c"], method="wilson") == proportion_ci([1, 1, 1])
+
+    # Exemple 14 : Agresti et Min ; A seul 1, B seul 0, sur 5 questions : effectifs 7, (1,5 - 0,5) / 7 = 1/7,
+    # variance (2/7 - 1/49) / 7, intervalle [-0,2387 ; 0,5244] ; sans aucune discordance, il ne dégénère pas
+    t = paired_success_test([1, 0, 1, 0, 0], [0, 0, 1, 0, 0])
+    assert tuple(round(x, 4) for x in t["ci_difference_agresti_min"]) == (-0.2387, 0.5244)
+    assert t["ci_difference"] != t["ci_difference_agresti_min"]
+    nul = paired_success_test([1, 0, 1, 0, 0], [1, 0, 1, 0, 0])
+    assert nul["ci_difference"] == (0.0, 0.0) and nul["ci_difference_agresti_min"][0] < 0 < nul["ci_difference_agresti_min"][1]
 
     return True
 
