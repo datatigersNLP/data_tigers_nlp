@@ -230,6 +230,38 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Gestion des versions de paquets : installation et configuration requises de `transformers`, `sentence-transformers` et `rank-bm25` dans l'environnement local.
 
+### Session 11, 4 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Résolution intégrale de l'Issue #47 (milestone J3) : conception, implémentation et benchmarking des références lexicales TF-IDF et BM25 sur les 4 240 passages M2 du corpus travail-emploi SocialGouv, étude de 5 variantes de prétraitement et évaluation du portage client.
+
+**Produit.**
+- `scripts/evaluation/lexical_baselines.py` (220 lignes) : module modulaire et typé contenant les classes `LexicalTokenizer`, `BM25Retriever` et `TfidfRetriever`, supportant les variantes de stopwords (Snowball avec et sans négations), le stemming français et les exports web.
+- `scripts/evaluation/02_references_lexicales.py` (215 lignes) : banc d'expérimentation complet, mesure des vocabulaires, latences, empreinte mémoire d'export et validation qualitative sur requêtes types.
+- `docs/etudes/evaluation/02_references_lexicales_tfidf_bm25.md` : rapport complet d'analyse comparative, étude des négations en droit et proposition d'arbitrage pour le site web.
+
+**Mesures exécutées.**
+- Indexation des 4 240 passages M2 sous 5 variantes (V0 brute, V1 standard, V2 sans négations, V3 stemming + sans négations, V4 filtrage fréquentiel).
+- Contraction du vocabulaire par racinisation (V3) : passage de 15 440 à 8 695 termes uniques (-43,6 %).
+- Préservation des négations (V2 vs V1) : surcoût marginal négligeable (+2 mots au vocabulaire, +0,01 Mio en gzip), crucial pour l'intégrité juridique des clauses restrictives.
+- Poids de l'index BM25 optimisé pour le navigateur : 2,32 Mio brut / 0,74 Mio en gzip (face aux 112,8 Mio du modèle ONNX).
+- Latences moyennes mesurées : ~8 ms par requête pour BM25, ~2 ms pour TF-IDF.
+
+**Résultats retenus.**
+- La variante V3 (Stemming + Snowball sans négations) est retenue comme référence optimale pour le benchmark du Notebook 03.
+- Recommandation pour le Weekly : intégration possible de BM25 en JavaScript pour un moteur de recherche léger, instantané et sans dépendance ONNX.
+
+**Ce qui a été écarté, et pourquoi.**
+- Suppression aveugle des mots vides usuels : rejetée car elle élimine « ne », « pas », « sans », « aucun », inversant le sens des interdictions dans les textes de loi.
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la relecture de Mahé BEGNIS (binôme Domaine D2).
+
+**Temps d'appropriation constaté.**
+- 25 minutes pour formaliser le tokenizer juridique et l'estimation de l'index inversé Web.
+
+**Difficultés rencontrées.**
+- Prise en charge des dépendances spécifiques : installation et configuration requises de `nltk` pour les ressources Snowball françaises.
+
 ---
 
 ## 4. Erreurs détectées par la vérification

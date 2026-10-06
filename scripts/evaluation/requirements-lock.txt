@@ -155,13 +155,17 @@ packaging==26.3
     #   huggingface-hub
     #   transformers
 pandas==3.0.6
-    # via datasets
+    # via
+    #   -r scripts/evaluation/requirements.txt
+    #   datasets
 propcache==0.5.4
     # via
     #   aiohttp
     #   yarl
 pyarrow==25.0.1
-    # via datasets
+    # via
+    #   -r scripts/evaluation/requirements.txt
+    #   datasets
 pygments==2.21.0
     # via rich
 python-dateutil==2.9.0.post0
@@ -182,7 +186,9 @@ rich==15.0.0
 safetensors==0.8.0
     # via transformers
 scikit-learn==1.9.1
-    # via sentence-transformers
+    # via
+    #   -r scripts/evaluation/requirements.txt
+    #   sentence-transformers
 scipy==1.18.1
     # via
     #   -r scripts/evaluation/requirements.txt

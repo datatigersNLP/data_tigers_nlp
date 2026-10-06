@@ -37,6 +37,7 @@ Charges en heures. La colonne Écart sert à la section retour d'expérience du 
 | 5 | Livrable J2 | transverse | tous | 19/09 | | | | |
 | 6 | Weekly 2 | transverse | tous | 19/09 | | | | |
 | 45 | Valider la chaîne de mesure sur PIAF | D2 | Remy, Mahé | 03/10 | 03/10 | 4 | 3.5 | -0.5 |
+| 47 | Construire les références lexicales TF-IDF et BM25 | D2 | Remy, Mahé | 04/10 | 04/10 | 4 | 3.5 | -0.5 |
 
 ---
 
