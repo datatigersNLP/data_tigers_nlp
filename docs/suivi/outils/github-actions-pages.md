@@ -1,7 +1,8 @@
 # GitHub Actions et GitHub Pages
 
 ## Identification
-- Version : `actions/deploy-pages` v5, `actions/upload-pages-artifact` v5
+- Version : `actions/deploy-pages` v5, `actions/upload-pages-artifact` v5 (figées dans
+  `.github/workflows/deploiement-volet-a.yml` : identiques pour tous)
 - Nature : service d'intégration et de publication
 - Assignés : Vaneck (#29) ; prévus : Maïmouna, Mahé, Rémy (#48) ; Jibril (#53)
 - Coordination : Vaneck

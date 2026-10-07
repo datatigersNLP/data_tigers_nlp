@@ -1,7 +1,8 @@
 # Vite (avec React et Tailwind CSS)
 
 ## Identification
-- Version : Vite 8.3.0, React 19.3.0, Tailwind CSS 4.3.3
+- Version : Vite 8.3.0, React 19.3.0, Tailwind CSS 4.3.3 (figées dans `front/package.json` et
+  `front/package-lock.json` : identiques pour tous)
 - Nature : outil de construction du site et serveur de développement
 - Assignés : Vaneck, Maïmouna (#7, #29) ; prévus : Mahé, Rémy (#48) ; Jibril (#53)
 - Coordination : Vaneck, Jibril

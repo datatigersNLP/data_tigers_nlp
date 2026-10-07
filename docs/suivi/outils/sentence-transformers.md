@@ -1,7 +1,7 @@
 # Sentence Transformers
 
 ## Identification
-- Version : 6.1.0
+- Version : 6.1.0 (figée dans les fichiers `requirements-lock.txt` : identique pour tous)
 - Nature : bibliothèque d'entraînement et d'usage d'encodeurs
 - Assignés : Rémy (#49) ; prévus : Mahé, Jibril (#49) ; Mahé, Rémy (#46)
 - Coordination : Rémy

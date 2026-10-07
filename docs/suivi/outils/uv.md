@@ -1,12 +1,21 @@
 # uv
 
 ## Identification
-- Version : à compléter
+- Version : variable selon les membres, voir « Versions utilisées »
 - Nature : gestionnaire d'environnements et de dépendances Python
 - Assignés : Mahé (#35, #30, #45 à #47), Vaneck (relecture de la PR #39) ; prévus : Rémy (#46, #47)
 - Coordination : Mahé
 - Période d'utilisation : à compléter
 - Besoin du projet auquel il répond : créer des environnements Python reproductibles, avec des dépendances figées pour toutes les plateformes.
+
+## Versions utilisées
+Chaque membre tient sa propre ligne à jour.
+
+| Membre | Version | Système | Remarque |
+|---|---|---|---|
+| Mahé | à compléter | macOS | |
+| Vaneck | à compléter | Windows | relance du notebook 01 (relecture de la PR #39) |
+| Rémy | à compléter | à compléter | |
 
 ## Mise en place
 - Temps avant le premier résultat utile :

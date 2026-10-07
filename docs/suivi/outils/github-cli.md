@@ -1,13 +1,24 @@
 # GitHub CLI (`gh`)
 
 ## Identification
-- Version : 2.101.0
+- Version : variable selon les membres, voir « Versions utilisées »
 - Nature : application en ligne de commande
 - Assignés : toute l'équipe (premier usage consigné au journal le 19/09) ; première version de la fiche rédigée par Vaneck
 - Coordination : toute l'équipe
 - Période d'utilisation : depuis le 19 septembre 2026
 - Besoin du projet auquel il répond : manipuler tickets, pull requests, board et réglages du dépôt sans passer
   par l'interface web, et rendre ces opérations reproductibles dans des scripts.
+
+## Versions utilisées
+Chaque membre tient sa propre ligne à jour.
+
+| Membre | Version | Système | Remarque |
+|---|---|---|---|
+| Vaneck | 2.101.0 | Windows | |
+| Mahé | à compléter | à compléter | |
+| Rémy | à compléter | à compléter | |
+| Jibril | à compléter | à compléter | |
+| Maïmouna | à compléter | à compléter | |
 
 ## Mise en place
 - Installation puis `gh auth login`.

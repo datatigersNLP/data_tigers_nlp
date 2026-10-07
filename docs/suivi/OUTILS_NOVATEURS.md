@@ -42,6 +42,11 @@ sont assignés et coordonnés par toute l'équipe.
 6. **Comparer à la méthode utilisée auparavant** lorsque c'est pertinent.
 7. **Pas de doublon** : deux outils presque identiques ne font pas deux retours si les observations sont les
    mêmes.
+8. **Une version par membre quand elle varie** : pour un outil que chacun installe sur sa machine (GitHub CLI,
+   uv, Ollama, Playwright, assistants d'IA), la fiche contient un tableau « Versions utilisées » où chacun tient
+   **sa** ligne, et chaque observation précise la version ou l'assistant concerné. Pour un outil dont la
+   version est figée par le projet (`package.json`, `requirements-lock.txt`, workflow), une seule version
+   suffit, avec le fichier qui la fixe.
 
 ### Travail avec Git
 

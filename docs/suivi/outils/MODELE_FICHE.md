@@ -5,12 +5,21 @@ tableau de `docs/suivi/OUTILS_NOVATEURS.md`. Chaque observation est signée du p
 « (Vaneck) », et renvoie à une preuve.
 
 ## Identification
-- Version :
+- Version : si elle est figée par le projet (`package.json`, `requirements-lock.txt`, workflow), l'indiquer
+  avec le fichier ; si chaque membre installe l'outil sur sa machine, écrire « variable selon les membres » et
+  remplir le tableau « Versions utilisées »
 - Nature : application, bibliothèque, environnement, agent, assistant, service ou autre
 - Assignés : déjà utilisateurs, puis utilisateurs prévus (ticket)
 - Coordination : référents validés en Weekly
 - Période d'utilisation :
 - Besoin du projet auquel il répond :
+
+## Versions utilisées
+Uniquement si la version varie selon les membres. Chaque membre tient sa propre ligne à jour.
+
+| Membre | Version | Système | Remarque |
+|---|---|---|---|
+| | | | |
 
 ## Mise en place
 - Temps avant le premier résultat utile :

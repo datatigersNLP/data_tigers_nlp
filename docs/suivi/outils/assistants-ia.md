@@ -1,12 +1,24 @@
 # Assistants de développement IA
 
 ## Identification
-- Version : à compléter
+- Version : plusieurs assistants et versions selon les membres, voir « Versions utilisées »
 - Nature : assistants conversationnels et de programmation
 - Assignés : toute l'équipe ; prévus : toute l'équipe
 - Coordination : toute l'équipe
 - Période d'utilisation : à compléter
 - Besoin du projet auquel il répond : expliquer, rédiger, relire du code et des documents, vérifier des données.
+
+## Versions utilisées
+Chaque membre tient sa propre ligne à jour, avec une ligne par assistant s'il en utilise plusieurs. Chaque
+observation des rubriques suivantes précise l'assistant concerné, par exemple « (Vaneck, <assistant>) ».
+
+| Membre | Assistant | Modèle ou version | Formule (gratuite, payante…) | Usages principaux |
+|---|---|---|---|---|
+| Vaneck | à compléter | à compléter | à compléter | à compléter |
+| Mahé | à compléter | à compléter | à compléter | à compléter |
+| Rémy | à compléter | à compléter | à compléter | à compléter |
+| Jibril | à compléter | à compléter | à compléter | à compléter |
+| Maïmouna | à compléter | à compléter | à compléter | à compléter |
 
 ## Mise en place
 - Temps avant le premier résultat utile :

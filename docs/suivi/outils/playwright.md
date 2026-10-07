@@ -1,12 +1,21 @@
 # Playwright
 
 ## Identification
-- Version : à compléter
+- Version : variable selon les membres, voir « Versions utilisées »
 - Nature : bibliothèque d'automatisation de navigateur
 - Assignés : Mahé (mesure de faisabilité du J2) ; prévus : Vaneck, Jibril (#53)
 - Coordination : Vaneck, Jibril
 - Période d'utilisation : à compléter
 - Besoin du projet auquel il répond : piloter un vrai navigateur pour mesurer la recherche et tester l'interface du volet A.
+
+## Versions utilisées
+Chaque membre tient sa propre ligne à jour.
+
+| Membre | Version | Système | Remarque |
+|---|---|---|---|
+| Mahé | à compléter | à compléter | mesure de faisabilité du J2 |
+| Vaneck | à compléter | à compléter | |
+| Jibril | à compléter | à compléter | |
 
 ## Mise en place
 - Temps avant le premier résultat utile :

@@ -1,7 +1,8 @@
 # ONNX Runtime (Python et Web)
 
 ## Identification
-- Version : 1.30.0 (Python)
+- Version : 1.30.0 en Python (figée dans les fichiers `requirements-lock.txt` : identique pour tous) ; ONNX
+  Runtime Web suit la version embarquée par Transformers.js
 - Nature : moteur d'exécution de modèles
 - Assignés : Mahé (#30, PR #40), Rémy (#49) ; prévus : Jibril (#49) ; Mahé, Rémy (#50)
 - Coordination : Mahé

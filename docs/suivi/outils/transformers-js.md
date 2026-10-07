@@ -1,7 +1,8 @@
 # Transformers.js
 
 ## Identification
-- Version : 4.3.0
+- Version : 4.3.0 (figée dans les pages de contrôle de la PR #40, à figer dans `front/package.json` avec #48 :
+  identique pour tous)
 - Nature : bibliothèque d'inférence dans le navigateur
 - Assignés : Mahé (J2, PR #40) ; prévus : Vaneck, Maïmouna, Rémy (#48)
 - Coordination : à désigner
