@@ -53,6 +53,13 @@ Chaque membre tient sa propre ligne à jour.
 Adopté.
 - Motif : gain net pour les opérations répétées et scriptables ; les pièges observés sont connus et documentés.
 
+## À retenir pour le rapport
+- Apport : toutes les opérations GitHub courantes en une commande, reproductibles et scriptables, y compris
+  les réglages absents de l'interface en ligne de commande, par `gh api`.
+- Principale limite : `gh api` bascule silencieusement de GET en POST dès qu'un champ `-f` est fourni.
+- Ce que la documentation ne dit pas clairement : ce changement implicite de méthode, et les droits réels
+  exigés par certains réglages (environnement `github-pages` réservé aux administrateurs).
+
 ## Preuves
 - Journal d'usage de l'IA, entrée du 19/09 (bascule GET vers POST).
 - Ticket #29 et pull request #42 (Pages, droits de l'environnement `github-pages`).

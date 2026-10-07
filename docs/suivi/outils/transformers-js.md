@@ -36,6 +36,11 @@
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Rapport J2 : faisabilité mesurée dans le navigateur (19,8 ms par requête).
 - Pull request #40 : pages de contrôle exécutées dans un vrai navigateur, écart observé entre le q8 du navigateur et celui de Python.

@@ -36,6 +36,11 @@
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Pull request #40 : parité ONNX fp32 et PyTorch, critère de parité q8 échoué puis diagnostiqué (notebook 02, section 8).
 - Ticket #49 : export et quantification de l'encodeur ajusté (`scripts/adaptation/06_exporter_onnx.py`).

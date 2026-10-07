@@ -74,7 +74,9 @@ défauts, décision. La fiche des assistants d'IA renvoie au journal sans le dup
 | Fiches des cinq outils finalisées | avant la rédaction du rapport final |
 
 **Critères de sélection** : un usage réel et répété, des preuves disponibles, au moins une difficulté ou une
-limite observée, et un retour qui dit quelque chose que la documentation officielle ne dit pas.
+limite observée, et un retour qui dit quelque chose que la documentation officielle ne dit pas. La rubrique
+« À retenir pour le rapport » de chaque fiche, tenue à jour au fil du projet, sert de base à la présélection et
+à la rédaction du rapport final.
 
 ## Tableau de suivi
 

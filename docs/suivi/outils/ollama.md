@@ -45,6 +45,11 @@ Chaque membre tient sa propre ligne à jour.
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Pull request #41 : première inférence locale de Qwen2.5-7B (`docs/etudes/inference_locale_qwen.md`, `scripts/inference/test_qwen.ps1`) ; échec du téléchargement direct (HTTP 400) contourné par `ollama create`.
 - Ticket #49 : génération de paires d'entraînement avec Qwen (`scripts/adaptation/03_generer_paires_locales.py`).

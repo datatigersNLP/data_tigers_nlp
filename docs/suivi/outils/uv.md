@@ -14,7 +14,7 @@ Chaque membre tient sa propre ligne à jour.
 | Membre | Version | Système | Remarque |
 |---|---|---|---|
 | Mahé | à compléter | macOS | |
-| Vaneck | à compléter | Windows | relance du notebook 01 (relecture de la PR #39) |
+| Vaneck | à compléter | Windows | relance du notebook 01 (relecture de la PR #39), Python 3.12.14 |
 | Rémy | à compléter | à compléter | |
 
 ## Mise en place
@@ -22,18 +22,33 @@ Chaque membre tient sa propre ligne à jour.
 - Installation et configuration :
 - Prérequis découverts en chemin :
 - Difficultés non expliquées par la documentation :
+  - (Vaneck) Sous Windows, l'interpréteur de l'environnement est `.venv\Scripts\python.exe` : la commande de
+    reproduction du notebook 01, écrite avec `.venv/bin/python` (chemin macOS et Linux), échoue telle quelle
+    (relecture de la PR #39).
 
 ## Usage réel
 - Tâche réalisée, ticket ou pull request :
+  - (Vaneck) Relecture de la PR #39 : notebook 01 relancé intégralement sous Windows pour vérifier sa
+    reproductibilité.
 - Commande, configuration ou scénario :
+  - (Vaneck) Environnement créé avec uv (Python 3.12.14), dépendances installées depuis le fichier
+    `requirements-lock.txt`, notebook exécuté de bout en bout par `nbclient`.
 - Résultat obtenu :
+  - (Vaneck) Exécution complète en 2 212 s (environ 37 min). Mêmes effectifs que sur macOS pour toutes les
+    méthodes (M0 5 284, M1 5 317, M2 4 240, M3 4 229 passages) et empreinte de M0 identique ; empreintes de
+    M1, M2 et M3 différentes, l'extraction du texte conservant 3 964 979 caractères contre 3 965 010.
 - Temps gagné ou perdu, s'il peut être estimé :
 
 ## Qualités observées
--
+- (Vaneck) Le fichier figé toutes plateformes s'installe tel quel sous Windows : aucune dépendance à résoudre
+  à la main.
 
 ## Défauts et limites observés
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
+  - (Vaneck) Figer les dépendances ne suffit pas à rendre un résultat identique au caractère près entre
+    systèmes : avec les mêmes bibliothèques, l'écart observé coïncide avec une version de Python différente
+    (3.12.14 sous Windows, 3.12.11 sous macOS), cause probable mais non confirmée. Le déterminisme se vérifie
+    sur une même machine, pas d'une plateforme à l'autre.
 
 ## Comparaison
 - Méthode ou outil utilisé auparavant :
@@ -43,6 +58,11 @@ Chaque membre tient sa propre ligne à jour.
 ## Décision
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
+
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
 
 ## Preuves
 - Fichiers `requirements-lock.txt` multiplateformes (`uv pip compile --universal`) des notebooks 01 à 03.

@@ -48,5 +48,11 @@ Uniquement si la version varie selon les membres. Chaque membre tient sa propre 
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+Deux ou trois lignes, mises à jour au fil du projet, pour préparer la présélection et le rapport final.
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Tickets, pull requests, commits, captures, mesures :

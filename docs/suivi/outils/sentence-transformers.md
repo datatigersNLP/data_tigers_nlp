@@ -35,5 +35,10 @@
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Ticket #49 : `scripts/adaptation/04_ajuster_encodeur.py`, étude `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md`.

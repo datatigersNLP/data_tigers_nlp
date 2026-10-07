@@ -44,5 +44,10 @@ Chaque membre tient sa propre ligne à jour.
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Rapport J2 et document de décisions du J2 : Chromium piloté par Playwright pour la mesure de faisabilité (19,8 ms par requête).

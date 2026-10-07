@@ -47,5 +47,10 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
+## À retenir pour le rapport
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
 ## Preuves
 - Journal d'usage de l'IA (`docs/journal/JOURNAL_USAGE_IA.md`) : chaque usage y est tracé ; cette fiche évalue les assistants dans la durée, sans dupliquer le journal.
