@@ -58,7 +58,7 @@ Les référents sont proposés d'après les preuves existantes et restent à con
 | Transformers.js | 4.3.0 | à compléter | depuis le 19/09 | rapport J2 (faisabilité), PR #40 (pages de contrôle) | élevé : écart entre navigateur et Python mesuré | à désigner | à compléter |
 | ONNX Runtime (Python et Web) | 1.30.0 (Python) | Mahé | PR #40 | PR #40, notebook 02, section 8 | élevé : critère de parité échoué puis diagnostiqué | Mahé | à compléter |
 | `uv` | à compléter | Mahé, Vaneck | PR #39, #40 | fichiers `requirements-lock.txt` multiplateformes, relecture de la PR #39 | moyen : reproductibilité entre Windows et macOS | Mahé | à compléter |
-| Playwright | à compléter | à compléter | rapport J2 | rapport J2 (Chromium piloté pour la mesure de faisabilité) | à évaluer | à désigner | à compléter |
+| Playwright | à compléter | à compléter | rapport J2 | rapport J2 (Chromium piloté pour la mesure de faisabilité) ; tests de l'interface du volet A prévus (#48, #53) | à évaluer | Vaneck | à compléter |
 | Ollama | 0.34.4 | Jibril | PR #41 | `docs/etudes/inference_locale_qwen.md`, `scripts/inference/test_qwen.ps1` | élevé : échec d'import contourné | Jibril | à compléter |
 | Assistants de développement IA | à compléter | équipe | depuis le début | journal d'usage de l'IA | à évaluer | à désigner | à compléter |
 
