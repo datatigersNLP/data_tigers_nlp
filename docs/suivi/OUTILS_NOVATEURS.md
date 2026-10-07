@@ -56,11 +56,13 @@ Les référents sont proposés d'après les preuves existantes et restent à con
 | GitHub CLI (`gh`) | 2.101.0 | équipe | depuis le 19/09 | journal IA (19/09), PR #42, ticket #29 | élevé : pièges d'API et de droits observés | toute l'équipe | adopté |
 | GitHub Actions et Pages | `actions/deploy-pages` v5 | Vaneck | depuis le 30/09 | ticket #29, PR #42, workflow `deploiement-volet-a.yml` | moyen : chemin de base et droits de l'environnement | Vaneck | adopté |
 | Transformers.js | 4.3.0 | à compléter | depuis le 19/09 | rapport J2 (faisabilité), PR #40 (pages de contrôle) | élevé : écart entre navigateur et Python mesuré | à désigner | à compléter |
-| ONNX Runtime (Python et Web) | 1.30.0 (Python) | Mahé | PR #40 | PR #40, notebook 02, section 8 | élevé : critère de parité échoué puis diagnostiqué | Mahé | à compléter |
+| ONNX Runtime (Python et Web) | 1.30.0 (Python) | Mahé, Rémy | PR #40, ticket #49 | PR #40, notebook 02, section 8 ; export et quantification de l'encodeur ajusté (`scripts/adaptation/06_exporter_onnx.py`, branche `feat/49-ajustement-encodeur`) | élevé : critère de parité échoué puis diagnostiqué | Mahé | à compléter |
 | `uv` | à compléter | Mahé, Vaneck | PR #39, #40 | fichiers `requirements-lock.txt` multiplateformes, relecture de la PR #39 | moyen : reproductibilité entre Windows et macOS | Mahé | à compléter |
 | Playwright | à compléter | à compléter | rapport J2 | rapport J2 (Chromium piloté pour la mesure de faisabilité) ; tests de l'interface du volet A prévus (#48, #53) | à évaluer | Vaneck | à compléter |
-| Ollama | 0.34.4 | Jibril | PR #41 | `docs/etudes/inference_locale_qwen.md`, `scripts/inference/test_qwen.ps1` | élevé : échec d'import contourné | Jibril | à compléter |
+| Ollama | 0.34.4 | Jibril, Rémy | PR #41, ticket #49 | `docs/etudes/inference_locale_qwen.md`, `scripts/inference/test_qwen.ps1` ; génération de paires d'entraînement avec Qwen (`scripts/adaptation/03_generer_paires_locales.py`, branche `feat/49-ajustement-encodeur`) | élevé : échec d'import contourné | Jibril | à compléter |
 | Assistants de développement IA | à compléter | équipe | depuis le début | journal d'usage de l'IA | à évaluer | toute l'équipe | à compléter |
+| Sentence Transformers | 6.1.0 | Rémy | ticket #49 | ajustement contrastif de l'encodeur (`scripts/adaptation/04_ajuster_encodeur.py`), étude `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md`, branche `feat/49-ajustement-encodeur` | élevé : mesure avant et après ajustement | Rémy | à compléter |
+| Vite (avec React et Tailwind CSS) | 8.3.0 | Vaneck, Maïmouna | tickets #7 et #29 | construction d'essai (#7), site du volet A en ligne (#29, PR #42), `front/` | moyen : chemin de base et page blanche, suite avec #48 et #53 | Vaneck ou Maïmouna, à confirmer | adopté |
 
 ## Modèle de fiche
 
