@@ -14,7 +14,7 @@ Chaque membre tient sa propre ligne à jour.
 | Membre | Version | Système | Remarque |
 |---|---|---|---|
 | Mahé | à compléter | macOS | |
-| Vaneck | à compléter | Windows | relance du notebook 01 (relecture de la PR #39), Python 3.12.14 |
+| Vaneck | 0.12.19 | Windows | relance du notebook 01 (relecture de la PR #39), Python 3.12.14 |
 | Rémy | à compléter | à compléter | |
 
 ## Mise en place
@@ -22,6 +22,10 @@ Chaque membre tient sa propre ligne à jour.
 - Installation et configuration :
 - Prérequis découverts en chemin :
 - Difficultés non expliquées par la documentation :
+  - (Vaneck) Installé avec `pip install --user`, l'exécutable arrive dans
+    `%APPDATA%\Python\Python314\Scripts`, dossier absent du PATH de Windows : `uv --version` répond que la
+    commande est introuvable alors qu'uv est bien installé. Contournements : ajouter ce dossier au PATH, ou
+    lancer `python -m uv`.
   - (Vaneck) Sous Windows, l'interpréteur de l'environnement est `.venv\Scripts\python.exe` : la commande de
     reproduction du notebook 01, écrite avec `.venv/bin/python` (chemin macOS et Linux), échoue telle quelle
     (relecture de la PR #39).

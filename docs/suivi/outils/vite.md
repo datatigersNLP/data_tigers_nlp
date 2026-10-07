@@ -6,7 +6,7 @@
 - Nature : outil de construction du site et serveur de développement
 - Assignés : Vaneck, Maïmouna (#7, #29) ; prévus : Mahé, Rémy (#48) ; Jibril (#53)
 - Coordination : Vaneck, Jibril
-- Période d'utilisation : depuis le choix de la chaîne front-end (#7), site construit le 30 septembre 2026
+- Période d'utilisation : depuis le 30 septembre 2026 (création du site du volet A, #29)
 - Besoin du projet auquel il répond : construire le site statique du volet A.
 
 ## Mise en place
