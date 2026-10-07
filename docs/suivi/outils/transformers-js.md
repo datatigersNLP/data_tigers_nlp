@@ -4,8 +4,8 @@
 - Version : 4.3.0 (figée dans les pages de contrôle de la PR #40, à figer dans `front/package.json` avec #48 :
   identique pour tous)
 - Nature : bibliothèque d'inférence dans le navigateur
-- Assignés : Mahé (J2, PR #40) ; prévus : Vaneck, Maïmouna, Rémy (#48)
-- Coordination : à désigner
+- Assignés : Mahé (J2, PR #40) ; prévus : Vaneck, Maïmouna, Rémy (#48), Rémy (#49), Mahé (#50)
+- Coordination : Mahé
 - Période d'utilisation : à compléter
 - Besoin du projet auquel il répond : encoder la question du visiteur dans son navigateur, sans serveur, pour la recherche sémantique du volet A.
 
