@@ -375,13 +375,19 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Produit.**
 - Décisions du Weekly 4 publiées sur #10 ; protection de `dev` et `main` (une approbation requise) ; quatre branches fusionnées supprimées.
 - `scripts/evaluation/cdtn_seuil.py` : seuil d'abstention tiré du CDTN ; protocole figé ; empreintes et verrou dans le notebook ; générateur des tableaux du rapport (PR #62).
+- Audit statistique du protocole par simulation, test de non-infériorité de Tango corrigé de l'effet de plan (`03_audit_statistique.md`) ; jeu complémentaire du CDTN et sa règle figée (`04_cdtn.md`, #56) ; proposition de protocole pour l'encodeur ajusté (`05_protocole_ajustement.md`, #49) (PR #62).
+- Moteur de recherche du site, avec tests et parité (PR #67, #48) ; fiches d'outils Transformers.js, ONNX Runtime et `uv` (PR #68, #25).
 
 **Mesures exécutées.**
 - Seuil calculé avant la mesure (0,8560, sur 479 variantes du CDTN), recalculé de façon indépendante ; fidélité des vecteurs du navigateur au fp32.
 - Verrou testé : mesure refusée si le jeu, le protocole ou le seuil est modifié d'un octet.
+- Simulation de 10 000 tirages par scénario sur la structure du lot de test (73 questions, 61 fiches), sans aucune donnée de mesure.
+- Parité du moteur du site sur les 24 requêtes du contrôle, en Node puis dans le navigateur.
 
 **Résultats retenus.**
 - Aucun calcul sur le lot de test : la mesure attend la relecture de la PR #62.
+- La règle figée du critère du J2 conclut à tort dans 3,0 à 5,2 % des cas à la marge, au lieu de 2,5 % ; le score de Tango corrigé tient 1,9 à 2,5 %. Amendement proposé, à décider avant la mesure.
+- CDTN : 155 requêtes et 607 formulations appariées ; moteur du site identique à la page de contrôle sur 24 requêtes sur 24.
 
 **Ce que l'équipe a validé, et par qui.**
 - Relecture de la PR #62 demandée à Remy RAYANE.
@@ -422,6 +428,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 06/10 | Règle de pertinence proposée qui excluait par construction les réponses en liste des petits découpages | audit du jeu final contre les cinq découpages | seconde condition ajoutée avant la validation du protocole, d'après les seules annotations |
 | 10/10 | Nombre de fiches visées par le seuil du CDTN annoncé à 61 au lieu de 50, compté sur toutes les requêtes appariées | recomptage avant le commit | corrigé avant le gel du protocole |
 | 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
+| 10/10 | Chiffres de l'audit statistique tirés d'un essai préliminaire, à une autre graine, et non du script versionné | réexécution du script avant le commit | chiffres alignés sur la sortie reproductible |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
