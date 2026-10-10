@@ -34,7 +34,7 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 | Outil | Nature | Membres | Usage |
 |---|---|---|---|
-| Claude Opus 5 | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Opus 5, puis Claude Opus 5.5 (sessions 12 et 13) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
 | Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
@@ -262,6 +262,68 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Prise en charge des dépendances spécifiques : installation et configuration requises de `nltk` pour les ressources Snowball françaises.
 
+### Session 12, 4 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Consignée le 6 octobre 2026**, deux jours après la session : la règle de tenue du jour même (section 5) n'a pas été respectée.
+
+**Objet.** Relecture de la validation des métriques sur PIAF (#45, PR #55), puis analyse du jeu de questions de l'équipe (#44) et des jeux de questions externes.
+
+**Produit.**
+- Corrections poussées sur la PR #55 : module de métriques, script de validation sur PIAF, rapport et PDF.
+- Issue #56 (complément CDTN), mise à jour de #46, commentaires sur la PR #54 et sur l'issue #47.
+
+**Mesures exécutées.**
+- Reproduction des chiffres de la première version et recalcul des rangs sans tri, sur les 3 835 questions de PIAF.
+- Quatre variantes de BM25 sur PIAF ; tests appariés avec questions groupées par paragraphe et par article.
+- Appariement des requêtes du CDTN aux passages M2 ; contrôle des extraits du jeu de l'équipe contre les passages M2.
+
+**Résultats retenus.**
+- Recall@k aligné sur la convention de l'équipe (au moins un passage pertinent dans le top k), entrées invalides refusées.
+- Sur PIAF, l'avantage de l'encodeur sur BM25 dépend du réglage de BM25 : de 6,1 à 2,3 points de Recall@5. PIAF ne sert qu'à valider le code.
+- Jeu de l'équipe en analyse principale, CDTN en analyse secondaire, variantes groupées par requête.
+
+**Ce qui a été écarté, et pourquoi.**
+- La valeur p calculée en supposant les questions indépendantes : elles sont groupées par paragraphe et par article, ce qui la rend trop optimiste.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le complément CDTN, demandé par Jibril BENSALEM, Vaneck DAGAR et Maïmouna SIGNATE, validé par Mahé BEGNIS. La PR #55, fusionnée par Remy RAYANE le 6 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- La chaîne `docs/latex` n'affiche ni les formules, ni les liens Markdown, ni les listes imbriquées dans une liste numérotée : documents réécrits en conséquence.
+
+### Session 13, 6 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit de l'état du dépôt et du jeu de questions, remise au propre des pull requests et des tickets, correction de la PR #58 (#47).
+
+**Produit.**
+- PR #59, qui reporte le notebook 02 dans `dev` ; corrections poussées sur la PR #58 : module et script des références lexicales, rapport et PDF, PDF du journal.
+- Index des réunions complété (PR #36) ; comptes rendus de #6 et #26 rétablis, dates des Weekly et jalons corrigés, branches fusionnées supprimées.
+
+**Mesures exécutées.**
+- Reproduction du script de la PR #57, comparaison des listes de mots vides, mesure réelle du poids de l'index, recoupement avec `rank_bm25`.
+- Contrôle du jeu de questions contre les règles de son README et contre les passages M2.
+- Recherche de secrets dans l'historique du dépôt, audit des dépendances (`npm audit`, `pip-audit`).
+
+**Résultats retenus.**
+- Le notebook 02 n'était pas dans `dev` : la PR #40 avait été fusionnée dans une branche déjà intégrée.
+- Références lexicales sur la liste Snowball figée, BM25 avec la formule de Lucene par défaut, poids mesuré (0,65 Mio en gzip pour V3).
+- Avant le gel du jeu : 57 pré-annotations à valider et 21 doubles annotations à faire.
+
+**Ce qui a été écarté, et pourquoi.**
+- Les comparaisons entre BM25 et l'encodeur du premier rapport lexical : non mesurées, et contredites sur deux requêtes.
+
+**Ce que l'équipe a validé, et par qui.**
+- Les PR #55, #58 et #59, fusionnées par Remy RAYANE le 6 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- L'assistant ne peut ni fusionner une PR sans relecture, ni approuver une PR qui contient ses propres commits : ces actions reviennent à un autre membre.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -286,6 +348,9 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
 | 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
 | 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage | fichier de sortie vide alors que le processus était terminé | écriture directe vers un fichier, tampon vidé explicitement |
+| 04/10 | Test de McNemar pour questions groupées attribué à Durkalski (2003), alors que la formule employée est celle d'Obuchowski (1998) | lecture du code source d'une implémentation publiée | attribution et formule corrigées avant publication |
+| 04/10 | Appariement du CDTN à nos passages : 189 requêtes le matin, 175 l'après-midi, selon la règle employée | recalcul indépendant | règle d'appariement à écrire et figer avant la mesure (#56) |
+| 06/10 | Aperçu des résultats de l'encodeur calculé sur le jeu de test avant l'écriture du protocole, puis un commentaire affirmant qu'aucune mesure n'avait été faite | relecture de la méthode, puis du commentaire avant envoi | aperçu ni utilisé ni diffusé aux annotateurs, phrase corrigée avant envoi, protocole à écrire avant toute mesure |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
