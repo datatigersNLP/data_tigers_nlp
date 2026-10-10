@@ -5,7 +5,7 @@
 - Nature : gestionnaire d'environnements et de dépendances Python
 - Assignés : Mahé (#35, #30, #45 à #47), Vaneck (relecture de la PR #39) ; prévus : Rémy (#46, #47)
 - Coordination : Mahé
-- Période d'utilisation : à compléter
+- Période d'utilisation : (Mahé) depuis le 27 septembre 2026 (notebooks 01 à 03)
 - Besoin du projet auquel il répond : créer des environnements Python reproductibles, avec des dépendances figées pour toutes les plateformes.
 
 ## Versions utilisées
@@ -13,7 +13,7 @@ Chaque membre tient sa propre ligne à jour.
 
 | Membre | Version | Système | Remarque |
 |---|---|---|---|
-| Mahé | à compléter | macOS | |
+| Mahé | 0.11.0 | macOS (Apple Silicon) | fichiers figés des notebooks 01 à 03 |
 | Vaneck | 0.12.19 | Windows | relance du notebook 01 (relecture de la PR #39), Python 3.12.14 |
 | Rémy | à compléter | à compléter | |
 
@@ -38,6 +38,7 @@ Chaque membre tient sa propre ligne à jour.
   - (Vaneck) Environnement créé avec uv (Python 3.12.14), dépendances installées depuis le fichier
     `requirements-lock.txt`, notebook exécuté de bout en bout par `nbclient`.
 - Résultat obtenu :
+  - (Mahé) Le 6 puis le 10 octobre, environnement du notebook 03 reconstruit depuis son fichier figé après la perte du dossier temporaire : `pip check` sans conflit, versions installées identiques à celles du fichier, mêmes résultats du notebook en mode développement (PR #62).
   - (Vaneck) Exécution complète en 2 212 s (environ 37 min). Mêmes effectifs que sur macOS pour toutes les
     méthodes (M0 5 284, M1 5 317, M2 4 240, M3 4 229 passages) et empreinte de M0 identique ; empreintes de
     M1, M2 et M3 différentes, l'extraction du texte conservant 3 964 979 caractères contre 3 965 010.
@@ -49,6 +50,7 @@ Chaque membre tient sa propre ligne à jour.
 
 ## Défauts et limites observés
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
+  - (Mahé) Le fichier universel liste aussi des paquets réservés à d'autres systèmes par des marqueurs de plateforme : sous macOS, 23 d'entre eux ne s'installent pas (bibliothèques CUDA, `triton`, `colorama`, `tzdata`…). Comparer l'environnement au fichier demande d'en tenir compte (PR #62).
   - (Vaneck) Figer les dépendances ne suffit pas à rendre un résultat identique au caractère près entre
     systèmes : avec les mêmes bibliothèques, l'écart observé coïncide avec une version de Python différente
     (3.12.14 sous Windows, 3.12.11 sous macOS), cause probable mais non confirmée. Le déterminisme se vérifie
