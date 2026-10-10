@@ -5,7 +5,7 @@
 **Ticket** Issue #46 · Branche `feat/46-notebook-03`  
 **Responsable principal** Mahé BEGNIS  
 **Soutien** Remy RAYANE  
-**Statut** proposé le 6 octobre 2026, amendé le même jour après l'audit du jeu (D4), à valider au Weekly 4 du 7 octobre, puis figé avant toute mesure  
+**Statut** figé le 10 octobre 2026, avant toute mesure : décisions D1 à D8 validées au Weekly 4 du 7 octobre (#10)  
 
 ---
 
@@ -16,7 +16,7 @@ Ce protocole fixe, avant toute mesure sur le lot de test, la règle de pertinenc
 * **Figé avant la mesure.** Une fois validé, il est figé par un commit, et son empreinte SHA-256 est inscrite dans le notebook 03. Le notebook refuse de lire le lot de test si l'empreinte ne correspond pas.
 * **Rien d'autre n'est conclusif.** Toute analyse absente de ce document est présentée comme exploratoire.
 * **Déclaration.** Le 6 octobre 2026, un aperçu de l'encodeur sur le jeu de questions a été calculé pendant un audit, hors protocole (journal d'usage de l'IA, section 4). Aucune décision ci-dessous ne s'appuie sur lui : chacune est justifiée par le rapport J2, par la validation sur PIAF (#45), par les annotations seules ou par un calcul de puissance.
-* **Seconde déclaration.** Le 6 octobre 2026, la PR #63 (ajustement de l'encodeur, #49) a mesuré l'encodeur de base et l'encodeur ajusté sur les 72 questions du corpus du lot de test, avec sa propre règle de pertinence, et sa description en donne les résultats. Ces mesures sont hors protocole et ne remplacent pas celle du notebook 03. Les décisions D1 à D8 ont été proposées le 6 octobre à 10 h 02 (commit `fe548ce`), avant l'ouverture de cette PR à 10 h 52 ; l'amendement de D4 (section 3) a été rédigé sans lire ces résultats et ne s'appuie que sur les annotations.
+* **Seconde déclaration.** Le 6 octobre 2026, la PR #63 (ajustement de l'encodeur, #49) a mesuré l'encodeur de base et l'encodeur ajusté sur les 72 questions du corpus du lot de test, avec sa propre règle de pertinence, et sa description en donne les résultats. Ces mesures sont hors protocole et ne remplacent pas celle du notebook 03. Les décisions D1 à D8 ont été proposées le 6 octobre à 10 h 02 (commit `fe548ce`), avant l'ouverture de cette PR à 10 h 52 ; l'amendement de D4 (section 3) a été rédigé sans lire ces résultats et ne s'appuie que sur les annotations. La PR #63 a été fermée sans fusion le 7 octobre ; au Weekly 4, ses mesures sur le lot de test ont été déclarées exploratoires, et la comparaison officielle avant et après l'ajustement fera l'objet d'une mesure unique prévue d'avance (#49).
 
 ---
 
@@ -24,10 +24,10 @@ Ce protocole fixe, avant toute mesure sur le lot de test, la règle de pertinenc
 
 ### 2.1 Jeu de questions (#44)
 
-* **Fichier.** `evaluation/questions/questions_annotees.csv`, dans la version figée par le tag du jeu. Le tag et l'empreinte du fichier sont inscrits ici au moment du gel.
-* **Recherche.** Elle se mesure sur les questions du lot de test classées `dans_corpus` : 73 dans la version fusionnée dans `dev` le 6 octobre (commit `cdb48c9`), nombre à reconfirmer au gel.
+* **Fichier.** `evaluation/questions/questions_annotees.csv`, dans la version figée par le tag annoté `jeu-questions-v1`, posé le 6 octobre 2026 sur le commit `cdb48c9`. Le notebook refuse tout autre fichier ; les empreintes sont en section 9.
+* **Recherche.** Elle se mesure sur les questions du lot de test classées `dans_corpus` : 73 dans le jeu figé, et 24 hors corpus.
 * **Abstention.** Elle se mesure sur toutes les questions du lot de test, celles du corpus comme celles hors corpus.
-* **Lot de calibration.** Il ne sert qu'à mettre au point le notebook et, à défaut du CDTN, à fixer le seuil d'abstention (section 8.2).
+* **Lot de calibration.** Il ne sert qu'à mettre au point le notebook ; le seuil d'abstention vient du CDTN (section 8.2).
 * **Annotation secondaire.** L'accord entre annotateurs est calculé et publié ; l'annotation principale fait foi. Il est calculé par `scripts/evaluation/controle_jeu.py` sur l'annotation principale telle qu'elle était au moment de la seconde annotation (commit `187a9f8`), donc avant l'arbitrage de Q062, qui l'aurait gonflé.
 * **Accord sur le type.** Sur les 21 questions doublement annotées, les deux annotations donnent le même type 20 fois ; le kappa de Cohen vaut 0,88, avec un intervalle indicatif à 95 % de 0,59 à 1 par rééchantillonnage des 21 paires.
 * **Accord sur la réponse.** Sur les 15 questions que les deux annotations placent dans le corpus, elles désignent la même fiche 14 fois et les mêmes fiches pertinentes 14 fois, mais les mêmes passages pertinents en M2 seulement 7 fois, avec au moins un passage pertinent commun 9 fois. Dans les 6 autres cas, l'annotateur secondaire a choisi un autre passage de la même fiche, ou, pour Q051, une autre fiche.
@@ -124,7 +124,8 @@ Les autres métriques (Recall@1, Recall@3, Recall@10, MRR@10, niveau fiche) sont
 
 * **Score d'une question.** Le plus grand cosinus avec les passages M2, pour E5 servi.
 * **Sans seuil.** L'AUC entre les questions du corpus et les questions hors corpus du lot de test, avec un intervalle à 95 % par rééchantillonnage stratifié (10 000 tirages, graine fixée).
-* **Avec seuil, à titre exploratoire.** Le seuil vaut le 5e centile des scores maximaux des variantes du CDTN rédigées en question (#56). À défaut, il vaut le plus petit score maximal des questions du corpus du lot de calibration. Sur le test, on rapporte la part des questions hors corpus rejetées et celle des questions du corpus conservées, avec leurs intervalles de Wilson.
+* **Avec seuil, à titre exploratoire.** Le seuil vaut le 5e centile, par interpolation linéaire, des scores maximaux, pour E5 servi, des variantes du CDTN rédigées en question (#56), c'est-à-dire contenant un point d'interrogation (règle du 4 octobre). Seules comptent les variantes des requêtes dont au moins une référence vise une fiche de notre corpus, reconnue par son identifiant exact : les autres renvoient à des sources absentes de notre corpus et feraient baisser le seuil (Weekly 4, décision 3). Sur le test, on rapporte la part des questions hors corpus rejetées et celle des questions du corpus conservées, avec leurs intervalles de Wilson.
+* **Seuil fixé avant la mesure.** Calculé le 10 octobre 2026 par `scripts/evaluation/cdtn_seuil.py`, sur 479 variantes issues de 103 requêtes, qui visent 50 fiches de notre corpus, encodées dans le navigateur comme sur le site : **0,8560** (scores maximaux de 0,830 à 0,945). Les vecteurs du navigateur restent fidèles au fp32 (cosinus d'au moins 0,9926), et un recalcul indépendant redonne la même valeur à 5e-7 près. L'empreinte du fichier `data/evaluation/notebook03/seuil_cdtn.json`, contrôlée par le notebook, est en section 9. La règle de secours, le plus petit score maximal des questions du corpus du lot de calibration, n'est plus utilisée.
 
 ### 8.3 CDTN
 
@@ -135,14 +136,26 @@ Analyse secondaire séparée (#56) : pertinence jugée à la section, variantes 
 ## 9. Mise en œuvre et reproductibilité
 
 * **Notebook.** `scripts/evaluation/03_evaluation.ipynb`, exécuté en entier par `nbclient` sur un noyau privé, dans l'environnement figé du dossier (`requirements-lock.txt`).
-* **Verrou.** Le lot de test n'est lu qu'en mode mesure, et seulement si les empreintes de ce protocole et du jeu sont celles inscrites.
+* **Verrou.** Le lot de test n'est lu qu'en mode mesure, et seulement si les empreintes de ce protocole, du jeu et du fichier de seuil sont celles inscrites. Celle du protocole est inscrite dans le notebook ; les deux autres, ci-dessous, et dans le notebook.
+
+Empreintes SHA-256 figées le 10 octobre 2026 :
+
+```
+evaluation/questions/questions_annotees.csv (jeu figé)
+807498144fec46722ffab045a87c191b6282a86300799976869d4d6c1755fb35
+data/evaluation/notebook03/seuil_cdtn.json (seuil du CDTN)
+3432fb168cc7d92d374f1151c2f3a3a7938dfed812ba825d651beca87fa083c4
+evaluation/questions/annotations_secondaires.csv (pour mémoire)
+b71d73136a047d3f60cdfbbbc341a790e7a75a52d84ec99ca3b92190e704b228
+```
+
 * **Une seule exécution de mesure.** Les rangs bruts, par question et par système, sont sauvegardés dans `data/evaluation/notebook03/`.
 * **Contrôles.** Rangs recalculés sans tri ; deux exécutions identiques ; fidélité des vecteurs q8 du navigateur contrôlée comme au notebook 02.
 * **Interdits.** Modifier le lot de test après la mesure ; régler un paramètre sur le lot de test ; ajouter une analyse sans l'étiqueter « exploratoire ».
 
 ---
 
-## 10. Décisions à valider au Weekly 4
+## 10. Décisions validées au Weekly 4 (7 octobre 2026, #10)
 
 | N° | Décision | Proposition | Justification |
 |---|---|---|---|
@@ -151,7 +164,7 @@ Analyse secondaire séparée (#56) : pertinence jugée à la section, variantes 
 | D3 | Référence BM25 | V3, formule de Lucene | meilleure variante sur PIAF, qui est indépendant de notre jeu |
 | D4 | Règle de pertinence | fragment contigu couvrant la moitié de l'extrait normalisé, ou la moitié du passage avec au moins 80 caractères | équitable entre découpages, réponses en liste comprises |
 | D5 | Question sans résultat lexical | échec | aucun passage n'est montré à l'utilisateur |
-| D6 | Abstention | AUC sans seuil, et seuil tiré du CDTN ou de la calibration | lot de calibration trop petit pour un seuil fiable |
+| D6 | Abstention | AUC sans seuil, et seuil tiré des variantes du CDTN visant une fiche du corpus | lot de calibration trop petit pour un seuil fiable |
 | D7 | Comparaisons multiples | Holm par famille, sinon exploratoire | une seule analyse principale |
 | D8 | Niveau fiche | Recall@5 au niveau de la fiche, en métrique secondaire | le site affiche la fiche du passage |
 
@@ -161,3 +174,5 @@ Analyse secondaire séparée (#56) : pertinence jugée à la section, variantes 
 
 * **6 octobre 2026 :** version proposée (Mahé BEGNIS).
 * **6 octobre 2026, après l'audit du jeu fusionné (`cdb48c9`) :** seconde condition ajoutée à D4 pour les extraits longs, chiffres mis à jour sur le jeu fusionné, accord entre annotateurs publié, seconde déclaration (Mahé BEGNIS).
+* **7 octobre 2026, Weekly 4 :** D1 à D8 validées par l'équipe, avec D4 amendée et D6 précisée (#10).
+* **10 octobre 2026 :** protocole figé, avec le tag et les empreintes du jeu, et le seuil du CDTN calculé avant la mesure (Mahé BEGNIS).

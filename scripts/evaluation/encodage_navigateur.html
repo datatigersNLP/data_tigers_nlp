@@ -17,7 +17,9 @@
 <code>http://127.0.0.1:8765/scripts/evaluation/encodage_navigateur.html</code>. La page lit les questions écrites par le
 notebook 03 (<code>data/evaluation/notebook03/questions_navigateur.json</code>), vérifie leur empreinte, les encode avec
 le modèle et la précision que sert le site (q8), et expose les vecteurs dans <code>window.RESULTATS</code>, à enregistrer
-dans <code>data/evaluation/notebook03/vecteurs_navigateur.json</code>.</p>
+dans <code>data/evaluation/notebook03/vecteurs_navigateur.json</code>. Avec <code>?lot=cdtn</code>, elle encode les
+variantes du CDTN écrites par <code>scripts/evaluation/cdtn_seuil.py preparer</code>
+(<code>data/evaluation/cdtn/questions_cdtn.json</code>), à enregistrer dans <code>data/evaluation/cdtn/vecteurs_cdtn.json</code>.</p>
 <pre id="journal">Chargement...</pre>
 <p id="telechargement"></p>
 <script type="module">
@@ -31,17 +33,22 @@ const proposer = (nom) => {
   const lien = document.createElement("a");
   lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
   lien.download = nom;
-  lien.textContent = `Télécharger ${nom}, à placer dans data/evaluation/notebook03/`;
+  lien.textContent = `Télécharger ${nom}, à placer dans data/evaluation/${lotCdtn ? "cdtn" : "notebook03"}/`;
   document.getElementById("telechargement").append(lien);
 };
 // empreinte SHA-256, en hexadécimal, d'un texte encodé en UTF-8
 const sha256 = async (texte) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",
   new TextEncoder().encode(texte))), (octet) => octet.toString(16).padStart(2, "0")).join("");
 env.allowLocalModels = false;
+// lot à encoder : celui du notebook 03 par défaut, celui du seuil du CDTN avec ?lot=cdtn
+const lotCdtn = new URLSearchParams(location.search).get("lot") === "cdtn";
+const fichierQuestions = lotCdtn ? "../../data/evaluation/cdtn/questions_cdtn.json"
+  : "../../data/evaluation/notebook03/questions_navigateur.json";
+const nomSortie = lotCdtn ? "vecteurs_cdtn.json" : "vecteurs_navigateur.json";
 
 try {
   const entete = await (await fetch("../../data/indexation/site/index_m2.json")).json();
-  const lot = await (await fetch("../../data/evaluation/notebook03/questions_navigateur.json")).json();
+  const lot = await (await fetch(fichierQuestions)).json();
   // la liste des questions est contrôlée par son empreinte, calculée par le notebook sur le même texte JSON
   const empreinte = await sha256(JSON.stringify(lot.questions));
   if (empreinte !== lot.empreinte) throw new Error("empreinte des questions différente de celle écrite par le notebook");
@@ -61,7 +68,7 @@ try {
     revision: entete.modele.revision, dtype: entete.modele.dtype, prefixe: lot.prefixe, empreinte_questions: empreinte,
     identifiants: lot.questions.map((q) => q.id), vecteurs, encodage_ms };
   noter(`terminé : ${vecteurs.length} questions en ${Math.round(encodage_ms)} ms`);
-  proposer("vecteurs_navigateur.json");
+  proposer(nomSortie);
 } catch (erreur) {
   window.RESULTATS = { erreur: String(erreur) };
   noter("ERREUR : " + erreur);
