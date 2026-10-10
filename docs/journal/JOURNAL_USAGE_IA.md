@@ -324,6 +324,74 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - L'assistant ne peut ni fusionner une PR sans relecture, ni approuver une PR qui contient ses propres commits : ces actions reviennent à un autre membre.
 
+### Session 14, 6 octobre 2026 (après-midi), Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit du jeu de questions fusionné (#44), gel du jeu, règle de pertinence et dossier du Weekly 4.
+
+**Produit.**
+- `scripts/evaluation/controle_jeu.py` (contrôle du jeu et accord entre annotateurs) ; règle de pertinence D4 amendée et protocole mis à jour (PR #62).
+- Tag `jeu-questions-v1`, posé avec l'accord de Mahé ; audit publié en commentaire de la PR #54 ; dossier du Weekly 4.
+
+**Mesures exécutées.**
+- Contrôles du jeu sur les cinq découpages, accord calculé sur l'annotation d'avant l'arbitrage de Q062.
+- Règle de pertinence vérifiée par trois implémentations sur 470 couples découpage et extrait.
+
+**Résultats retenus.**
+- Accord sur le type 20 fois sur 21 (kappa 0,88) ; mêmes passages pertinents 7 fois sur 15.
+- Avec la règle initiale, deux réponses en liste (Q046, Q052) n'avaient aucun passage pertinent possible dans les petits découpages.
+
+**Ce qui a été écarté, et pourquoi.**
+- La lecture des résultats de la PR #63 sur le lot de test : le protocole devait rester indépendant de ces chiffres.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le gel du jeu par Mahé BEGNIS ; la règle amendée au Weekly 4.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Le dossier temporaire de l'assistant a été vidé : environnement d'exécution à reconstruire depuis le fichier figé.
+
+### Session 15, 7 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Préparation et suivi du Weekly 4 (#10).
+
+**Produit.**
+- Synthèse des sept décisions à prendre, avec leurs options et une recommandation ; message de répartition des tâches pour l'équipe.
+
+**Résultats retenus.**
+- Les sept recommandations ont été validées par l'équipe ; échéance du volet A fixée au 18 octobre.
+
+**Ce que l'équipe a validé, et par qui.**
+- Les décisions, par l'équipe réunie au Weekly 4.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+### Session 16, 10 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt, application des décisions du Weekly 4, préparation de la mesure du notebook 03 (#46).
+
+**Produit.**
+- Décisions du Weekly 4 publiées sur #10 ; protection de `dev` et `main` (une approbation requise) ; quatre branches fusionnées supprimées.
+- `scripts/evaluation/cdtn_seuil.py` : seuil d'abstention tiré du CDTN ; protocole figé ; empreintes et verrou dans le notebook ; générateur des tableaux du rapport (PR #62).
+
+**Mesures exécutées.**
+- Seuil calculé avant la mesure (0,8560, sur 479 variantes du CDTN), recalculé de façon indépendante ; fidélité des vecteurs du navigateur au fp32.
+- Verrou testé : mesure refusée si le jeu, le protocole ou le seuil est modifié d'un octet.
+
+**Résultats retenus.**
+- Aucun calcul sur le lot de test : la mesure attend la relecture de la PR #62.
+
+**Ce que l'équipe a validé, et par qui.**
+- Relecture de la PR #62 demandée à Remy RAYANE.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Données du CDTN sans licence : lues au commit figé dans `data/`, jamais versionnées.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -351,6 +419,9 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 04/10 | Test de McNemar pour questions groupées attribué à Durkalski (2003), alors que la formule employée est celle d'Obuchowski (1998) | lecture du code source d'une implémentation publiée | attribution et formule corrigées avant publication |
 | 04/10 | Appariement du CDTN à nos passages : 189 requêtes le matin, 175 l'après-midi, selon la règle employée | recalcul indépendant | règle d'appariement à écrire et figer avant la mesure (#56) |
 | 06/10 | Aperçu des résultats de l'encodeur calculé sur le jeu de test avant l'écriture du protocole, puis un commentaire affirmant qu'aucune mesure n'avait été faite | relecture de la méthode, puis du commentaire avant envoi | aperçu ni utilisé ni diffusé aux annotateurs, phrase corrigée avant envoi, protocole à écrire avant toute mesure |
+| 06/10 | Règle de pertinence proposée qui excluait par construction les réponses en liste des petits découpages | audit du jeu final contre les cinq découpages | seconde condition ajoutée avant la validation du protocole, d'après les seules annotations |
+| 10/10 | Nombre de fiches visées par le seuil du CDTN annoncé à 61 au lieu de 50, compté sur toutes les requêtes appariées | recomptage avant le commit | corrigé avant le gel du protocole |
+| 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
