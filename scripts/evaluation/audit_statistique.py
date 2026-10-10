@@ -84,6 +84,15 @@ def simuler(rng, tailles, g, delta, discordance, p11, rho, tirages):
                                     "couverture_ic95": couvert_t / tirages}}
 
 
+def taille_obuchowski(rng, tailles, g, discordance, rho, tirages):
+    """Rejet à tort, au seuil de 5 %, du test d'Obuchowski groupé (familles F1 à F3) quand l'écart réel est nul."""
+    rejets = 0
+    for _ in range(tirages):
+        a, b = tirer_paires(rng, tailles, discordance / 2, discordance / 2, 0.80 - discordance / 2, rho)
+        rejets += paired_success_test(a, b, groups=g)["p_value_groups"] < 0.05
+    return {"discordance": discordance, "rho": rho, "rejet_a_tort": rejets / tirages}
+
+
 def couverture_proportion(rng, tailles, g, p, rho, tirages):
     n, couvert = int(np.sum(tailles)), 0
     for _ in range(tirages):
@@ -111,6 +120,8 @@ def main(tirages):
         for disc in (0.20, 0.25, 0.30):
             scenarios.append(simuler(rng, tailles, g, -MARGE, disc, 0.80 - disc / 2, rho, tirages))
     resultat["test_apparie"] = scenarios
+    resultat["obuchowski"] = [taille_obuchowski(rng, tailles, g, d, rho, tirages)
+                              for rho in (0.0, RHO) for d in (0.05, 0.14, 0.25)]
     resultat["proportion"] = [couverture_proportion(rng, tailles, g, p, rho, tirages)
                               for rho in (0.0, RHO) for p in (0.6, 0.8, 0.9)]
     SORTIE.write_text(json.dumps(resultat, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

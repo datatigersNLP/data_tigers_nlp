@@ -50,7 +50,8 @@ Lecture : avec un écart réel nul, la colonne « critère » est la puissance ;
 
 * **Puissance conforme.** Avec un écart nul, la règle figée conclut dans 67 à 92 % des tirages, cohérent avec les 72 à 93 % annoncés au protocole pour 72 questions indépendantes.
 * **Risque trop élevé.** À la marge, la règle figée conclut à tort dans 3,0 à 5,2 % des tirages, au lieu de 2,5 %. L'écart dépasse largement l'erreur de Monte-Carlo.
-* **Intervalle d'une proportion bien calibré.** Le Wilson à effectif corrigé de l'effet de plan couvre la vraie valeur dans 94,0 à 94,9 % des tirages, pour des proportions de 0,6, 0,8 et 0,9, avec ou sans corrélation.
+* **Test des familles secondaires bien calibré.** Avec un écart réel nul, le test d'Obuchowski groupé par fiche, qui décide des familles F1 à F3, rejette à tort dans 2,5 à 4,7 % des tirages, pour 5 % visés : il est légèrement prudent, et n'appelle pas de correction.
+* **Intervalle d'une proportion bien calibré.** Le Wilson à effectif corrigé de l'effet de plan couvre la vraie valeur dans 94,2 à 95,2 % des tirages, pour des proportions de 0,6, 0,8 et 0,9, avec ou sans corrélation.
 
 ---
 
