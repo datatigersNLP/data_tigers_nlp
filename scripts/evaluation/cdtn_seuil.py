@@ -13,6 +13,7 @@ Usage, depuis la racine du dépôt :
     python scripts/evaluation/cdtn_seuil.py preparer   # écrit data/evaluation/cdtn/questions_cdtn.json
     (page scripts/evaluation/encodage_navigateur.html?lot=cdtn, résultat dans data/evaluation/cdtn/vecteurs_cdtn.json)
     python scripts/evaluation/cdtn_seuil.py calculer   # écrit data/evaluation/notebook03/seuil_cdtn.json
+    python scripts/evaluation/cdtn_seuil.py incertitude   # intervalle du seuil, sans toucher au fichier figé
 """
 
 import hashlib
@@ -34,6 +35,8 @@ FICHIER_SOURCE = RACINE / "data/evaluation/cdtn/requests_6d16869.json"
 QUESTIONS = RACINE / "data/evaluation/cdtn/questions_cdtn.json"
 VECTEURS = RACINE / "data/evaluation/cdtn/vecteurs_cdtn.json"
 SEUIL = RACINE / "data/evaluation/notebook03/seuil_cdtn.json"
+INCERTITUDE = RACINE / "data/evaluation/cdtn/incertitude_seuil.json"
+GRAINE, TIRAGES = 20261010, 10_000
 PREFIXE_FICHE = "/fiche-ministere-travail/"
 PREFIXE_REQUETE = "query: "
 CENTILE = 5
@@ -140,6 +143,29 @@ def calculer():
     print(f"seuil = {seuil:.4f} (5e centile de {len(scores)} scores maximaux) écrit dans {SEUIL.relative_to(RACINE)}")
 
 
+def incertitude():
+    """Intervalle à 95 % du seuil par rééchantillonnage des requêtes (les variantes d'une requête ne sont pas
+    indépendantes) ; percentiles des tirages. N'écrit jamais dans le fichier de seuil figé."""
+    lot = json.loads(QUESTIONS.read_text(encoding="utf-8"))
+    r = json.loads(VECTEURS.read_text(encoding="utf-8"))
+    if r.get("empreinte_questions") != empreinte_lot(lot["questions"]):
+        raise ValueError("Vecteurs du navigateur incohérents avec le lot.")
+    E, _ = charger_m2()
+    scores = (np.array(r["vecteurs"], dtype=np.float32) @ E.T).max(axis=1)
+    requetes = np.array([q["id"].split("-")[0] for q in lot["questions"]])
+    noms = np.unique(requetes)
+    par_requete = [scores[requetes == x] for x in noms]
+    rng = np.random.default_rng(GRAINE)
+    tirages = np.array([np.percentile(np.concatenate([par_requete[i] for i in rng.integers(0, len(noms), len(noms))]),
+                                      CENTILE) for _ in range(TIRAGES)])
+    fige = json.loads(SEUIL.read_text(encoding="utf-8"))["seuil"]
+    res = {"seuil_fige": fige, "ic95_requetes": [float(np.percentile(tirages, 2.5)), float(np.percentile(tirages, 97.5))],
+           "requetes": len(noms), "variantes": len(scores), "tirages": TIRAGES, "graine": GRAINE,
+           "variantes_par_requete": {"min": int(min(map(len, par_requete))), "max": int(max(map(len, par_requete)))}}
+    INCERTITUDE.write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(json.dumps(res, ensure_ascii=False))
+
+
 def sanity_check():
     """Contrôles calculés à la main."""
     assert identifiant_fiche("/fiche-ministere-travail/la-demission#Faut-il") == "la-demission"
@@ -164,4 +190,4 @@ def sanity_check():
 
 if __name__ == "__main__":
     assert sanity_check()
-    {"preparer": preparer, "calculer": calculer}[sys.argv[1]]()
+    {"preparer": preparer, "calculer": calculer, "incertitude": incertitude}[sys.argv[1]]()
