@@ -89,8 +89,8 @@ Assignés : déjà utilisateurs, puis utilisateurs prévus avec le ticket concer
 | GitHub Actions et Pages | [github-actions-pages.md](outils/github-actions-pages.md) | Vaneck ; prévus : Maïmouna, Mahé, Rémy (#48), Jibril (#53) | Vaneck | moyen : chemin de base et droits de l'environnement | adopté |
 | Vite (avec React et Tailwind CSS) | [vite.md](outils/vite.md) | Vaneck, Maïmouna ; prévus : Mahé, Rémy (#48), Jibril (#53) | Vaneck, Jibril | moyen : chemin de base et page blanche | adopté |
 | Playwright | [playwright.md](outils/playwright.md) | Mahé ; prévus : Vaneck, Jibril (#53) | Vaneck, Jibril | à évaluer | à compléter |
-| Transformers.js | [transformers-js.md](outils/transformers-js.md) | Mahé ; prévus : Vaneck, Maïmouna, Rémy (#48) | Mahé | élevé : écart entre navigateur et Python mesuré | à compléter |
-| ONNX Runtime (Python et Web) | [onnx-runtime.md](outils/onnx-runtime.md) | Mahé, Rémy ; prévus : Jibril (#49) | Mahé | élevé : critère de parité échoué puis diagnostiqué | à compléter |
+| Transformers.js | [transformers-js.md](outils/transformers-js.md) | Mahé ; prévus : Vaneck, Maïmouna, Rémy (#48) | Mahé | élevé : écart entre navigateur et Python mesuré | adopté |
+| ONNX Runtime (Python et Web) | [onnx-runtime.md](outils/onnx-runtime.md) | Mahé, Rémy ; prévus : Jibril (#49) | Mahé | élevé : critère de parité échoué puis diagnostiqué | adopté |
 | `uv` | [uv.md](outils/uv.md) | Mahé, Vaneck ; prévu : Rémy (#46, #47) | Mahé | moyen : reproductibilité entre Windows et macOS | à compléter |
 | Ollama | [ollama.md](outils/ollama.md) | Jibril, Rémy ; prévus : Maïmouna (#51), Mahé (#52) | Jibril | élevé : échec d'import contourné | à compléter |
 | Sentence Transformers | [sentence-transformers.md](outils/sentence-transformers.md) | Rémy ; prévus : Mahé, Jibril (#49) | Rémy | élevé : mesure avant et après ajustement | à compléter |
