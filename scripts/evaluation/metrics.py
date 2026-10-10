@@ -26,7 +26,7 @@ import math
 from typing import List, Dict, Set, Union, Any, Tuple, Optional, Sequence
 
 import numpy as np
-from scipy import stats
+from scipy import optimize, stats
 
 # collections lues comme plusieurs identifiants pertinents ; tout autre objet est un identifiant
 COLLECTIONS = (set, frozenset, list, tuple, np.ndarray)
@@ -313,6 +313,72 @@ def paired_success_test(
     return result
 
 
+def _tango_p01(n_10: int, n_01: int, n_total: int, d0: float) -> float:
+    """
+    Estimateur du maximum de vraisemblance de p01 (B seul réussit) sous la contrainte p10 - p01 = d0 (Tango, 1998) :
+    racine positive de 2n q² + (-(n10 + n01) + (2n - n10 + n01) d0) q - n01 d0 (1 - d0) = 0, ramenée dans le domaine
+    où les quatre probabilités restent positives.
+    """
+    a = 2.0 * n_total
+    b = -(n_10 + n_01) + (2.0 * n_total - n_10 + n_01) * d0
+    c = -n_01 * d0 * (1.0 - d0)
+    q = (-b + math.sqrt(max(0.0, b * b - 4.0 * a * c))) / (2.0 * a)
+    return min(max(q, max(0.0, -d0)), (1.0 - d0) / 2.0)
+
+
+def noninferiority_tango(
+    success_a: Sequence[bool],
+    success_b: Sequence[bool],
+    margin: float,
+    groups: Optional[Sequence[Any]] = None,
+    level: float = 0.95
+) -> Dict[str, Any]:
+    """
+    Test de non-infériorité de A face à B (écart de proportions appariées p_A - p_B), par le score de Tango
+    (Statistics in Medicine, 1998), corrigé de l'effet de plan quand les questions sont groupées.
+
+    H0 : p_A - p_B <= -margin. La statistique est Z(d0) = (d - d0) / racine(V(d0) / n), où d est l'écart observé et
+    V(d0) = 2 p01~ + d0 - d0² la variance de l'écart sous la contrainte p10 - p01 = d0, p01~ étant l'estimateur
+    contraint. La variance est donc calculée à la marge, et non à l'écart observé comme le Wald, qui sous-estime
+    l'incertitude sur un petit effectif. Avec groups, Z est divisé par la racine de l'effet de plan, rapport des
+    variances robuste aux groupes et sans groupes de l'écart (au moins 1), comme le Wilson à effectif corrigé de
+    proportion_ci. A est déclaré non inférieur si Z(-margin) dépasse le quantile bilatéral de level, soit un
+    risque unilatéral de (1 - level) / 2. L'intervalle est celui du score : les d0 que le test ne rejette pas ;
+    la décision équivaut à une borne basse supérieure à -margin.
+    """
+    a = np.asarray(success_a, dtype=bool)
+    b = np.asarray(success_b, dtype=bool)
+    if len(a) != len(b):
+        raise ValueError("Les deux vecteurs de succès doivent avoir la même longueur.")
+    n = len(a)
+    n_10, n_01 = int(np.sum(a & ~b)), int(np.sum(~a & b))
+    d = (n_10 - n_01) / n
+    effet_de_plan = 1.0
+    if groups is not None:
+        diff = a.astype(float) - b.astype(float)
+        se_groupes, _ = _clustered_se(diff - d, groups)
+        variance_sans = float(np.var(diff, ddof=1)) / n if n > 1 else 0.0
+        if variance_sans > 0:
+            effet_de_plan = max(1.0, se_groupes ** 2 / variance_sans)
+    z_crit = float(stats.norm.ppf(0.5 + level / 2))
+
+    def score(d0: float) -> float:
+        q = _tango_p01(n_10, n_01, n, d0)
+        variance = max(2.0 * q + d0 - d0 * d0, 1e-15) / n
+        return (d - d0) / math.sqrt(variance * effet_de_plan)
+
+    z = score(-margin)
+    eps = 1e-9
+    bas = -1.0 + eps if score(-1.0 + eps) <= z_crit else optimize.brentq(lambda x: score(x) - z_crit, -1.0 + eps, d)
+    haut = 1.0 - eps if score(1.0 - eps) >= -z_crit else optimize.brentq(lambda x: score(x) + z_crit, d, 1.0 - eps)
+    return {
+        "n_total": n, "n_10_A_only": n_10, "n_01_B_only": n_01, "difference": d,
+        "margin": margin, "design_effect": effet_de_plan, "z": float(z),
+        "p_value_one_sided": float(stats.norm.sf(z)), "ci_score": (float(bas), float(haut)),
+        "noninferior": bool(z > z_crit),
+    }
+
+
 def holm(p_values: Sequence[float]) -> List[float]:
     """
     Valeurs p ajustées par la méthode de Holm (1979), dans l'ordre des entrées.
@@ -480,6 +546,22 @@ def sanity_check_manual_examples() -> bool:
     assert t["ci_difference"] != t["ci_difference_agresti_min"]
     nul = paired_success_test([1, 0, 1, 0, 0], [1, 0, 1, 0, 0])
     assert nul["ci_difference"] == (0.0, 0.0) and nul["ci_difference_agresti_min"][0] < 0 < nul["ci_difference_agresti_min"][1]
+
+    # Exemple 15 : score de Tango. À d0 = 0, l'estimateur contraint vaut (b + c) / 2n et le score se réduit à la
+    # statistique de McNemar (b - c) / racine(b + c) : b = 5, c = 3 donne 2 / racine(8) = 0,7071
+    assert abs(_tango_p01(5, 3, 73, 0.0) - 8 / 146) < 1e-12
+    a = [1] * 5 + [0] * 3 + [1] * 60 + [0] * 5
+    b = [0] * 5 + [1] * 3 + [1] * 60 + [0] * 5
+    r = noninferiority_tango(a, b, margin=0.0)
+    assert abs(r["z"] - 2 / math.sqrt(8)) < 1e-12 and r["design_effect"] == 1.0
+    # la décision équivaut à une borne basse du score supérieure à -marge, et l'intervalle contient l'écart observé
+    for m in (0.05, 0.15):
+        r = noninferiority_tango(a, b, margin=m)
+        assert r["noninferior"] == (r["ci_score"][0] > -m) and r["ci_score"][0] < r["difference"] < r["ci_score"][1]
+    # sans aucune discordance, A et B identiques sont déclarés non inférieurs à 15 points
+    assert noninferiority_tango([1, 0] * 40, [1, 0] * 40, margin=0.15)["noninferior"]
+    # avec des groupes d'une question, l'effet de plan vaut 1, à l'arrondi près
+    assert abs(noninferiority_tango(a, b, 0.15, groups=list(range(73)))["design_effect"] - 1.0) < 1e-9
 
     return True
 
