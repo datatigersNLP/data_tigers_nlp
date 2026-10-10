@@ -8,6 +8,9 @@
 #   .venv/bin/python scripts/evaluation/01_valider_sur_piaf.py
 #   .venv/bin/python scripts/evaluation/02_references_lexicales.py
 #
+# Notebook 03 : déclarer le noyau privé de cet environnement, puis exécuter le notebook en entier :
+#   .venv/bin/python -m ipykernel install --prefix .venv --name evaluation-venv
+#
 # Après modification de ce fichier, régénérer le fichier figé :
 #   uv pip compile scripts/evaluation/requirements.txt --universal --python-version 3.12 -o scripts/evaluation/requirements-lock.txt
 #
@@ -33,6 +36,11 @@ snowballstemmer==3.1.1
 # lecture des passages du notebook 01
 pandas==3.0.6
 pyarrow==25.0.1
+
+# notebook 03 : exécution par nbclient sur un noyau privé, et figures (mêmes versions que le notebook 01)
+ipykernel==7.3.0
+nbclient==0.11.0
+matplotlib==3.11.2
 
 # encodeur intfloat/multilingual-e5-small sur CPU
 sentence-transformers==6.1.0
