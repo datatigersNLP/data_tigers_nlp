@@ -12,7 +12,7 @@
 ## Intégration dans le site
 
 1. Ajouter Transformers.js à la version figée du site : `npm install @huggingface/transformers@4.3.0 --save-exact`, dans `front/`.
-2. Copier les trois fichiers de `data/indexation/site/` dans `front/public/index/` (12,3 Mio au total ; décision de versionnement à prendre, voir la PR).
+2. Les trois fichiers de l'index sont versionnés dans `front/public/index/` (12,3 Mio ; option A, validée le 11 octobre 2026). Ne pas les régénérer : voir `front/public/index/SOURCES.md`.
 3. Dans le composant :
 
 ```

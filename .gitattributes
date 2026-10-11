@@ -1,0 +1,3 @@
+# Index du site (#48) : octets identiques sur toutes les machines. Aucune conversion de fin de ligne, même sous
+# Windows avec core.autocrlf : le site vérifie l'empreinte SHA-256 de chaque fichier et refuserait une copie modifiée.
+front/public/index/** -text
