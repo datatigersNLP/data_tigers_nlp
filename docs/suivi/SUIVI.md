@@ -37,8 +37,11 @@ Charges en heures. La colonne Écart sert à la section retour d'expérience du 
 | 5 | Livrable J2 | transverse | tous | 19/09 | | | | |
 | 6 | Weekly 2 | transverse | tous | 19/09 | | | | |
 | 25 | Définir la méthode de suivi des outils novateurs | transverse | Vaneck, Maïmouna | 06/10 | 07/10 | non estimée | 2 | |
+| 44 | Construire le jeu de questions annotées | D1, D5 | Jibril, Maïmouna, Vaneck | | | | 18 | |
 | 45 | Valider la chaîne de mesure sur PIAF | D2 | Remy, Mahé | 03/10 | 03/10 | 4 | 3.5 | -0.5 |
 | 47 | Construire les références lexicales TF-IDF et BM25 | D2 | Remy, Mahé | 04/10 | 04/10 | 4 | 3.5 | -0.5 |
+
+**#44 — charge réelle :** 18 h cumulées pour Jibril, Maïmouna et Vaneck, confirmées par Jibril le 11/10/2026 et déjà consignées dans le ticket. Répartition individuelle non renseignée. Charge **non estimée avant le début** : la cellule Estimé reste vide et aucun écart n'est calculé. Les dates réelles de début et de fin ne sont pas renseignées.
 
 ---
 
