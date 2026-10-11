@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parité du moteur du site</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: Canvas; color: CanvasText; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Parité du moteur du site avec la page de contrôle (#48)</h1>
+<p>À servir depuis la racine du dépôt, sur la seule interface locale (<code>python -m http.server 8765 --bind 127.0.0.1</code>),
+puis ouvrir <code>http://127.0.0.1:8765/scripts/indexation/parite_moteur.html</code>. La page charge l'export du notebook 02 avec
+le module <code>front/src/recherche/moteur.js</code>, encode les 24 requêtes du contrôle avec le modèle servi, et compare les
+5 premiers passages et leurs scores à <code>data/indexation/controle/resultats_navigateur.json</code>.</p>
+<pre id="journal">Chargement...</pre>
+<script type="module">
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
+import { creerMoteur } from "../../front/src/recherche/moteur.js";
+
+const journal = document.getElementById("journal");
+const noter = (texte) => { journal.textContent += "\n" + texte; };
+env.allowLocalModels = false;
+
+try {
+  const reference = await (await fetch("../../data/indexation/controle/resultats_navigateur.json")).json();
+  const moteur = await creerMoteur(pipeline, "../../data/indexation/site/");
+  noter(`index et modèle chargés : ${moteur.nbPassages} passages, ${moteur.entete.modele.dtype}`);
+  const lignes = [];
+  for (const r of reference.resultats) {
+    const debut = performance.now();
+    const resultats = await moteur.rechercher(r.question, 5);
+    const duree_ms = performance.now() - debut;
+    const ids = resultats.map((x) => x.passage_id);
+    const ecartScore = Math.max(...resultats.map((x, i) => Math.abs(x.score - r.scores5[i])));
+    lignes.push({ question: r.question, memes_5: JSON.stringify(ids) === JSON.stringify(r.top5), ecart_score_max: ecartScore,
+      duree_ms });
+  }
+  const identiques = lignes.filter((l) => l.memes_5).length;
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, requetes: lignes.length,
+    memes_5_premiers: identiques, ecart_score_max: Math.max(...lignes.map((l) => l.ecart_score_max)),
+    duree_mediane_ms: lignes.map((l) => l.duree_ms).sort((a, b) => a - b)[Math.floor(lignes.length / 2)], lignes };
+  noter(`terminé : ${identiques}/${lignes.length} requêtes avec les mêmes 5 premiers passages`);
+} catch (erreur) {
+  window.RESULTATS = { erreur: String(erreur) };
+  noter("ERREUR : " + erreur);
+}
+</script>
+</body>
+</html>
