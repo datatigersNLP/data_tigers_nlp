@@ -88,16 +88,35 @@ def main():
     fp32_size_mb = fp32_path.stat().st_size / (1024 * 1024)
     print(f"       Export FP32 réussi en {t_export:.2f}s : {fp32_path.name} ({fp32_size_mb:.1f} Mio)")
 
-    print("[3/5] Quantification dynamique INT8 (q8)...")
+    print("[3/5] Quantification dynamique INT8 (q8 - format Xenova avec per_channel=True et reduce_range=True)...")
     t0 = time.time()
     quantize_dynamic(
         model_input=str(fp32_path),
         model_output=str(q8_path),
         weight_type=QuantType.QInt8,
+        per_channel=True,
+        reduce_range=True,
     )
     t_quant = time.time() - t0
     q8_size_mb = q8_path.stat().st_size / (1024 * 1024)
     print(f"       Quantification q8 réussie en {t_quant:.2f}s : {q8_path.name} ({q8_size_mb:.1f} Mio)")
+
+    quant_config = {
+        "per_channel": True,
+        "reduce_range": True,
+        "per_model_config": {
+            "model": {
+                "op_types": [
+                    "Transpose", "Add", "Unsqueeze", "Cast", "Concat", "Sub",
+                    "Sqrt", "Pow", "Gather", "ReduceMean", "Div", "Reshape",
+                    "Softmax", "Mul", "Constant", "Shape", "Slice", "Erf", "MatMul"
+                ],
+                "weight_type": "QInt8"
+            }
+        }
+    }
+    with open(model_dir / "quant_config.json", "w", encoding="utf-8") as f:
+        json.dump(quant_config, f, indent=4)
 
     print("[4/5] Contrôle 1 : Parité numérique ONNX FP32 vs PyTorch FP32...")
     test_texts = [

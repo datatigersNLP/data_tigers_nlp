@@ -13,7 +13,9 @@ Ce dossier contient l'ensemble de la chaîne de traitement permettant d'ajuster 
 | [`03_generer_paires_locales.py`](03_generer_paires_locales.py) | Génération synthétique de paires avec Qwen2.5-7B local et filtres anti-fuite | `passages_m2.parquet`, `exclusions_train.json` | `train_paires.jsonl`, `echantillon_controle_train.json` |
 | [`04_ajuster_encodeur.py`](04_ajuster_encodeur.py) | Fine-tuning contrastif (MultipleNegativesRankingLoss) | `train_paires.jsonl` | `models/multilingual-e5-small-finetuned/` |
 | [`05_evaluer_apres.py`](05_evaluer_apres.py) | Évaluation après fine-tuning et tests statistiques appariés | `benchmark_test.json`, modèle ajusté | `resultats_comparaison.json` |
-| [`06_exporter_onnx.py`](06_exporter_onnx.py) | Export ONNX FP32, quantification q8 et contrôles de parité/fidélité | Modèle ajusté PyTorch | `model.onnx`, `model_quantized.onnx`, `rapport_onnx_parite.json` |
+| [`06_exporter_onnx.py`](06_exporter_onnx.py) | Export ONNX FP32, quantification q8 alignée Xenova et contrôles de parité/fidélité | Modèle ajusté PyTorch | `model.onnx`, `model_quantized.onnx`, `quant_config.json`, `rapport_onnx_parite.json` |
+| [`07_mesurer_fidelite_822.py`](07_mesurer_fidelite_822.py) | Mesure de fidélité Python sur les 822 requêtes réalistes de section M2 vs index 4 240 passages | `requetes_fidelite.json`, `passage_embeddings_apres.npy`, modèle ONNX q8 | `rapport_fidelite_822.json` |
+| [`serveur_controle.py`](serveur_controle.py) | Serveur local pour les tests de contrôle navigateur (`fidelite_navigateur.html`) avec endpoint de sauvegarde | Dépôt local | `data/indexation/controle/fidelite_navigateur_ajuste.json` |
 
 ---
 

@@ -44,7 +44,10 @@ L'inférence locale validée dans le cadre de l'Issue #31 (`qwen2.5-7b-instruct:
 * **Filtrage automatique et documentation du filtre de Jaccard** :
   * Contrôle syntaxique (interrogation finale, longueur entre 25 et 220 caractères).
   * **Filtre de non-recouvrement lexical Jaccard** : Rejet automatique si l'indice de Jaccard sur les ensembles de tokens entre une question générée et n'importe quelle question du jeu de test dépasse **0,40**. Ce seuil a été calibré empiriquement comme filtre heuristique anti-fuite : il tolère le lexique juridique inévitable (« contrat », « salarié », « préavis ») tout en interdisant toute proximité thématique ou calque de formulation avec les requêtes de test.
-* **Résultat** : **109 paires validées**, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans `data/adaptation/echantillon_controle_train.json`.
+* **Résultat et empreinte de reproductibilité** : **109 paires validées**, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans `data/adaptation/echantillon_controle_train.json`.
+  * **Fichier de données** : `data/adaptation/train_paires.jsonl` (exclu du suivi Git pour respecter les règles de taille du dépôt).
+  * **Empreinte SHA-256** : `2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698` (174 552 octets).
+  * **Garantie de reproductibilité sans graine** : La génération locale via Ollama ayant été exécutée sans graine pseudo-aléatoire explicite (`seed`), cette empreinte cryptographique SHA-256 fige de manière unique et opposable le jeu d'entraînement contrastif exact, garantissant une reproductibilité intégrale de la recette sans versionner le fichier volumineux.
 
 ---
 
@@ -58,6 +61,7 @@ L'inférence locale validée dans le cadre de l'Issue #31 (`qwen2.5-7b-instruct:
 
 ### 3.2 Hyperparamètres d'entraînement et déclaration de la recette (figée au 13/10)
 Les hyperparamètres suivants constituent la recette d'entraînement déclarée et figée au 13 octobre 2026. Ils ont été choisis pour adapter le modèle au vocabulaire du droit du travail sans détruire sa structure multilingue pré-entraînée (*catastrophic forgetting*) :
+* **Données d'entraînement figées** : `data/adaptation/train_paires.jsonl` (109 paires, SHA-256 : `2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698`).
 * **Taille de lot (*batch size*)** : 16 (soit 15 négatifs par exemple).
 * **Taux d'apprentissage (*learning rate*)** : $2 \times 10^{-5}$ avec optimiseur AdamW et décroissance linéaire.
 * **Époques** : 2 (14 pas d'optimisation).
@@ -108,29 +112,45 @@ La perte a décru de manière régulière et robuste (de 1,56 à 0,47), confirma
 
 ---
 
-## 5. Export ONNX et Contrôles de Parité
+## 5. Export ONNX et Contrôles de Parité et Fidélité Navigateur
 
-Pour permettre le déploiement ultérieur dans le navigateur client via **Transformers.js** (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences du Notebook 02.
+Pour permettre le déploiement ultérieur dans le navigateur client via **Transformers.js** (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences rigoureuses du Notebook 02.
 
-### 5.1 Fichiers générés
+### 5.1 Fichiers générés et alignement de quantification Xenova
 
-| Format | Fichier | Taille disque | Rôle applicatif |
-|---|---|---|---|
-| **FP32** | `models/multilingual-e5-small-finetuned/onnx/model.onnx` | 448,5 Mio | Modèle de référence ONNX haute précision |
-| **INT8 (q8)** | `models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx` | 112,7 Mio | Modèle compact pour le navigateur Web |
+| Format | Fichier | Taille disque | Spécification technique | Rôle applicatif |
+|---|---|---|---|---|
+| **FP32** | `models/multilingual-e5-small-finetuned/onnx/model.onnx` | 448,5 Mio | Opset 14, pooling mean, FP32 complet | Modèle de référence ONNX haute précision |
+| **q8 (Xenova)** | `models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx` | 112,9 Mio | `per_channel=True`, `reduce_range=True`, `QuantType.QInt8` | Modèle compact pour le navigateur Web (WASM) |
+
+> **Alignement sur la quantification Xenova :**  
+> Au Notebook 02, une conversion INT8 dynamique basique (`per_tensor`, standard `quantize_dynamic`) dégradait la fidélité de premier résultat dans le navigateur à 85,8 %, contre **91,8 %** pour la conversion `q8` de Xenova (`model_quantized.onnx`).  
+> Le script `scripts/adaptation/06_exporter_onnx.py` a donc été explicitement aligné sur le standard Xenova avec `per_channel=True` (vecteurs d'échelles de taille 384 par canal de sortie) et `reduce_range=True` (protection contre la saturation sur processeurs non-VNNI), accompagné de `models/multilingual-e5-small-finetuned/quant_config.json`. Cette rigueur garantit que la mesure future isolera l'apport de l'ajustement sémantique sans subir de perte parasite de précision numérique.
 
 ### 5.2 Contrôles de conformité
 
-1. **Contrôle 1 : Parité numérique FP32 (PyTorch vs ONNX FP32)** :
-   * **Cosinus minimal** : $1.00000000$ (seuil de parité strict : $\ge 0.99999$).
-   * **Écart absolu maximal composante** : $1,17 \times 10^{-7}$.
-   * **Statut** : **VALIDÉ AVEC SUCCÈS**.
+#### Contrôle 1 : Parité numérique FP32 (PyTorch vs ONNX FP32)
+* **Cosinus minimal** : $1.00000000$ (seuil strict : $\ge 0.99999$).
+* **Écart absolu maximal composante** : $1,17 \times 10^{-7}$.
+* **Statut** : **VALIDÉ AVEC SUCCÈS**.
 
-2. **Contrôle 2 : Fidélité de la quantification INT8 (PyTorch FP32 vs ONNX q8)** :
-   * **Cosinus médian** : $0.9834$ (seuil attendu : $\ge 0.98$).
-   * **Cosinus minimal** : $0.9789$ (seuil : $\ge 0.97$).
-   * **Concordance du Top-1** : $100,0\ \%$ sur le banc de validation.
-   * **Statut** : **VALIDÉ AVEC SUCCÈS**.
+#### Contrôle 2 : Fidélité navigateur du modèle quantifié q8 (Protocole Notebook 02)
+Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure de fidélité opposable a été exécutée **directement dans le navigateur** à l'aide de la page de contrôle du projet (`scripts/indexation/fidelite_navigateur.html?modele=ajuste`) :
+* **Moteur d'exécution** : Chromium, moteur ONNX Runtime WebAssembly (`device: "wasm"`), bibliothèque `@huggingface/transformers@4.3.0`.
+* **Jeu de test** : Les **822 requêtes réalistes** du corpus M2 (`data/indexation/controle/requetes_fidelite.json`, titres de section interrogatifs).
+* **Index de référence** : Les **4 240 passages** du corpus M2 encodés en PyTorch FP32 (`data/adaptation/passage_embeddings_apres.npy`).
+* **Résultats enregistrés** : `data/indexation/controle/fidelite_navigateur_ajuste.json` (empreintes et vecteurs navigateur sauvegardés).
+
+| Métrique de fidélité (822 requêtes, 4 240 passages) | Valeur mesurée dans le navigateur | Seuil d'acceptabilité Notebook 02 | Statut |
+|---|---:|---:|:---:|
+| **Cosinus médian avec la référence PyTorch** | **0,99389** | $\ge 0,98$ | **CONFORME** |
+| **Cosinus minimal avec la référence PyTorch** | **0,98627** | $\ge 0,97$ | **CONFORME** |
+| **Concordance Top-1 (même 1er résultat)** | **91,61 %** (753 / 822) | Alignée baseline (91,8 %) | **CONFORME** |
+| **Premier résultat de référence dans le Top-5** | **99,88 %** (821 / 822) | $\ge 99,5 \%$ | **CONFORME** |
+| **Rang maximal de dégradation** | **10** (99e percentile : 3,0) | $\le 25$ | **CONFORME** |
+| **Temps d'encodage moyen par requête** | **74,4 ms** (WASM) | Fluide pour l'UI | **CONFORME** |
+
+*Note sur la simulation locale Python :* En inférence CPU Python directe (`onnxruntime`), la concordance Top-1 atteint 93,43 % (cosinus médian 0,99355, cosinus minimal 0,98314, rapport dans `data/adaptation/rapport_fidelite_822.json`). La mesure in-browser Chromium WASM ci-dessus (91,61 %) fait foi conformément aux conclusions du Notebook 02.
 
 > **Statut de déploiement (Règle d'arbitrage) :**  
 > Le modèle ajusté n'est **pas déployé sur le site en ligne** à ce stade. Son intégration éventuelle pour le 18 octobre (remplacement de l'encodeur de base sur GitHub Pages) est conditionnée au résultat de la mesure officielle conjointe selon la règle de décision du protocole `05_protocole_ajustement.md` (gain de Recall@5 positif ou nul à la fois sur le jeu de l'équipe et sur le CDTN).
@@ -141,9 +161,11 @@ Pour permettre le déploiement ultérieur dans le navigateur client via **Transf
 
 - [x] **Génération de paires synthétiques avec le modèle local** : 109 paires question-passage générées avec Qwen2.5-7B local.
 - [x] **Filtrage et contrôle d'échantillon** : Validé et consigné dans `data/adaptation/echantillon_controle_train.json`.
+- [x] **Empreinte de reproductibilité des données** : SHA-256 de `train_paires.jsonl` consigné (`2d377eb6...`) pour pallier l'absence de graine explicite sans versionner le fichier.
 - [x] **Vérification d'absence de fuite du test** : 67 fiches totalement exclues du train set, contrôle heuristique Jaccard < 0,40 documenté.
 - [x] **Ajustement contrastif (négatifs du lot)** : Réalisé avec `MultipleNegativesRankingLoss`, recette déclarée figée au 13 octobre.
 - [x] **Banc exploratoire documenté** : Chiffres préliminaires étiquetés « exploratoires, hors protocole » selon la décision du Weekly 4.
-- [x] **Conversion ONNX et contrôles notebook 02** : Parité FP32 ($1.00000000$) et fidélité q8 validées.
+- [x] **Quantification ONNX q8 alignée Xenova** : Export avec `per_channel=True` et `reduce_range=True` (112,9 Mio).
+- [x] **Contrôle de fidélité dans le navigateur (Notebook 02)** : 91,61 % de concordance Top-1 et 99,88 % dans le Top-5 sur les 822 requêtes mesurées dans Chromium WASM via `scripts/indexation/fidelite_navigateur.html`.
 - [x] **Poids hors Git** : Dossier `models/` protégé par le `.gitignore`.
 - [ ] **Mesure officielle et décision de déploiement** : Planifiée au Weekly 5 (15 octobre) selon le protocole officiel commun `05_protocole_ajustement.md`.

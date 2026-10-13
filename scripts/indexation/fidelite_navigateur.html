@@ -26,23 +26,40 @@ const journal = document.getElementById("journal");
 const noter = (texte) => { journal.textContent += "\n" + texte; };
 // lien de téléchargement du fichier attendu par le notebook 02, pour rejouer le contrôle sans outil d'automatisation
 const proposer = (nom) => {
+  const nomFichier = nom || (modeleAjuste ? "fidelite_navigateur_ajuste.json" : "fidelite_navigateur.json");
   const lien = document.createElement("a");
   lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
-  lien.download = nom;
-  lien.textContent = `Télécharger ${nom}, à placer dans data/indexation/controle/`;
+  lien.download = nomFichier;
+  lien.textContent = `Télécharger ${nomFichier}, à placer dans data/indexation/controle/`;
   document.getElementById("telechargement").append(lien);
 };
-env.allowLocalModels = false;
-const DEPOT = "Xenova/multilingual-e5-small";
-const REVISION = "761b726dd34fb83930e26aab4e9ac3899aa1fa78";
-const PRECISIONS = ["q8", "int8", "uint8", "fp16", "fp32"];
+
+const params = new URLSearchParams(window.location.search);
+const modeleAjuste = params.get("modele") === "ajuste";
+
+if (modeleAjuste) {
+  env.allowLocalModels = true;
+  env.allowRemoteModels = false;
+  env.localModelPath = "../../models/";
+  noter("Mode : modèle ajusté local (models/multilingual-e5-small-finetuned)");
+} else {
+  env.allowLocalModels = false;
+  noter("Mode : modèle de référence Hub (Xenova/multilingual-e5-small)");
+}
+
+const DEPOT = modeleAjuste ? "multilingual-e5-small-finetuned" : "Xenova/multilingual-e5-small";
+const REVISION = modeleAjuste ? null : "761b726dd34fb83930e26aab4e9ac3899aa1fa78";
+const precisionParam = params.get("precision");
+const PRECISIONS = precisionParam ? [precisionParam] : (modeleAjuste ? ["q8"] : ["q8", "int8", "uint8", "fp16", "fp32"]);
 
 try {
   const { prefixe, requetes } = await (await fetch("../../data/indexation/controle/requetes_fidelite.json")).json();
   const resultats = {};
   for (const dtype of PRECISIONS) {
     const debut = performance.now();
-    const extracteur = await pipeline("feature-extraction", DEPOT, { revision: REVISION, dtype, device: "wasm" });
+    const optionsPipeline = { dtype, device: "wasm" };
+    if (REVISION) optionsPipeline.revision = REVISION;
+    const extracteur = await pipeline("feature-extraction", DEPOT, optionsPipeline);
     const charge = performance.now() - debut;
     const vecteurs = [];
     const debutEncodage = performance.now();
@@ -56,9 +73,15 @@ try {
     await extracteur.dispose();
   }
   window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, depot: DEPOT, revision: REVISION,
-    prefixe, requetes, resultats };
+    modele_ajuste: modeleAjuste, prefixe, requetes, resultats };
   noter("terminé");
-  proposer("fidelite_navigateur.json");
+  proposer();
+  fetch("/api/sauvegarder_fidelite", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(window.RESULTATS)
+  }).then(() => noter("résultats automatiquement enregistrés sur le serveur"))
+    .catch(() => {});
 } catch (erreur) {
   window.RESULTATS = { erreur: String(erreur) };
   noter("ERREUR : " + erreur);
