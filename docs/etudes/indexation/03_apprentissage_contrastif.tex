@@ -1,0 +1,549 @@
+\input{../../latex/preambule.tex}
+% Document autonome : il reprend le préambule de l'équipe (fontes, palette, encadrés) et ajoute
+% ce que la chaîne Markdown ne sait pas produire : formules, schémas TikZ et graphiques pgfplots.
+% Compilation depuis ce dossier : latexmk -xelatex 03_apprentissage_contrastif.tex
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{unicode-math}
+\setmathfont{LibertinusMath-Regular.otf}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,babel}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\hypersetup{pdftitle={Entraîner un encodeur de recherche},
+  pdfsubject={Fiche pédagogique : recherche dense, évaluation et apprentissage contrastif},
+  pdfauthor={Equipe Data Tigers - NLP 2 - M2 Data et IA, FGES}}
+\renewcommand{\entetecourant}{Entraîner un encodeur de recherche \textbullet{} Équipe Data Tigers}
+
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash\hspace{0pt}}X}
+\newcommand{\mesure}{\textcolor{vert}{\faRuler}\,}
+\newcommand{\source}{\textcolor{accent}{\faBook}\,}
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\R}{\mathbb{R}}
+
+\tikzset{
+  boite/.style={draw=accent,fill=fondclair,rounded corners=2pt,align=center,
+    font=\sffamily\small,inner sep=5pt,minimum height=9mm},
+  boite2/.style={boite,draw=accent2,fill=white},
+  fleche/.style={-{Stealth[length=2.4mm]},draw=encre,line width=0.7pt},
+  etiquette/.style={font=\sffamily\scriptsize,text=gris,align=center},
+}
+
+\newtheoremstyle{fiche}{6pt}{6pt}{\itshape}{}{\sffamily\bfseries\color{accent}}{.}{0.5em}{}
+\theoremstyle{fiche}
+\newtheorem{proposition}{Proposition}
+\renewcommand{\qedsymbol}{\textcolor{gris}{\faSquare[regular]}}
+
+\addto\captionsfrench{\renewcommand{\contentsname}{Sommaire}}
+\begin{document}
+\thispagestyle{empty}
+\begingroup\sffamily
+{\color{accent}\rule{\textwidth}{2.6pt}}\par\vspace{13pt}
+{\fontsize{27}{31}\selectfont\bfseries\color{encre}\raggedright Entraîner un encodeur\\de recherche\par}\vspace{7pt}
+{\fontsize{13.5}{17}\selectfont\color{gris} Équipe Data Tigers \textbullet{} NLP~2 \textbullet{} M2 Data \& IA \textbullet{} FGES}\par\vspace{5pt}
+{\fontsize{11}{14}\selectfont\color{accent2}\bfseries Fiche pédagogique : recherche dense, évaluation et apprentissage contrastif}\par\vspace{12pt}
+{\color{filet}\rule{\textwidth}{0.6pt}}\par\vspace{14pt}
+\endgroup
+
+\begingroup\setlength{\parskip}{0pt}
+\settowidth{\metalab}{\tabfont\bfseries Vérifications}
+\begin{tabular}{@{}>{\tabfont\bfseries\color{accent}}l@{\hspace{16pt}}p{\dimexpr\textwidth-\metalab-18pt\relax}@{}}
+Objet & Expliquer ce que fait l'encodeur pendant une recherche, ce qui distingue l'évaluation de l'entraînement, et comment l'apprentissage contrastif ajuste ses paramètres \\[3.5pt]
+Public & Toute l'équipe ; prolonge le support \emph{Comprendre l'encodeur multilingual-e5-small} (sections 3 à 5), à lire d'abord \\[3.5pt]
+Usage & Préparer le notebook 03 (\#46), qui évalue, et l'ajustement fin (\#49), qui entraînerait \\[3.5pt]
+Version & 6 octobre 2026 \\[3.5pt]
+Vérifications & Chaque chiffre est soit cité d'une source primaire (\source), soit mesuré sur notre corpus (\mesure) \\[3.5pt]
+\end{tabular}\par\vspace{16pt}\endgroup
+
+\begin{callout}
+Les exemples numériques ont été calculés le 6 octobre 2026 sur les 4\,240 passages du découpage M2, avec le modèle
+\code{intfloat/multilingual-e5-small} (révision \code{614241f6}) en précision fp32. Les trois questions employées
+sont celles du notebook 02 : aucune ne vient du jeu de test. Elles illustrent un mécanisme ; elles ne mesurent
+pas la qualité du système.
+\end{callout}
+
+\vspace{10pt}{\color{filet}\rule{\textwidth}{0.4pt}}\par\vspace{16pt}
+\begingroup\setlength{\parskip}{0pt}\tableofcontents\endgroup
+\clearpage
+
+% =====================================================================================
+\section{L'essentiel en cinq points}
+
+\begin{enumerate}
+\item \textbf{Le modèle est une fonction} qui transforme \emph{un} texte en \emph{un} vecteur de 384 nombres. Il
+  encode chaque texte séparément, question ou passage ; il ne voit jamais un couple d'un seul bloc.
+\item \textbf{La matrice de similarités n'est pas le modèle} : c'est un calcul fait à partir de ses vecteurs. Chercher,
+  c'est calculer une ligne de cette matrice pour la question posée, puis trier.
+\item \textbf{Évaluer n'est pas entraîner.} Les notebooks 01 à 03 et le site utilisent le modèle sans le modifier ; le
+  notebook 03 mesure son classement sur nos questions.
+\item \textbf{Entraîner, c'est modifier ses 117,7 millions de paramètres} pour que, dans tout lot d'exemples, chaque
+  question soit plus proche de son passage que des autres passages du lot. La perte InfoNCE mesure l'écart à cet
+  objectif ; la rétropropagation dit comment chaque paramètre doit bouger.
+\item \textbf{Le modèle a déjà été entraîné} par ses auteurs. L'ajustement fin (\#49) reprendrait le même mécanisme
+  sur des couples de notre domaine, distincts du jeu de test, puis exigerait de recalculer l'index et de remesurer.
+\end{enumerate}
+
+% =====================================================================================
+\section{Le modèle et ses paramètres}
+
+\subsection{Une fonction des textes vers la sphère}
+
+Notons $\mathcal{T}$ l'ensemble des textes et $d = 384$. L'encodeur est une fonction paramétrée
+\[
+  f_\theta : \mathcal{T} \longrightarrow \mathbb{S}^{d-1} = \{\vect{x} \in \R^d : \lVert\vect{x}\rVert_2 = 1\},
+\]
+où $\theta$ désigne l'ensemble de ses paramètres. Pour un texte $x$, le réseau produit un vecteur
+$\vect{h}_t \in \R^d$ par token, puis
+\[
+  \vect{h}(x) = \frac{\sum_t m_t\,\vect{h}_t}{\sum_t m_t},
+  \qquad
+  f_\theta(x) = \frac{\vect{h}(x)}{\lVert\vect{h}(x)\rVert_2},
+\]
+avec $m_t = 1$ pour un token réel et $0$ pour un remplissage (support sur l'encodeur, section 3.4). Une question
+$q$ et un passage $p$ passent dans le \textbf{même} réseau, distingués par un préfixe \source :
+\[
+  \vect{u} = f_\theta(\text{\code{query: }} q), \qquad \vect{e} = f_\theta(\text{\code{passage: }} p).
+\]
+
+\subsection{Ce que contient \texorpdfstring{$\theta$}{theta}}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}YR{2.7cm}R{1.6cm}@{}}
+\toprule
+\thead{Composant} & \thead{Paramètres} & \thead{Part} \\
+\midrule
+Table des tokens : 250\,037 lignes de 384 nombres (le tokeniseur en emploie 250\,002) & 96\,014\,208 & 81,6\,\% \\
+12 couches Transformer : 12 têtes d'attention, dimension 384, couche intermédiaire de 1\,536 & 21\,293\,568 & 18,1\,\% \\
+Positions (512 $\times$ 384), types de segments et normalisation de la table & 198\,144 & 0,2\,\% \\
+Couche \emph{pooler}, que la moyenne des tokens n'utilise pas & 147\,840 & 0,1\,\% \\
+\midrule
+\textbf{Total} & \textbf{117\,653\,760} & 100\,\% \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\mesure Décompte fait sur le modèle chargé. Une couche compte $1\,774\,464$ paramètres : $4 \times (384^2 + 384)$
+pour l'attention, $2\,(384 \times 1\,536) + 1\,536 + 384$ pour la couche intermédiaire, et $2 \times 768$ pour
+ses deux normalisations. Les quatre cinquièmes du modèle servent donc à donner un vecteur de départ à chaque
+token du vocabulaire multilingue : c'est ce que vise la réduction du vocabulaire (\#50).
+
+% =====================================================================================
+\section{Chercher : une ligne de matrice, puis un tri}
+
+\subsection{Le calcul fait à chaque question}
+
+Le notebook 02 a calculé une fois pour toutes la matrice des passages, ou \textbf{index},
+\[
+  \vect{E} = \begin{pmatrix} \vect{e}_1^{\top} \\ \vdots \\ \vect{e}_N^{\top} \end{pmatrix} \in \R^{N \times d},
+  \qquad N = 4\,240 ,
+\]
+soit $4\,240 \times 384 \times 4$ octets $= 6{,}21$~Mio en fp32 \mesure. Pour une question $q$ de vecteur $\vect{u}$,
+le site calcule
+\[
+  \vect{v} = \vect{E}\,\vect{u} \in \R^{N}, \qquad v_j = \langle \vect{e}_j, \vect{u} \rangle = \cos(\vect{e}_j, \vect{u}),
+\]
+puis classe les passages par score décroissant, les ex aequo dans l'ordre de l'index, et affiche les $k$ premiers.
+Le calcul de $\vect{v}$ coûte $N d = 1\,628\,160$ multiplications et autant d'additions : 1,7~ms en médiane dans
+le navigateur, pour environ 20~ms d'encodage de la question \mesure.
+
+\begin{center}
+\begin{tikzpicture}[node distance=5mm and 7mm]
+  \node[boite2,text width=2.5cm] (q) {Question\\du visiteur};
+  \node[boite,right=of q,text width=2.4cm] (f) {Encodeur $f_\theta$\\\code{query:}};
+  \node[boite,right=of f,text width=2.6cm] (v) {$\vect{v} = \vect{E}\vect{u}$\\4\,240 scores};
+  \node[boite2,right=of v,text width=2.2cm] (k) {Tri,\\$k$ premiers};
+  \node[boite,above=7mm of v,text width=2.6cm] (E) {Index $\vect{E}$\\calculé hors ligne};
+  \draw[fleche] (q) -- (f); \draw[fleche] (f) -- node[etiquette,above]{$\vect{u}$} (v);
+  \draw[fleche] (v) -- (k); \draw[fleche,dashed] (E) -- (v);
+\end{tikzpicture}
+\end{center}
+
+\subsection{La matrice de similarités}
+
+Pour évaluer, on pose d'un coup $n$ questions de vecteurs $\vect{u}_1, \dots, \vect{u}_n$, réunis dans
+$\vect{U} \in \R^{n \times d}$, et l'on forme
+\[
+  \vect{S} = \vect{U}\,\vect{E}^{\top} \in \R^{n \times N}, \qquad S_{ij} = \langle \vect{u}_i, \vect{e}_j \rangle .
+\]
+Chaque ligne est la recherche d'une question. Le notebook 03 construit cette matrice pour les questions du jeu de
+test et y lit le rang du premier passage pertinent. Le site, lui, ne la stocke jamais : il calcule à la volée la
+seule ligne de la question posée.
+
+\subsection{Pourquoi ne pas tenir une table de scores}
+
+On pourrait imaginer d'apprendre directement les scores, une case par couple (question, passage). Une telle table
+n'est définie que pour les questions qu'elle contient : pour une question nouvelle, il n'existe aucune ligne. Or
+l'ensemble des questions possibles est illimité, et presque toutes celles du site seront nouvelles. L'encodeur, au
+contraire, est défini sur \emph{tout} texte, avec un nombre de paramètres fixé qui ne dépend pas du nombre de
+questions : deux formulations voisines reçoivent des vecteurs voisins, ce qui lui permet de \textbf{généraliser}. Une
+table apprise serait la forme extrême du surapprentissage : une mémoire, sans généralisation.
+
+\subsection{Bi-encodeur et modèle croisé}
+
+Un modèle \textbf{croisé} lit la question et le passage ensemble, $g_\theta(q, p) \in \R$, et classe souvent mieux.
+Mais il ne permet aucun calcul préalable : chaque question exigerait $N = 4\,240$ passages complets dans le
+réseau. Au coût d'encodage d'une seule question, environ 20~ms, cela fait déjà plus de 80~secondes par question,
+et davantage en réalité, car un couple est bien plus long qu'une question. Le \textbf{bi-encodeur} déplace tout le
+travail lourd hors ligne : c'est ce qui rend le volet A possible dans un navigateur (support sur l'encodeur,
+section 5.1).
+
+% =====================================================================================
+\section{Évaluer n'est pas entraîner}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}L{3.0cm}YY@{}}
+\toprule
+& \thead{Inférence et évaluation} & \thead{Entraînement} \\
+\midrule
+Paramètres $\theta$ & fixes & modifiés à chaque pas \\
+Données & n'importe quel texte ; pour évaluer, des questions annotées & des couples (question, passage qui répond) \\
+Résultat & des vecteurs, des classements, des métriques & de nouveaux paramètres $\theta'$ \\
+Dans notre projet & notebooks 01, 02 et 03, site du volet A & ajustement fin (\#49), non commencé \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\textbf{Évaluer} consiste à lire la matrice $\vect{S}$. Pour la question $i$, soit $r_i$ le rang de son premier
+passage pertinent ; avec $n$ questions,
+\[
+  \text{Recall@}k = \frac{1}{n}\sum_{i=1}^{n} \mathbf{1}[r_i \le k],
+  \qquad
+  \text{MRR@10} = \frac{1}{n}\sum_{i=1}^{n} \frac{\mathbf{1}[r_i \le 10]}{r_i} .
+\]
+Ces définitions sont celles de \code{scripts/evaluation/metrics.py}, validées sur PIAF (\#45). Rien n'y est appris.
+
+\textbf{BM25 n'apprend rien non plus.} Sa méthode \code{fit()} compte, pour chaque mot, le nombre de passages qui le
+contiennent, et mesure la longueur de chaque passage : ce sont des statistiques, sans gradient. Ses deux réglages,
+$k_1$ et $b$, sont fixés à la main. Le nom \code{fit} vient seulement de la convention de scikit-learn.
+
+% =====================================================================================
+\section{Entraîner : la matrice d'un lot}
+
+\subsection{Les données et la construction du lot}
+
+On dispose d'un ensemble de couples $\mathcal{D} = \{(q_i, p_i^{+})\}$, où $p_i^{+}$ répond à $q_i$. Un pas
+d'entraînement tire un \textbf{lot} de $n$ couples, les encode, et forme la matrice carrée
+\[
+  \vect{S}^{B} \in \R^{n \times n}, \qquad S_{ij} = \langle \vect{u}_i, \vect{e}_j \rangle,
+  \quad \vect{u}_i = f_\theta(\text{\code{query: }} q_i), \quad \vect{e}_j = f_\theta(\text{\code{passage: }} p_j^{+}) .
+\]
+Les couples étant rangés dans le même ordre en lignes et en colonnes, \textbf{les bons couples sont sur la
+diagonale par construction}. Pour la question $i$, les autres colonnes contiennent les passages des autres couples :
+ce sont les \textbf{négatifs du lot}, obtenus sans aucune annotation supplémentaire. C'est la stratégie de DPR et
+d'E5 \source.
+
+\subsection{Un lot réel sur notre corpus}\label{sec:lot}
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}YR{1.75cm}R{1.75cm}R{1.75cm}R{1.75cm}@{}}
+\toprule
+& \thead{$p_1$ mentions interdites} & \thead{$p_2$ arrêt maladie} & \thead{$p_3$ essai, CDI} & \thead{$p_4$ essai, CDD} \\
+\midrule
+$q_1$ : Quelles mentions sont interdites sur le bulletin de paie ? & \textbf{0,902} & 0,800 & 0,797 & 0,802 \\
+$q_2$ : Mon employeur peut-il me licencier pendant un arrêt maladie ? & 0,811 & \textbf{0,885} & 0,805 & 0,808 \\
+$q_3$ : Combien de temps peut durer la période d'essai d'un CDI ? & 0,787 & 0,828 & \textbf{0,884} & 0,893 \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\mesure Cosinus du modèle actuel. Les colonnes $p_1$ à $p_3$ forment le lot $3 \times 3$ ; $p_4$, la section de la
+fiche CDD sur la durée de la période d'essai, est ajouté comme \textbf{négatif difficile} pour $q_3$. C'est l'échec
+observé au notebook 02 : $p_4$ (0,893) devance $p_3$ (0,884).
+
+\subsection{Pourquoi les négatifs sont indispensables}
+
+Si l'on cherchait seulement à rapprocher chaque question de son passage, la fonction constante serait une solution
+optimale : tous les vecteurs égaux donnent $S_{ii} = 1$, le cosinus maximal, et le modèle ne distingue plus rien.
+C'est l'\textbf{effondrement}. Les négatifs rendent l'objectif \emph{relatif} : il ne suffit plus d'être proche de son
+passage, il faut l'être \emph{plus} que des autres. La proposition~\ref{prop:effondrement} montre que la perte
+InfoNCE pénalise l'effondrement.
+
+% =====================================================================================
+\section{La perte InfoNCE}
+
+\subsection{Définition}
+
+Avec une température $\tau > 0$, on pose pour chaque ligne $i$ du lot
+\[
+  P_{ij} = \frac{\exp(S_{ij}/\tau)}{\sum_{k=1}^{n} \exp(S_{ik}/\tau)},
+  \qquad
+  \ell_i = -\log P_{ii},
+  \qquad
+  \mathcal{L} = \frac{1}{n}\sum_{i=1}^{n} \ell_i .
+\]
+$P_{i\cdot}$ est une loi de probabilité sur les $n$ passages du lot (fonction \emph{softmax}) ; $\ell_i$ est
+l'entropie croisée de la classification « parmi ces $n$ passages, lequel est le bon ? ». Des négatifs difficiles
+s'ajoutent simplement au dénominateur ; E5 en emploie 7 par exemple lors de son ajustement fin \source. En
+réécrivant $\ell_i$,
+\[
+  \ell_i = \log \sum_{k=1}^{n} \exp\!\Big(\frac{S_{ik} - S_{ii}}{\tau}\Big),
+\]
+on voit que la perte ne dépend que des \textbf{écarts} entre le score du bon passage et ceux des autres.
+
+\subsection{D'où vient le nom}
+
+L'estimation contrastive par bruit (\emph{Noise-Contrastive Estimation}) apprend un modèle en le faisant distinguer
+de vraies données d'échantillons de bruit \source. InfoNCE en est la variante de van den Oord et al. : sous leurs
+hypothèses, des négatifs tirés indépendamment, minimiser $\mathcal{L}$ maximise une borne inférieure de
+l'information mutuelle entre questions et passages, $I(q; p) \ge \log n - \mathcal{L}$ \source. D'où l'intérêt de
+lots nombreux : E5 a été pré-entraîné avec des lots de 32\,768 couples \source.
+
+\subsection{Bornes}
+
+\begin{proposition}\label{prop:bornes}
+Pour des vecteurs normalisés, donc des scores dans $[-1, 1]$, chaque terme vérifie
+$\ell_i \ge \log\big(1 + (n-1)\,e^{-2/\tau}\big) > 0$.
+\end{proposition}
+
+\begin{proof}
+$P_{ii}$ est maximal quand $S_{ii} = 1$ et $S_{ik} = -1$ pour $k \neq i$ ; alors
+$P_{ii} = e^{1/\tau} / \big(e^{1/\tau} + (n-1)e^{-1/\tau}\big) = 1 / \big(1 + (n-1)e^{-2/\tau}\big)$, et
+$\ell_i = -\log P_{ii}$.
+\end{proof}
+
+Avec $\tau = 0{,}01$ et $n = 32$, cette borne vaut $\log(1 + 31\,e^{-200})$, soit pratiquement zéro : la perte peut
+devenir aussi petite que l'on veut, sans jamais s'annuler.
+
+\begin{proposition}\label{prop:effondrement}
+Si $f_\theta$ est constante, alors $\mathcal{L} = \log n$, quelle que soit $\tau$.
+\end{proposition}
+
+\begin{proof}
+Tous les vecteurs sont égaux, donc $S_{ik} = 1$ pour tous $i, k$, puis $P_{ii} = 1/n$ et $\ell_i = \log n$.
+\end{proof}
+
+Pour $n = 32$, l'effondrement coûte $\log 32 \approx 3{,}466$, très loin du minimum : il n'est donc pas une
+solution de la minimisation.
+
+\subsection{Le rôle de la température}
+
+Comme $\ell_i = \log \sum_k \exp\big((S_{ik} - S_{ii})/\tau\big)$, deux limites éclairent son rôle :
+\begin{itemize}
+\item quand $\tau \to 0$, la somme est dominée par son plus grand terme, et
+  $\ell_i \approx \max\big(0,\ \max_{k \neq i} S_{ik} - S_{ii}\big)/\tau$ : seule compte la question de savoir si le
+  plus dangereux des négatifs passe devant le bon passage, et de combien ;
+\item quand $\tau \to \infty$, tous les termes tendent vers 1, $P_{i\cdot}$ devient uniforme et $\ell_i \to \log n$ :
+  le signal d'apprentissage disparaît.
+\end{itemize}
+E5 emploie $\tau = 0{,}01$ \source. C'est cohérent avec ses scores resserrés : deux passages pris au hasard sur notre
+corpus ont un cosinus médian de 0,834 \mesure (support sur l'encodeur, section 4.4). Sans une petite température, des
+écarts de quelques centièmes resteraient sans effet.
+
+\begin{tabletype}
+\begin{tabularx}{\textwidth}{@{}YR{2.7cm}R{2.7cm}@{}}
+\toprule
+\thead{Lot réel de la section \ref{sec:lot}} & \thead{$\tau = 0{,}01$ (E5)} & \thead{$\tau = 0{,}05$} \\
+\midrule
+Lot $3 \times 3$ : probabilité du bon passage pour $q_1$, $q_2$, $q_3$ & $>0{,}999$ ; 0,999 ; 0,996 & 0,798 ; 0,698 ; 0,680 \\
+Lot $3 \times 3$ : perte $\mathcal{L}$ & 0,002 & 0,324 \\
+Avec le négatif difficile $p_4$ : probabilité du bon passage pour $q_3$ & 0,290 & 0,375 \\
+Avec le négatif difficile $p_4$ : perte $\ell_3$ & 1,237 & 0,981 \\
+\bottomrule
+\end{tabularx}
+\end{tabletype}
+
+\mesure Le lot $3 \times 3$ est déjà résolu par le modèle actuel : avec $\tau = 0{,}01$, sa perte est presque nulle,
+et un tel lot n'apprendrait presque rien. Le négatif difficile change tout : $q_3$ ne place plus que 29\,\% de sa
+probabilité sur le bon passage, et sa perte passe de 0,004 à 1,237.
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.86\textwidth,height=5.6cm,xmode=log,xmin=0.002,xmax=1,ymin=0,ymax=4.7,
+  xlabel={température $\tau$},ylabel={perte $\ell_3$},
+  tick label style={font=\sffamily\scriptsize},label style={font=\sffamily\small},
+  legend style={font=\sffamily\scriptsize,draw=none,fill=none,at={(0.98,0.97)},anchor=north east},
+  grid=major,grid style={filet}]
+  \addplot[accent2,line width=1pt,domain=-6.2:0,samples=160]
+    ({exp(x)},{ln(exp(-0.096719/exp(x))+exp(-0.055906/exp(x))+1+exp(0.008931/exp(x)))});
+  \addlegendentry{avec le négatif difficile $p_4$ (4 passages)}
+  \addplot[accent,line width=1pt,domain=-6.2:0,samples=160]
+    ({exp(x)},{ln(exp(-0.096719/exp(x))+exp(-0.055906/exp(x))+1)});
+  \addlegendentry{lot $3 \times 3$ seul}
+  \draw[gris,dashed] (axis cs:0.01,0) -- (axis cs:0.01,4.7) node[pos=0.93,right,font=\sffamily\scriptsize]{E5};
+  \addplot[gris,dotted,domain=0.002:1] {ln(4)};
+  \addplot[gris,dotted,domain=0.002:1] {ln(3)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\mesure Perte de $q_3$ en fonction de $\tau$, calculée à partir des scores exacts du lot de la section \ref{sec:lot}. Les
+pointillés marquent $\log 4$ et $\log 3$, vers lesquelles chaque courbe tend quand $\tau$ grandit. Quand $\tau$
+diminue, la perte s'annule si le bon passage est en tête (courbe bleue), et croît comme $0{,}009/\tau$ si un négatif
+le devance de 0,009 (courbe brune).
+
+% =====================================================================================
+\section{Le gradient : qui pousse qui}
+
+\subsection{Par rapport aux scores}
+
+\begin{proposition}\label{prop:gradient}
+$\displaystyle \frac{\partial \ell_i}{\partial S_{ij}} = \frac{1}{\tau}\big(P_{ij} - \mathbf{1}[i = j]\big)$.
+\end{proposition}
+
+\begin{proof}
+$\ell_i = -S_{ii}/\tau + \log \sum_k \exp(S_{ik}/\tau)$. La dérivée du premier terme vaut $-\mathbf{1}[i=j]/\tau$ ;
+celle du second vaut $\exp(S_{ij}/\tau)/\big(\tau\sum_k \exp(S_{ik}/\tau)\big) = P_{ij}/\tau$.
+\end{proof}
+
+La descente de gradient déplace chaque score dans le sens opposé à sa dérivée. Le bon score $S_{ii}$ est donc
+\textbf{tiré vers le haut} avec un poids $(1 - P_{ii})/\tau$, et chaque négatif \textbf{repoussé} avec un poids
+$P_{ij}/\tau$. Comme $\sum_j P_{ij} = 1$, la traction exercée sur le bon passage est exactement répartie sur les
+négatifs, \textbf{au prorata de leur probabilité}. Un négatif facile ($P_{ij} \approx 0$) ne reçoit presque rien ; un
+négatif difficile reçoit presque tout.
+
+\mesure Sur le lot réel avec $\tau = 0{,}01$, la ligne de $q_3$ vaut
+$P_{3\cdot} = (0{,}000 ;\ 0{,}001 ;\ 0{,}290 ;\ 0{,}709)$. Le bon passage $p_3$ est tiré avec le poids
+$1 - 0{,}290 = 0{,}710$ ; le passage CDD en reçoit 0,709, soit la quasi-totalité. Les passages sur le bulletin
+de paie et la maladie, faciles, ne reçoivent pratiquement rien : un lot de négatifs aléatoires apprend peu.
+
+\subsection{Jusqu'aux vecteurs}
+
+Comme $S_{ij} = \langle \vect{u}_i, \vect{e}_j \rangle$, on a $\partial S_{ij}/\partial \vect{u}_i = \vect{e}_j$ et
+$\partial S_{ij}/\partial \vect{e}_j = \vect{u}_i$, donc
+\[
+  \frac{\partial \ell_i}{\partial \vect{u}_i} = \frac{1}{\tau}\Big(\sum_{j} P_{ij}\,\vect{e}_j - \vect{e}_i\Big).
+\]
+Un pas de gradient déplace $\vect{u}_i$ vers $\vect{e}_i$ et l'éloigne de la moyenne des passages pondérée par
+$P_{i\cdot}$, c'est-à-dire surtout des négatifs dangereux. Symétriquement, chaque $\vect{e}_j$ bouge.
+
+Ces vecteurs restent sur la sphère, car ils sont normalisés. Avec $f = \vect{h}/\lVert\vect{h}\rVert$, la dérivée de la
+normalisation vaut
+\[
+  \frac{\partial f}{\partial \vect{h}} = \frac{1}{\lVert\vect{h}\rVert}\big(\vect{I} - f f^{\top}\big),
+\]
+qui projette le gradient sur le plan tangent à la sphère : l'apprentissage fait \emph{tourner} les vecteurs, il ne
+les allonge pas.
+
+\subsection{Jusqu'aux paramètres : la rétropropagation}
+
+Les vecteurs dépendent de $\theta$ à travers la normalisation, la moyenne des tokens
+($\partial \vect{h}/\partial \vect{h}_t = m_t / \sum_s m_s$), les 12 couches et la table des tokens. La
+\textbf{rétropropagation} applique la règle de dérivation en chaîne de la perte vers l'entrée, couche par couche, et
+fournit en une seule passe arrière la dérivée de $\mathcal{L}$ par rapport à chacun des 117\,653\,760 paramètres.
+Comme questions et passages passent dans le même réseau, les deux côtés contribuent au gradient des mêmes
+paramètres : un pas déplace à la fois les vecteurs des questions et ceux des passages.
+
+% =====================================================================================
+\section{Optimiser : la descente de gradient}
+
+\subsection{Le pas}
+
+La descente de gradient stochastique remplace $\theta$ par
+\[
+  \theta_{t+1} = \theta_t - \eta\, \vect{g}_t, \qquad \vect{g}_t = \nabla_\theta \mathcal{L}(\theta_t ; B_t),
+\]
+où $B_t$ est le lot du pas $t$ et $\eta$ le pas d'apprentissage. Le gradient d'un lot est une estimation bruitée du
+gradient sur toutes les données ; c'est le sens de « stochastique ». En pratique, on emploie AdamW, qui adapte le
+pas de chaque paramètre à l'aide de moyennes mobiles des gradients et de leurs carrés, et applique une décroissance
+des poids découplée \source.
+
+\subsection{Les ordres de grandeur pour nous}
+
+\mesure Sur la machine de référence, un pas sur un lot de 32 couples prend 89~ms (journal d'usage de l'IA,
+session 8). Avec $17\,106$ couples, une époque compte $\lceil 17\,106 / 32 \rceil = 535$ pas, et trois époques
+$1\,605$ pas, soit environ 143~secondes : 2,4~minutes. Le coût de calcul n'est pas un obstacle. Avec des lots de
+32, chaque question n'a que 31 négatifs, contre 32\,767 pour E5 ; les auteurs notent que des négatifs difficiles
+permettent de compenser des lots plus petits \source.
+
+\subsection{Deux risques}
+
+\begin{itemize}
+\item Le \textbf{surapprentissage} : à force de pas, le modèle apprend par cœur les couples d'entraînement et
+  généralise moins bien. Parades : un petit pas $\eta$, peu d'époques, et l'arrêt quand la perte d'un ensemble de
+  validation, distinct de l'entraînement et du test, cesse de baisser.
+\item L'\textbf{oubli catastrophique} : en s'adaptant à notre domaine, le modèle peut perdre une partie de ce qu'il
+  savait du français général. Seule une mesure avant et après, sur le même jeu figé, permet de le voir.
+\end{itemize}
+
+% =====================================================================================
+\needspace{12\baselineskip}
+\section{Ce que cela implique pour notre projet}
+
+\subsection{Où nous en sommes}
+
+Le modèle a été entraîné par ses auteurs : pré-entraînement contrastif sur environ un milliard de couples de textes,
+puis ajustement fin sur environ 1,6 million de couples annotés, avec négatifs difficiles et distillation depuis un
+modèle croisé \source. Nous l'utilisons tel quel. Le notebook 03 fournira la mesure \textbf{avant} tout ajustement.
+
+\subsection{Une recette pour l'ajustement fin (\#49)}
+
+Proposition, à décider dans le ticket :
+\begin{enumerate}
+\item \textbf{Données.} Des couples (question, passage qui répond) construits sur les passages M2, par exemple avec
+  des questions générées par IA, que le README du jeu de questions réserve à l'entraînement. \textbf{Jamais une
+  question du jeu de test}, sans quoi la mesure après ajustement évaluerait de la mémoire.
+\item \textbf{Validation.} Un ensemble de validation tiré des couples d'entraînement, séparé par fiche, pour
+  arrêter l'entraînement à temps.
+\item \textbf{Lots sans faux négatifs.} Des lots composés de fiches différentes : deux couples de la même fiche
+  feraient d'un passage pertinent un négatif. Le découpage M2 compte 57 passages à texte identique \mesure (support
+  sur l'encodeur, section 8.4).
+\item \textbf{Négatifs difficiles.} Pour chaque question, des passages que le modèle actuel classe haut sans qu'ils
+  répondent, vérifiés : le passage CDD pour une question sur le CDI en est l'exemple type.
+\item \textbf{Après l'entraînement.} $f_\theta$ a changé : recalculer l'index des 4\,240 passages (notebook 02),
+  réexporter le modèle en ONNX q8 et contrôler sa fidélité dans le navigateur, puis remesurer avec le notebook 03,
+  selon le même protocole et sur le même jeu figé.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[node distance=5mm and 8mm]
+  \node[boite2,text width=3.0cm] (train) {Couples d'entraînement\\(questions générées)};
+  \node[boite,right=of train,text width=2.6cm] (ft) {Ajustement fin\\(\#49) : $\theta \to \theta'$};
+  \node[boite,right=of ft,text width=2.6cm] (idx) {Nouvel index\\(notebook 02)};
+  \node[boite,right=of idx,text width=2.4cm] (eval) {Évaluation\\(notebook 03)};
+  \node[boite2,above=8mm of eval,text width=2.4cm] (test) {Jeu de test figé\\(\#44)};
+  \draw[fleche] (train) -- (ft); \draw[fleche] (ft) -- (idx); \draw[fleche] (idx) -- (eval);
+  \draw[fleche] (test) -- (eval);
+  \draw[rouge,line width=0.8pt,dashed,-{Stealth[length=2.4mm]}] (test.west) -| (train.north)
+    node[pos=0.3,above,etiquette,text=rouge]{jamais vers l'entraînement}
+    node[pos=0.5,fill=white,inner sep=1pt,text=rouge]{\faTimes};
+\end{tikzpicture}
+\end{center}
+
+% =====================================================================================
+\section{Glossaire}
+
+\begin{description}[leftmargin=0pt,labelsep=0.5em,itemsep=2pt]
+\item[Encodeur] fonction $f_\theta$ qui transforme un texte en vecteur normalisé.
+\item[Paramètres] les nombres $\theta$ du réseau, 117\,653\,760 ici, que l'entraînement modifie.
+\item[Inférence] utilisation du modèle à paramètres fixes : encoder, chercher, évaluer.
+\item[Lot] ensemble de $n$ couples traités ensemble à un pas d'entraînement.
+\item[Négatif du lot] passage d'un autre couple du lot, employé comme mauvaise réponse.
+\item[Négatif difficile] passage proche de la question sans y répondre, choisi exprès.
+\item[Faux négatif] passage traité comme négatif alors qu'il répond à la question.
+\item[Softmax] transformation de scores en probabilités : $P_{ij} \propto \exp(S_{ij}/\tau)$.
+\item[Température] constante $\tau$ qui règle la sévérité de la comparaison des scores.
+\item[InfoNCE] perte $-\log P_{ii}$ moyennée sur le lot : entropie croisée de la classification du bon passage.
+\item[Effondrement] solution triviale où tous les textes reçoivent le même vecteur.
+\item[Gradient] vecteur des dérivées de la perte par rapport aux paramètres.
+\item[Rétropropagation] calcul de ce gradient par dérivation en chaîne, de la perte vers l'entrée.
+\item[Époque] passage complet sur les données d'entraînement.
+\item[Surapprentissage] apprentissage par cœur des exemples, au détriment de la généralisation.
+\item[Oubli catastrophique] perte de compétences générales lors d'une adaptation à un domaine.
+\item[Bi-encodeur] question et passage encodés séparément puis comparés ; passages encodés à l'avance.
+\item[Modèle croisé] question et passage lus ensemble ; plus précis, sans calcul préalable possible.
+\end{description}
+
+% =====================================================================================
+\section{Sources}
+
+\begin{itemize}
+\item Gutmann M. et Hyvärinen A. (2010), {\NoAutoSpacing\emph{Noise-contrastive estimation: A new estimation principle for
+  unnormalized statistical models}}, AISTATS.
+\item van den Oord A., Li Y. et Vinyals O. (2018), \emph{Representation Learning with Contrastive Predictive
+  Coding}, {\NoAutoSpacing arXiv:1807.03748}.
+\item Karpukhin V. et al. (2020), \emph{Dense Passage Retrieval for Open-Domain Question Answering}, EMNLP :
+  négatifs du lot.
+\item Loshchilov I. et Hutter F. (2019), \emph{Decoupled Weight Decay Regularization}, ICLR : AdamW.
+\item Wang L. et al. (2022), \emph{Text Embeddings by Weakly-Supervised Contrastive Pre-training},
+  {\NoAutoSpacing arXiv:2212.03533}, sections 4.1 et 4.2 et section 5 : perte, $\tau = 0{,}01$, préfixes, négatifs du lot, lots de
+  32\,768, 7 négatifs difficiles.
+\item Wang L. et al. (2024), {\NoAutoSpacing\emph{Multilingual E5 Text Embeddings: A Technical Report}, arXiv:2402.05672},
+  tableaux 1 et 2 : données de pré-entraînement et d'ajustement fin.
+\item Équipe Data Tigers : support \emph{Comprendre l'encodeur multilingual-e5-small} ; rapport de validation des
+  métriques sur PIAF ; journal d'usage de l'IA, session 8.
+\end{itemize}
+
+\end{document}

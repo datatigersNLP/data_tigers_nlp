@@ -1,0 +1,52 @@
+# Construit le site du volet A (dossier front/) et le publie sur GitHub Pages (ticket #29).
+# URL : https://datatigersnlp.github.io/data_tigers_nlp/
+# Publié depuis dev, pour que le site suive l'intégration sans attendre la fusion de jalon dans main.
+name: Déploiement du volet A
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "front/**"
+      - ".github/workflows/deploiement-volet-a.yml"
+  # redéploiement manuel depuis l'onglet Actions, sans nouveau commit
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# un seul déploiement à la fois ; celui en cours va à son terme
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construction:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: front/dist
+
+  deploiement:
+    needs: construction
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v5

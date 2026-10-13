@@ -83,6 +83,10 @@ ENTETE = {
  "05_RAPPORT_J2":         r"Rapport de jalon J2 \textbullet{} Équipe Data Tigers",
  "06_JOURNAL_USAGE_IA":   r"Journal d'usage de l'IA \textbullet{} Équipe Data Tigers",
 }
+# Noms des fichiers dans le dépôt : même bandeau et même en-tête que les noms de travail
+for _depot, _travail in [("J2_rapport", "05_RAPPORT_J2"), ("JOURNAL_USAGE_IA", "06_JOURNAL_USAGE_IA")]:
+    BANDEAU[_depot] = BANDEAU[_travail]
+    ENTETE[_depot] = ENTETE[_travail]
 
 T = []
 T.append(r'\renewcommand{\entetecourant}{%s}'

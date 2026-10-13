@@ -32,13 +32,13 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 ## 2. Outils déclarés
 
-| Outil              | Nature                                                                   | Membres                            | Usage                                                                |
-| ------------------ | ------------------------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------- |
-| Claude Opus 5      | modèle de langage, fenêtre de contexte de 1 million de tokens          | Mahé BEGNIS                       | architecture, décisions, recherches, critique, rédaction assistée |
-| Claude Code        | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement  | exécution de commandes, lecture de fichiers, mesures                |
-| Google Antigravity | plateforme d'agents, alternative gratuite                                | Rémy RAYANE                       | même usage, divergence déclarée au jalon J2                       |
-| Gemini 3.8 Flash   | modèle de langage multimodal rapide, exécuté sous Google Antigravity  | Rmy RAYANE                         | raisonnement, génération de scripts, analyse de contextes          |
-| ChatGPT            | interface conversationnelle web (modèles GPT-4o / o1)                   | membres disposant d'un abonnement | brainstorming, reformulations, documentation ponctuelle              |
+| Outil | Nature | Membres | Usage |
+|---|---|---|---|
+| Claude Opus 5, puis Claude Opus 5.5 (sessions 12 et 13) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
+| Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
+| Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
+| ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
 
@@ -88,12 +88,12 @@ La divergence entre Claude Code et Google Antigravity est déclarée dans le rap
 
 **Mesures exécutées.**
 
-| Mesure                                  | Méthode                                                                                      | Résultat retenu                                                                                          |
-| --------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Faisabilité de l'exécution navigateur | page statique servie en local, Chromium piloté par Playwright, 20 passes après chauffe      | 19,8 ms par requête, 3 052 ms au premier chargement, 568 ms en cache, 135,6 Mio de charge utile          |
-| Empreinte mémoire des modèles locaux  | calcul du cache KV à partir des fichiers de configuration officiels                          | Qwen2.5-7B à 56,0 Kio par token, soit 2,3 à 3,4 fois moins que les autres candidats                     |
-| Recherche de corpus                     | interrogation des API Hugging Face et data.gouv.fr, contrôle d'accessibilité de dix sources | `AgentPublic/travail-emploi`, 5 702 passages, 29,6 Mio, licence Etalab 2.0                              |
-| Dimensionnement du jeu de référence   | calcul de puissance statistique                                                               | 60 questions donnent un intervalle de plus ou moins 10,1 points, insuffisant pour distinguer 0,80 de 0,85 |
+| Mesure | Méthode | Résultat retenu |
+|---|---|---|
+| Faisabilité de l'exécution navigateur | page statique servie en local, Chromium piloté par Playwright, 20 passes après chauffe | 19,8 ms par requête, 3 052 ms au premier chargement, 568 ms en cache, 135,6 Mio de charge utile |
+| Empreinte mémoire des modèles locaux | calcul du cache KV à partir des fichiers de configuration officiels | Qwen2.5-7B à 56,0 Kio par token, soit 2,3 à 3,4 fois moins que les autres candidats |
+| Recherche de corpus | interrogation des API Hugging Face et data.gouv.fr, contrôle d'accessibilité de dix sources | `AgentPublic/travail-emploi`, 5 702 passages, 29,6 Mio, licence Etalab 2.0 |
+| Dimensionnement du jeu de référence | calcul de puissance statistique | 60 questions donnent un intervalle de plus ou moins 10,1 points, insuffisant pour distinguer 0,80 de 0,85 |
 
 **Apport le plus net.** La recherche de corpus. Dix sources publiques ont été testées pour leur accessibilité réelle, leur volumétrie, leur licence et leur fraîcheur, en quelques minutes. Cette recherche a écarté les documents internes de la formation, absents du sitemap public, et fait émerger un jeu de données administratif français dont la structure correspond exactement aux besoins du cas A3.
 
@@ -163,18 +163,18 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Objet.** Élaboration du plan d'action opérationnel pour le Domaine 2 (Encodeur et Indexation) dans le cadre de la résolution de l'Issue #30 (milestone Mi-parcours), ciblant l'indexation vectorielle sur le corpus réduit de référence PIAF.
 
-**Produit.** `Plan_Action_Index.md` (286 lignes, ~2 400 mots) détaillant les spécifications techniques, les fondements NLP (asymétrie E5, normalisation $L_2$), l'architecture de découplage binaire/JSON, ainsi que les spécifications des scripts d'indexation (`build_reduced_index.py`), de recherche (`query_reduced_index.py`) et d'évaluation quantitative (`evaluate_reduced_index.py`).
+**Produit.** `Plan_Action_Index.md` (286 lignes, ~2 400 mots) détaillant les spécifications techniques, les fondements NLP (asymétrie E5, normalisation L2), l'architecture de découplage binaire/JSON, ainsi que l'architecture des scripts du pipeline décrits dans le plan d'action : préparation du corpus (`prepare_piaf_corpus.py`), encodage et export binaire (`build_vector_index.py`), recherche dense (`src/retrieval/dense_search.py`) et banc d'évaluation comparatif (`evaluate_benchmarks.py`).
 
 **Mesures exécutées.**
 
 - Analyse du jeu de données Hugging Face `AgentPublic/piaf` : 3 835 questions, 761 contextes uniques (paragraphes Wikipédia francophones), 191 articles distincts. Longueur moyenne de 688,4 caractères par contexte (~130 à 150 sous-mots).
-- Calcul théorique de l'empreinte de la matrice d'embeddings pour 761 passages en dimension 384 : $761 \times 384 \times 4 \text{ octets} = 1\,168\,896 \text{ octets}$ (~1,17 Mio en Float32, ~293 Kio en Int8), respectant strictement le budget réseau et mémoire du navigateur (< 5 Mio).
-- Contrôle de la complexité algorithmique côté client : la normalisation $L_2$ appliquée dès l'indexation permet de réduire la similarité cosinus à un simple produit scalaire en $O(d)$ opérations, vectorisable en WebAssembly / SIMD sans surcoût.
+- Calcul théorique de l'empreinte de la matrice d'embeddings pour 761 passages en dimension 384 : 761 × 384 × 4 octets = 1 168 896 octets (1,11 Mio en float32, 285 Kio en int8), respectant strictement le budget réseau et mémoire du navigateur (< 5 Mio).
+- Contrôle de la complexité algorithmique côté client : la normalisation L2 appliquée dès l'indexation permet de réduire la similarité cosinus à un simple produit scalaire en O(d) opérations, vectorisable en WebAssembly / SIMD sans surcoût.
 
 **Résultats retenus.**
 
 - Choix de PIAF comme jeu réduit de calibration grâce à la présence d'une vérité terrain humaine (*Ground Truth* paires questions-contextes).
-- Adoption stricte des préfixes asymétriques E5 (`passage: ` pour les contextes, `query: ` pour les requêtes) pour prévenir une chute documentée de 10 à 25 % du Recall@k.
+- Adoption stricte des préfixes asymétriques E5 (`passage: ` pour les contextes, `query: ` pour les requêtes) pour prévenir la dégradation de Recall@k documentée par les auteurs sur les tâches de recherche asymétrique (Wang et al., 2022, arXiv:2212.03533).
 - Découplage strict entre la matrice dense brute (`piaf_reduced_index.bin`) et les métadonnées (`piaf_reduced_meta.json`) pour éviter la surcharge de sérialisation JSON en mémoire navigateur.
 - Définition d'un protocole d'évaluation quantitatif objectif fondé sur Recall@k (k=1, 3, 5, 10), MRR et latence d'inférence.
 
@@ -195,33 +195,279 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 - Format binaire multi-plateforme : obligation de spécifier explicitement l'ordre des octets en Little-Endian (standard x86/ARM/WebAssembly) pour permettre un mapping mémoire direct sans réordonnancement d'octets.
 
+### Session 10, 3 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Résolution intégrale de l'Issue #45 (milestone J3 / mi-parcours) : implémentation, test unitaire et exécution du banc d'évaluation comparatif (Aléatoire vs BM25 vs Dense E5) sur le jeu public français PIAF (`AgentPublic/piaf`), avec test de significativité statistique apparié (McNemar).
+
+**Produit.**
+- `scripts/evaluation/metrics.py` (190 lignes) : module autonome de métriques IR (`recall_at_k`, `reciprocal_rank`, `evaluate_retrieval`, `compute_mcnemar_test`) incluant un banc de tests unitaires par assertions.
+- `scripts/evaluation/01_valider_sur_piaf.py` (220 lignes) : pipeline d'évaluation reproductible de bout en bout avec sauvegarde des résultats structurés dans `data/evaluation/piaf/`.
+- `docs/etudes/evaluation/01_validation_metriques_piaf.md` : note de synthèse méthodologique, tableau comparatif, analyse qualitative et guide de réutilisation pour le Notebook 03.
+
+**Mesures exécutées.**
+- Extraction déterministe de 761 contextes uniques (passages Wikipédia) et 3 835 questions annotées depuis `AgentPublic/piaf` (révision figée `bda8c063bc7297180796cd835d1974c0bc71c521`).
+- Encodage normalisé L2 avec `intfloat/multilingual-e5-small` (préfixes `passage: ` et `query: `) et calcul de similarité cosinus par produit scalaire matriciel (3 835 × 761).
+- Calcul des métriques globales :
+  - **Aléatoire :** Recall@1 = 0,08 %, Recall@5 = 0,76 %, MRR = 0,0036
+  - **BM25 (`rank_bm25`) :** Recall@1 = 64,25 %, Recall@5 = 81,07 %, MRR = 0,7147
+  - **Dense E5 :** Recall@1 = 66,78 %, Recall@5 = 87,20 %, MRR = 0,7567 (+6,13 points de Recall@5 face à BM25).
+- Test de McNemar sur le Recall@5 : 438 victoires exclusives E5 contre 203 pour BM25 sur 641 paires discordantes, chi2 = 85,42, p = 8,84e-21 (gain hautement significatif).
+- Temps d'inférence CPU moyen mesuré : 6,08 ms par requête pour E5 contre 0,37 ms pour BM25.
+
+**Résultats retenus.**
+- Validation mathématique complète de la chaîne de métriques via assertions sur calculs manuels préalables.
+- Le module `metrics.py` est certifié prêt pour l'évaluation sur le corpus SocialGouv (Notebook 03).
+
+**Ce qui a été écarté, et pourquoi.**
+- Généralisation hâtive des performances au corpus réglementaire : explicitement rejetée dans le rapport, PIAF étant encyclopédique et ne reflétant pas la complexité des articles de loi ni des sigles métiers (CDI, CDD).
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la relecture de Mahé BEGNIS (binôme Domaine D2).
+
+**Temps d'appropriation constaté.**
+- 20 minutes pour formaliser le module de métriques pures et le test exact de McNemar.
+
+**Difficultés rencontrées.**
+- Gestion des versions de paquets : installation et configuration requises de `transformers`, `sentence-transformers` et `rank-bm25` dans l'environnement local.
+
+### Session 11, 4 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Résolution intégrale de l'Issue #47 (milestone J3) : conception, implémentation et benchmarking des références lexicales TF-IDF et BM25 sur les 4 240 passages M2 du corpus travail-emploi SocialGouv, étude de 5 variantes de prétraitement et évaluation du portage client.
+
+**Produit.**
+- `scripts/evaluation/lexical_baselines.py` (220 lignes) : module modulaire et typé contenant les classes `LexicalTokenizer`, `BM25Retriever` et `TfidfRetriever`, supportant les variantes de stopwords (Snowball avec et sans négations), le stemming français et les exports web.
+- `scripts/evaluation/02_references_lexicales.py` (215 lignes) : banc d'expérimentation complet, mesure des vocabulaires, latences, empreinte mémoire d'export et validation qualitative sur requêtes types.
+- `docs/etudes/evaluation/02_references_lexicales_tfidf_bm25.md` : rapport complet d'analyse comparative, étude des négations en droit et proposition d'arbitrage pour le site web.
+
+**Mesures exécutées.**
+- Indexation des 4 240 passages M2 sous 5 variantes (V0 brute, V1 standard, V2 sans négations, V3 stemming + sans négations, V4 filtrage fréquentiel).
+- Contraction du vocabulaire par racinisation (V3) : passage de 15 440 à 8 695 termes uniques (-43,6 %).
+- Préservation des négations (V2 vs V1) : surcoût marginal négligeable (+2 mots au vocabulaire, +0,01 Mio en gzip), crucial pour l'intégrité juridique des clauses restrictives.
+- Poids de l'index BM25 optimisé pour le navigateur : 2,32 Mio brut / 0,74 Mio en gzip (face aux 112,8 Mio du modèle ONNX).
+- Latences moyennes mesurées : ~8 ms par requête pour BM25, ~2 ms pour TF-IDF.
+
+**Résultats retenus.**
+- La variante V3 (Stemming + Snowball sans négations) est retenue comme référence optimale pour le benchmark du Notebook 03.
+- Recommandation pour le Weekly : intégration possible de BM25 en JavaScript pour un moteur de recherche léger, instantané et sans dépendance ONNX.
+
+**Ce qui a été écarté, et pourquoi.**
+- Suppression aveugle des mots vides usuels : rejetée car elle élimine « ne », « pas », « sans », « aucun », inversant le sens des interdictions dans les textes de loi.
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la relecture de Mahé BEGNIS (binôme Domaine D2).
+
+**Temps d'appropriation constaté.**
+- 25 minutes pour formaliser le tokenizer juridique et l'estimation de l'index inversé Web.
+
+**Difficultés rencontrées.**
+- Prise en charge des dépendances spécifiques : installation et configuration requises de `nltk` pour les ressources Snowball françaises.
+
+### Session 12, 4 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Consignée le 6 octobre 2026**, deux jours après la session : la règle de tenue du jour même (section 5) n'a pas été respectée.
+
+**Objet.** Relecture de la validation des métriques sur PIAF (#45, PR #55), puis analyse du jeu de questions de l'équipe (#44) et des jeux de questions externes.
+
+**Produit.**
+- Corrections poussées sur la PR #55 : module de métriques, script de validation sur PIAF, rapport et PDF.
+- Issue #56 (complément CDTN), mise à jour de #46, commentaires sur la PR #54 et sur l'issue #47.
+
+**Mesures exécutées.**
+- Reproduction des chiffres de la première version et recalcul des rangs sans tri, sur les 3 835 questions de PIAF.
+- Quatre variantes de BM25 sur PIAF ; tests appariés avec questions groupées par paragraphe et par article.
+- Appariement des requêtes du CDTN aux passages M2 ; contrôle des extraits du jeu de l'équipe contre les passages M2.
+
+**Résultats retenus.**
+- Recall@k aligné sur la convention de l'équipe (au moins un passage pertinent dans le top k), entrées invalides refusées.
+- Sur PIAF, l'avantage de l'encodeur sur BM25 dépend du réglage de BM25 : de 6,1 à 2,3 points de Recall@5. PIAF ne sert qu'à valider le code.
+- Jeu de l'équipe en analyse principale, CDTN en analyse secondaire, variantes groupées par requête.
+
+**Ce qui a été écarté, et pourquoi.**
+- La valeur p calculée en supposant les questions indépendantes : elles sont groupées par paragraphe et par article, ce qui la rend trop optimiste.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le complément CDTN, demandé par Jibril BENSALEM, Vaneck DAGAR et Maïmouna SIGNATE, validé par Mahé BEGNIS. La PR #55, fusionnée par Remy RAYANE le 6 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- La chaîne `docs/latex` n'affiche ni les formules, ni les liens Markdown, ni les listes imbriquées dans une liste numérotée : documents réécrits en conséquence.
+
+### Session 13, 6 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit de l'état du dépôt et du jeu de questions, remise au propre des pull requests et des tickets, correction de la PR #58 (#47).
+
+**Produit.**
+- PR #59, qui reporte le notebook 02 dans `dev` ; corrections poussées sur la PR #58 : module et script des références lexicales, rapport et PDF, PDF du journal.
+- Index des réunions complété (PR #36) ; comptes rendus de #6 et #26 rétablis, dates des Weekly et jalons corrigés, branches fusionnées supprimées.
+
+**Mesures exécutées.**
+- Reproduction du script de la PR #57, comparaison des listes de mots vides, mesure réelle du poids de l'index, recoupement avec `rank_bm25`.
+- Contrôle du jeu de questions contre les règles de son README et contre les passages M2.
+- Recherche de secrets dans l'historique du dépôt, audit des dépendances (`npm audit`, `pip-audit`).
+
+**Résultats retenus.**
+- Le notebook 02 n'était pas dans `dev` : la PR #40 avait été fusionnée dans une branche déjà intégrée.
+- Références lexicales sur la liste Snowball figée, BM25 avec la formule de Lucene par défaut, poids mesuré (0,65 Mio en gzip pour V3).
+- Avant le gel du jeu : 57 pré-annotations à valider et 21 doubles annotations à faire.
+
+**Ce qui a été écarté, et pourquoi.**
+- Les comparaisons entre BM25 et l'encodeur du premier rapport lexical : non mesurées, et contredites sur deux requêtes.
+
+**Ce que l'équipe a validé, et par qui.**
+- Les PR #55, #58 et #59, fusionnées par Remy RAYANE le 6 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- L'assistant ne peut ni fusionner une PR sans relecture, ni approuver une PR qui contient ses propres commits : ces actions reviennent à un autre membre.
+
+### Session 14, 6 octobre 2026 (après-midi), Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit du jeu de questions fusionné (#44), gel du jeu, règle de pertinence et dossier du Weekly 4.
+
+**Produit.**
+- `scripts/evaluation/controle_jeu.py` (contrôle du jeu et accord entre annotateurs) ; règle de pertinence D4 amendée et protocole mis à jour (PR #62).
+- Tag `jeu-questions-v1`, posé avec l'accord de Mahé ; audit publié en commentaire de la PR #54 ; dossier du Weekly 4.
+
+**Mesures exécutées.**
+- Contrôles du jeu sur les cinq découpages, accord calculé sur l'annotation d'avant l'arbitrage de Q062.
+- Règle de pertinence vérifiée par trois implémentations sur 470 couples découpage et extrait.
+
+**Résultats retenus.**
+- Accord sur le type 20 fois sur 21 (kappa 0,88) ; mêmes passages pertinents 7 fois sur 15.
+- Avec la règle initiale, deux réponses en liste (Q046, Q052) n'avaient aucun passage pertinent possible dans les petits découpages.
+
+**Ce qui a été écarté, et pourquoi.**
+- La lecture des résultats de la PR #63 sur le lot de test : le protocole devait rester indépendant de ces chiffres.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le gel du jeu par Mahé BEGNIS ; la règle amendée au Weekly 4.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Le dossier temporaire de l'assistant a été vidé : environnement d'exécution à reconstruire depuis le fichier figé.
+
+### Session 15, 7 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Préparation et suivi du Weekly 4 (#10).
+
+**Produit.**
+- Synthèse des sept décisions à prendre, avec leurs options et une recommandation ; message de répartition des tâches pour l'équipe.
+
+**Résultats retenus.**
+- Les sept recommandations ont été validées par l'équipe ; échéance du volet A fixée au 18 octobre.
+
+**Ce que l'équipe a validé, et par qui.**
+- Les décisions, par l'équipe réunie au Weekly 4.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+### Session 16, 10 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt, application des décisions du Weekly 4, préparation de la mesure du notebook 03 (#46).
+
+**Produit.**
+- Décisions du Weekly 4 publiées sur #10 ; protection de `dev` et `main` (une approbation requise) ; quatre branches fusionnées supprimées.
+- `scripts/evaluation/cdtn_seuil.py` : seuil d'abstention tiré du CDTN ; protocole figé ; empreintes et verrou dans le notebook ; générateur des tableaux du rapport (PR #62).
+- Audit statistique du protocole par simulation, test de non-infériorité de Tango corrigé de l'effet de plan (`03_audit_statistique.md`) ; jeu complémentaire du CDTN et sa règle figée (`04_cdtn.md`, #56) ; proposition de protocole pour l'encodeur ajusté (`05_protocole_ajustement.md`, #49) (PR #62).
+- Moteur de recherche du site, avec tests et parité (PR #67, #48) ; fiches d'outils Transformers.js, ONNX Runtime et `uv` (PR #68, #25).
+
+**Mesures exécutées.**
+- Seuil calculé avant la mesure (0,8560, sur 479 variantes du CDTN), recalculé de façon indépendante ; fidélité des vecteurs du navigateur au fp32.
+- Verrou testé : mesure refusée si le jeu, le protocole ou le seuil est modifié d'un octet.
+- Simulation de 10 000 tirages par scénario sur la structure du lot de test (73 questions, 61 fiches), sans aucune donnée de mesure.
+- Parité du moteur du site sur les 24 requêtes du contrôle, en Node puis dans le navigateur.
+
+**Résultats retenus.**
+- Aucun calcul sur le lot de test : la mesure attend la relecture de la PR #62.
+- La règle figée du critère du J2 conclut à tort dans 3,0 à 5,2 % des cas à la marge, au lieu de 2,5 % ; le score de Tango corrigé tient 1,9 à 2,5 %. Amendement proposé, à décider avant la mesure.
+- CDTN : 155 requêtes et 607 formulations appariées ; moteur du site identique à la page de contrôle sur 24 requêtes sur 24.
+
+**Ce que l'équipe a validé, et par qui.**
+- Relecture de la PR #62 demandée à Remy RAYANE.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Données du CDTN sans licence : lues au commit figé dans `data/`, jamais versionnées.
+
+### Session 18, 13 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Terminer la PR #38 après ses revues et inscrire une estimation provisoire de #53.
+
+**Produit.**
+- Inventaire de 46 issues, séparé des dates et charges de travail ; jalons et réunions actualisés dans `docs/suivi/SUIVI.md`.
+- Estimation de planification de #53 : 16 h cumulées pour Vaneck et Jibril, à la demande de Jibril, explicitement provisoire et à réviser.
+- Conservation des charges déclarées de #25, #27, #29, #44, #45 et #47, et des estimations documentées de #31 et #51.
+
+**Mesures exécutées.**
+- Lecture des issues et de leurs commentaires, comparaison des références de dev et de la PR #38, contrôle des lignes et calcul des écarts connus.
+- Vérification de l'absence du commentaire public contenant la fiche CDTN sur #56. Envoi privé le 11/10 déclaré par Jibril, sans lecture de Discord.
+- Aucun moteur, modèle ou lot d'évaluation exécuté.
+
+**Résultats retenus.**
+- Les réunions du 19/09 et du 23/09 restent distinctes ; participants non documentés laissés NR.
+- Dates GitHub converties à l'heure de Paris ; elles ne remplacent pas les dates de travail.
+- Charges historiques absentes laissées NR ; une issue fermée ne prouve ni validation du dernier livrable ni statut Done du board.
+
+**Ce qui a été écarté, et pourquoi.**
+- Reconstitution des charges ou des comptes rendus manquants.
+- Publication de textes CDTN et modification du jeu ou du protocole.
+- Modification implicite des échéances : les contradictions sont signalées aux responsables.
+
+**Ce que l'équipe a validé, et par qui.**
+- Jibril a demandé de terminer #38 et autorisé une estimation plausible, révisable, pour #53.
+- Les revues antérieures de Mahé sont prises en compte. Relecture indépendante du dernier diff attendue avant fusion.
+- La session 17 reste portée par la PR #69 ; le numéro 18 évite de remplacer cette entrée encore en attente d'intégration.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps déduit de la durée de l'échange.
+
+**Difficultés rencontrées.**
+- Le PDF du journal ne peut pas encore être régénéré dans cet environnement : la chaîne du dépôt exige le support LaTeX français et des polices absents. Aucun PDF incomplet publié.
+- Le statut du Project Board n'est pas consulté ; les états d'issues sont explicitement distingués.
+- Les corps de certains tickets gardent des dates historiques malgré des plannings récents différents.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
 
 Cette section est tenue volontairement. Elle documente ce que la relecture systématique a permis de rattraper, et constitue le principal argument en faveur de notre méthode.
 
-| Date  | Erreur                                                                                                                             | Détection                                                                                     | Correction                                                                                                                        |
-| ----- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 18/09 | Comptage des notions faussé par une recherche en sous-chaîne, qui comptait « rag » dans « paragraphe »                       | incohérence des ordres de grandeur                                                            | comptage refait avec frontières de mots                                                                                          |
-| 18/09 | Expression régulière renvoyant zéro occurrence de LSTM alors qu'il y en avait 133                                               | contradiction avec un autre compteur                                                           | passage à une implémentation Python vérifiée                                                                                  |
-| 18/09 | Nombre de fichiers audités annoncé à 12, réel 14 dont 3 quasi-doublons                                                         | recomptage explicite                                                                           | corpus de référence ramené à 11 fichiers dédoublonnés                                                                       |
-| 18/09 | Classification des paquets Python ignorant les roues`universal2`, donc deux paquets déclarés à tort incompatibles             | contrôle manuel des étiquettes                                                               | reclassement complet                                                                                                              |
-| 18/09 | Rang mondial du dépôt ECC annoncé au 13e, réel 16e                                                                             | comptage des dépôts plus étoilés                                                           | corrigé, et l'argument en est sorti renforcé                                                                                    |
-| 18/09 | Tirets cadratins rendus en « --- » dans les tableaux du PDF                                                                      | relecture visuelle du rendu                                                                    | caractères Unicode utilisés directement                                                                                         |
-| 19/09 | Taille d'un modèle annoncée par l'API à 0,5 Mio, réelle 294,6 Mio, les poids étant dans des fichiers externes                 | invraisemblance pour un modèle de 300 millions de paramètres                                 | mesure des fichiers externes                                                                                                      |
-| 19/09 | Charge utile du navigateur relevée à 5,5 Mio pour un modèle de 112,8 Mio                                                        | invraisemblance                                                                                | les ressources d'origine tierce ne déclarent pas leur taille, mesure refaite fichier par fichier, résultat 135,6 Mio            |
-| 19/09 | Seuil de réussite Recall@5 proposé à 0,80 sans fondement                                                                        | recherche des résultats publiés du modèle : 23 mesures de récupération, toutes en anglais | seuils reformulés en écarts appariés face à une baseline                                                                      |
-| 19/09 | Conclusion hâtive sur l'absence de board, tirée d'une sortie vide                                                                | la sortie vide masquait une erreur de périmètre d'autorisation                               | aucune conclusion tirée, limite déclarée dans le rapport                                                                       |
-| 19/09 | Rapport annonçant trois milestones et dix labels inexistants                                                                      | consultation du dépôt                                                                        | section 2 alignée sur l'état vérifié                                                                                          |
-| 19/09 | Lecture immédiatement consécutive à une écriture renvoyant un état périmé                                                   | garde-fou conditionnant la suppression à un décompte nul                                     | suppression refusée puis reprise après contrôle direct                                                                         |
-| 19/09 | `gh api` basculant de GET en POST dès qu'un champ `-f` est fourni                                                             | échec en 422 sur un titre manquant                                                            | requêtes de lecture écrites sans`-f`                                                                                          |
-| 19/09 | Suppression de`readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture                                                       | fichier réécrit, casse forcée en deux étapes avec`git mv`                                                                   |
-| 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation                          | lecture de l'adresse distante avant publication                                                | adresse corrigée avant tout envoi                                                                                                |
-| 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage                                                 | fichier de sortie vide alors que le processus était terminé                                  | écriture directe vers un fichier, tampon vidé explicitement                                                                     |
-| 25/09 | Risque d'omission des préfixes « query: » et « passage: » lors de l'encodage avec`multilingual-e5-small`                    | confrontation avec la documentation constructeur et les benchmarks MTEB du modèle             | obligation formelle d'ajouter les préfixes intégrée dans le plan d'action (évite 10 à 25 % de chute silencieuse de Recall@k) |
+| Date | Erreur | Détection | Correction |
+|---|---|---|---|
+| 18/09 | Comptage des notions faussé par une recherche en sous-chaîne, qui comptait « rag » dans « paragraphe » | incohérence des ordres de grandeur | comptage refait avec frontières de mots |
+| 18/09 | Expression régulière renvoyant zéro occurrence de LSTM alors qu'il y en avait 133 | contradiction avec un autre compteur | passage à une implémentation Python vérifiée |
+| 18/09 | Nombre de fichiers audités annoncé à 12, réel 14 dont 3 quasi-doublons | recomptage explicite | corpus de référence ramené à 11 fichiers dédoublonnés |
+| 18/09 | Classification des paquets Python ignorant les roues `universal2`, donc deux paquets déclarés à tort incompatibles | contrôle manuel des étiquettes | reclassement complet |
+| 18/09 | Rang mondial du dépôt ECC annoncé au 13e, réel 16e | comptage des dépôts plus étoilés | corrigé, et l'argument en est sorti renforcé |
+| 18/09 | Tirets cadratins rendus en « --- » dans les tableaux du PDF | relecture visuelle du rendu | caractères Unicode utilisés directement |
+| 19/09 | Taille d'un modèle annoncée par l'API à 0,5 Mio, réelle 294,6 Mio, les poids étant dans des fichiers externes | invraisemblance pour un modèle de 300 millions de paramètres | mesure des fichiers externes |
+| 19/09 | Charge utile du navigateur relevée à 5,5 Mio pour un modèle de 112,8 Mio | invraisemblance | les ressources d'origine tierce ne déclarent pas leur taille, mesure refaite fichier par fichier, résultat 135,6 Mio |
+| 19/09 | Seuil de réussite Recall@5 proposé à 0,80 sans fondement | recherche des résultats publiés du modèle : 23 mesures de récupération, toutes en anglais | seuils reformulés en écarts appariés face à une baseline |
+| 19/09 | Conclusion hâtive sur l'absence de board, tirée d'une sortie vide | la sortie vide masquait une erreur de périmètre d'autorisation | aucune conclusion tirée, limite déclarée dans le rapport |
+| 19/09 | Rapport annonçant trois milestones et dix labels inexistants | consultation du dépôt | section 2 alignée sur l'état vérifié |
+| 19/09 | Lecture immédiatement consécutive à une écriture renvoyant un état périmé | garde-fou conditionnant la suppression à un décompte nul | suppression refusée puis reprise après contrôle direct |
+| 19/09 | `gh api` basculant de GET en POST dès qu'un champ `-f` est fourni | échec en 422 sur un titre manquant | requêtes de lecture écrites sans `-f` |
+| 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
+| 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
+| 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage | fichier de sortie vide alors que le processus était terminé | écriture directe vers un fichier, tampon vidé explicitement |
+| 04/10 | Test de McNemar pour questions groupées attribué à Durkalski (2003), alors que la formule employée est celle d'Obuchowski (1998) | lecture du code source d'une implémentation publiée | attribution et formule corrigées avant publication |
+| 04/10 | Appariement du CDTN à nos passages : 189 requêtes le matin, 175 l'après-midi, selon la règle employée | recalcul indépendant | règle d'appariement à écrire et figer avant la mesure (#56) |
+| 06/10 | Aperçu des résultats de l'encodeur calculé sur le jeu de test avant l'écriture du protocole, puis un commentaire affirmant qu'aucune mesure n'avait été faite | relecture de la méthode, puis du commentaire avant envoi | aperçu ni utilisé ni diffusé aux annotateurs, phrase corrigée avant envoi, protocole à écrire avant toute mesure |
+| 06/10 | Règle de pertinence proposée qui excluait par construction les réponses en liste des petits découpages | audit du jeu final contre les cinq découpages | seconde condition ajoutée avant la validation du protocole, d'après les seules annotations |
+| 10/10 | Nombre de fiches visées par le seuil du CDTN annoncé à 61 au lieu de 50, compté sur toutes les requêtes appariées | recomptage avant le commit | corrigé avant le gel du protocole |
+| 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
+| 10/10 | Chiffres de l'audit statistique tirés d'un essai préliminaire, à une autre graine, et non du script versionné | réexécution du script avant le commit | chiffres alignés sur la sortie reproductible |
 
-**Bilan intermédiaire.** Dix-sept erreurs ou pièges détectés et traités. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
+**Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 

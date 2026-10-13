@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrôle navigateur de l'index</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: Canvas; color: CanvasText; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Contrôle navigateur de l'index (notebook 02, section 12)</h1>
+<p>À servir depuis la racine du dépôt, par exemple avec <code>python -m http.server 8765</code>, puis ouvrir
+<code>http://localhost:8765/scripts/indexation/controle_navigateur.html</code>. La page lit l'export du site, en
+vérifie les empreintes, lit le fichier <code>controle/attendu.json</code> écrit par le notebook 02, puis expose ses résultats dans
+<code>window.RESULTATS</code>, à enregistrer dans <code>data/indexation/controle/resultats_navigateur.json</code>.</p>
+<pre id="journal">Chargement...</pre>
+<p id="telechargement"></p>
+<script type="module">
+// Même bibliothèque et même version que la mesure de faisabilité du jalon J2
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
+
+const journal = document.getElementById("journal");
+const noter = (texte) => { journal.textContent += "\n" + texte; };
+// lien de téléchargement du fichier attendu par le notebook 02, pour rejouer le contrôle sans outil d'automatisation
+const proposer = (nom) => {
+  const lien = document.createElement("a");
+  lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
+  lien.download = nom;
+  lien.textContent = `Télécharger ${nom}, à placer dans data/indexation/controle/`;
+  document.getElementById("telechargement").append(lien);
+};
+const base = "../../data/indexation/";
+env.allowLocalModels = false;
+// empreinte SHA-256 d'un fichier reçu, en hexadécimal, comme celles de l'en-tête
+const sha256 = async (tampon) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", tampon)),
+  (octet) => octet.toString(16).padStart(2, "0")).join("");
+
+try {
+  const debut = performance.now();
+  // 1. L'en-tête d'abord : il décrit le modèle, la requête et l'index
+  const entete = await (await fetch(base + "site/index_m2.json")).json();
+  const [octetsMeta, octets, attendu] = await Promise.all([
+    fetch(base + "site/" + entete.metadonnees.fichier).then((r) => r.arrayBuffer()),
+    fetch(base + "site/" + entete.index.fichier).then((r) => r.arrayBuffer()),
+    fetch(base + "controle/attendu.json").then((r) => r.json()),
+  ]);
+  const N = entete.index.nb_vecteurs, D = entete.index.dimension;
+  // 2. Refus d'un index incohérent : c'est la garantie qu'un vecteur n'est jamais associé au mauvais passage
+  const empreinteIndex = await sha256(octets), empreinteMeta = await sha256(octetsMeta);
+  if (empreinteIndex !== entete.index.sha256) throw new Error("empreinte de la matrice différente de celle de l'en-tête");
+  if (empreinteMeta !== entete.metadonnees.sha256) throw new Error("empreinte des métadonnées différente de celle de l'en-tête");
+  const meta = JSON.parse(new TextDecoder().decode(octetsMeta));
+  if (octets.byteLength !== N * D * 4) throw new Error(`taille de l'index : ${octets.byteLength} octets au lieu de ${N * D * 4}`);
+  if (meta.length !== N) throw new Error(`métadonnées : ${meta.length} passages au lieu de ${N}`);
+  const index = new Float32Array(octets);
+  noter(`index chargé : ${N} vecteurs de ${D} dimensions, empreintes conformes à l'en-tête`);
+
+  // 3. Le modèle, à la révision et au type de poids indiqués par l'en-tête
+  const extracteur = await pipeline("feature-extraction", entete.modele.depot,
+    { revision: entete.modele.revision, dtype: entete.modele.dtype, device: "wasm" });
+  noter(`modèle chargé : ${entete.modele.depot}, ${entete.modele.dtype}`);
+
+  const resultats = [];
+  for (const r of attendu.requetes) {
+    // 4. Encodage de la question avec les options de l'en-tête : préfixe, moyenne des tokens, normalisation
+    const sortie = await extracteur(entete.requete.prefixe + r.question,
+      { pooling: entete.requete.pooling, normalize: entete.requete.normalize });
+    const q = sortie.data;
+    // 5. Recherche exhaustive : produit scalaire avec chacun des N vecteurs, puis tri ; durée mesurée à part
+    const debutRecherche = performance.now();
+    const scores = new Float32Array(N);
+    for (let n = 0; n < N; n++) {
+      let s = 0;
+      const o = n * D;
+      for (let i = 0; i < D; i++) s += index[o + i] * q[i];
+      scores[n] = s;
+    }
+    const top = Array.from(scores.keys()).sort((a, b) => scores[b] - scores[a]).slice(0, 5);
+    const recherche_ms = performance.now() - debutRecherche;
+    resultats.push({ question: r.question, vecteur: Array.from(q), recherche_ms,
+      top5: top.map((i) => meta[i].passage_id), scores5: top.map((i) => scores[i]) });
+  }
+  // empreintes calculées ici, sur les octets reçus, et non recopiées de l'en-tête
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, dtype: entete.modele.dtype,
+    sha256_index: empreinteIndex, sha256_metadonnees: empreinteMeta, duree_ms: performance.now() - debut, resultats };
+  noter(`terminé : ${resultats.length} requêtes en ${Math.round(performance.now() - debut)} ms`);
+  proposer("resultats_navigateur.json");
+} catch (erreur) {
+  window.RESULTATS = { erreur: String(erreur) };
+  noter("ERREUR : " + erreur);
+}
+</script>
+</body>
+</html>

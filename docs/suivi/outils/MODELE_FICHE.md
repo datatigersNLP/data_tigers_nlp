@@ -1,0 +1,58 @@
+# Nom de l'outil
+
+Modèle de fiche. Copier ce fichier sous `docs/suivi/outils/<outil>.md` pour un nouvel outil, et l'ajouter au
+tableau de `docs/suivi/OUTILS_NOVATEURS.md`. Chaque observation est signée du prénom de son auteur, par exemple
+« (Vaneck) », et renvoie à une preuve.
+
+## Identification
+- Version : si elle est figée par le projet (`package.json`, `requirements-lock.txt`, workflow), l'indiquer
+  avec le fichier ; si chaque membre installe l'outil sur sa machine, écrire « variable selon les membres » et
+  remplir le tableau « Versions utilisées »
+- Nature : application, bibliothèque, environnement, agent, assistant, service ou autre
+- Assignés : déjà utilisateurs, puis utilisateurs prévus (ticket)
+- Coordination : référents validés en Weekly
+- Période d'utilisation :
+- Besoin du projet auquel il répond :
+
+## Versions utilisées
+Uniquement si la version varie selon les membres. Chaque membre tient sa propre ligne à jour.
+
+| Membre | Version | Système | Remarque |
+|---|---|---|---|
+| | | | |
+
+## Mise en place
+- Temps avant le premier résultat utile :
+- Installation et configuration :
+- Prérequis découverts en chemin :
+- Difficultés non expliquées par la documentation :
+
+## Usage réel
+- Tâche réalisée, ticket ou pull request :
+- Commande, configuration ou scénario :
+- Résultat obtenu :
+- Temps gagné ou perdu, s'il peut être estimé :
+
+## Qualités observées
+-
+
+## Défauts et limites observés
+- Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
+
+## Comparaison
+- Méthode ou outil utilisé auparavant :
+- Différences observées :
+- Cas où l'ancienne méthode reste préférable :
+
+## Décision
+À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
+- Motif :
+
+## À retenir pour le rapport
+Deux ou trois lignes, mises à jour au fil du projet, pour préparer la présélection et le rapport final.
+- Apport :
+- Principale limite :
+- Ce que la documentation ne dit pas :
+
+## Preuves
+- Tickets, pull requests, commits, captures, mesures :
