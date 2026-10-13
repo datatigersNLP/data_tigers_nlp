@@ -3,7 +3,7 @@
 // la fonction de recherche.
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { creerMoteur } from "./moteur.js";
+import { creerMoteur, horsPerimetre } from "./moteur.js";
 
 // dossier de l'index dans le site : sous le chemin de base de GitHub Pages en ligne, à la racine en local
 const DOSSIER_INDEX = import.meta.env.BASE_URL + "index/";
@@ -59,10 +59,12 @@ export function useMoteur() {
     return () => { abandonne = true; };
   }, [essai]);
 
+  // horsPerimetre : le meilleur passage reste sous le seuil d'abstention du modèle servi (moteur.js, ABSTENTION)
   const rechercher = useCallback(async (question, k = 5) => {
     const debut = performance.now();
     const resultats = await moteur.current.rechercher(question, k);
-    return { resultats, duree: performance.now() - debut };
+    return { resultats, duree: performance.now() - debut,
+      horsPerimetre: horsPerimetre(resultats, moteur.current.seuilAbstention) };
   }, []);
 
   const reessayer = useCallback(() => setEssai((n) => n + 1), []);
