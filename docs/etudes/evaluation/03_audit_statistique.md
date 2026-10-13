@@ -70,11 +70,8 @@ Le Wald estime la variance de l'écart avec les proportions observées. Quand l'
 
 ---
 
-## 6. Décision à prendre avant la mesure
+## 6. Décision
 
-Le protocole est figé, et cet audit ne le modifie pas. Deux possibilités, à trancher avant la mesure :
+Deux possibilités étaient ouvertes le 10 octobre : garder la règle figée en publiant son risque réel, de 3 à 5 % au lieu de 2,5 %, ou amender le protocole avec le score de Tango corrigé de l'effet de plan.
 
-* **Garder la règle figée**, en publiant avec le résultat son risque réel, de 3 à 5 % au lieu de 2,5 %.
-* **Amender le protocole**, avec le score de Tango corrigé de l'effet de plan pour le verdict du critère du J2, l'intervalle de Wald ou d'Agresti et Min restant publié à titre descriptif. Cet amendement repose sur la seule simulation, sans aucune donnée de mesure ; il impose de figer à nouveau le protocole et d'inscrire sa nouvelle empreinte dans le notebook.
-
-Recommandation : amender. Un critère annoncé « au risque de 2,5 % » doit tenir ce risque, et la correction est standard, simple et déjà testée.
+**Décision du 13 octobre 2026 : amendement**, validé par Mahé BEGNIS avant toute mesure. Le verdict du critère du J2 repose désormais sur le score de Tango corrigé de l'effet de plan ; l'intervalle de Wald ou d'Agresti et Min reste publié à titre descriptif. Avant l'amendement, l'implémentation a été comparée au paquet R PropCIs (`scoreci.mp`), à 7e-8 près sur neuf tables, et sa statistique vérifiée strictement décroissante sur 625 tables. Le protocole a été figé à nouveau. L'explication complète figure dans `03_fiche_amendement_tango.md`.

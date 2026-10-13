@@ -5,7 +5,7 @@
 **Ticket** Issue #46 · Branche `feat/46-notebook-03`  
 **Responsable principal** Mahé BEGNIS  
 **Soutien** Remy RAYANE  
-**Statut** figé le 10 octobre 2026, avant toute mesure : décisions D1 à D8 validées au Weekly 4 du 7 octobre (#10)  
+**Statut** figé le 10 octobre 2026, amendé le 13 octobre (test de l'analyse principale) et figé à nouveau, avant toute mesure : décisions D1 à D8 validées au Weekly 4 du 7 octobre (#10)  
 
 ---
 
@@ -81,19 +81,20 @@ Règles communes :
 
 * **Au niveau du passage :** Recall@k pour k = 1, 3, 5 et 10, et MRR@10. Une question est réussie à k si au moins un passage pertinent figure parmi les k premiers.
 * **Au niveau de la fiche (D8) :** Recall@5, une question étant réussie si l'un des 5 premiers passages appartient à une fiche pertinente.
-* **Intervalles à 95 % :** robustes au regroupement des questions par fiche annotée. Pour une proportion, intervalle de Wilson calculé sur l'effectif corrigé de l'effet de plan, qui reste dans [0, 1] (`proportion_ci`, méthode `wilson`) ; pour un écart apparié, intervalle de Wald à erreur type robuste (`paired_success_test`), sauf s'il y a moins de 10 paires discordantes : le Wald dégénère alors, jusqu'à une largeur nulle sans aucune discordance, et l'on retient l'intervalle d'Agresti et Min (Statistics in Medicine, 2005), qui ajoute une demi-observation à chaque case de la table. Les deux viennent de `scripts/evaluation/metrics.py`, avec la fiche en `groups`.
+* **Intervalles à 95 % :** robustes au regroupement des questions par fiche annotée. Pour une proportion, intervalle de Wilson calculé sur l'effectif corrigé de l'effet de plan, qui reste dans [0, 1] (`proportion_ci`, méthode `wilson`) ; pour un écart apparié, intervalle de Wald à erreur type robuste (`paired_success_test`), sauf s'il y a moins de 10 paires discordantes : le Wald dégénère alors, jusqu'à une largeur nulle sans aucune discordance, et l'on retient l'intervalle d'Agresti et Min (Statistics in Medicine, 2005), qui ajoute une demi-observation à chaque case de la table. Les deux viennent de `scripts/evaluation/metrics.py`, avec la fiche en `groups`. Pour l'analyse principale seulement (section 6), l'intervalle de l'écart est celui du score de Tango corrigé de l'effet de plan (amendement du 13 octobre).
 
 ---
 
 ## 6. Analyse principale (D1, D2, D3)
 
 * **Question.** E5 servi est-il non inférieur à BM25 de référence, en Recall@5 au niveau du passage, sur les questions du corpus du lot de test ? C'est le critère du rapport J2.
-* **Statistique.** L'écart d = Recall@5 (E5 servi) moins Recall@5 (BM25 de référence), avec son intervalle de confiance à 95 %, robuste aux groupes.
-* **Critère satisfait (D2)** si la borne basse de l'intervalle dépasse -15 points : c'est un test de non-infériorité, au risque unilatéral de 2,5 %.
+* **Statistique.** L'écart d = Recall@5 (E5 servi) moins Recall@5 (BM25 de référence), et son intervalle à 95 % du score de Tango (Statistics in Medicine, 1998), corrigé de l'effet de plan des fiches (`noninferiority_tango`). La variance de l'écart y est calculée sous l'hypothèse testée, avec l'estimateur du maximum de vraisemblance contraint par cette hypothèse, puis multipliée par l'effet de plan : le rapport des variances de l'écart avec et sans regroupement par fiche, au moins égal à 1.
+* **Critère satisfait (D2)** si la borne basse de cet intervalle dépasse -15 points, ce qui équivaut au rejet, au risque unilatéral de 2,5 %, de l'hypothèse « E5 servi moins bon de 15 points ou plus ».
 * **E5 servi déclaré meilleur** si, en outre, la borne basse dépasse 0.
 * **Critère non démontré** dans les autres cas, ce qui ne prouve pas pour autant une infériorité.
-* **Pourquoi 15 points.** Avec 72 questions et un écart réel nul, le test de non-infériorité a une puissance de 72 à 93 % pour une marge de 15 points, selon que le taux de désaccord entre systèmes vaut 0,25 ou 0,14 (0,14 est celui de PIAF entre E5 et BM25 V3). Pour une marge de 10 points, elle n'est que de 40 à 62 %. Le rapport J2 dimensionnait déjà le jeu pour 15 points.
-* **Également rapportés :** la table de contingence, la valeur p exacte de McNemar et celle d'Obuchowski avec les questions groupées par fiche.
+* **Pourquoi ce test (amendement du 13 octobre).** La règle figée le 10 octobre (Wald robuste, ou Agresti et Min sous 10 paires discordantes) conclut à tort dans 3,0 à 5,2 % des cas quand l'écart réel vaut exactement -15 points, au lieu de 2,5 %. Le score de Tango corrigé tient 1,9 à 2,5 %, avec une couverture de 94,6 à 95,8 %. Ces chiffres viennent d'une simulation sur la structure du lot de test, sans aucune donnée de mesure (`03_audit_statistique.md`). Son intervalle concorde à 7e-8 près avec celui du paquet R PropCIs (`scoreci.mp`) sur neuf tables. L'amendement rend la conclusion plus difficile à obtenir, jamais plus facile (`03_fiche_amendement_tango.md`).
+* **Pourquoi 15 points.** Avec les 73 questions du lot de test et un écart réel nul, ce test a une puissance de 62 à 87 % pour une marge de 15 points, selon le taux de désaccord entre systèmes (0,25 ou 0,14, celui de PIAF entre E5 et BM25 V3) et la corrélation entre questions d'une même fiche ; pour une marge de 10 points, elle n'est que de 34 à 55 %. Le rapport J2 dimensionnait déjà le jeu pour 15 points.
+* **Également rapportés :** la table de contingence, la valeur p exacte de McNemar et celle d'Obuchowski avec les questions groupées par fiche, et, à titre descriptif, l'intervalle de la règle du 10 octobre (Wald robuste ou Agresti et Min).
 
 ---
 
@@ -160,7 +161,7 @@ b71d73136a047d3f60cdfbbbc341a790e7a75a52d84ec99ca3b92190e704b228
 | N° | Décision | Proposition | Justification |
 |---|---|---|---|
 | D1 | Comparaison principale | Recall@5 au niveau du passage, E5 servi contre BM25 de référence | le site affiche 5 résultats ; c'est la configuration que voit l'utilisateur |
-| D2 | Marge de non-infériorité | 15 points | puissance de 72 à 93 %, contre 40 à 62 % pour 10 points ; dimensionnement du J2 |
+| D2 | Marge de non-infériorité | 15 points | puissance de 62 à 87 %, contre 34 à 55 % pour 10 points (score de Tango, 73 questions) ; dimensionnement du J2 |
 | D3 | Référence BM25 | V3, formule de Lucene | meilleure variante sur PIAF, qui est indépendant de notre jeu |
 | D4 | Règle de pertinence | fragment contigu couvrant la moitié de l'extrait normalisé, ou la moitié du passage avec au moins 80 caractères | équitable entre découpages, réponses en liste comprises |
 | D5 | Question sans résultat lexical | échec | aucun passage n'est montré à l'utilisateur |
@@ -176,3 +177,4 @@ b71d73136a047d3f60cdfbbbc341a790e7a75a52d84ec99ca3b92190e704b228
 * **6 octobre 2026, après l'audit du jeu fusionné (`cdb48c9`) :** seconde condition ajoutée à D4 pour les extraits longs, chiffres mis à jour sur le jeu fusionné, accord entre annotateurs publié, seconde déclaration (Mahé BEGNIS).
 * **7 octobre 2026, Weekly 4 :** D1 à D8 validées par l'équipe, avec D4 amendée et D6 précisée (#10).
 * **10 octobre 2026 :** protocole figé, avec le tag et les empreintes du jeu, et le seuil du CDTN calculé avant la mesure (Mahé BEGNIS).
+* **13 octobre 2026 :** amendement du test de l'analyse principale : score de Tango corrigé de l'effet de plan, au lieu du Wald robuste ou d'Agresti et Min. Décidé avant la mesure, à partir de la seule simulation, et validé par Mahé BEGNIS ; protocole figé à nouveau.
