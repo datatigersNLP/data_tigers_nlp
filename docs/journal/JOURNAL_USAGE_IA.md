@@ -349,7 +349,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Ce que l'équipe a validé, et par qui.**
 - PR #69 relue et approuvée par Vaneck le 11/10 ; Mahé a demandé les corrections de dates, de mention et de journal. Jibril a demandé leur application et la fusion le 13/10.
-- Relecture CDTN annoncée complète et exploitable dans le message de Mahé transmis par Jibril le 13/10 ; transmission privée encore à effectuer.
+- Relecture CDTN annoncée complète et exploitable dans le message de Mahé transmis par Jibril le 13/10. Jibril confirme ensuite, le même jour, avoir envoyé la fiche en privé à Mahé par Discord le dimanche 11/10 et supprimé le commentaire public de #56. Suppression vérifiée dans la liste des commentaires ; envoi privé déclaré par Jibril, sans lecture de Discord.
 
 **Temps d'appropriation constaté.**
 - Non relevé ; aucun temps reconstruit.
