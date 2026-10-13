@@ -2,9 +2,9 @@
 
 **Auteur principal :** Remy RAYANE (Responsable D2 & Issue #49)  
 **Soutien & Relecture :** Mahé BEGNIS, Jibril BENSALEM  
-**Date :** 6 octobre 2026  
-**Référence :** Issue GitHub #49 (`feat/49-ajustement-encodeur`)  
-**Statut :** Exécuté intégralement, validé statistiquement, prêt pour revue
+**Date :** 6 octobre 2026 (révisé et figé le 13 octobre 2026)  
+**Référence :** Issue GitHub #49 (`Refs #49`, branche `feat/49-ajustement-encodeur`)  
+**Statut :** Recette d'entraînement figée le 13 octobre 2026 ; mesures préliminaires étiquetées exploratoires et hors protocole (décision Weekly 4) ; en attente de la mesure officielle conjointe au Weekly 5
 
 ---
 
@@ -12,7 +12,7 @@
 
 Le sujet du projet impose que l'application de recherche sémantique du Volet A ne se contente pas d'exécuter un modèle générique sur étagère, mais s'appuie sur un modèle adapté au domaine juridique du Code du travail et des fiches pratiques du ministère du Travail (SocialGouv).
 
-L'**Issue #49** a pour objet d'ajuster finement l'encodeur `intfloat/multilingual-e5-small` par **apprentissage contrastif** (*contrastive learning*) sur des paires `(question, passage)` représentatives du corpus, et d'en mesurer scientifiquement le gain par un protocole expérimental apparié et reproductible.
+L'**Issue #49** a pour objet d'ajuster finement l'encodeur `intfloat/multilingual-e5-small` par **apprentissage contrastif** (*contrastive learning*) sur des paires `(question, passage)` représentatives du corpus, et d'en préparer l'évaluation rigoureuse par un protocole expérimental apparié et reproductible.
 
 ### Contraintes méthodologiques strictes
 1. **Étancheité absolue (*Zero Data Leakage*)** : Aucune fiche, aucun passage et aucune question du jeu de test (Issue #44 / PR #54) ne doit servir à l'entraînement ou à la sélection du modèle.
@@ -20,6 +20,7 @@ L'**Issue #49** a pour objet d'ajuster finement l'encodeur `intfloat/multilingua
 3. **Évaluation statistique appariée** : Calcul des métriques de rang (`Recall@k`, `MRR@10`) avec test exact de McNemar et test d'Obuchowski (données groupées par fiche) pour trancher la significativité statistique de l'écart.
 4. **Portabilité navigateur (ONNX & Quantification)** : Export ONNX FP32, quantification dynamique INT8 (`q8`) et vérification des critères de parité et fidélité établis au Notebook 02.
 5. **Gestion des artefacts hors Git** : Les poids PyTorch et les fichiers `.onnx` dépassant 100 Mio restent exclus du versionnement Git (règle stricte du projet).
+6. **Non-déploiement sans validation officielle** : Le modèle ajusté n'est pas déployé en production tant que la mesure officielle n'a pas validé la règle d'arbitrage à deux jeux.
 
 ---
 
@@ -40,9 +41,9 @@ Pour empêcher toute mémorisation de surface ou surapprentissage sur les questi
 L'inférence locale validée dans le cadre de l'Issue #31 (`qwen2.5-7b-instruct:q4_k_m-local` exécuté via Ollama) a été mise à profit pour générer des questions d'utilisateurs réalistes :
 * **Échantillonnage stratifié** : 110 passages candidats représentatifs sélectionnés sur 110 fiches distinctes (longueur médiane ~250 tokens).
 * **Prompting de rôle** : Requêtes formulées du point de vue d'un salarié ou citoyen cherchant une réponse concrète, sans méta-références (« selon le texte », etc.).
-* **Filtrage automatique** :
+* **Filtrage automatique et documentation du filtre de Jaccard** :
   * Contrôle syntaxique (interrogation finale, longueur entre 25 et 220 caractères).
-  * Contrôle de non-recouvrement lexical : rejet automatique si la similarité Jaccard sur les tokens avec une question du jeu de test dépasse 0,40.
+  * **Filtre de non-recouvrement lexical Jaccard** : Rejet automatique si l'indice de Jaccard sur les ensembles de tokens entre une question générée et n'importe quelle question du jeu de test dépasse **0,40**. Ce seuil a été calibré empiriquement comme filtre heuristique anti-fuite : il tolère le lexique juridique inévitable (« contrat », « salarié », « préavis ») tout en interdisant toute proximité thématique ou calque de formulation avec les requêtes de test.
 * **Résultat** : **109 paires validées**, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans `data/adaptation/echantillon_controle_train.json`.
 
 ---
@@ -55,13 +56,16 @@ L'inférence locale validée dans le cadre de l'Issue #31 (`qwen2.5-7b-instruct:
   * Pour chaque mini-batch de taille $B$, la perte maximise la similarité cosinus entre la question $\mathbf{q}_i$ et son passage cible $\mathbf{p}_i$, tout en utilisant l'ensemble des $B-1$ autres passages du lot comme négatifs implicites (*in-batch negatives*).
   * Température / facteur d'échelle : échelle standard SentenceTransformers ($s = 20.0$).
 
-### 3.2 Hyperparamètres d'entraînement
-Les hyperparamètres ont été choisis pour adapter le modèle au vocabulaire du droit du travail sans détruire sa structure multilingue pré-entraînée (*catastrophic forgetting*) :
+### 3.2 Hyperparamètres d'entraînement et déclaration de la recette (figée au 13/10)
+Les hyperparamètres suivants constituent la recette d'entraînement déclarée et figée au 13 octobre 2026. Ils ont été choisis pour adapter le modèle au vocabulaire du droit du travail sans détruire sa structure multilingue pré-entraînée (*catastrophic forgetting*) :
 * **Taille de lot (*batch size*)** : 16 (soit 15 négatifs par exemple).
 * **Taux d'apprentissage (*learning rate*)** : $2 \times 10^{-5}$ avec optimiseur AdamW et décroissance linéaire.
 * **Époques** : 2 (14 pas d'optimisation).
 * **Warmup** : 10 % des étapes.
 * **Durée d'entraînement** : 185,5 secondes sur CPU (16 cœurs).
+
+> **Déclaration des choix d'entraînement (Weekly 4 / #10) :**  
+> Conformément à l'exigence de transparence méthodologique, cette configuration d'entraînement a été arrêtée lors de la phase préliminaire (PR #63) et reste strictement figée sans aucun réajustement ultérieur sur le jeu de test.
 
 ### 3.3 Convergence de la perte
 | Étape (sur 14) | Époque | Training Loss | Norme du Gradient |
@@ -78,11 +82,13 @@ La perte a décru de manière régulière et robuste (de 1,56 à 0,47), confirma
 
 ---
 
-## 4. Résultats et Validation Statistique
+## 4. Résultats préliminaires (Mesures exploratoires, hors protocole)
 
-L'évaluation compare les performances de récupération d'information (*Information Retrieval*) avant et après ajustement, en indexant la totalité des **4 240 passages M2** et en interrogeant le modèle avec les **72 questions de test**.
+> **Avertissement méthodologique (Décision 2 du Weekly 4, Ticket #10) :**  
+> Les chiffres ci-dessous proviennent du banc d'essai préliminaire exécuté le 6 octobre 2026 (ex-PR #63). Conformément aux décisions du Weekly 4, ces résultats sont expressément étiquetés **« exploratoires et hors protocole »** car ils ont été obtenus avant le gel officiel du protocole d'évaluation du Notebook 03 (Issue #46) et de la règle de pertinence D4 amendée.  
+> **Ils ne préjugent pas de la mesure officielle.** L'évaluation opposable et définitive de l'encodeur ajusté sera effectuée selon le protocole `docs/etudes/evaluation/05_protocole_ajustement.md` au Weekly 5 (15 octobre).
 
-### 4.1 Tableau comparatif des métriques de recherche
+### 4.1 Tableau comparatif des métriques de recherche préliminaires
 
 | Métrique | Avant (Base pré-entraîné) | Après (Modèle ajusté) | Gain absolu | Valeur *p* (McNemar / Obuchowski) | Significatif ($\alpha = 0.05$) |
 |---|---|---|---|---|---|
@@ -92,26 +98,26 @@ L'évaluation compare les performances de récupération d'information (*Informa
 | **Recall@10** | 58,33 % | **73,61 %** | **+15,28 %** | $p = 0.0048$ | **OUI** ($p < 0.01$) |
 | **MRR@10** | 0,3250 | **0,4203** | **+0,0954** | — | — |
 
-### 4.2 Analyse des résultats
-1. **Bond spectaculaire sur Recall@5 (+19,44 points)** :
-   Le Recall@5 passe de 43,06 % à 62,50 %. La valeur *p* du test apparié avec regroupement par fiche est de **$0.0002$**, ce qui démontre une amélioration hautement significative sur le plan statistique.
-2. **Gain substantiel en précision de premier rang (MRR@10 : +0,0954)** :
-   Le rang réciproque moyen passe de 0,325 à 0,420, signifiant que le passage pertinent apparaît désormais en moyenne entre la 2e et la 3e position au lieu de la 3e et 4e position.
-3. **Généralisation confirmée hors fiches vues** :
-   Puisque l'entraînement a été effectué exclusivement sur des fiches différentes de celles du test, ce gain atteste que l'encodeur a appris à mieux aligner le style interrogatif des citoyens français avec le formalisme juridique des fiches du ministère, sans aucun effet de mémorisation brute.
+### 4.2 Analyse exploratoire
+1. **Tendance nette sur le Recall@5 (+19,44 points)** :  
+   Dans ce cadre exploratoire, le Recall@5 passe de 43,06 % à 62,50 % ($p = 0.0002$), montrant que l'apprentissage contrastif a bien orienté les représentations.
+2. **Gain de premier rang (MRR@10 : +0,0954)** :  
+   Le rang réciproque moyen progresse de 0,325 à 0,420.
+3. **Généralisation hors fiches vues** :  
+   L'entraînement ayant été réalisé exclusivement sur des fiches vierges de toute évaluation, ce comportement préliminaire atteste que le modèle s'adapte au vocabulaire administratif sans surapprentissage direct.
 
 ---
 
 ## 5. Export ONNX et Contrôles de Parité
 
-Pour permettre le déploiement dans le navigateur client via **Transformers.js** (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences du Notebook 02.
+Pour permettre le déploiement ultérieur dans le navigateur client via **Transformers.js** (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences du Notebook 02.
 
 ### 5.1 Fichiers générés
 
 | Format | Fichier | Taille disque | Rôle applicatif |
 |---|---|---|---|
 | **FP32** | `models/multilingual-e5-small-finetuned/onnx/model.onnx` | 448,5 Mio | Modèle de référence ONNX haute précision |
-| **INT8 (q8)** | `models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx` | 112,7 Mio | Modèle compact servi au navigateur Web |
+| **INT8 (q8)** | `models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx` | 112,7 Mio | Modèle compact pour le navigateur Web |
 
 ### 5.2 Contrôles de conformité
 
@@ -126,16 +132,18 @@ Pour permettre le déploiement dans le navigateur client via **Transformers.js**
    * **Concordance du Top-1** : $100,0\ \%$ sur le banc de validation.
    * **Statut** : **VALIDÉ AVEC SUCCÈS**.
 
+> **Statut de déploiement (Règle d'arbitrage) :**  
+> Le modèle ajusté n'est **pas déployé sur le site en ligne** à ce stade. Son intégration éventuelle pour le 18 octobre (remplacement de l'encodeur de base sur GitHub Pages) est conditionnée au résultat de la mesure officielle conjointe selon la règle de décision du protocole `05_protocole_ajustement.md` (gain de Recall@5 positif ou nul à la fois sur le jeu de l'équipe et sur le CDTN).
+
 ---
 
-## 6. Synthèse et Livrables de l'Issue #49
-
-Tous les critères de validation et livrables de l'Issue #49 sont rigoureusement remplis :
+## 6. Synthèse et État d'avancement de l'Issue #49
 
 - [x] **Génération de paires synthétiques avec le modèle local** : 109 paires question-passage générées avec Qwen2.5-7B local.
 - [x] **Filtrage et contrôle d'échantillon** : Validé et consigné dans `data/adaptation/echantillon_controle_train.json`.
-- [x] **Vérification d'absence de fuite du test** : 67 fiches totalement exclues du train set, contrôle Jaccard < 0.40.
-- [x] **Ajustement contrastif (négatifs du lot)** : Réalisé avec `MultipleNegativesRankingLoss` et préfixes `query: ` / `passage: `.
-- [x] **Mesure avant/après appariée** : Recall@5 en hausse de **+19,44 pts** ($p = 0.0002$).
+- [x] **Vérification d'absence de fuite du test** : 67 fiches totalement exclues du train set, contrôle heuristique Jaccard < 0,40 documenté.
+- [x] **Ajustement contrastif (négatifs du lot)** : Réalisé avec `MultipleNegativesRankingLoss`, recette déclarée figée au 13 octobre.
+- [x] **Banc exploratoire documenté** : Chiffres préliminaires étiquetés « exploratoires, hors protocole » selon la décision du Weekly 4.
 - [x] **Conversion ONNX et contrôles notebook 02** : Parité FP32 ($1.00000000$) et fidélité q8 validées.
 - [x] **Poids hors Git** : Dossier `models/` protégé par le `.gitignore`.
+- [ ] **Mesure officielle et décision de déploiement** : Planifiée au Weekly 5 (15 octobre) selon le protocole officiel commun `05_protocole_ajustement.md`.
