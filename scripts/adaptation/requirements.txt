@@ -1,0 +1,13 @@
+# Dépendances de l'adaptation de l'encodeur (ticket #49), Python 3.12.
+#
+# Reprend l'environnement de l'indexation (découpage + sentence-transformers + torch)
+# et épingle onnx et onnxruntime pour l'export ONNX et la quantification INT8 (q8)
+# alignée sur le standard Xenova / Transformers.js.
+
+-r ../indexation/requirements.txt
+
+# Export ONNX FP32 et manipulation des graphes
+onnx==1.23.2
+
+# Moteur d'exécution ONNX et quantification dynamique INT8 (q8)
+onnxruntime==1.30.0

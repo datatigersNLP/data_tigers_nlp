@@ -2,7 +2,7 @@
 
 **Auteur principal :** Remy RAYANE (Responsable D2 & Issue #49)  
 **Soutien & Relecture :** Mahé BEGNIS, Jibril BENSALEM  
-**Date :** 6 octobre 2026 (révisé et figé le 13 octobre 2026)  
+**Date :** 13 octobre 2026 (révision finale avant Weekly 5)  
 **Référence :** Issue GitHub #49 (`Refs #49`, branche `feat/49-ajustement-encodeur`)  
 **Statut :** Recette d'entraînement figée le 13 octobre 2026 ; mesures préliminaires étiquetées exploratoires et hors protocole (décision Weekly 4) ; en attente de la mesure officielle conjointe au Weekly 5
 
@@ -19,7 +19,7 @@ L'**Issue #49** a pour objet d'ajuster finement l'encodeur `intfloat/multilingua
 2. **Préservation du protocole E5** : Conservation systématique des préfixes obligatoires (`query: ` pour les requêtes et `passage: ` pour les documents).
 3. **Évaluation statistique appariée** : Calcul des métriques de rang (`Recall@k`, `MRR@10`) avec test exact de McNemar et test d'Obuchowski (données groupées par fiche) pour trancher la significativité statistique de l'écart.
 4. **Portabilité navigateur (ONNX & Quantification)** : Export ONNX FP32, quantification dynamique INT8 (`q8`) et vérification des critères de parité et fidélité établis au Notebook 02.
-5. **Gestion des artefacts hors Git** : Les poids PyTorch et les fichiers `.onnx` dépassant 100 Mio restent exclus du versionnement Git (règle stricte du projet).
+5. **Gestion des artefacts hors Git** : Les dossiers `data/` et `models/` (données d'entraînement, index `.npy`, poids PyTorch et modèles `.onnx`) restent intégralement exclus du versionnement Git (règle stricte du projet).
 6. **Non-déploiement sans validation officielle** : Le modèle ajusté n'est pas déployé en production tant que la mesure officielle n'a pas validé la règle d'arbitrage à deux jeux.
 
 ---
@@ -44,10 +44,11 @@ L'inférence locale validée dans le cadre de l'Issue #31 (`qwen2.5-7b-instruct:
 * **Filtrage automatique et documentation du filtre de Jaccard** :
   * Contrôle syntaxique (interrogation finale, longueur entre 25 et 220 caractères).
   * **Filtre de non-recouvrement lexical Jaccard** : Rejet automatique si l'indice de Jaccard sur les ensembles de tokens entre une question générée et n'importe quelle question du jeu de test dépasse **0,40**. Ce seuil a été calibré empiriquement comme filtre heuristique anti-fuite : il tolère le lexique juridique inévitable (« contrat », « salarié », « préavis ») tout en interdisant toute proximité thématique ou calque de formulation avec les requêtes de test.
-* **Résultat et empreinte de reproductibilité** : **109 paires validées**, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans `data/adaptation/echantillon_controle_train.json`.
-  * **Fichier de données** : `data/adaptation/train_paires.jsonl` (exclu du suivi Git pour respecter les règles de taille du dépôt).
+* **Résultat et empreinte d'authentification** : **109 paires validées**, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans `data/adaptation/echantillon_controle_train.json`.
+  * **Fichier de données** : `data/adaptation/train_paires.jsonl` (exclu du suivi Git : le dossier `data/` n'est jamais versionné dans le dépôt).
   * **Empreinte SHA-256** : `2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698` (174 552 octets).
-  * **Garantie de reproductibilité sans graine** : La génération locale via Ollama ayant été exécutée sans graine pseudo-aléatoire explicite (`seed`), cette empreinte cryptographique SHA-256 fige de manière unique et opposable le jeu d'entraînement contrastif exact, garantissant une reproductibilité intégrale de la recette sans versionner le fichier volumineux.
+  * **Rôle de l'empreinte cryptographique** : La génération locale via Ollama ayant été exécutée sans graine pseudo-aléatoire explicite (`seed`), cette empreinte identifie de manière unique et opposable le fichier exact utilisé pour l'entraînement. L'empreinte authentifie le fichier sans permettre de le recréer de novo sans la source, ce qui impose de conserver précieusement cet artefact d'entraînement.
+
 
 ---
 
@@ -121,36 +122,48 @@ Pour permettre le déploiement ultérieur dans le navigateur client via **Transf
 | Format | Fichier | Taille disque | Spécification technique | Rôle applicatif |
 |---|---|---|---|---|
 | **FP32** | `models/multilingual-e5-small-finetuned/onnx/model.onnx` | 448,5 Mio | Opset 14, pooling mean, FP32 complet | Modèle de référence ONNX haute précision |
-| **q8 (Xenova)** | `models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx` | 112,9 Mio | `per_channel=True`, `reduce_range=True`, `QuantType.QInt8` | Modèle compact pour le navigateur Web (WASM) |
+| **q8 (Ajusté)** | `models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx` | 112,9 Mio | `per_channel=True`, `reduce_range=True`, `ActivationSymmetric=True` | Modèle ajusté pour le navigateur Web (WASM) |
+| **q8 (Témoin base)** | `models/multilingual-e5-small-base/onnx/model_quantized.onnx` | 112,9 Mio | Même recette d'export opset 14 sur `intfloat/multilingual-e5-small` | Modèle témoin isolant le graphe de l'ajustement |
 
-> **Alignement sur la quantification Xenova :**  
-> Au Notebook 02, une conversion INT8 dynamique basique (`per_tensor`, standard `quantize_dynamic`) dégradait la fidélité de premier résultat dans le navigateur à 85,8 %, contre **91,8 %** pour la conversion `q8` de Xenova (`model_quantized.onnx`).  
-> Le script `scripts/adaptation/06_exporter_onnx.py` a donc été explicitement aligné sur le standard Xenova avec `per_channel=True` (vecteurs d'échelles de taille 384 par canal de sortie) et `reduce_range=True` (protection contre la saturation sur processeurs non-VNNI), accompagné de `models/multilingual-e5-small-finetuned/quant_config.json`. Cette rigueur garantit que la mesure future isolera l'apport de l'ajustement sémantique sans subir de perte parasite de précision numérique.
+> **Alignement sur la quantification Xenova et tables d'embeddings symétriques :**  
+> Au Notebook 02, une conversion INT8 dynamique basique (`per_tensor`) dégradait la fidélité de premier résultat dans le navigateur à 85,8 %, contre **91,8 %** pour la conversion `q8` de Xenova (`model_quantized.onnx`).  
+> Pour combler l'écart structural, le script `scripts/adaptation/06_exporter_onnx.py` a été aligné sur les hyperparamètres de Xenova avec `per_channel=True`, `reduce_range=True` et l'option `extra_options={"ActivationSymmetric": True}`. Cette option force la quantification symétrique des 3 tables d'embeddings (`word_embeddings`, `position_embeddings`, `token_type_embeddings`) : sur le modèle de base, **74 tenseurs sur 75 deviennent strictement identiques bit à bit à ceux de Xenova**, le 75e ne différant que d'une seule valeur sur 96 millions. Les dépendances sont rigoureusement épinglées dans `scripts/adaptation/requirements.txt` (`onnx==1.23.2`, `onnxruntime==1.30.0`).
 
-### 5.2 Contrôles de conformité
+### 5.2 Contrôles de conformité et protocole comparatif
 
 #### Contrôle 1 : Parité numérique FP32 (PyTorch vs ONNX FP32)
-* **Cosinus minimal** : $1.00000000$ (seuil strict : $\ge 0.99999$).
+* **Cosinus minimal** : $1.00000000$ (tolérance : $\ge 0.99999$).
 * **Écart absolu maximal composante** : $1,17 \times 10^{-7}$.
 * **Statut** : **VALIDÉ AVEC SUCCÈS**.
 
 #### Contrôle 2 : Fidélité navigateur du modèle quantifié q8 (Protocole Notebook 02)
-Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure de fidélité opposable a été exécutée **directement dans le navigateur** à l'aide de la page de contrôle du projet (`scripts/indexation/fidelite_navigateur.html?modele=ajuste`) :
+Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure de fidélité opposable a été exécutée **directement dans le navigateur** à l'aide de la page de contrôle du projet (`scripts/indexation/fidelite_navigateur.html`) servie par `scripts/adaptation/serveur_controle.py` :
 * **Moteur d'exécution** : Chromium, moteur ONNX Runtime WebAssembly (`device: "wasm"`), bibliothèque `@huggingface/transformers@4.3.0`.
 * **Jeu de test** : Les **822 requêtes réalistes** du corpus M2 (`data/indexation/controle/requetes_fidelite.json`, titres de section interrogatifs).
-* **Index de référence** : Les **4 240 passages** du corpus M2 encodés en PyTorch FP32 (`data/adaptation/passage_embeddings_apres.npy`).
-* **Résultats enregistrés** : `data/indexation/controle/fidelite_navigateur_ajuste.json` (empreintes et vecteurs navigateur sauvegardés).
+* **Index de référence** : Les **4 240 passages** du corpus M2 encodés en PyTorch FP32 (`data/adaptation/passage_embeddings_apres.npy` pour le modèle ajusté, `passage_embeddings_baseline.npy` pour le témoin).
+* **Règle de décision méthodologique** : Le Notebook 02 ne définit aucun seuil statique arbitraire, mais une **règle comparative** : la fidélité de la variante quantifiée doit être évaluée par rapport au modèle de référence `q8` de Xenova.
+* **Besoin d'un témoin de base** : Même avec des poids quasi identiques, l'export PyTorch vers ONNX (opset 14) produit un ordonnancement de graphe légèrement distinct de Xenova (environ 3 % de requêtes dont le premier résultat diffère sur le modèle de base). Le passage du modèle de base dans le script 06 (`models/multilingual-e5-small-base`) fournit le **témoin méthodologique indispensable** pour isoler l'effet du graphe de celui de l'ajustement sémantique.
 
-| Métrique de fidélité (822 requêtes, 4 240 passages) | Valeur mesurée dans le navigateur | Seuil d'acceptabilité Notebook 02 | Statut |
-|---|---:|---:|:---:|
-| **Cosinus médian avec la référence PyTorch** | **0,99389** | $\ge 0,98$ | **CONFORME** |
-| **Cosinus minimal avec la référence PyTorch** | **0,98627** | $\ge 0,97$ | **CONFORME** |
-| **Concordance Top-1 (même 1er résultat)** | **91,61 %** (753 / 822) | Alignée baseline (91,8 %) | **CONFORME** |
-| **Premier résultat de référence dans le Top-5** | **99,88 %** (821 / 822) | $\ge 99,5 \%$ | **CONFORME** |
-| **Rang maximal de dégradation** | **10** (99e percentile : 3,0) | $\le 25$ | **CONFORME** |
-| **Temps d'encodage moyen par requête** | **74,4 ms** (WASM) | Fluide pour l'UI | **CONFORME** |
+| Métrique de fidélité (822 requêtes, 4 240 passages) | Modèle Ajusté (Navigateur WASM) | Témoin de BASE (Navigateur WASM) | Réf. q8 Hub Xenova (Notebook 02) |
+|---|---:|---:|---:|
+| **Cosinus médian avec la référence PyTorch** | **0,99389** | **0,99653** | 0,99655 |
+| **Cosinus minimal avec la référence PyTorch** | **0,98627** | **0,99044** | 0,99196 |
+| **Concordance Top-1 (même 1er résultat)** | **91,61 %** (753 / 822) | **92,58 %** (761 / 822) | 91,8 % (755 / 822) |
+| **Premier résultat de référence dans le Top-5** | **99,88 %** (821 / 822) | **99,88 %** (821 / 822) | 99,9 % (821 / 822) |
+| **Rang maximal de dégradation** | **10** (99e percentile : 2,8) | **7** (99e percentile : 3,0) | 9 |
+| **Temps d'encodage moyen par requête** | **78,7 ms** (WASM) | **73,7 ms** (WASM) | 18,6 ms (WASM) |
 
-*Note sur la simulation locale Python :* En inférence CPU Python directe (`onnxruntime`), la concordance Top-1 atteint 93,43 % (cosinus médian 0,99355, cosinus minimal 0,98314, rapport dans `data/adaptation/rapport_fidelite_822.json`). La mesure in-browser Chromium WASM ci-dessus (91,61 %) fait foi conformément aux conclusions du Notebook 02.
+#### Versionnement du calcul et empreintes SHA-256 opposables
+Le calcul des métriques in-browser ci-dessus est intégralement versionné et automatisé dans le script [`08_calculer_metriques_navigateur.py`](../../scripts/adaptation/08_calculer_metriques_navigateur.py). Les empreintes cryptographiques SHA-256 des fichiers opposables sont consignées dans le tableau suivant :
+
+| Modèle & Artefact | Fichier | Taille | Empreinte cryptographique SHA-256 |
+|---|---|---:|---|
+| **Modèle ajusté (ONNX q8)** | `model_quantized.onnx` | 112,89 Mio | `934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047` |
+| **Résultats navigateur ajusté** | `fidelite_navigateur_ajuste.json` | 9,97 Mio | `72baf3e4011aa610a99c19a36768c1e13703e0d197f721db4c422554d95f26d0` |
+| **Modèle témoin de base (ONNX q8)** | `model_quantized.onnx` | 112,89 Mio | `30ae0f2153f7e14ce5afe082c68ee251d0cce6c26e8caa71307fbd8ebf4bcb90` |
+| **Résultats navigateur témoin** | `fidelite_navigateur_temoin.json` | 9,96 Mio | `72a612ea392dce707fd1b59c9a7b1bc200dcfaea8bf585d1ef97c21953330a63` |
+
+*Note sur la simulation locale Python :* En inférence CPU Python directe avec `batch_size=1` ([`07_mesurer_fidelite_822.py`](../../scripts/adaptation/07_mesurer_fidelite_822.py)), la concordance Top-1 atteint **93,67 %** (770 / 822) pour le modèle ajusté et **92,70 %** (762 / 822) pour le témoin de base, avec un recouvrement Top-5 de 100,00 % (822 / 822) et un rang maximal de 5. L'encodage unitaire (`batch_size=1`) évite les artefacts de quantification dynamique induits par le remplissage (*padding*) sur les lots de 32.
 
 > **Statut de déploiement (Règle d'arbitrage) :**  
 > Le modèle ajusté n'est **pas déployé sur le site en ligne** à ce stade. Son intégration éventuelle pour le 18 octobre (remplacement de l'encodeur de base sur GitHub Pages) est conditionnée au résultat de la mesure officielle conjointe selon la règle de décision du protocole `05_protocole_ajustement.md` (gain de Recall@5 positif ou nul à la fois sur le jeu de l'équipe et sur le CDTN).
@@ -161,11 +174,15 @@ Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure
 
 - [x] **Génération de paires synthétiques avec le modèle local** : 109 paires question-passage générées avec Qwen2.5-7B local.
 - [x] **Filtrage et contrôle d'échantillon** : Validé et consigné dans `data/adaptation/echantillon_controle_train.json`.
-- [x] **Empreinte de reproductibilité des données** : SHA-256 de `train_paires.jsonl` consigné (`2d377eb6...`) pour pallier l'absence de graine explicite sans versionner le fichier.
+- [x] **Empreinte d'authentification des données** : SHA-256 de `train_paires.jsonl` consigné (`2d377eb6...`) pour authentifier de manière unique le jeu d'entraînement.
 - [x] **Vérification d'absence de fuite du test** : 67 fiches totalement exclues du train set, contrôle heuristique Jaccard < 0,40 documenté.
 - [x] **Ajustement contrastif (négatifs du lot)** : Réalisé avec `MultipleNegativesRankingLoss`, recette déclarée figée au 13 octobre.
 - [x] **Banc exploratoire documenté** : Chiffres préliminaires étiquetés « exploratoires, hors protocole » selon la décision du Weekly 4.
-- [x] **Quantification ONNX q8 alignée Xenova** : Export avec `per_channel=True` et `reduce_range=True` (112,9 Mio).
+- [x] **Quantification ONNX q8 alignée Xenova** : Export avec `per_channel=True`, `reduce_range=True` et `ActivationSymmetric=True` (112,9 Mio, 74/75 tenseurs identiques bit à bit).
+- [x] **Modèle témoin de BASE exporté** : Export du modèle pré-entraîné avec la même recette pour isoler les effets de graphe opset 14.
 - [x] **Contrôle de fidélité dans le navigateur (Notebook 02)** : 91,61 % de concordance Top-1 et 99,88 % dans le Top-5 sur les 822 requêtes mesurées dans Chromium WASM via `scripts/indexation/fidelite_navigateur.html`.
-- [x] **Poids hors Git** : Dossier `models/` protégé par le `.gitignore`.
+- [x] **Calcul automatisé et empreintes SHA-256 versionnés** : Script `scripts/adaptation/08_calculer_metriques_navigateur.py` consignant les métriques et empreintes cryptographiques.
+- [x] **Dépendances épinglées** : Fichier `scripts/adaptation/requirements.txt` (`onnx==1.23.2`, `onnxruntime==1.30.0`).
+- [x] **Poids et données hors Git** : Dossiers `models/` et `data/` intégralement protégés par le `.gitignore`.
 - [ ] **Mesure officielle et décision de déploiement** : Planifiée au Weekly 5 (15 octobre) selon le protocole officiel commun `05_protocole_ajustement.md`.
+

@@ -162,9 +162,9 @@
 \begin{tabular}{@{}>{\tabfont\bfseries\color{accent}}l@{\hspace{16pt}}p{\dimexpr\textwidth-\metalab-18pt\relax}@{}}
 Auteur principal : & Remy RAYANE (Responsable D2 \& Issue \#49) \\[3.5pt]
 Soutien \& Relecture : & Mahé BEGNIS, Jibril BENSALEM \\[3.5pt]
-Date : & 6 octobre 2026 \\[3.5pt]
-Référence : & Issue GitHub \#49 (\code{feat/\allowbreak{}49-\allowbreak{}ajustement-\allowbreak{}encodeur}) \\[3.5pt]
-Statut : & Exécuté intégralement, validé statistiquement, prêt pour revue \\[3.5pt]
+Date : & 13 octobre 2026 (révision finale avant Weekly 5) \\[3.5pt]
+Référence : & Issue GitHub \#49 (\code{Refs \#49}, branche \code{feat/\allowbreak{}49-\allowbreak{}ajustement-\allowbreak{}encodeur}) \\[3.5pt]
+Statut : & Recette d'entraînement figée le 13 octobre 2026 ; mesures préliminaires étiquetées exploratoires et hors protocole (décision Weekly 4) ; en attente de la mesure officielle conjointe au Weekly 5 \\[3.5pt]
 \end{tabular}\par\vspace{16pt}\endgroup
 \vspace{10pt}{\color{filet}\rule{\textwidth}{0.4pt}}\par\vspace{16pt}
 \begingroup\setlength{\parskip}{0pt}\tableofcontents\endgroup
@@ -174,7 +174,7 @@ Statut : & Exécuté intégralement, validé statistiquement, prêt pour revue \
 
 Le sujet du projet impose que l'application de recherche sémantique du Volet A ne se contente pas d'exécuter un modèle générique sur étagère, mais s'appuie sur un modèle adapté au domaine juridique du Code du travail et des fiches pratiques du ministère du Travail (SocialGouv).
 
-L'\textbf{Issue \#49} a pour objet d'ajuster finement l'encodeur \code{intfloat/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small} par \textbf{apprentissage contrastif} (\textit{contrastive learning}) sur des paires \code{(question, passage)} représentatives du corpus, et d'en mesurer scientifiquement le gain par un protocole expérimental apparié et reproductible.
+L'\textbf{Issue \#49} a pour objet d'ajuster finement l'encodeur \code{intfloat/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small} par \textbf{apprentissage contrastif} (\textit{contrastive learning}) sur des paires \code{(question, passage)} représentatives du corpus, et d'en préparer l'évaluation rigoureuse par un protocole expérimental apparié et reproductible.
 
 \subsection{Contraintes méthodologiques strictes}
 \begin{enumerate}
@@ -182,7 +182,8 @@ L'\textbf{Issue \#49} a pour objet d'ajuster finement l'encodeur \code{intfloat/
 \item \textbf{Préservation du protocole E5} : Conservation systématique des préfixes obligatoires (\code{query:\allowbreak{} } pour les requêtes et \code{passage:\allowbreak{} } pour les documents).
 \item \textbf{Évaluation statistique appariée} : Calcul des métriques de rang (\code{Recall@\allowbreak{}k}, \code{MRR@\allowbreak{}10}) avec test exact de McNemar et test d'Obuchowski (données groupées par fiche) pour trancher la significativité statistique de l'écart.
 \item \textbf{Portabilité navigateur (ONNX \& Quantification)} : Export ONNX FP32, quantification dynamique INT8 (\code{q8}) et vérification des critères de parité et fidélité établis au Notebook 02.
-\item \textbf{Gestion des artefacts hors Git} : Les poids PyTorch et les fichiers \code{.\allowbreak{}onnx} dépassant 100 Mio restent exclus du versionnement Git (règle stricte du projet).
+\item \textbf{Gestion des artefacts hors Git} : Les dossiers \code{data/\allowbreak{}} et \code{models/\allowbreak{}} (données d'entraînement, index \code{.\allowbreak{}npy}, poids PyTorch et modèles \code{.\allowbreak{}onnx}) restent intégralement exclus du versionnement Git (règle stricte du projet).
+\item \textbf{Non-déploiement sans validation officielle} : Le modèle ajusté n'est pas déployé en production tant que la mesure officielle n'a pas validé la règle d'arbitrage à deux jeux.
 \end{enumerate}
 \rulebreak
 
@@ -211,10 +212,13 @@ L'inférence locale validée dans le cadre de l'Issue \#31 (\code{qwen2.\allowbr
 \begin{itemize}
 \item \textbf{Échantillonnage stratifié} : 110 passages candidats représentatifs sélectionnés sur 110 fiches distinctes (longueur médiane \textasciitilde{}250 tokens).
 \item \textbf{Prompting de rôle} : Requêtes formulées du point de vue d'un salarié ou citoyen cherchant une réponse concrète, sans méta-références (\og selon le texte\fg{}, etc.).
-\item \textbf{Filtrage automatique} :
+\item \textbf{Filtrage automatique et documentation du filtre de Jaccard} :
 \item Contrôle syntaxique (interrogation finale, longueur entre 25 et 220 caractères).
-\item Contrôle de non-recouvrement lexical : rejet automatique si la similarité Jaccard sur les tokens avec une question du jeu de test dépasse 0,40.
-\item \textbf{Résultat} : \textbf{109 paires validées}, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans \code{data/\allowbreak{}adaptation/\allowbreak{}echantillon\_\allowbreak{}controle\_\allowbreak{}train.\allowbreak{}json}.
+\item \textbf{Filtre de non-recouvrement lexical Jaccard} : Rejet automatique si l'indice de Jaccard sur les ensembles de tokens entre une question générée et n'importe quelle question du jeu de test dépasse \textbf{0,40}. Ce seuil a été calibré empiriquement comme filtre heuristique anti-fuite : il tolère le lexique juridique inévitable (\og contrat\fg{}, \og salarié\fg{}, \og préavis\fg{}) tout en interdisant toute proximité thématique ou calque de formulation avec les requêtes de test.
+\item \textbf{Résultat et empreinte d'authentification} : \textbf{109 paires validées}, 1 rejetée. Un échantillon de contrôle a été audité manuellement dans \code{data/\allowbreak{}adaptation/\allowbreak{}echantillon\_\allowbreak{}controle\_\allowbreak{}train.\allowbreak{}json}.
+\item \textbf{Fichier de données} : \code{data/\allowbreak{}adaptation/\allowbreak{}train\_\allowbreak{}paires.\allowbreak{}jsonl} (exclu du suivi Git : le dossier \code{data/\allowbreak{}} n'est jamais versionné dans le dépôt).
+\item \textbf{Empreinte SHA-256} : \code{2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698} (174 552 octets).
+\item \textbf{Rôle de l'empreinte cryptographique} : La génération locale via Ollama ayant été exécutée sans graine pseudo-aléatoire explicite (\code{seed}), cette empreinte identifie de manière unique et opposable le fichier exact utilisé pour l'entraînement. L'empreinte authentifie le fichier sans permettre de le recréer de novo sans la source, ce qui impose de conserver précieusement cet artefact d'entraînement.
 \end{itemize}
 \rulebreak
 
@@ -228,16 +232,20 @@ L'inférence locale validée dans le cadre de l'Issue \#31 (\code{qwen2.\allowbr
 \item Température / facteur d'échelle : échelle standard SentenceTransformers (\$s = 20.0\$).
 \end{itemize}
 
-\subsection{Hyperparamètres d'entraînement}
+\subsection{Hyperparamètres d'entraînement et déclaration de la recette (figée au 13/10)}
 
-Les hyperparamètres ont été choisis pour adapter le modèle au vocabulaire du droit du travail sans détruire sa structure multilingue pré-entraînée (\textit{catastrophic forgetting}) :
+Les hyperparamètres suivants constituent la recette d'entraînement déclarée et figée au 13 octobre 2026. Ils ont été choisis pour adapter le modèle au vocabulaire du droit du travail sans détruire sa structure multilingue pré-entraînée (\textit{catastrophic forgetting}) :
 \begin{itemize}
+\item \textbf{Données d'entraînement figées} : \code{data/\allowbreak{}adaptation/\allowbreak{}train\_\allowbreak{}paires.\allowbreak{}jsonl} (109 paires, SHA-256 : \code{2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698}).
 \item \textbf{Taille de lot (*batch size*)} : 16 (soit 15 négatifs par exemple).
 \item \textbf{Taux d'apprentissage (*learning rate*)} : \$2 \textbackslash\{\}times 10\textasciicircum{}\{-5\}\$ avec optimiseur AdamW et décroissance linéaire.
 \item \textbf{Époques} : 2 (14 pas d'optimisation).
 \item \textbf{Warmup} : 10 \% des étapes.
 \item \textbf{Durée d'entraînement} : 185,5 secondes sur CPU (16 cœurs).
 \end{itemize}
+\begin{callout}
+\textbf{Déclaration des choix d'entraînement (Weekly 4 / \#10) :}   Conformément à l'exigence de transparence méthodologique, cette configuration d'entraînement a été arrêtée lors de la phase préliminaire (PR \#63) et reste strictement figée sans aucun réajustement ultérieur sur le jeu de test.
+\end{callout}
 
 \subsection{Convergence de la perte}
 % TABLE 0
@@ -271,11 +279,12 @@ Les hyperparamètres ont été choisis pour adapter le modèle au vocabulaire du
 La perte a décru de manière régulière et robuste (de 1,56 à 0,47), confirmant un apprentissage efficace sans instabilité.
 \rulebreak
 
-\section{Résultats et Validation Statistique}
+\section{Résultats préliminaires (Mesures exploratoires, hors protocole)}
+\begin{callout}
+\textbf{Avertissement méthodologique (Décision 2 du Weekly 4, Ticket \#10) :}   Les chiffres ci-dessous proviennent du banc d'essai préliminaire exécuté le 6 octobre 2026 (ex-PR \#63). Conformément aux décisions du Weekly 4, ces résultats sont expressément étiquetés \textbf{\og exploratoires et hors protocole\fg{}} car ils ont été obtenus avant le gel officiel du protocole d'évaluation du Notebook 03 (Issue \#46) et de la règle de pertinence D4 amendée.   \textbf{Ils ne préjugent pas de la mesure officielle.} L'évaluation opposable et définitive de l'encodeur ajusté sera effectuée selon le protocole \code{docs/\allowbreak{}etudes/\allowbreak{}evaluation/\allowbreak{}05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md} au Weekly 5 (15 octobre).
+\end{callout}
 
-L'évaluation compare les performances de récupération d'information (\textit{Information Retrieval}) avant et après ajustement, en indexant la totalité des \textbf{4 240 passages M2} et en interrogeant le modèle avec les \textbf{72 questions de test}.
-
-\subsection{Tableau comparatif des métriques de recherche}
+\subsection{Tableau comparatif des métriques de recherche préliminaires}
 % TABLE 1
 \begin{tabletype}
 \scriptsize
@@ -302,68 +311,140 @@ L'évaluation compare les performances de récupération d'information (\textit{
 \end{longtable}
 \end{tabletype}
 
-\subsection{Analyse des résultats}
+\subsection{Analyse exploratoire}
 \begin{enumerate}
-\item \textbf{Bond spectaculaire sur Recall@5 (+19,44 points)} : Le Recall@5 passe de 43,06 \% à 62,50 \%. La valeur \textit{p} du test apparié avec regroupement par fiche est de \textbf{\$0.0002\$}, ce qui démontre une amélioration hautement significative sur le plan statistique.
-\item \textbf{Gain substantiel en précision de premier rang (MRR@10 : +0,0954)} : Le rang réciproque moyen passe de 0,325 à 0,420, signifiant que le passage pertinent apparaît désormais en moyenne entre la 2e et la 3e position au lieu de la 3e et 4e position.
-\item \textbf{Généralisation confirmée hors fiches vues} : Puisque l'entraînement a été effectué exclusivement sur des fiches différentes de celles du test, ce gain atteste que l'encodeur a appris à mieux aligner le style interrogatif des citoyens français avec le formalisme juridique des fiches du ministère, sans aucun effet de mémorisation brute.
+\item \textbf{Tendance nette sur le Recall@5 (+19,44 points)} :   Dans ce cadre exploratoire, le Recall@5 passe de 43,06 \% à 62,50 \% (\$p = 0.0002\$), montrant que l'apprentissage contrastif a bien orienté les représentations.
+\item \textbf{Gain de premier rang (MRR@10 : +0,0954)} :   Le rang réciproque moyen progresse de 0,325 à 0,420.
+\item \textbf{Généralisation hors fiches vues} :   L'entraînement ayant été réalisé exclusivement sur des fiches vierges de toute évaluation, ce comportement préliminaire atteste que le modèle s'adapte au vocabulaire administratif sans surapprentissage direct.
 \end{enumerate}
 \rulebreak
 
-\section{Export ONNX et Contrôles de Parité}
+\section{Export ONNX et Contrôles de Parité et Fidélité Navigateur}
 
-Pour permettre le déploiement dans le navigateur client via \textbf{Transformers.js} (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences du Notebook 02.
+Pour permettre le déploiement ultérieur dans le navigateur client via \textbf{Transformers.js} (Volet A), le modèle PyTorch affiné a été converti en ONNX et quantifié selon les exigences rigoureuses du Notebook 02.
 
-\subsection{Fichiers générés}
+\subsection{Fichiers générés et alignement de quantification Xenova}
 % TABLE 2
 \begin{tabletype}
-\small
-\settw{24.0}
+\footnotesize
+\settw{32.0}
 \setlength{\LTpre}{0pt}\setlength{\LTpost}{0pt}
-\begin{longtable}{@{}L{0.07354\tw}L{0.49340\tw}L{0.10692\tw}L{0.32614\tw}@{}}
+\begin{longtable}{@{}L{0.07776\tw}L{0.31012\tw}L{0.06503\tw}L{0.31395\tw}L{0.23314\tw}@{}}
 \toprule
-\thead{Format} & \thead{Fichier} & \thead{Taille disque} & \thead{Rôle applicatif} \\
+\thead{Format} & \thead{Fichier} & \thead{Taille disque} & \thead{Spécification technique} & \thead{Rôle applicatif} \\
 \midrule
 \endfirsthead
 \toprule
-\thead{Format} & \thead{Fichier} & \thead{Taille disque} & \thead{Rôle applicatif} \\
+\thead{Format} & \thead{Fichier} & \thead{Taille disque} & \thead{Spécification technique} & \thead{Rôle applicatif} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
 \bottomrule
 \endlastfoot
-\textbf{FP32} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}finetuned/\allowbreak{}onnx/\allowbreak{}model.\allowbreak{}onnx} & 448,5 Mio & Modèle de référence ONNX haute précision \\
-\textbf{INT8 (q8)} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}finetuned/\allowbreak{}onnx/\allowbreak{}model\_\allowbreak{}quantized.\allowbreak{}onnx} & 112,7 Mio & Modèle compact servi au navigateur Web \\
+\textbf{FP32} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}finetuned/\allowbreak{}onnx/\allowbreak{}model.\allowbreak{}onnx} & 448,5 Mio & Opset 14, pooling mean, FP32 complet & Modèle de référence ONNX haute précision \\
+\textbf{q8 (Ajusté)} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}finetuned/\allowbreak{}onnx/\allowbreak{}model\_\allowbreak{}quantized.\allowbreak{}onnx} & 112,9 Mio & \code{per\_\allowbreak{}channel=True}, \code{reduce\_\allowbreak{}range=True}, \code{ActivationSymmetric=True} & Modèle ajusté pour le navigateur Web (WASM) \\
+\textbf{q8 (Témoin base)} & \code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}base/\allowbreak{}onnx/\allowbreak{}model\_\allowbreak{}quantized.\allowbreak{}onnx} & 112,9 Mio & Même recette d'export opset 14 sur \code{intfloat/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small} & Modèle témoin isolant le graphe de l'ajustement \\
+\end{longtable}
+\end{tabletype}
+\begin{callout}
+\textbf{Alignement sur la quantification Xenova et tables d'embeddings symétriques :}   Au Notebook 02, une conversion INT8 dynamique basique (\code{per\_\allowbreak{}tensor}) dégradait la fidélité de premier résultat dans le navigateur à 85,8 \%, contre \textbf{91,8 \%} pour la conversion \code{q8} de Xenova (\code{model\_\allowbreak{}quantized.\allowbreak{}onnx}).   Pour combler l'écart structural, le script \code{scripts/\allowbreak{}adaptation/\allowbreak{}06\_\allowbreak{}exporter\_\allowbreak{}onnx.\allowbreak{}py} a été aligné sur les hyperparamètres de Xenova avec \code{per\_\allowbreak{}channel=True}, \code{reduce\_\allowbreak{}range=True} et l'option \code{extra\_\allowbreak{}options=\{"ActivationSymmetric":\allowbreak{} True\}}. Cette option force la quantification symétrique des 3 tables d'embeddings (\code{word\_\allowbreak{}embeddings}, \code{position\_\allowbreak{}embeddings}, \code{token\_\allowbreak{}type\_\allowbreak{}embeddings}) : sur le modèle de base, \textbf{74 tenseurs sur 75 deviennent strictement identiques bit à bit à ceux de Xenova}, le 75e ne différant que d'une seule valeur sur 96 millions. Les dépendances sont rigoureusement épinglées dans \code{scripts/\allowbreak{}adaptation/\allowbreak{}requirements.\allowbreak{}txt} (\code{onnx==1.\allowbreak{}23.\allowbreak{}2}, \code{onnxruntime==1.\allowbreak{}30.\allowbreak{}0}).
+\end{callout}
+
+\subsection{Contrôles de conformité et protocole comparatif}
+
+\subsubsection*{Contrôle 1 : Parité numérique FP32 (PyTorch vs ONNX FP32)}
+\begin{itemize}
+\item \textbf{Cosinus minimal} : \$1.00000000\$ (tolérance : \$\textbackslash\{\}ge 0.99999\$).
+\item \textbf{Écart absolu maximal composante} : \$1,17 \textbackslash\{\}times 10\textasciicircum{}\{-7\}\$.
+\item \textbf{Statut} : \textbf{VALIDÉ AVEC SUCCÈS}.
+\end{itemize}
+
+\subsubsection*{Contrôle 2 : Fidélité navigateur du modèle quantifié q8 (Protocole Notebook 02)}
+
+Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure de fidélité opposable a été exécutée \textbf{directement dans le navigateur} à l'aide de la page de contrôle du projet (\code{scripts/\allowbreak{}indexation/\allowbreak{}fidelite\_\allowbreak{}navigateur.\allowbreak{}html}) servie par \code{scripts/\allowbreak{}adaptation/\allowbreak{}serveur\_\allowbreak{}controle.\allowbreak{}py} :
+\begin{itemize}
+\item \textbf{Moteur d'exécution} : Chromium, moteur ONNX Runtime WebAssembly (\code{device:\allowbreak{} "wasm"}), bibliothèque \code{@\allowbreak{}huggingface/\allowbreak{}transformers@\allowbreak{}4.\allowbreak{}3.\allowbreak{}0}.
+\item \textbf{Jeu de test} : Les \textbf{822 requêtes réalistes} du corpus M2 (\code{data/\allowbreak{}indexation/\allowbreak{}controle/\allowbreak{}requetes\_\allowbreak{}fidelite.\allowbreak{}json}, titres de section interrogatifs).
+\item \textbf{Index de référence} : Les \textbf{4 240 passages} du corpus M2 encodés en PyTorch FP32 (\code{data/\allowbreak{}adaptation/\allowbreak{}passage\_\allowbreak{}embeddings\_\allowbreak{}apres.\allowbreak{}npy} pour le modèle ajusté, \code{passage\_\allowbreak{}embeddings\_\allowbreak{}baseline.\allowbreak{}npy} pour le témoin).
+\item \textbf{Règle de décision méthodologique} : Le Notebook 02 ne définit aucun seuil statique arbitraire, mais une \textbf{règle comparative} : la fidélité de la variante quantifiée doit être évaluée par rapport au modèle de référence \code{q8} de Xenova.
+\item \textbf{Besoin d'un témoin de base} : Même avec des poids quasi identiques, l'export PyTorch vers ONNX (opset 14) produit un ordonnancement de graphe légèrement distinct de Xenova (environ 3 \% de requêtes dont le premier résultat diffère sur le modèle de base). Le passage du modèle de base dans le script 06 (\code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}base}) fournit le \textbf{témoin méthodologique indispensable} pour isoler l'effet du graphe de celui de l'ajustement sémantique.
+\end{itemize}
+% TABLE 3
+\begin{tabletype}
+\small
+\settw{24.0}
+\setlength{\LTpre}{0pt}\setlength{\LTpost}{0pt}
+\begin{longtable}{@{}L{0.37657\tw}L{0.20843\tw}L{0.21332\tw}L{0.20168\tw}@{}}
+\toprule
+\thead{Métrique de fidélité (822 requêtes, 4 240 passages)} & \thead{Modèle Ajusté (Navigateur WASM)} & \thead{Témoin de BASE (Navigateur WASM)} & \thead{Réf. q8 Hub Xenova (Notebook 02)} \\
+\midrule
+\endfirsthead
+\toprule
+\thead{Métrique de fidélité (822 requêtes, 4 240 passages)} & \thead{Modèle Ajusté (Navigateur WASM)} & \thead{Témoin de BASE (Navigateur WASM)} & \thead{Réf. q8 Hub Xenova (Notebook 02)} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{Cosinus médian avec la référence PyTorch} & \textbf{0,99389} & \textbf{0,99653} & 0,99655 \\
+\textbf{Cosinus minimal avec la référence PyTorch} & \textbf{0,98627} & \textbf{0,99044} & 0,99196 \\
+\textbf{Concordance Top-1 (même 1er résultat)} & \textbf{91,61 \%} (753 / 822) & \textbf{92,58 \%} (761 / 822) & 91,8 \% (755 / 822) \\
+\textbf{Premier résultat de référence dans le Top-5} & \textbf{99,88 \%} (821 / 822) & \textbf{99,88 \%} (821 / 822) & 99,9 \% (821 / 822) \\
+\textbf{Rang maximal de dégradation} & \textbf{10} (99e percentile : 2,8) & \textbf{7} (99e percentile : 3,0) & 9 \\
+\textbf{Temps d'encodage moyen par requête} & \textbf{78,7 ms} (WASM) & \textbf{73,7 ms} (WASM) & 18,6 ms (WASM) \\
 \end{longtable}
 \end{tabletype}
 
-\subsection{Contrôles de conformité}
-\begin{enumerate}
-\item \textbf{Contrôle 1 : Parité numérique FP32 (PyTorch vs ONNX FP32)} :
-\item \textbf{Cosinus minimal} : \$1.00000000\$ (seuil de parité strict : \$\textbackslash\{\}ge 0.99999\$).
-\item \textbf{Écart absolu maximal composante} : \$1,17 \textbackslash\{\}times 10\textasciicircum{}\{-7\}\$.
-\item \textbf{Statut} : \textbf{VALIDÉ AVEC SUCCÈS}.
-\end{enumerate}
-\begin{enumerate}
-\item \textbf{Contrôle 2 : Fidélité de la quantification INT8 (PyTorch FP32 vs ONNX q8)} :
-\item \textbf{Cosinus médian} : \$0.9834\$ (seuil attendu : \$\textbackslash\{\}ge 0.98\$).
-\item \textbf{Cosinus minimal} : \$0.9789\$ (seuil : \$\textbackslash\{\}ge 0.97\$).
-\item \textbf{Concordance du Top-1} : \$100,0\textbackslash\{\} \textbackslash\{\}\%\$ sur le banc de validation.
-\item \textbf{Statut} : \textbf{VALIDÉ AVEC SUCCÈS}.
-\end{enumerate}
+\subsubsection*{Versionnement du calcul et empreintes SHA-256 opposables}
+
+Le calcul des métriques in-browser ci-dessus est intégralement versionné et automatisé dans le script [\code{08\_\allowbreak{}calculer\_\allowbreak{}metriques\_\allowbreak{}navigateur.\allowbreak{}py}](../../scripts/adaptation/08\_calculer\_metriques\_navigateur.py). Les empreintes cryptographiques SHA-256 des fichiers opposables sont consignées dans le tableau suivant :
+% TABLE 4
+\begin{tabletype}
+\small
+\settw{24.0}
+\setlength{\LTpre}{0pt}\setlength{\LTpost}{0pt}
+\begin{longtable}{@{}L{0.12619\tw}L{0.12054\tw}L{0.06416\tw}L{0.68912\tw}@{}}
+\toprule
+\thead{Modèle \& Artefact} & \thead{Fichier} & \thead{Taille} & \thead{Empreinte cryptographique SHA-256} \\
+\midrule
+\endfirsthead
+\toprule
+\thead{Modèle \& Artefact} & \thead{Fichier} & \thead{Taille} & \thead{Empreinte cryptographique SHA-256} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{Modèle ajusté (ONNX q8)} & \code{model\_\allowbreak{}quantized.\allowbreak{}onnx} & 112,89 Mio & \code{934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047} \\
+\textbf{Résultats navigateur ajusté} & \code{fidelite\_\allowbreak{}navigateur\_\allowbreak{}ajuste.\allowbreak{}json} & 9,97 Mio & \code{72baf3e4011aa610a99c19a36768c1e13703e0d197f721db4c422554d95f26d0} \\
+\textbf{Modèle témoin de base (ONNX q8)} & \code{model\_\allowbreak{}quantized.\allowbreak{}onnx} & 112,89 Mio & \code{30ae0f2153f7e14ce5afe082c68ee251d0cce6c26e8caa71307fbd8ebf4bcb90} \\
+\textbf{Résultats navigateur témoin} & \code{fidelite\_\allowbreak{}navigateur\_\allowbreak{}temoin.\allowbreak{}json} & 9,96 Mio & \code{72a612ea392dce707fd1b59c9a7b1bc200dcfaea8bf585d1ef97c21953330a63} \\
+\end{longtable}
+\end{tabletype}
+
+\textit{Note sur la simulation locale Python :} En inférence CPU Python directe avec \code{batch\_\allowbreak{}size=1} ([\code{07\_\allowbreak{}mesurer\_\allowbreak{}fidelite\_\allowbreak{}822.\allowbreak{}py}](../../scripts/adaptation/07\_mesurer\_fidelite\_822.py)), la concordance Top-1 atteint \textbf{93,67 \%} (770 / 822) pour le modèle ajusté et \textbf{92,70 \%} (762 / 822) pour le témoin de base, avec un recouvrement Top-5 de 100,00 \% (822 / 822) et un rang maximal de 5. L'encodage unitaire (\code{batch\_\allowbreak{}size=1}) évite les artefacts de quantification dynamique induits par le remplissage (\textit{padding}) sur les lots de 32.
+\begin{callout}
+\textbf{Statut de déploiement (Règle d'arbitrage) :}   Le modèle ajusté n'est \textbf{pas déployé sur le site en ligne} à ce stade. Son intégration éventuelle pour le 18 octobre (remplacement de l'encodeur de base sur GitHub Pages) est conditionnée au résultat de la mesure officielle conjointe selon la règle de décision du protocole \code{05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md} (gain de Recall@5 positif ou nul à la fois sur le jeu de l'équipe et sur le CDTN).
+\end{callout}
 \rulebreak
 
-\section{Synthèse et Livrables de l'Issue \#49}
-
-Tous les critères de validation et livrables de l'Issue \#49 sont rigoureusement remplis :
+\section{Synthèse et État d'avancement de l'Issue \#49}
 \begin{itemize}
 \item [x] \textbf{Génération de paires synthétiques avec le modèle local} : 109 paires question-passage générées avec Qwen2.5-7B local.
 \item [x] \textbf{Filtrage et contrôle d'échantillon} : Validé et consigné dans \code{data/\allowbreak{}adaptation/\allowbreak{}echantillon\_\allowbreak{}controle\_\allowbreak{}train.\allowbreak{}json}.
-\item [x] \textbf{Vérification d'absence de fuite du test} : 67 fiches totalement exclues du train set, contrôle Jaccard < 0.40.
-\item [x] \textbf{Ajustement contrastif (négatifs du lot)} : Réalisé avec \code{MultipleNegativesRankingLoss} et préfixes \code{query:\allowbreak{} } / \code{passage:\allowbreak{} }.
-\item [x] \textbf{Mesure avant/après appariée} : Recall@5 en hausse de \textbf{+19,44 pts} (\$p = 0.0002\$).
-\item [x] \textbf{Conversion ONNX et contrôles notebook 02} : Parité FP32 (\$1.00000000\$) et fidélité q8 validées.
-\item [x] \textbf{Poids hors Git} : Dossier \code{models/\allowbreak{}} protégé par le \code{.\allowbreak{}gitignore}.
+\item [x] \textbf{Empreinte d'authentification des données} : SHA-256 de \code{train\_\allowbreak{}paires.\allowbreak{}jsonl} consigné (\code{2d377eb6.\allowbreak{}.\allowbreak{}.\allowbreak{}}) pour authentifier de manière unique le jeu d'entraînement.
+\item [x] \textbf{Vérification d'absence de fuite du test} : 67 fiches totalement exclues du train set, contrôle heuristique Jaccard < 0,40 documenté.
+\item [x] \textbf{Ajustement contrastif (négatifs du lot)} : Réalisé avec \code{MultipleNegativesRankingLoss}, recette déclarée figée au 13 octobre.
+\item [x] \textbf{Banc exploratoire documenté} : Chiffres préliminaires étiquetés \og exploratoires, hors protocole\fg{} selon la décision du Weekly 4.
+\item [x] \textbf{Quantification ONNX q8 alignée Xenova} : Export avec \code{per\_\allowbreak{}channel=True}, \code{reduce\_\allowbreak{}range=True} et \code{ActivationSymmetric=True} (112,9 Mio, 74/75 tenseurs identiques bit à bit).
+\item [x] \textbf{Modèle témoin de BASE exporté} : Export du modèle pré-entraîné avec la même recette pour isoler les effets de graphe opset 14.
+\item [x] \textbf{Contrôle de fidélité dans le navigateur (Notebook 02)} : 91,61 \% de concordance Top-1 et 99,88 \% dans le Top-5 sur les 822 requêtes mesurées dans Chromium WASM via \code{scripts/\allowbreak{}indexation/\allowbreak{}fidelite\_\allowbreak{}navigateur.\allowbreak{}html}.
+\item [x] \textbf{Calcul automatisé et empreintes SHA-256 versionnés} : Script \code{scripts/\allowbreak{}adaptation/\allowbreak{}08\_\allowbreak{}calculer\_\allowbreak{}metriques\_\allowbreak{}navigateur.\allowbreak{}py} consignant les métriques et empreintes cryptographiques.
+\item [x] \textbf{Dépendances épinglées} : Fichier \code{scripts/\allowbreak{}adaptation/\allowbreak{}requirements.\allowbreak{}txt} (\code{onnx==1.\allowbreak{}23.\allowbreak{}2}, \code{onnxruntime==1.\allowbreak{}30.\allowbreak{}0}).
+\item [x] \textbf{Poids et données hors Git} : Dossiers \code{models/\allowbreak{}} et \code{data/\allowbreak{}} intégralement protégés par le \code{.\allowbreak{}gitignore}.
+\item [ ] \textbf{Mesure officielle et décision de déploiement} : Planifiée au Weekly 5 (15 octobre) selon le protocole officiel commun \code{05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md}.
 \end{itemize}
 \end{document}
