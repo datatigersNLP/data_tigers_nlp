@@ -281,7 +281,7 @@ La perte a décru de manière régulière et robuste (de 1,56 à 0,47), confirma
 
 \section{Résultats préliminaires (Mesures exploratoires, hors protocole)}
 \begin{callout}
-\textbf{Avertissement méthodologique (Décision 2 du Weekly 4, Ticket \#10) :}   Les chiffres ci-dessous proviennent du banc d'essai préliminaire exécuté le 6 octobre 2026 (ex-PR \#63). Conformément aux décisions du Weekly 4, ces résultats sont expressément étiquetés \textbf{\og exploratoires et hors protocole\fg{}} car ils ont été obtenus avant le gel officiel du protocole d'évaluation du Notebook 03 (Issue \#46) et de la règle de pertinence D4 amendée.   \textbf{Ils ne préjugent pas de la mesure officielle.} L'évaluation opposable et définitive de l'encodeur ajusté sera effectuée selon le protocole \code{docs/\allowbreak{}etudes/\allowbreak{}evaluation/\allowbreak{}05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md} au Weekly 5 (15 octobre).
+\textbf{Avertissement méthodologique (Décision 2 du Weekly 4, Ticket \#10) :}   Les chiffres ci-dessous proviennent du banc d'essai préliminaire exécuté le 6 octobre 2026 (ex-PR \#63). Conformément aux décisions du Weekly 4, ces résultats sont expressément étiquetés \textbf{\og exploratoires et hors protocole\fg{}} car ils ont été obtenus avant le gel officiel du protocole d'évaluation du Notebook 03 (Issue \#46) et de la règle de pertinence D4 amendée.   \textbf{Ils ne préjugent pas de la mesure officielle.} L'évaluation opposable et définitive de l'encodeur ajusté sera présentée au Weekly 5 (14 octobre 2026, Issue \#11) et effectuée selon le protocole \code{docs/\allowbreak{}etudes/\allowbreak{}evaluation/\allowbreak{}05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md} le 15 octobre 2026.
 \end{callout}
 
 \subsection{Tableau comparatif des métriques de recherche préliminaires}
@@ -367,8 +367,7 @@ Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure
 \item \textbf{Moteur d'exécution} : Chromium, moteur ONNX Runtime WebAssembly (\code{device:\allowbreak{} "wasm"}), bibliothèque \code{@\allowbreak{}huggingface/\allowbreak{}transformers@\allowbreak{}4.\allowbreak{}3.\allowbreak{}0}.
 \item \textbf{Jeu de test} : Les \textbf{822 requêtes réalistes} du corpus M2 (\code{data/\allowbreak{}indexation/\allowbreak{}controle/\allowbreak{}requetes\_\allowbreak{}fidelite.\allowbreak{}json}, titres de section interrogatifs).
 \item \textbf{Index de référence} : Les \textbf{4 240 passages} du corpus M2 encodés en PyTorch FP32 (\code{data/\allowbreak{}adaptation/\allowbreak{}passage\_\allowbreak{}embeddings\_\allowbreak{}apres.\allowbreak{}npy} pour le modèle ajusté, \code{passage\_\allowbreak{}embeddings\_\allowbreak{}baseline.\allowbreak{}npy} pour le témoin).
-\item \textbf{Règle de décision méthodologique} : Le Notebook 02 ne définit aucun seuil statique arbitraire, mais une \textbf{règle comparative} : la fidélité de la variante quantifiée doit être évaluée par rapport au modèle de référence \code{q8} de Xenova.
-\item \textbf{Besoin d'un témoin de base} : Même avec des poids quasi identiques, l'export PyTorch vers ONNX (opset 14) produit un ordonnancement de graphe légèrement distinct de Xenova (environ 3 \% de requêtes dont le premier résultat diffère sur le modèle de base). Le passage du modèle de base dans le script 06 (\code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}base}) fournit le \textbf{témoin méthodologique indispensable} pour isoler l'effet du graphe de celui de l'ajustement sémantique.
+\item \textbf{Besoin d'un témoin de base et écart de graphe opset 14} : Même avec des poids quasi identiques, l'export PyTorch vers ONNX (opset 14) produit un graphe dont les chemins d'exécution diffèrent légèrement de Xenova. Dans le navigateur, bien que le témoin de base et le modèle q8 de Xenova atteignent une fidélité globale similaire (92,58 \% contre 91,80 \% face à PyTorch), ils affichent un premier résultat différent pour \textbf{52 requêtes sur 822} (6,3 \% de divergence). L'exportation modifie donc certains classements indépendamment de tout apprentissage. Le passage du modèle de base dans le script 06 (\code{models/\allowbreak{}multilingual-\allowbreak{}e5-\allowbreak{}small-\allowbreak{}base}) fournit le \textbf{témoin méthodologique indispensable} pour isoler l'effet de l'export de celui de l'ajustement sémantique. Il est ainsi proposé au Weekly 5 (14 octobre, Issue \#11) d'intégrer ce témoin à titre descriptif dans la mesure officielle conjointe (15 octobre).
 \end{itemize}
 % TABLE 3
 \begin{tabletype}
@@ -393,9 +392,17 @@ Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure
 \textbf{Concordance Top-1 (même 1er résultat)} & \textbf{91,61 \%} (753 / 822) & \textbf{92,58 \%} (761 / 822) & 91,8 \% (755 / 822) \\
 \textbf{Premier résultat de référence dans le Top-5} & \textbf{99,88 \%} (821 / 822) & \textbf{99,88 \%} (821 / 822) & 99,9 \% (821 / 822) \\
 \textbf{Rang maximal de dégradation} & \textbf{10} (99e percentile : 2,8) & \textbf{7} (99e percentile : 3,0) & 9 \\
-\textbf{Temps d'encodage moyen par requête} & \textbf{78,7 ms} (WASM) & \textbf{73,7 ms} (WASM) & 18,6 ms (WASM) \\
+\textbf{Temps d'encodage moyen (WASM)} & 78,7 ms (1) & 73,7 ms (1) & 18,6 ms (2) \\
 \end{longtable}
 \end{tabletype}
+
+\vspace{2pt}\noindent\textit{\footnotesize (1) Mesure sur PC de test Windows (Core i7). (2) Mesure du Notebook 02 sur MacBook de référence. Sur cette même machine Mac de test, le témoin prend \textbf{19,0 ms}, comparable aux 18,6 ms de Xenova : les latences ne sont comparables qu'à matériel identique.}\par\vspace{4pt}
+
+\subsubsection*{Analyse comparative et test exact de McNemar apparié}
+\begin{itemize}
+\item \textbf{Fidélité de classement Top-1} : La fidélité de premier résultat du modèle ajusté dans le navigateur est très proche de celle du témoin de base (\textbf{753 contre 761} requêtes concordantes sur 822, soit 91,61 \% vs 92,58 \%). Au test exact de McNemar apparié (\code{scripts/\allowbreak{}adaptation/\allowbreak{}08\_\allowbreak{}calculer\_\allowbreak{}metriques\_\allowbreak{}navigateur.\allowbreak{}py}), l'écart n'est pas statistiquement significatif : $b = 51$ requêtes concordantes pour l'ajusté seul, $c = 59$ pour le témoin seul ($n = 110$ requêtes discordantes, $p = 0,5047 > 0,05$).
+\item \textbf{Distorsion des représentations} : Si la fidélité de classement est proche, l'erreur de quantification des vecteurs est plus forte sur le modèle ajusté (cosinus médian de \textbf{0,99389}, minimal de \textbf{0,98627}) que sur le témoin de base (médian de \textbf{0,99653}, minimal de \textbf{0,99044}).
+\end{itemize}
 
 \subsubsection*{Versionnement du calcul et empreintes SHA-256 opposables}
 
@@ -425,7 +432,7 @@ Le calcul des métriques in-browser ci-dessus est intégralement versionné et a
 \end{longtable}
 \end{tabletype}
 
-\textit{Note sur la simulation locale Python :} En inférence CPU Python directe avec \code{batch\_\allowbreak{}size=1} ([\code{07\_\allowbreak{}mesurer\_\allowbreak{}fidelite\_\allowbreak{}822.\allowbreak{}py}](../../scripts/adaptation/07\_mesurer\_fidelite\_822.py)), la concordance Top-1 atteint \textbf{93,67 \%} (770 / 822) pour le modèle ajusté et \textbf{92,70 \%} (762 / 822) pour le témoin de base, avec un recouvrement Top-5 de 100,00 \% (822 / 822) et un rang maximal de 5. L'encodage unitaire (\code{batch\_\allowbreak{}size=1}) évite les artefacts de quantification dynamique induits par le remplissage (\textit{padding}) sur les lots de 32.
+\textit{Note sur l'exécution Python et dépendance matérielle :} Les mesures exécutées en Python CPU (\code{batch\_\allowbreak{}size=1}, \code{scripts/\allowbreak{}adaptation/\allowbreak{}07\_\allowbreak{}mesurer\_\allowbreak{}fidelite\_\allowbreak{}822.\allowbreak{}py}) dépendent des microarchitectures processeur et instructions vectorielles (AVX2 sur x86\_64 vs NEON sur Mac ARM), induisant des variations arithmétiques d'arrondi (ex. 762/822 sur PC x86 contre 791/822 sur Mac ARM). Seule la mesure in-browser sous WebAssembly (WASM) fournit un environnement d'exécution unifié et rigoureusement déterministe entre machines (761/822 pour le témoin, 753/822 pour l'ajusté).
 \begin{callout}
 \textbf{Statut de déploiement (Règle d'arbitrage) :}   Le modèle ajusté n'est \textbf{pas déployé sur le site en ligne} à ce stade. Son intégration éventuelle pour le 18 octobre (remplacement de l'encodeur de base sur GitHub Pages) est conditionnée au résultat de la mesure officielle conjointe selon la règle de décision du protocole \code{05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md} (gain de Recall@5 positif ou nul à la fois sur le jeu de l'équipe et sur le CDTN).
 \end{callout}
@@ -442,9 +449,9 @@ Le calcul des métriques in-browser ci-dessus est intégralement versionné et a
 \item [x] \textbf{Quantification ONNX q8 alignée Xenova} : Export avec \code{per\_\allowbreak{}channel=True}, \code{reduce\_\allowbreak{}range=True} et \code{ActivationSymmetric=True} (112,9 Mio, 74/75 tenseurs identiques bit à bit).
 \item [x] \textbf{Modèle témoin de BASE exporté} : Export du modèle pré-entraîné avec la même recette pour isoler les effets de graphe opset 14.
 \item [x] \textbf{Contrôle de fidélité dans le navigateur (Notebook 02)} : 91,61 \% de concordance Top-1 et 99,88 \% dans le Top-5 sur les 822 requêtes mesurées dans Chromium WASM via \code{scripts/\allowbreak{}indexation/\allowbreak{}fidelite\_\allowbreak{}navigateur.\allowbreak{}html}.
-\item [x] \textbf{Calcul automatisé et empreintes SHA-256 versionnés} : Script \code{scripts/\allowbreak{}adaptation/\allowbreak{}08\_\allowbreak{}calculer\_\allowbreak{}metriques\_\allowbreak{}navigateur.\allowbreak{}py} consignant les métriques et empreintes cryptographiques.
+\item [x] \textbf{Calcul automatisé et empreintes SHA-256 versionnés} : Script \code{scripts/\allowbreak{}adaptation/\allowbreak{}08\_\allowbreak{}calculer\_\allowbreak{}metriques\_\allowbreak{}navigateur.\allowbreak{}py} consignant les métriques, le test de McNemar apparié et les empreintes cryptographiques.
 \item [x] \textbf{Dépendances épinglées} : Fichier \code{scripts/\allowbreak{}adaptation/\allowbreak{}requirements.\allowbreak{}txt} (\code{onnx==1.\allowbreak{}23.\allowbreak{}2}, \code{onnxruntime==1.\allowbreak{}30.\allowbreak{}0}).
 \item [x] \textbf{Poids et données hors Git} : Dossiers \code{models/\allowbreak{}} et \code{data/\allowbreak{}} intégralement protégés par le \code{.\allowbreak{}gitignore}.
-\item [ ] \textbf{Mesure officielle et décision de déploiement} : Planifiée au Weekly 5 (15 octobre) selon le protocole officiel commun \code{05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md}.
+\item [ ] \textbf{Mesure officielle et décision de déploiement} : Présentation au Weekly 5 (14 octobre, Issue \#11) et mesure conjointe le 15 octobre selon le protocole officiel commun \code{05\_\allowbreak{}protocole\_\allowbreak{}ajustement.\allowbreak{}md}.
 \end{itemize}
 \end{document}

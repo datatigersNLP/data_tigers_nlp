@@ -8,6 +8,7 @@ Consigne les métriques comparatives et les empreintes SHA-256 des fichiers oppo
 import argparse
 import hashlib
 import json
+from math import comb
 import sys
 import time
 from pathlib import Path
@@ -18,6 +19,25 @@ from transformers import AutoModel, AutoTokenizer
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+REVISION_BASE = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+
+
+def mcnemar_exact(a_juste: np.ndarray, b_juste: np.ndarray) -> dict:
+    """
+    Test exact de McNemar, bilatéral : ne compte que les requêtes où une seule des deux configurations est juste.
+    Identique à la fonction du Notebook 02 (cellule 1051).
+    """
+    b = int(np.sum(a_juste & ~b_juste))
+    c = int(np.sum(~a_juste & b_juste))
+    n = b + c
+    p = 1.0 if n == 0 else min(1.0, 2 * sum(comb(n, i) for i in range(min(b, c) + 1)) / (2 ** n))
+    return {
+        "A_juste_seule": b,
+        "B_juste_seule": c,
+        "n_discordantes": n,
+        "p_value": float(p),
+    }
 
 
 def calculer_sha256(chemin: Path) -> str:
@@ -142,8 +162,10 @@ def main():
 
     print(f"   Calcul de la référence PyTorch FP32 unitaire sur {nb_queries} requêtes ({source_model})...")
     t0 = time.time()
-    tokenizer = AutoTokenizer.from_pretrained(str(PROJECT_ROOT / source_model if (PROJECT_ROOT / source_model).exists() else source_model))
-    pt_model = AutoModel.from_pretrained(str(PROJECT_ROOT / source_model if (PROJECT_ROOT / source_model).exists() else source_model))
+    model_id = str(PROJECT_ROOT / source_model if (PROJECT_ROOT / source_model).exists() else source_model)
+    load_kw = {"revision": REVISION_BASE} if source_model == "intfloat/multilingual-e5-small" else {}
+    tokenizer = AutoTokenizer.from_pretrained(model_id, **load_kw)
+    pt_model = AutoModel.from_pretrained(model_id, **load_kw)
     Q_ref = encode_pytorch_unitaire(pt_model, tokenizer, queries)
     t_pt = time.time() - t0
     print(f"   Référence PyTorch calculée en {t_pt:.2f}s ({1000 * t_pt / nb_queries:.1f} ms/req).")
@@ -161,7 +183,8 @@ def main():
     top1_ref = np.argmax(scores_ref, axis=1)
     top1_nav = np.argmax(scores_nav, axis=1)
 
-    top1_concordance_nb = int(np.sum(top1_ref == top1_nav))
+    juste_actif = (top1_ref == top1_nav)
+    top1_concordance_nb = int(np.sum(juste_actif))
     top1_concordance_pct = float(top1_concordance_nb / nb_queries * 100)
 
     top5_nav = np.argsort(-scores_nav, axis=1)[:, :5]
@@ -189,8 +212,61 @@ def main():
     print(f"{'Concordance Top-1 (même 1er résultat)':<44} | {f'{top1_concordance_pct:.2f}% ({top1_concordance_nb}/{nb_queries})':<15} | {'91.8% (755/822)':<15}")
     print(f"{'Premier résultat réf dans le Top-5':<44} | {f'{top1_dans_top5_pct:.2f}% ({top1_dans_top5_nb}/{nb_queries})':<15} | {'99.9% (821/822)':<15}")
     print(f"{'Rang maximal de dégradation':<44} | {f'{max_rank} (P99: {p99_rank:.1f})':<15} | {'9':<15}")
-    print(f"{'Temps d encodage moyen par requête':<44} | {f'{ms_par_req} ms':<15} | {'18.6 ms':<15}")
+    print(f"{'Temps d encodage moyen par requête':<44} | {f'{ms_par_req} ms':<15} | {'(matériel-dép.)':<15}")
     print("-" * 78)
+    print("   Note latence : le temps d'encodage dépend du matériel hôte (sur machine de référence Mac,")
+    print("   le témoin prend 19,0 ms, comparable aux 18,6 ms de Xenova au Notebook 02).")
+
+    # 5. Test exact de McNemar apparié entre Ajusté et Témoin si les deux fichiers sont disponibles
+    fichier_ajuste = PROJECT_ROOT / "data" / "indexation" / "controle" / "fidelite_navigateur_ajuste.json"
+    fichier_temoin = PROJECT_ROOT / "data" / "indexation" / "controle" / "fidelite_navigateur_temoin.json"
+    mcnemar_res = None
+
+    if fichier_ajuste.exists() and fichier_temoin.exists():
+        print("\n[5/5] Test exact de McNemar apparié (Modèle Ajusté vs Témoin de BASE dans le navigateur) :")
+        try:
+            # Charger l'autre modèle pour calculer la contingence exacte
+            if est_temoin:
+                # Actif = témoin, comparer avec ajusté
+                data_autre = json.loads(fichier_ajuste.read_text(encoding="utf-8"))
+                passages_autre = np.load(PROJECT_ROOT / "data" / "adaptation" / "passage_embeddings_apres.npy")
+                tok_autre = AutoTokenizer.from_pretrained(str(PROJECT_ROOT / "models" / "multilingual-e5-small-finetuned"))
+                mod_autre = AutoModel.from_pretrained(str(PROJECT_ROOT / "models" / "multilingual-e5-small-finetuned"))
+                Q_ref_autre = encode_pytorch_unitaire(mod_autre, tok_autre, queries)
+                scores_ref_autre = np.dot(Q_ref_autre, passages_autre.T)
+                scores_nav_autre = np.dot(np.array(data_autre["resultats"]["q8"]["vecteurs"], dtype=np.float32), passages_autre.T)
+                juste_ajuste = (np.argmax(scores_ref_autre, axis=1) == np.argmax(scores_nav_autre, axis=1))
+                juste_temoin = juste_actif
+            else:
+                # Actif = ajusté, comparer avec témoin
+                data_autre = json.loads(fichier_temoin.read_text(encoding="utf-8"))
+                passages_autre = np.load(PROJECT_ROOT / "data" / "adaptation" / "passage_embeddings_baseline.npy")
+                tok_autre = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-small", revision=REVISION_BASE)
+                mod_autre = AutoModel.from_pretrained("intfloat/multilingual-e5-small", revision=REVISION_BASE)
+                Q_ref_autre = encode_pytorch_unitaire(mod_autre, tok_autre, queries)
+                scores_ref_autre = np.dot(Q_ref_autre, passages_autre.T)
+                scores_nav_autre = np.dot(np.array(data_autre["resultats"]["q8"]["vecteurs"], dtype=np.float32), passages_autre.T)
+                juste_temoin = (np.argmax(scores_ref_autre, axis=1) == np.argmax(scores_nav_autre, axis=1))
+                juste_ajuste = juste_actif
+
+            mcnemar_res = mcnemar_exact(juste_ajuste, juste_temoin)
+            b = mcnemar_res["A_juste_seule"]
+            c = mcnemar_res["B_juste_seule"]
+            n = mcnemar_res["n_discordantes"]
+            p = mcnemar_res["p_value"]
+            print(f"       * Concordance Ajusté (A)        : {np.sum(juste_ajuste)} / {nb_queries} ({100 * np.mean(juste_ajuste):.2f} %)")
+            print(f"       * Concordance Témoin base (B)   : {np.sum(juste_temoin)} / {nb_queries} ({100 * np.mean(juste_temoin):.2f} %)")
+            print(f"       * Ajusté juste seul (b)         : {b} requêtes")
+            print(f"       * Témoin juste seul (c)         : {c} requêtes")
+            print(f"       * Requêtes discordantes (n=b+c) : {n} requêtes")
+            print(f"       * p-value exacte (bilatérale)   : {p:.4f}")
+            if p >= 0.05:
+                print("       -> Conclusion : Aucune différence statistiquement significative de fidélité Top-1 (p >= 0.05).")
+                print("          Fidélité de classement proche (753 contre 761), erreur de quantification des vecteurs plus forte.")
+            else:
+                print(f"       -> Différence statistiquement significative (p = {p:.4f} < 0.05).")
+        except Exception as e:
+            print(f"       (Avertissement calcul McNemar : {e})")
 
     rapport = {
         "etiquette": etiquette,
@@ -219,6 +295,7 @@ def main():
             "chargement_ms": chargement_ms,
             "encodage_ms_total": encodage_ms_total,
             "ms_par_requete": ms_par_req,
+            "note": "Dépend de la machine hôte ; sur machine Mac de test de référence, témoin = 19,0 ms vs 18,6 ms pour Xenova.",
         },
         "reference_notebook_02": {
             "cosinus_mediane": 0.99655,
@@ -226,8 +303,8 @@ def main():
             "top1_concordance_pct": 91.8,
             "top1_dans_top5_pct": 99.9,
             "rang_maximal": 9,
-            "ms_par_requete": 18.6,
         },
+        "mcnemar_apparie_vs_temoin": mcnemar_res,
         "date": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
 

@@ -91,7 +91,7 @@ La perte a décru de manière régulière et robuste (de 1,56 à 0,47), confirma
 
 > **Avertissement méthodologique (Décision 2 du Weekly 4, Ticket #10) :**  
 > Les chiffres ci-dessous proviennent du banc d'essai préliminaire exécuté le 6 octobre 2026 (ex-PR #63). Conformément aux décisions du Weekly 4, ces résultats sont expressément étiquetés **« exploratoires et hors protocole »** car ils ont été obtenus avant le gel officiel du protocole d'évaluation du Notebook 03 (Issue #46) et de la règle de pertinence D4 amendée.  
-> **Ils ne préjugent pas de la mesure officielle.** L'évaluation opposable et définitive de l'encodeur ajusté sera effectuée selon le protocole `docs/etudes/evaluation/05_protocole_ajustement.md` au Weekly 5 (15 octobre).
+> **Ils ne préjugent pas de la mesure officielle.** L'évaluation opposable et définitive de l'encodeur ajusté sera présentée au Weekly 5 (14 octobre 2026, Issue #11) et effectuée selon le protocole `docs/etudes/evaluation/05_protocole_ajustement.md` le 15 octobre 2026.
 
 ### 4.1 Tableau comparatif des métriques de recherche préliminaires
 
@@ -142,16 +142,22 @@ Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure
 * **Jeu de test** : Les **822 requêtes réalistes** du corpus M2 (`data/indexation/controle/requetes_fidelite.json`, titres de section interrogatifs).
 * **Index de référence** : Les **4 240 passages** du corpus M2 encodés en PyTorch FP32 (`data/adaptation/passage_embeddings_apres.npy` pour le modèle ajusté, `passage_embeddings_baseline.npy` pour le témoin).
 * **Règle de décision méthodologique** : Le Notebook 02 ne définit aucun seuil statique arbitraire, mais une **règle comparative** : la fidélité de la variante quantifiée doit être évaluée par rapport au modèle de référence `q8` de Xenova.
-* **Besoin d'un témoin de base** : Même avec des poids quasi identiques, l'export PyTorch vers ONNX (opset 14) produit un ordonnancement de graphe légèrement distinct de Xenova (environ 3 % de requêtes dont le premier résultat diffère sur le modèle de base). Le passage du modèle de base dans le script 06 (`models/multilingual-e5-small-base`) fournit le **témoin méthodologique indispensable** pour isoler l'effet du graphe de celui de l'ajustement sémantique.
+* **Besoin d'un témoin de base et écart de graphe opset 14** : Même avec des poids quasi identiques, l'export PyTorch vers ONNX (opset 14) produit un graphe dont les chemins d'exécution diffèrent légèrement de Xenova. Dans le navigateur, bien que le témoin de base et le modèle q8 de Xenova atteignent une fidélité globale similaire (92,58 % contre 91,80 % face à PyTorch), ils affichent un premier résultat différent pour **52 requêtes sur 822** (6,3 % de divergence). L'exportation modifie donc certains classements indépendamment de tout apprentissage. Le passage du modèle de base dans le script 06 (`models/multilingual-e5-small-base`) fournit le **témoin méthodologique indispensable** pour isoler l'effet de l'export de celui de l'ajustement sémantique. Il est ainsi proposé au Weekly 5 (14 octobre, Issue #11) d'intégrer ce témoin à titre descriptif dans la mesure officielle conjointe (15 octobre).
 
 | Métrique de fidélité (822 requêtes, 4 240 passages) | Modèle Ajusté (Navigateur WASM) | Témoin de BASE (Navigateur WASM) | Réf. q8 Hub Xenova (Notebook 02) |
 |---|---:|---:|---:|
 | **Cosinus médian avec la référence PyTorch** | **0,99389** | **0,99653** | 0,99655 |
 | **Cosinus minimal avec la référence PyTorch** | **0,98627** | **0,99044** | 0,99196 |
-| **Concordance Top-1 (même 1er résultat)** | **91,61 %** (753 / 822) | **92,58 %** (761 / 822) | 91,8 % (755 / 822) |
-| **Premier résultat de référence dans le Top-5** | **99,88 %** (821 / 822) | **99,88 %** (821 / 822) | 99,9 % (821 / 822) |
-| **Rang maximal de dégradation** | **10** (99e percentile : 2,8) | **7** (99e percentile : 3,0) | 9 |
-| **Temps d'encodage moyen par requête** | **78,7 ms** (WASM) | **73,7 ms** (WASM) | 18,6 ms (WASM) |
+| **Concordance Top-1 (même 1er résultat)** | **91,61 %** (753 / 822) | **92,58 %** (761 / 822) | **91,8 %** (755 / 822) |
+| **Premier résultat de référence dans le Top-5** | **99,88 %** (821 / 822) | **99,88 %** (821 / 822) | **99,9 %** (821 / 822) |
+| **Rang maximal de dégradation** | **10** (99e percentile : 2,8) | **7** (99e percentile : 3,0) | **9** |
+| **Temps d'encodage moyen (WASM)** | 78,7 ms *(1)* | 73,7 ms *(1)* | 18,6 ms *(2)* |
+
+*(1) Mesure sur PC de test Windows (Core i7). (2) Mesure du Notebook 02 sur MacBook de référence. Sur cette même machine Mac de test, le témoin prend **19,0 ms**, comparable aux 18,6 ms de Xenova : les latences ne sont comparables qu'à matériel identique.*
+
+#### Analyse comparative et test exact de McNemar apparié
+* **Fidélité de classement Top-1** : La fidélité de premier résultat du modèle ajusté dans le navigateur est très proche de celle du témoin de base (**753 contre 761** requêtes concordantes sur 822, soit 91,61 % vs 92,58 %). Au test exact de McNemar apparié ([`08_calculer_metriques_navigateur.py`](../../scripts/adaptation/08_calculer_metriques_navigateur.py)), l'écart n'est pas statistiquement significatif : $b = 51$ requêtes concordantes pour l'ajusté seul, $c = 59$ pour le témoin seul ($n = 110$ requêtes discordantes, $p = 0,5047 > 0,05$).
+* **Distorsion des représentations** : Si la fidélité de classement est proche, l'erreur de quantification des vecteurs est plus forte sur le modèle ajusté (cosinus médian de **0,99389**, minimal de **0,98627**) que sur le témoin de base (médian de **0,99653**, minimal de **0,99044**).
 
 #### Versionnement du calcul et empreintes SHA-256 opposables
 Le calcul des métriques in-browser ci-dessus est intégralement versionné et automatisé dans le script [`08_calculer_metriques_navigateur.py`](../../scripts/adaptation/08_calculer_metriques_navigateur.py). Les empreintes cryptographiques SHA-256 des fichiers opposables sont consignées dans le tableau suivant :
@@ -163,7 +169,7 @@ Le calcul des métriques in-browser ci-dessus est intégralement versionné et a
 | **Modèle témoin de base (ONNX q8)** | `model_quantized.onnx` | 112,89 Mio | `30ae0f2153f7e14ce5afe082c68ee251d0cce6c26e8caa71307fbd8ebf4bcb90` |
 | **Résultats navigateur témoin** | `fidelite_navigateur_temoin.json` | 9,96 Mio | `72a612ea392dce707fd1b59c9a7b1bc200dcfaea8bf585d1ef97c21953330a63` |
 
-*Note sur la simulation locale Python :* En inférence CPU Python directe avec `batch_size=1` ([`07_mesurer_fidelite_822.py`](../../scripts/adaptation/07_mesurer_fidelite_822.py)), la concordance Top-1 atteint **93,67 %** (770 / 822) pour le modèle ajusté et **92,70 %** (762 / 822) pour le témoin de base, avec un recouvrement Top-5 de 100,00 % (822 / 822) et un rang maximal de 5. L'encodage unitaire (`batch_size=1`) évite les artefacts de quantification dynamique induits par le remplissage (*padding*) sur les lots de 32.
+*Note sur l'exécution Python et dépendance matérielle :* Les mesures exécutées en Python CPU (`batch_size=1`, [`07_mesurer_fidelite_822.py`](../../scripts/adaptation/07_mesurer_fidelite_822.py)) dépendent des microarchitectures processeur et instructions vectorielles (AVX2 sur x86_64 vs NEON sur Mac ARM), induisant des variations arithmétiques d'arrondi (ex. 762/822 sur PC x86 contre 791/822 sur Mac ARM). Seule la mesure in-browser sous WebAssembly (WASM) fournit un environnement d'exécution unifié et rigoureusement déterministe entre machines (761/822 pour le témoin, 753/822 pour l'ajusté).
 
 > **Statut de déploiement (Règle d'arbitrage) :**  
 > Le modèle ajusté n'est **pas déployé sur le site en ligne** à ce stade. Son intégration éventuelle pour le 18 octobre (remplacement de l'encodeur de base sur GitHub Pages) est conditionnée au résultat de la mesure officielle conjointe selon la règle de décision du protocole `05_protocole_ajustement.md` (gain de Recall@5 positif ou nul à la fois sur le jeu de l'équipe et sur le CDTN).
@@ -181,8 +187,8 @@ Le calcul des métriques in-browser ci-dessus est intégralement versionné et a
 - [x] **Quantification ONNX q8 alignée Xenova** : Export avec `per_channel=True`, `reduce_range=True` et `ActivationSymmetric=True` (112,9 Mio, 74/75 tenseurs identiques bit à bit).
 - [x] **Modèle témoin de BASE exporté** : Export du modèle pré-entraîné avec la même recette pour isoler les effets de graphe opset 14.
 - [x] **Contrôle de fidélité dans le navigateur (Notebook 02)** : 91,61 % de concordance Top-1 et 99,88 % dans le Top-5 sur les 822 requêtes mesurées dans Chromium WASM via `scripts/indexation/fidelite_navigateur.html`.
-- [x] **Calcul automatisé et empreintes SHA-256 versionnés** : Script `scripts/adaptation/08_calculer_metriques_navigateur.py` consignant les métriques et empreintes cryptographiques.
+- [x] **Calcul automatisé et empreintes SHA-256 versionnés** : Script `scripts/adaptation/08_calculer_metriques_navigateur.py` consignant les métriques, le test de McNemar apparié et les empreintes cryptographiques.
 - [x] **Dépendances épinglées** : Fichier `scripts/adaptation/requirements.txt` (`onnx==1.23.2`, `onnxruntime==1.30.0`).
 - [x] **Poids et données hors Git** : Dossiers `models/` et `data/` intégralement protégés par le `.gitignore`.
-- [ ] **Mesure officielle et décision de déploiement** : Planifiée au Weekly 5 (15 octobre) selon le protocole officiel commun `05_protocole_ajustement.md`.
+- [ ] **Mesure officielle et décision de déploiement** : Présentation au Weekly 5 (14 octobre, Issue #11) et mesure conjointe le 15 octobre selon le protocole officiel commun `05_protocole_ajustement.md`.
 

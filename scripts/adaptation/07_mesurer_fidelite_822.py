@@ -1,7 +1,14 @@
 """
 scripts/adaptation/07_mesurer_fidelite_822.py
-Mesure rigoureuse de fidélité du modèle quantifié (q8) vs PyTorch FP32
-sur l'ensemble des 822 requêtes réalistes du corpus M2 (Notebook 02).
+Mesure de fidélité du modèle quantifié (q8) vs PyTorch FP32 sur les 822 requêtes réalistes (Notebook 02).
+
+Note méthodologique sur les moteurs d'exécution :
+Les calculs ONNX Runtime CPU avec quantification dynamique INT8 dépendent des instructions
+vectorielles CPU de la machine hôte (AVX2 sur x86_64 sous Windows vs NEON sur Mac ARM64), ce qui
+induit de légères variations d'arrondis arithmétiques (ex. 762/822 sur PC x86 vs 791/822 sur Mac ARM).
+Ces chiffres Python sont donc indicatifs de l'environnement hôte.
+La mesure de référence opposable et strictement reproductible inter-machines est celle exécutée
+dans le navigateur WebAssembly (WASM via scripts/adaptation/08_calculer_metriques_navigateur.py).
 """
 
 import json
@@ -123,8 +130,10 @@ def main():
     print(f"       Index passages chargé : {passages_path.name} shape {passages_emb.shape}")
 
     print(f"[2/4] Chargement des modèles (source: {source_model}, ONNX: {q8_path})...")
-    tokenizer = AutoTokenizer.from_pretrained(source_model)
-    pt_model = AutoModel.from_pretrained(source_model)
+    REVISION_BASE = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    load_kwargs = {"revision": REVISION_BASE} if source_model == "intfloat/multilingual-e5-small" else {}
+    tokenizer = AutoTokenizer.from_pretrained(source_model, **load_kwargs)
+    pt_model = AutoModel.from_pretrained(source_model, **load_kwargs)
     sess_q8 = ort.InferenceSession(str(q8_path), providers=["CPUExecutionProvider"])
 
     print("[3/4] Encodage unitaire (batch_size=1) des 822 requêtes...")

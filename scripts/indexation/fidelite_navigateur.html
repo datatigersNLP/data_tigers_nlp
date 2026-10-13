@@ -31,7 +31,7 @@ const modeleTemoin = modeleParam === "temoin" || modeleParam === "base" || model
 
 // lien de téléchargement du fichier de résultats
 const proposer = (nom) => {
-  const nomFichier = nom || (modeleAjuste ? "fidelite_navigateur_ajuste.json" : (modeleTemoin ? "fidelite_navigateur_temoin.json" : "fidelite_navigateur_capture.json"));
+  const nomFichier = nom || (modeleAjuste ? "fidelite_navigateur_ajuste.json" : (modeleTemoin ? "fidelite_navigateur_temoin.json" : "fidelite_navigateur.json"));
   const lien = document.createElement("a");
   lien.href = URL.createObjectURL(new Blob([JSON.stringify(window.RESULTATS)], { type: "application/json" }));
   lien.download = nomFichier;

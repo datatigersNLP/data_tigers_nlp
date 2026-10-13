@@ -75,9 +75,12 @@ def main():
     fp32_path = onnx_dir / "model.onnx"
     q8_path = onnx_dir / "model_quantized.onnx"
 
+    REVISION_BASE = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    load_kwargs = {"revision": REVISION_BASE} if source_model == "intfloat/multilingual-e5-small" else {}
+
     print(f"[1/5] Chargement du {description_modele} ({source_model})...")
-    tokenizer = AutoTokenizer.from_pretrained(source_model)
-    base_model = AutoModel.from_pretrained(source_model)
+    tokenizer = AutoTokenizer.from_pretrained(source_model, **load_kwargs)
+    base_model = AutoModel.from_pretrained(source_model, **load_kwargs)
     wrapper = OnnxEncoderWrapper(base_model)
     wrapper.eval()
 
