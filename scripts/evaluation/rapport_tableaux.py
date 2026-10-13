@@ -55,7 +55,11 @@ def rapport(r):
         [[pts(p["difference"]), f"[{pts(ic[0])} ; {pts(ic[1])}]", meth, p["discordant"], p_val(p["p_value"]),
           p_val(p["p_value_groups"]), f"{round(100 * p['marge'])} points", p["verdict"]]])
         + "\n\nTable de contingence : les deux réussissent " + str(t["n_11"]) + ", E5 seul " + str(t["n_10_A_only"])
-        + ", BM25 seul " + str(t["n_01_B_only"]) + ", aucun " + str(t["n_00"]) + f" ; {p['n_groups']} fiches.")
+        + ", BM25 seul " + str(t["n_01_B_only"]) + ", aucun " + str(t["n_00"]) + f" ; {p['n_groups']} fiches."
+        + ("" if "tango" not in p else
+           f"\n\nScore de Tango à la marge : z = {nb(p['tango']['z'], 2)}, p unilatéral {p_val(p['tango']['p_unilateral'])}, "
+           f"effet de plan {nb(p['tango']['effet_de_plan'], 2)}. À titre descriptif, intervalle de la règle du 10 octobre "
+           f"({p['methode_descriptive']}) : [{pts(p['intervalle_descriptif'][0])} ; {pts(p['intervalle_descriptif'][1])}]."))
     blocs.append("### Métriques par système\n\n" + tableau(
         ["Système", "R@1", "R@3", "R@5", "R@5, IC 95 %", "R@10", "MRR@10", "R@5 fiche"],
         [[m["système"], pct(m["R@1"]), pct(m["R@3"]), pct(m["R@5"]),
