@@ -5,8 +5,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { creerMoteur, horsPerimetre } from "./moteur.js";
 
-// dossier de l'index dans le site : sous le chemin de base de GitHub Pages en ligne, à la racine en local
+// dossiers de l'index et du modèle dans le site : sous le chemin de base de GitHub Pages en ligne, à la racine en local
 const DOSSIER_INDEX = import.meta.env.BASE_URL + "index/";
+const DOSSIER_MODELES = import.meta.env.BASE_URL + "modele/";
 
 // message lisible par un visiteur, selon l'origine de l'erreur ; le détail technique reste affichable
 export function messageErreur(erreur) {
@@ -27,8 +28,8 @@ export function useMoteur() {
 
   useEffect(() => {
     let abandonne = false;
-    // progression affichée : celle du modèle ONNX q8 (113 Mio) dès qu'il est en cours, sinon celle du vocabulaire du
-    // tokeniseur (16 Mio). Les deux se téléchargent en parallèle : un cumul afficherait un total faux au départ
+    // progression affichée : celle du modèle ONNX q8 (65,7 Mio, élagué sans perte) dès qu'il est en cours, sinon celle
+    // du vocabulaire du tokeniseur (4,1 Mio). Les deux se téléchargent en parallèle : un cumul afficherait un total faux
     const fichiers = new Map();
     setEtat({ phase: "chargement", progression: null, erreur: null });
 
@@ -36,8 +37,11 @@ export function useMoteur() {
       try {
         // import différé : Transformers.js n'est chargé qu'une fois la page affichée
         const { pipeline, env } = await import("@huggingface/transformers");
-        env.allowLocalModels = false; // le modèle vient du Hub, à la révision fixée par l'en-tête de l'index
+        // l'en-tête de l'index dit d'où vient le modèle : du site (dossier DOSSIER_MODELES) ou du Hub ; moteur.js
+        // règle env en conséquence
         const instance = await creerMoteur(pipeline, DOSSIER_INDEX, {
+          env,
+          dossierModeles: DOSSIER_MODELES,
           suivre: (p) => {
             if (abandonne || p.status !== "progress" || !p.file || !p.total) return;
             if (p.total < 2 ** 20) return; // fichiers de configuration : quelques Kio, sans intérêt pour le visiteur
