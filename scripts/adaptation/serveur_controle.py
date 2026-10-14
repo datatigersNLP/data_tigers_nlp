@@ -4,6 +4,7 @@ Serveur HTTP local permettant de servir les fichiers du dépôt et d'enregistrer
 automatiquement les résultats de fidélité issus du navigateur.
 """
 
+import functools
 import http.server
 import json
 import sys
@@ -13,6 +14,24 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 class ControleHandler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, directory=None, **kwargs):
+        if directory is None:
+            directory = str(PROJECT_ROOT)
+        super().__init__(*args, directory=directory, **kwargs)
+
+    def parse_request(self):
+        if not super().parse_request():
+            return False
+
+        # Vérification de l'en-tête Host (127.0.0.1 ou localhost)
+        host = self.headers.get("Host", "")
+        host_name = host.split(":")[0] if host else ""
+        if host_name not in ("127.0.0.1", "localhost"):
+            self.send_error(403, f"Hôte non autorisé : {host}")
+            return False
+
+        return True
+
     def do_POST(self):
         if self.path != "/api/sauvegarder_fidelite":
             self.send_error(404, "Endpoint inconnu")
@@ -63,8 +82,9 @@ class ControleHandler(http.server.SimpleHTTPRequestHandler):
 
 def main():
     port = 8765
-    server = http.server.HTTPServer(("127.0.0.1", port), ControleHandler)
-    print(f"Serveur démarré sur http://127.0.0.1:{port}")
+    handler = functools.partial(ControleHandler, directory=str(PROJECT_ROOT))
+    server = http.server.HTTPServer(("127.0.0.1", port), handler)
+    print(f"Serveur démarré sur http://127.0.0.1:{port} (racine : {PROJECT_ROOT})")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

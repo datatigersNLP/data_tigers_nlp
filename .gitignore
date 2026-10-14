@@ -14,7 +14,6 @@ __pycache__/
 data/
 # modeles et poids volumineux (>100 Mio hors Git)
 models/
-*.onnx
 *.safetensors
 *.pt
 *.bin
