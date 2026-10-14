@@ -14,6 +14,11 @@ __pycache__/
 data/
 # environnements Python, reconstruits depuis les fichiers requirements-lock.txt
 .venv*/
+# modeles et poids volumineux (>100 Mio hors Git)
+models/
+*.safetensors
+*.pt
+*.bin
 # site du volet A : dépendances et construction, regénérées par npm
 node_modules/
 front/dist/

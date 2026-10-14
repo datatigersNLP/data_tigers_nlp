@@ -132,4 +132,4 @@ T.append(r'\end{document}')
 
 tex = open(PRE, encoding='utf-8').read() + '\n' + '\n'.join(T) + '\n'
 open(OUT, 'w', encoding='utf-8').write(tex)
-print(f"✅ {OUT}\n   {len(tex)} caractères, {tex.count(chr(10))} lignes")
+print(f"[OK] {OUT}\n   {len(tex)} caractères, {tex.count(chr(10))} lignes")
