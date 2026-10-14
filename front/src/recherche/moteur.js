@@ -68,13 +68,44 @@ export function classer(matrice, N, D, q, k = 5) {
     .map((n) => ({ indice: n, score: scores[n] }));
 }
 
+// Seuil d'abstention (protocole du notebook 03, section 8.2) : une question dont le meilleur cosinus avec les passages
+// est strictement inférieur au seuil est signalée hors du périmètre, comme dans la mesure du 13 octobre 2026. Fixé le
+// 10 octobre 2026, avant la mesure : 5e centile des scores maximaux de 479 variantes du CDTN rédigées en question
+// (#56, data/evaluation/notebook03/seuil_cdtn.json, SHA-256 3432fb16…). Sur le lot de test, il garde 72 des 73
+// questions du corpus et rejette 9 des 24 questions hors corpus. Il ne vaut que pour le modèle et l'index avec
+// lesquels il a été calculé : pour un autre en-tête, l'encodeur ajusté par exemple, aucun seuil n'est appliqué.
+export const ABSTENTION = Object.freeze({
+  seuil: 0.8559679388999939,
+  depot: "Xenova/multilingual-e5-small",
+  revision: "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+  dtype: "q8",
+  indexSha256: "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
+});
+
+// Seuil applicable à cet en-tête, ou null s'il a été calculé pour un autre modèle ou un autre index.
+export function seuilAbstention(entete, reference = ABSTENTION) {
+  const m = entete?.modele ?? {};
+  const meme = m.depot === reference.depot && m.revision === reference.revision && m.dtype === reference.dtype
+    && entete?.index?.sha256 === reference.indexSha256;
+  return meme ? reference.seuil : null;
+}
+
+// Vrai si le meilleur passage reste strictement sous le seuil ; faux sans seuil applicable ou sans résultat.
+// resultats est trié par score décroissant, comme le renvoie rechercher.
+export function horsPerimetre(resultats, seuil) {
+  if (seuil === null || seuil === undefined || resultats.length === 0) return false;
+  return resultats[0].score < seuil;
+}
+
 // Moteur complet : index vérifié, modèle chargé, puis rechercher(question, k) renvoie les k meilleurs passages.
+// seuilAbstention vaut null si l'en-tête ne désigne pas le modèle et l'index pour lesquels le seuil a été calculé.
 export async function creerMoteur(pipeline, base, options = {}) {
   const index = await chargerIndex(base, options);
   const extracteur = await chargerModele(pipeline, index.entete, options);
   return {
     entete: index.entete,
     nbPassages: index.N,
+    seuilAbstention: seuilAbstention(index.entete),
     async rechercher(question, k = 5) {
       const q = await encoder(extracteur, index.entete, question);
       return classer(index.matrice, index.N, index.D, q, k)

@@ -6,7 +6,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { classer, chargerIndex, creerMoteur, sha256 } from "./moteur.js";
+import { ABSTENTION, classer, chargerIndex, creerMoteur, horsPerimetre, seuilAbstention, sha256 } from "./moteur.js";
 
 // racine du dépôt, ou du clone qui contient data/ (variable facultative RACINE_DONNEES)
 const RACINE = process.env.RACINE_DONNEES ?? fileURLToPath(new URL("../../../", import.meta.url));
@@ -97,4 +97,47 @@ test("creerMoteur : préfixe et options de l'en-tête transmis au modèle, résu
     assert.deepEqual(resultats.map((x) => x.passage_id), reference.top5);
     assert.deepEqual(resultats.map((x) => x.rang), [1, 2, 3, 4, 5]);
     for (const champ of ["titre_fiche", "section_titre", "url_citation", "texte"]) assert.ok(champ in resultats[0], champ);
+    assert.equal(moteur.seuilAbstention, ABSTENTION.seuil);
+  });
+
+test("seuilAbstention : le seuil vaut pour le modèle et l'index mesurés, et pour eux seuls", () => {
+  // en-tête versionné du site, celui que sert GitHub Pages : lu dans ce dépôt, quelle que soit RACINE_DONNEES
+  const entete = JSON.parse(readFileSync(new URL("../../public/index/index_m2.json", import.meta.url), "utf-8"));
+  assert.equal(seuilAbstention(entete), ABSTENTION.seuil);
+  const variante = (modif) => { const e = structuredClone(entete); modif(e); return seuilAbstention(e); };
+  assert.equal(variante((e) => { e.modele.depot = "equipe/multilingual-e5-small-ajuste"; }), null);
+  assert.equal(variante((e) => { e.modele.revision = "0".repeat(40); }), null);
+  assert.equal(variante((e) => { e.modele.dtype = "fp32"; }), null);
+  assert.equal(variante((e) => { e.index.sha256 = "0".repeat(64); }), null);
+  assert.equal(seuilAbstention(undefined), null);
+});
+
+test("horsPerimetre : strictement sous le seuil, comme le notebook 03", () => {
+  const s = ABSTENTION.seuil;
+  const de = (score) => [{ score: Math.fround(score) }, { score: Math.fround(score - 0.01) }];
+  assert.equal(horsPerimetre(de(0.80), s), true);
+  assert.equal(horsPerimetre(de(0.90), s), false);
+  assert.equal(horsPerimetre([{ score: s }], s), false); // égalité : la question est conservée
+  assert.equal(horsPerimetre([{ score: s - 1e-9 }], s), true);
+  assert.equal(horsPerimetre(de(0.10), null), false); // pas de seuil applicable : jamais d'abstention
+  assert.equal(horsPerimetre([], s), false);
+});
+
+// variantes du CDTN encodées dans le navigateur pour calculer le seuil (scripts/evaluation/cdtn_seuil.py)
+const CDTN = RACINE + "data/evaluation/cdtn/vecteurs_cdtn.json";
+test("abstention : le classement du site redonne le seuil et ses 24 rejets sur les 479 variantes du CDTN",
+  { skip: DONNEES && existsSync(CDTN) ? false : "vecteurs du CDTN ou export du notebook 02 absents" }, async () => {
+    const index = await chargerIndex("site/", { lire: lecteur(SITE) });
+    const cdtn = JSON.parse(readFileSync(CDTN, "utf-8"));
+    assert.equal(cdtn.depot, ABSTENTION.depot);
+    assert.equal(cdtn.revision, ABSTENTION.revision);
+    assert.equal(cdtn.dtype, ABSTENTION.dtype);
+    assert.equal(cdtn.vecteurs.length, 479);
+    const meilleurs = cdtn.vecteurs.map((v) => classer(index.matrice, index.N, index.D, new Float32Array(v), 1));
+    // 5e centile par interpolation linéaire, comme numpy.percentile : position 0,05 × (n - 1)
+    const tries = meilleurs.map((r) => r[0].score).sort((a, b) => a - b);
+    const pos = 0.05 * (tries.length - 1), bas = Math.floor(pos);
+    const centile = tries[bas] + (pos - bas) * (tries[bas + 1] - tries[bas]);
+    assert.ok(Math.abs(centile - ABSTENTION.seuil) < 1e-6, `centile ${centile}`);
+    assert.equal(meilleurs.filter((r) => horsPerimetre(r, ABSTENTION.seuil)).length, 24);
   });
