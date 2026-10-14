@@ -1,11 +1,18 @@
 {
   "format": "index-e5-v1",
   "modele": {
-    "depot": "Xenova/multilingual-e5-small",
-    "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "emplacement": "site",
+    "depot": "multilingual-e5-small-q8-elague-4499d46b",
+    "revision": null,
     "dtype": "q8",
     "fichier": "onnx/model_quantized.onnx",
-    "sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193"
+    "sha256": "4499d46b6ffc94746da7e91782977ec49699a035ffd4fba5d33393f86e4480d9",
+    "origine": {
+      "depot": "Xenova/multilingual-e5-small",
+      "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "transformation": "élagage sans perte du vocabulaire (#50, scripts/allegement/elaguer_vocabulaire.py)"
+    }
   },
   "requete": {
     "prefixe": "query: ",

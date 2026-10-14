@@ -37,11 +37,34 @@ export async function chargerIndex(base, { lire = globalThis.fetch } = {}) {
   return { entete, matrice: new Float32Array(octets), passages, N, D };
 }
 
-// Charge le modèle à la révision et avec la précision de l'en-tête. Le dtype doit être explicite : par défaut,
-// Transformers.js charge q8 en WASM mais fp32 ailleurs. suivre reçoit la progression du téléchargement.
-export async function chargerModele(pipeline, entete, { suivre } = {}) {
-  return pipeline("feature-extraction", entete.modele.depot, {
-    revision: entete.modele.revision, dtype: entete.modele.dtype, device: "wasm", progress_callback: suivre,
+// Charge le modèle de l'en-tête, avec sa précision. Le dtype doit être explicite : par défaut, Transformers.js charge
+// q8 en WASM mais fp32 ailleurs. Deux emplacements :
+// - « site » : le modèle est servi par le site, dans dossierModeles + depot, et le Hub n'est jamais interrogé ;
+// - sinon, le Hub de Hugging Face, à la révision de l'en-tête.
+// env est l'objet de configuration de Transformers.js ; suivre reçoit la progression du téléchargement.
+export async function chargerModele(pipeline, entete, { suivre, env, dossierModeles } = {}) {
+  const m = entete.modele;
+  if (m.emplacement === "site") {
+    if (!env || !dossierModeles) throw new Error("modèle servi par le site : env et dossierModeles sont requis");
+    // Le site est déclaré comme hôte distant, et non comme dossier local : avec un suivi de progression,
+    // Transformers.js 4.3.0 lit d'abord la taille de chaque fichier (pipelines.js, get_file_metadata). Pour un hôte
+    // distant, il le fait par une requête Range d'un octet ; pour un dossier local, par une requête GET complète, qui
+    // téléchargerait chaque fichier deux fois.
+    env.allowLocalModels = false;
+    env.allowRemoteModels = true;
+    env.remoteHost = globalThis.location ? new URL(dossierModeles, globalThis.location.href).href : dossierModeles;
+    env.remotePathTemplate = "{model}/";
+    return pipeline("feature-extraction", m.depot, { dtype: m.dtype, device: "wasm", progress_callback: suivre });
+  }
+  if (env) {
+    // valeurs par défaut de Transformers.js 4.3.0 (src/env.js) : le Hub de Hugging Face
+    env.allowLocalModels = false;
+    env.allowRemoteModels = true;
+    env.remoteHost = "https://huggingface.co/";
+    env.remotePathTemplate = "{model}/resolve/{revision}/";
+  }
+  return pipeline("feature-extraction", m.depot, {
+    revision: m.revision, dtype: m.dtype, device: "wasm", progress_callback: suivre,
   });
 }
 
@@ -72,20 +95,25 @@ export function classer(matrice, N, D, q, k = 5) {
 // est strictement inférieur au seuil est signalée hors du périmètre, comme dans la mesure du 13 octobre 2026. Fixé le
 // 10 octobre 2026, avant la mesure : 5e centile des scores maximaux de 479 variantes du CDTN rédigées en question
 // (#56, data/evaluation/notebook03/seuil_cdtn.json, SHA-256 3432fb16…). Sur le lot de test, il garde 72 des 73
-// questions du corpus et rejette 9 des 24 questions hors corpus. Il ne vaut que pour le modèle et l'index avec
-// lesquels il a été calculé : pour un autre en-tête, l'encodeur ajusté par exemple, aucun seuil n'est appliqué.
+// questions du corpus et rejette 9 des 24 questions hors corpus. Il ne vaut que pour les vecteurs avec lesquels il a
+// été calculé : le modèle est reconnu à l'empreinte de son fichier ONNX, l'index à la sienne. Pour un autre modèle,
+// l'encodeur ajusté par exemple, aucun seuil n'est appliqué tant qu'il n'a pas été recalculé.
 export const ABSTENTION = Object.freeze({
   seuil: 0.8559679388999939,
-  depot: "Xenova/multilingual-e5-small",
-  revision: "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
   dtype: "q8",
+  // le q8 de Xenova (révision 761b726d), et sa version élaguée sans perte (#50) : mêmes vecteurs, bit à bit, sur les
+  // 822 requêtes de contrôle du notebook 02 encodées dans le navigateur (scripts/allegement/controle_navigateur.html)
+  modeles: Object.freeze([
+    "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "4499d46b6ffc94746da7e91782977ec49699a035ffd4fba5d33393f86e4480d9",
+  ]),
   indexSha256: "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
 });
 
 // Seuil applicable à cet en-tête, ou null s'il a été calculé pour un autre modèle ou un autre index.
 export function seuilAbstention(entete, reference = ABSTENTION) {
   const m = entete?.modele ?? {};
-  const meme = m.depot === reference.depot && m.revision === reference.revision && m.dtype === reference.dtype
+  const meme = reference.modeles.includes(m.sha256) && m.dtype === reference.dtype
     && entete?.index?.sha256 === reference.indexSha256;
   return meme ? reference.seuil : null;
 }
