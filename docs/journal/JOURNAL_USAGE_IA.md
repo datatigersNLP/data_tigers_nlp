@@ -432,6 +432,43 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Note séparée absente du PDF du journal : intégration en session selon le modèle de la section 5.
 - Estimations initiales manquantes : conserver « non estimée » pour les travaux déjà commencés.
 
+### Session 18, 13 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Terminer la PR #38 après ses revues et inscrire une estimation provisoire de #53.
+
+**Produit.**
+- Inventaire de 46 issues, séparé des dates et charges de travail ; jalons et réunions actualisés dans `docs/suivi/SUIVI.md`.
+- Estimation de planification de #53 : 16 h cumulées pour Vaneck et Jibril, à la demande de Jibril, explicitement provisoire et à réviser.
+- Conservation des charges déclarées de #25, #27, #29, #44, #45 et #47, et des estimations documentées de #31 et #51.
+
+**Mesures exécutées.**
+- Lecture des issues et de leurs commentaires, comparaison des références de dev et de la PR #38, contrôle des lignes et calcul des écarts connus.
+- Vérification de l'absence du commentaire public contenant la fiche CDTN sur #56. Envoi privé le 11/10 déclaré par Jibril, sans lecture de Discord.
+- Aucun moteur, modèle ou lot d'évaluation exécuté.
+
+**Résultats retenus.**
+- Les réunions du 19/09 et du 23/09 restent distinctes ; participants non documentés laissés NR.
+- Dates GitHub converties à l'heure de Paris ; elles ne remplacent pas les dates de travail.
+- Charges historiques absentes laissées NR ; une issue fermée ne prouve ni validation du dernier livrable ni statut Done du board.
+
+**Ce qui a été écarté, et pourquoi.**
+- Reconstitution des charges ou des comptes rendus manquants.
+- Publication de textes CDTN et modification du jeu ou du protocole.
+- Modification implicite des échéances : les contradictions sont signalées aux responsables.
+
+**Ce que l'équipe a validé, et par qui.**
+- Jibril a demandé de terminer #38 et autorisé une estimation plausible, révisable, pour #53.
+- Les revues antérieures de Mahé sont prises en compte. Relecture indépendante du dernier diff attendue avant fusion.
+- La session 17 reste portée par la PR #69 ; le numéro 18 évite de remplacer cette entrée encore en attente d'intégration.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps déduit de la durée de l'échange.
+
+**Difficultés rencontrées.**
+- Le PDF du journal ne peut pas encore être régénéré dans cet environnement : la chaîne du dépôt exige le support LaTeX français et des polices absents. Aucun PDF incomplet publié.
+- Le statut du Project Board n'est pas consulté ; les états d'issues sont explicitement distingués.
+- Les corps de certains tickets gardent des dates historiques malgré des plannings récents différents.
+
 ### Session 19, 13 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
 
 **Objet.** Résoudre le blocage de compilation du PDF du journal pour les PR #69 et #38.
@@ -464,7 +501,6 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Installation système empêchée par les permissions ; installation dans un TEXMF local.
 - Format XeLaTeX initial sans césure française : reconstruction locale nécessaire, en plus du module de langue.
-
 
 ---
 
