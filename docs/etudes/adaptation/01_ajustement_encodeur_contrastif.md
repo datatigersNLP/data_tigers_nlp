@@ -163,7 +163,7 @@ Conformément au protocole méthodologique du Notebook 02 (section 8), la mesure
 #### Constat sur le tokeniseur et proposition pour le Weekly 5
 Lors de la sauvegarde du modèle affiné sous `transformers` 5.18, le fichier `tokenizer.json` a été sérialisé avec un prétraitement légèrement différent de la version d'origine, bien que le vocabulaire et les scores Unigram soient strictement identiques. 
 * **Impact vérifié** : Le découpage est 100 % identique sur l'ensemble des 822 requêtes de contrôle, des 113 textes de mesure du Notebook 03 et des 4 240 passages du corpus M2. En revanche, un écart de découpage apparaît sur 6 des 607 formulations du CDTN (comportant un espace final).
-* **Proposition soumise au gel du Weekly 5 (Issue #11)** : Afin de garantir que le modèle ajusté ne diffère de l'encodeur de base que par ses seuls poids de représentations sémantiques, il est proposé et acté de mesurer et servir le modèle ajusté avec le tokeniseur du modèle de base (`intfloat/multilingual-e5-small`).
+* **Proposition soumise au gel du Weekly 5 (Issue #11)** : Afin de garantir que le modèle ajusté ne diffère de l'encodeur de base que par ses seuls poids de représentations sémantiques, il est proposé de mesurer et servir le modèle ajusté avec le tokeniseur du modèle de base (`intfloat/multilingual-e5-small`) (décidée au Weekly 5 si validée).
 
 #### Versionnement du calcul et empreintes SHA-256 opposables
 Le calcul des métriques in-browser ci-dessus est intégralement versionné et automatisé dans le script [`08_calculer_metriques_navigateur.py`](../../scripts/adaptation/08_calculer_metriques_navigateur.py). Les empreintes cryptographiques SHA-256 des fichiers opposables sont consignées dans le tableau suivant :
@@ -181,7 +181,7 @@ Le calcul des métriques in-browser ci-dessus est intégralement versionné et a
 *Note sur l'exécution Python et dépendance matérielle :* Les mesures exécutées en Python CPU (`batch_size=1`, [`07_mesurer_fidelite_822.py`](../../scripts/adaptation/07_mesurer_fidelite_822.py)) dépendent du processeur de la machine hôte, induisant de légères variations arithmétiques d'arrondi (ex. 762/822 sur PC contre 791/822 sur Mac). Dans le navigateur sous WebAssembly (WASM), le calcul donne en revanche exactement les mêmes chiffres sur nos deux machines de test pour le témoin (761/822).
 
 > **Statut de déploiement et hébergement par élagage sans perte (#50) :**  
-> Le q8 ajusté pèse 112,9 Mio, dépassant la limite GitHub de 100 Mio. Plutôt que de recourir à un hébergement externe sur le Hub de Hugging Face, la solution retenue pour le site est l'**élagage sans perte du vocabulaire** (Issue #50, PR #78), qui retire du tokeniseur et de la table d'embeddings les caractères non latins et non grecs sans toucher à la précision des poids :
+> Le q8 ajusté pèse 112,9 Mio, dépassant la limite GitHub de 100 Mio. Plutôt que de recourir à un hébergement externe sur le Hub de Hugging Face, la solution prévue par le protocole 05 (section 5), qu'on gèle au Weekly 5, est l'**élagage sans perte du vocabulaire** (Issue #50, PR #78), qui retire du tokeniseur et de la table d'embeddings les caractères non latins et non grecs sans toucher à la précision des poids :
 > * Si l'arbitrage officiel valide le modèle ajusté, celui-ci sera allégé par `scripts/allegement/elaguer_vocabulaire.py` pour passer à ~65,7 Mio et être directement versionné dans `front/public/modele/` sous son empreinte.
 > * Sa version élaguée devra redonner bit à bit dans le navigateur les vecteurs complets sur les 822 requêtes de contrôle.
 > * Le seuil d'abstention sera alors recalculé par `scripts/evaluation/cdtn_seuil.py` pour l'encodeur ajusté (le moteur du site n'appliquant aucun seuil tant qu'il n'est pas recalculé).
@@ -197,11 +197,11 @@ Le calcul des métriques in-browser ci-dessus est intégralement versionné et a
 - [x] **Vérification d'absence de fuite du test** : 67 fiches totalement exclues du train set, contrôle heuristique Jaccard < 0,40 documenté.
 - [x] **Ajustement contrastif (négatifs du lot)** : Réalisé avec `MultipleNegativesRankingLoss`, recette déclarée figée au 13 octobre.
 - [x] **Banc exploratoire documenté** : Chiffres préliminaires étiquetés « exploratoires, hors protocole » selon la décision du Weekly 4.
-- [x] **Quantification ONNX q8 alignée Xenova** : Export avec `per_channel=True`, `reduce_range=True` et `ActivationSymmetric=True` (112,9 Mio, 74/75 tenseurs identiques bit à bit).
+- [x] **Quantification ONNX q8 alignée Xenova** : Export avec `per_channel=True`, `reduce_range=True` et `ActivationSymmetric=True` (112,9 Mio) ; appliquée au témoin de base, la recette donne 74/75 tenseurs strictement identiques bit à bit à ceux de Xenova (les poids de l'ajusté différant par construction).
 - [x] **Modèle témoin de BASE exporté** : Export du modèle pré-entraîné avec la même recette pour isoler les effets de graphe opset 14.
 - [x] **Contrôle de fidélité dans le navigateur (Notebook 02)** : 93,55 % de concordance Top-1 (769 / 822) et 99,76 % dans le Top-5 sur le q8 livré (`934a202b`) mesuré dans Chromium WASM via `scripts/indexation/fidelite_navigateur.html`.
 - [x] **Calcul automatisé et empreintes SHA-256 versionnés** : Script `scripts/adaptation/08_calculer_metriques_navigateur.py` mis à jour, test de McNemar apparié ($b=53, c=45, p=0,48$) et empreintes opposables consignées.
-- [x] **Proposition tokeniseur base actée** : Mesure et service de l'ajusté avec le tokeniseur de base pour isoler strictement les poids.
+- [x] **Proposition tokeniseur base soumise au Weekly 5** : Mesure et service de l'ajusté proposés avec le tokeniseur de base pour isoler strictement les poids (décidée au Weekly 5 si validée).
 - [x] **Alignement sur la stratégie d'hébergement par élagage (#50)** : Préparation au déploiement sous 100 Mio via PR #78.
 - [x] **Dépendances épinglées** : Fichier `scripts/adaptation/requirements.txt` (`onnx==1.23.2`, `onnxruntime==1.30.0`).
 - [x] **Poids et données hors Git** : Dossiers `models/` et `data/` intégralement protégés par le `.gitignore`.

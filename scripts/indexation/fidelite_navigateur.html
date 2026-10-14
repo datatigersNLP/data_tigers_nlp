@@ -62,8 +62,8 @@ const precisionParam = params.get("precision");
 const PRECISIONS = precisionParam ? [precisionParam] : ((modeleAjuste || modeleTemoin) ? ["q8"] : ["q8", "int8", "uint8", "fp16", "fp32"]);
 
 try {
-  if (window.indexedDB && (modeleAjuste || modeleTemoin)) {
-    window.indexedDB.deleteDatabase("transformers-cache");
+  if (window.caches && (modeleAjuste || modeleTemoin)) {
+    await caches.delete("transformers-cache");
   }
 } catch (e) {}
 

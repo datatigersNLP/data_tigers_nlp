@@ -263,7 +263,7 @@ def main():
         print(f"       * p-value exacte (bilatérale)   : {p:.4f}")
         if p >= 0.05:
             print("       -> Conclusion : Aucune différence statistiquement significative de fidélité Top-1 (p >= 0.05).")
-            print(f"          Fidélité de classement proche ({nb_ajuste_justes} contre {nb_temoin_justes}), erreur de quantification des vecteurs plus forte.")
+            print(f"          Fidélité de classement proche ({nb_ajuste_justes} contre {nb_temoin_justes}).")
         else:
             print(f"       -> Différence statistiquement significative (p = {p:.4f} < 0.05).")
 
