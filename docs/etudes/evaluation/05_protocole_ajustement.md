@@ -22,21 +22,27 @@ Décider, par une mesure unique écrite d'avance, si le site sert l'encodeur aju
 * **Étanchéité.** Les fiches du jeu de l'équipe sont exclues de l'entraînement, comme dans la PR #63 ; le filtre de Jaccard contre les questions de test est conservé et documenté comme un écart assumé au critère de #49.
 * **Recette d'export figée.** `scripts/adaptation/06_exporter_onnx.py`, au commit `7001645` : export ONNX en opset 14, puis quantification dynamique `QInt8`, par canal, avec `reduce_range` et `ActivationSymmetric`, sous onnx 1.23.2 et onnxruntime 1.30.0. Appliquée au modèle de base, elle redonne bit à bit 74 des 75 tenseurs quantifiés du q8 servi, le dernier à une valeur près sur 96 millions, mais pas son graphe : dans le navigateur, les deux modèles donnent un premier résultat différent pour 52 des 822 requêtes de contrôle du notebook 02, pour une fidélité globale égale (761 et 755 sur 822, McNemar p = 0,46).
 * **Parité, condition du déploiement.** L'encodeur ajusté exporté en fp32 redonne les vecteurs de PyTorch : cosinus minimal d'au moins 0,99999 sur les 822 requêtes de contrôle du notebook 02, le seuil de son contrôle 1.
-* **Fidélité, constatée avant le gel.** Dans le navigateur, sur les 822 requêtes, le premier résultat est celui du fp32 pour 753 requêtes avec l'ajusté, 761 avec le témoin et 755 avec le q8 servi ; l'écart entre l'ajusté et le témoin n'est pas significatif (McNemar exact, p = 0,50), mais les vecteurs de l'ajusté s'écartent davantage de son fp32 (cosinus médian de 0,9939, contre 0,9965 pour le témoin). Ces chiffres étaient connus avant le gel : ils sont rapportés et ne servent pas de critère.
-* **Index.** Les 4 240 passages M2 (colonne `entree_encodeur`) sont réencodés en fp32 par l'encodeur ajusté, comme l'index du site (configuration A du notebook 02 : index en fp32, requête en q8), puis exportés au format du site avec leur en-tête. Le notebook de mesure les réencode lui-même et compare le résultat au fichier `passage_embeddings_apres.npy` de Remy.
+* **Fidélité, constatée avant le gel.** Dans le navigateur, sur les 822 requêtes, le premier résultat est celui du fp32 pour 769 requêtes avec l'ajusté livré (q8 `934a202b…`), 761 avec le témoin et 755 avec le q8 servi ; l'écart entre l'ajusté et le témoin n'est pas significatif (McNemar exact, 53 contre 45, p = 0,48), mais les vecteurs de l'ajusté s'écartent davantage de son fp32 (cosinus médian de 0,9938, contre 0,9965 pour le témoin). Les chiffres publiés le 13 octobre (753 sur 822, p = 0,50) portaient sur un q8 antérieur, quantifié sans `ActivationSymmetric` : ils sont reproduits exactement avec cette ancienne recette, et remplacés ici par ceux du q8 livré, mesurés le 14 octobre. Ces chiffres étaient connus avant le gel : ils sont rapportés et ne servent pas de critère.
+* **Reproductibilité, vérifiée le 14 octobre.** À partir des poids livrés (`model.safetensors`), le script 06 redonne bit à bit les deux fichiers ONNX livrés, fp32 et q8. La parité fp32 est atteinte sur les 822 requêtes de contrôle (cosinus minimal de 1,00000000). Les 199 tenseurs ont la forme de ceux du modèle de base ; l'ajustement les a modifiés de 1,1e-3 en médiane, en valeur relative.
+* **Tokeniseur, proposition soumise au gel.** Celui du modèle livré a été réécrit par transformers 5.18 : même vocabulaire et mêmes scores, mais prétraitement écrit autrement. Le découpage est identique pour les 822 requêtes de contrôle, les 113 textes de la mesure du notebook 03 et les 4 240 passages, mais différent pour 6 des 607 formulations du CDTN (un espace final). Pour que l'ajusté ne diffère de l'encodeur de base que par ses poids, il est mesuré et servi avec le tokeniseur de l'encodeur de base.
+* **Index.** Les 4 240 passages M2 (colonne `entree_encodeur`) sont réencodés en fp32 par l'encodeur ajusté, comme l'index du site (configuration A du notebook 02 : index en fp32, requête en q8), puis exportés au format du site avec leur en-tête. Le notebook de mesure les réencode lui-même et compare le résultat au fichier `passage_embeddings_apres.npy` de Remy. Contrôle préalable du 14 octobre : cosinus minimal de 0,99999984 entre les deux, et chaque passage retrouve sa ligne, à trois passages en double près.
 
 Empreintes SHA-256, à contrôler à la réception des fichiers :
 
 ```
 data/adaptation/train_paires.jsonl (109 paires, 174 552 octets)
 2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698
+models/multilingual-e5-small-finetuned/model.safetensors (ajusté, poids)
+5b8db94ade7f3a05678a6cb36e4e49aa7d24f71aaaedfc5fcef43d811d2dee06
 models/multilingual-e5-small-finetuned/onnx/model_quantized.onnx (ajusté)
 934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047
+data/adaptation/passage_embeddings_apres.npy (index de Remy)
+94e9f52a67b8e259bf04d341338e2e51f558661fbefb1502f6b0049fe218b3ed
 models/multilingual-e5-small-base/onnx/model_quantized.onnx (témoin)
 30ae0f2153f7e14ce5afe082c68ee251d0cce6c26e8caa71307fbd8ebf4bcb90
 ```
 
-L'empreinte du témoin a été reproduite indépendamment, à partir du script ; celles de l'ajusté et des paires sont déclarées par Remy.
+Les fichiers de l'ajusté ont été reçus le 14 octobre, conformes au manifeste de Remy. L'empreinte du témoin et celles des deux ONNX de l'ajusté ont été reproduites indépendamment, à partir du script ; celle des paires est déclarée par Remy.
 
 ---
 
@@ -92,4 +98,4 @@ L'empreinte du témoin a été reproduite indépendamment, à partir du script ;
 
 * **10 octobre 2026.** Protocole proposé.
 * **13 octobre 2026.** Complété avant toute mesure de l'encodeur ajusté : recette d'export et empreintes, fidélité constatée, témoin descriptif, encodage dans le navigateur seulement, notebook de mesure, hébergement sur le Hub, calendrier.
-* **14 octobre 2026.** Hébergement par élagage sans perte du vocabulaire, depuis le dépôt, à la place du Hub ; contrôle d'identité de l'ajusté élagué ; seuil d'abstention recalculé pour l'encodeur retenu. Toujours avant toute mesure de l'encodeur ajusté ; la règle de décision ne change pas.
+* **14 octobre 2026.** Hébergement par élagage sans perte du vocabulaire, depuis le dépôt, à la place du Hub ; contrôle d'identité de l'ajusté élagué ; seuil d'abstention recalculé pour l'encodeur retenu. Puis, à la réception des fichiers : fidélité corrigée (769 sur 822, sur le q8 livré), reproductibilité vérifiée, empreintes des poids et de l'index, proposition sur le tokeniseur. Toujours avant toute mesure de l'encodeur ajusté ; la règle de décision ne change pas.
