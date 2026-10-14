@@ -26,7 +26,7 @@ REVISION_BASE = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
 def mcnemar_exact(a_juste: np.ndarray, b_juste: np.ndarray) -> dict:
     """
     Test exact de McNemar, bilatéral : ne compte que les requêtes où une seule des deux configurations est juste.
-    Identique à la fonction du Notebook 02 (cellule 1051).
+    Identique à la fonction mcnemar_exact du Notebook 02.
     """
     b = int(np.sum(a_juste & ~b_juste))
     c = int(np.sum(~a_juste & b_juste))
@@ -224,49 +224,48 @@ def main():
 
     if fichier_ajuste.exists() and fichier_temoin.exists():
         print("\n[5/5] Test exact de McNemar apparié (Modèle Ajusté vs Témoin de BASE dans le navigateur) :")
-        try:
-            # Charger l'autre modèle pour calculer la contingence exacte
-            if est_temoin:
-                # Actif = témoin, comparer avec ajusté
-                data_autre = json.loads(fichier_ajuste.read_text(encoding="utf-8"))
-                passages_autre = np.load(PROJECT_ROOT / "data" / "adaptation" / "passage_embeddings_apres.npy")
-                tok_autre = AutoTokenizer.from_pretrained(str(PROJECT_ROOT / "models" / "multilingual-e5-small-finetuned"))
-                mod_autre = AutoModel.from_pretrained(str(PROJECT_ROOT / "models" / "multilingual-e5-small-finetuned"))
-                Q_ref_autre = encode_pytorch_unitaire(mod_autre, tok_autre, queries)
-                scores_ref_autre = np.dot(Q_ref_autre, passages_autre.T)
-                scores_nav_autre = np.dot(np.array(data_autre["resultats"]["q8"]["vecteurs"], dtype=np.float32), passages_autre.T)
-                juste_ajuste = (np.argmax(scores_ref_autre, axis=1) == np.argmax(scores_nav_autre, axis=1))
-                juste_temoin = juste_actif
-            else:
-                # Actif = ajusté, comparer avec témoin
-                data_autre = json.loads(fichier_temoin.read_text(encoding="utf-8"))
-                passages_autre = np.load(PROJECT_ROOT / "data" / "adaptation" / "passage_embeddings_baseline.npy")
-                tok_autre = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-small", revision=REVISION_BASE)
-                mod_autre = AutoModel.from_pretrained("intfloat/multilingual-e5-small", revision=REVISION_BASE)
-                Q_ref_autre = encode_pytorch_unitaire(mod_autre, tok_autre, queries)
-                scores_ref_autre = np.dot(Q_ref_autre, passages_autre.T)
-                scores_nav_autre = np.dot(np.array(data_autre["resultats"]["q8"]["vecteurs"], dtype=np.float32), passages_autre.T)
-                juste_temoin = (np.argmax(scores_ref_autre, axis=1) == np.argmax(scores_nav_autre, axis=1))
-                juste_ajuste = juste_actif
+        # Charger l'autre modèle pour calculer la contingence exacte
+        if est_temoin:
+            # Actif = témoin, comparer avec ajusté
+            data_autre = json.loads(fichier_ajuste.read_text(encoding="utf-8"))
+            passages_autre = np.load(PROJECT_ROOT / "data" / "adaptation" / "passage_embeddings_apres.npy")
+            tok_autre = AutoTokenizer.from_pretrained(str(PROJECT_ROOT / "models" / "multilingual-e5-small-finetuned"))
+            mod_autre = AutoModel.from_pretrained(str(PROJECT_ROOT / "models" / "multilingual-e5-small-finetuned"))
+            Q_ref_autre = encode_pytorch_unitaire(mod_autre, tok_autre, queries)
+            scores_ref_autre = np.dot(Q_ref_autre, passages_autre.T)
+            scores_nav_autre = np.dot(np.array(data_autre["resultats"]["q8"]["vecteurs"], dtype=np.float32), passages_autre.T)
+            juste_ajuste = (np.argmax(scores_ref_autre, axis=1) == np.argmax(scores_nav_autre, axis=1))
+            juste_temoin = juste_actif
+        else:
+            # Actif = ajusté, comparer avec témoin
+            data_autre = json.loads(fichier_temoin.read_text(encoding="utf-8"))
+            passages_autre = np.load(PROJECT_ROOT / "data" / "adaptation" / "passage_embeddings_baseline.npy")
+            tok_autre = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-small", revision=REVISION_BASE)
+            mod_autre = AutoModel.from_pretrained("intfloat/multilingual-e5-small", revision=REVISION_BASE)
+            Q_ref_autre = encode_pytorch_unitaire(mod_autre, tok_autre, queries)
+            scores_ref_autre = np.dot(Q_ref_autre, passages_autre.T)
+            scores_nav_autre = np.dot(np.array(data_autre["resultats"]["q8"]["vecteurs"], dtype=np.float32), passages_autre.T)
+            juste_temoin = (np.argmax(scores_ref_autre, axis=1) == np.argmax(scores_nav_autre, axis=1))
+            juste_ajuste = juste_actif
 
-            mcnemar_res = mcnemar_exact(juste_ajuste, juste_temoin)
-            b = mcnemar_res["A_juste_seule"]
-            c = mcnemar_res["B_juste_seule"]
-            n = mcnemar_res["n_discordantes"]
-            p = mcnemar_res["p_value"]
-            print(f"       * Concordance Ajusté (A)        : {np.sum(juste_ajuste)} / {nb_queries} ({100 * np.mean(juste_ajuste):.2f} %)")
-            print(f"       * Concordance Témoin base (B)   : {np.sum(juste_temoin)} / {nb_queries} ({100 * np.mean(juste_temoin):.2f} %)")
-            print(f"       * Ajusté juste seul (b)         : {b} requêtes")
-            print(f"       * Témoin juste seul (c)         : {c} requêtes")
-            print(f"       * Requêtes discordantes (n=b+c) : {n} requêtes")
-            print(f"       * p-value exacte (bilatérale)   : {p:.4f}")
-            if p >= 0.05:
-                print("       -> Conclusion : Aucune différence statistiquement significative de fidélité Top-1 (p >= 0.05).")
-                print("          Fidélité de classement proche (753 contre 761), erreur de quantification des vecteurs plus forte.")
-            else:
-                print(f"       -> Différence statistiquement significative (p = {p:.4f} < 0.05).")
-        except Exception as e:
-            print(f"       (Avertissement calcul McNemar : {e})")
+        mcnemar_res = mcnemar_exact(juste_ajuste, juste_temoin)
+        b = mcnemar_res["A_juste_seule"]
+        c = mcnemar_res["B_juste_seule"]
+        n = mcnemar_res["n_discordantes"]
+        p = mcnemar_res["p_value"]
+        nb_ajuste_justes = int(np.sum(juste_ajuste))
+        nb_temoin_justes = int(np.sum(juste_temoin))
+        print(f"       * Concordance Ajusté (A)        : {nb_ajuste_justes} / {nb_queries} ({100 * np.mean(juste_ajuste):.2f} %)")
+        print(f"       * Concordance Témoin base (B)   : {nb_temoin_justes} / {nb_queries} ({100 * np.mean(juste_temoin):.2f} %)")
+        print(f"       * Ajusté juste seul (b)         : {b} requêtes")
+        print(f"       * Témoin juste seul (c)         : {c} requêtes")
+        print(f"       * Requêtes discordantes (n=b+c) : {n} requêtes")
+        print(f"       * p-value exacte (bilatérale)   : {p:.4f}")
+        if p >= 0.05:
+            print("       -> Conclusion : Aucune différence statistiquement significative de fidélité Top-1 (p >= 0.05).")
+            print(f"          Fidélité de classement proche ({nb_ajuste_justes} contre {nb_temoin_justes}), erreur de quantification des vecteurs plus forte.")
+        else:
+            print(f"       -> Différence statistiquement significative (p = {p:.4f} < 0.05).")
 
     rapport = {
         "etiquette": etiquette,

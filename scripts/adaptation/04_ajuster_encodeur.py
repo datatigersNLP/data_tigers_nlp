@@ -45,7 +45,8 @@ def main():
 
     print("[2/5] Chargement du modèle de base intfloat/multilingual-e5-small...")
     model_id = "intfloat/multilingual-e5-small"
-    model = SentenceTransformer(model_id)
+    REVISION_BASE = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    model = SentenceTransformer(model_id, revision=REVISION_BASE)
 
     print("[3/5] Configuration de la fonction de perte contrastive (MultipleNegativesRankingLoss)...")
     # MultipleNegativesRankingLoss utilise les passages des autres requêtes du batch comme négatifs

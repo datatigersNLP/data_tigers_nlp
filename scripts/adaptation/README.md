@@ -15,7 +15,7 @@ Ce dossier contient l'ensemble de la chaîne de traitement permettant d'ajuster 
 | [`05_evaluer_apres.py`](05_evaluer_apres.py) | Évaluation après fine-tuning et tests statistiques appariés | `benchmark_test.json`, modèle ajusté | `resultats_comparaison.json` |
 | [`06_exporter_onnx.py`](06_exporter_onnx.py) | Export ONNX FP32, quantification q8 alignée Xenova (`ActivationSymmetric=True`), support modèle témoin et génération de `quant_config.json` | Modèle ajusté ou de base | `model.onnx`, `model_quantized.onnx`, `quant_config.json`, `rapport_onnx_parite.json` |
 | [`07_mesurer_fidelite_822.py`](07_mesurer_fidelite_822.py) | Mesure de fidélité Python unitaire (`batch_size=1`) sur les 822 requêtes réalistes de section M2 vs index 4 240 passages | `requetes_fidelite.json`, passages `.npy`, modèle ONNX q8 | `rapport_fidelite_822.json` / `_base.json` |
-| [`08_calculer_metriques_navigateur.py`](08_calculer_metriques_navigateur.py) | Calcul des métriques de fidélité navigateur (753/822...), comparaison à la baseline et empreintes SHA-256 | `fidelite_navigateur_*.json`, passages `.npy`, modèle ONNX q8 | `rapport_metriques_navigateur.json` / `_temoin.json` |
+| [`08_calculer_metriques_navigateur.py`](08_calculer_metriques_navigateur.py) | Calcul des métriques de fidélité navigateur (769/822...), comparaison à la baseline et empreintes SHA-256 | `fidelite_navigateur_*.json`, passages `.npy`, modèle ONNX q8 | `rapport_metriques_navigateur.json` / `_temoin.json` |
 | [`serveur_controle.py`](serveur_controle.py) | Serveur local sécurisé pour les tests de contrôle navigateur (`fidelite_navigateur.html`) avec endpoint POST protégé | Dépôt local | `data/indexation/controle/fidelite_navigateur_ajuste.json` / `_temoin.json` |
 
 ---

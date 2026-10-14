@@ -3,12 +3,13 @@ scripts/adaptation/07_mesurer_fidelite_822.py
 Mesure de fidélité du modèle quantifié (q8) vs PyTorch FP32 sur les 822 requêtes réalistes (Notebook 02).
 
 Note méthodologique sur les moteurs d'exécution :
-Les calculs ONNX Runtime CPU avec quantification dynamique INT8 dépendent des instructions
-vectorielles CPU de la machine hôte (AVX2 sur x86_64 sous Windows vs NEON sur Mac ARM64), ce qui
-induit de légères variations d'arrondis arithmétiques (ex. 762/822 sur PC x86 vs 791/822 sur Mac ARM).
-Ces chiffres Python sont donc indicatifs de l'environnement hôte.
-La mesure de référence opposable et strictement reproductible inter-machines est celle exécutée
-dans le navigateur WebAssembly (WASM via scripts/adaptation/08_calculer_metriques_navigateur.py).
+Les calculs ONNX Runtime CPU avec quantification dynamique INT8 dépendent du processeur
+de la machine hôte, ce qui induit de légères variations d'arrondis arithmétiques
+(ex. 762/822 sur PC contre 791/822 sur Mac). Ces chiffres Python sont donc indicatifs
+de l'environnement hôte.
+La mesure de référence opposable est celle exécutée dans le navigateur WebAssembly
+(WASM via scripts/adaptation/08_calculer_metriques_navigateur.py), vérifiée identique
+sur nos deux machines de test pour le témoin.
 """
 
 import json

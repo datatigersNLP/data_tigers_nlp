@@ -42,11 +42,13 @@ const proposer = (nom) => {
 if (modeleAjuste) {
   env.allowLocalModels = true;
   env.allowRemoteModels = false;
+  env.useBrowserCache = false;
   env.localModelPath = "../../models/";
   noter("Mode : modèle ajusté local (models/multilingual-e5-small-finetuned)");
 } else if (modeleTemoin) {
   env.allowLocalModels = true;
   env.allowRemoteModels = false;
+  env.useBrowserCache = false;
   env.localModelPath = "../../models/";
   noter("Mode : modèle témoin base exporté localement (models/multilingual-e5-small-base)");
 } else {
@@ -58,6 +60,12 @@ const DEPOT = modeleAjuste ? "multilingual-e5-small-finetuned" : (modeleTemoin ?
 const REVISION = (modeleAjuste || modeleTemoin) ? null : "761b726dd34fb83930e26aab4e9ac3899aa1fa78";
 const precisionParam = params.get("precision");
 const PRECISIONS = precisionParam ? [precisionParam] : ((modeleAjuste || modeleTemoin) ? ["q8"] : ["q8", "int8", "uint8", "fp16", "fp32"]);
+
+try {
+  if (window.indexedDB && (modeleAjuste || modeleTemoin)) {
+    window.indexedDB.deleteDatabase("transformers-cache");
+  }
+} catch (e) {}
 
 try {
   const { prefixe, requetes } = await (await fetch("../../data/indexation/controle/requetes_fidelite.json")).json();

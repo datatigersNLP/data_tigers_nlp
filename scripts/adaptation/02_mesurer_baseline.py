@@ -38,7 +38,8 @@ def main():
     print(f"       {len(passages_text)} passages à indexer")
 
     print("[2/5] Chargement du modèle intfloat/multilingual-e5-small pré-entraîné...")
-    model = SentenceTransformer("intfloat/multilingual-e5-small")
+    REVISION_BASE = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    model = SentenceTransformer("intfloat/multilingual-e5-small", revision=REVISION_BASE)
 
     print("[3/5] Encodage des passages du corpus M2 (FP32)...")
     t0 = time.time()
