@@ -1,17 +1,27 @@
 @import "tailwindcss";
+/* DM Sans, police de la maquette B validée par l'équipe (#53) : servie par le site lui-même (paquet npm, licence
+   OFL), sans requête vers Google Fonts ; seuls les jeux de caractères latins utilisés sont téléchargés */
+@import "@fontsource-variable/dm-sans";
 
-/* couleurs de la charte de l'équipe, reprises de docs/latex/preambule.tex ; fond et accent-clair sont des ajouts du
-   site. Contrastes vérifiés au niveau AA des WCAG 2.1 (#53) : le gris n'est jamais éclairci, il tombe sinon sous 4,5:1.
-   Police système : rien à télécharger, rendu natif sur chaque appareil (#53) */
+/* couleurs de la maquette B validée par l'équipe (#53). Contrastes vérifiés au niveau AA des WCAG 2.1 : texte gris
+   sur le fond 6,3:1, sur le panneau 5,9:1, blanc sur l'accent 7,5:1 */
 @theme {
-  --color-encre: #16181d;
-  --color-accent: #1f4e5f;
-  --color-accent-clair: #e8f0f2;
-  --color-accent2: #8c4a2f;
-  --color-gris: #6b7280;
-  --color-filet: #d5dade;
-  --color-fond: #f7f8f9;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-encre: #1c1b1a;
+  --color-texte: #2e2c29;
+  --color-texte2: #3d3a36;
+  --color-gris: #5e5a55;
+  --color-fond: #f7f6f3;
+  --color-panneau: #efede8;
+  --color-actif: #e2dfd7;
+  --color-filet: #e0ddd5;
+  --color-bordure: #d3cfc5;
+  --color-accent: #17604a;
+  --color-accent-fonce: #0f4535;
+  --color-accent-clair: #e4ece8;
+  --color-accent-texte: #234238;
+  --color-alerte-fond: #fbf5f2;
+  --color-alerte-bord: #e3cfc6;
+  --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 html {
