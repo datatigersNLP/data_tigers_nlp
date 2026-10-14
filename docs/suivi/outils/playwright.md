@@ -35,7 +35,9 @@ Chaque membre tient sa propre ligne à jour.
     (`browser.newContext()`), dont l'API Cache est vide : le modèle de 113 Mio est retéléchargé, ce qui ajoute environ
     50 s par parcours. Ce n'est pas une limite de Playwright : un contexte persistant (`launchPersistentContext`) garde
     l'API Cache d'une exécution à l'autre. `page.route()`, que j'utilise pour simuler une coupure réseau, désactive le
-    cache HTTP, mais n'empêche pas de retrouver le modèle rangé dans l'API Cache.
+    cache HTTP, mais pas l'API Cache. Vérifié par un essai le 14 octobre 2026 : dans un contexte persistant rouvert
+    avec `page.route()` actif, la recherche est prête en 4 s au lieu de 87 s, et le fichier du modèle n'est plus
+    téléchargé (seule une requête `Range` d'un octet en lit la taille).
 
 ## Usage réel
 - Tâche réalisée, ticket ou pull request :
@@ -92,7 +94,8 @@ Chaque membre tient sa propre ligne à jour.
   installé.
 - Principale limite : avec un contexte neuf à chaque exécution, comme dans mon script, l'API Cache où Transformers.js
   range le modèle est vide, et le modèle de 113 Mio est retéléchargé à chaque parcours. Un contexte persistant
-  (`launchPersistentContext`) l'évite, y compris pour les scénarios qui interceptent le réseau avec `page.route()`.
+  (`launchPersistentContext`) l'évite, y compris pour les scénarios qui interceptent le réseau avec `page.route()`
+  (vérifié par un essai, voir « Mise en place »).
 - Ce que la documentation ne dit pas : la page des navigateurs explique que Playwright peut piloter le Chrome ou l'Edge
   déjà installés (`channel: "msedge"`), mais ni elle ni la page de la bibliothèque ne précisent que `playwright-core`
   ne télécharge aucun navigateur. On peut aussi lire directement les résultats d'une page (`window.RESULTATS`) au lieu
