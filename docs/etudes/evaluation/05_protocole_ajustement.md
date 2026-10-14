@@ -4,7 +4,7 @@
 **Projet** NLP 2 · Master 2 Data & IA · FGES, Université Catholique de Lille  
 **Ticket** Issue #49, mesure unique avant et après l'ajustement fin  
 **Responsables** Remy RAYANE (ajustement), Mahé BEGNIS (mesure)  
-**Statut** proposé le 10 octobre 2026, complété le 13 octobre (recette d'export, témoin, hébergement), à figer au Weekly 5 du 14 octobre, avant toute mesure de l'encodeur ajusté  
+**Statut** proposé le 10 octobre 2026, complété le 13 octobre (recette d'export, témoin, hébergement), puis le 14 octobre (hébergement par élagage, seuil d'abstention), à figer au Weekly 5 du 14 octobre, avant toute mesure de l'encodeur ajusté  
 
 ---
 
@@ -66,11 +66,13 @@ L'empreinte du témoin a été reproduite indépendamment, à partir du script ;
 
 ## 5. Hébergement de l'encodeur ajusté
 
-* **Contrainte.** Le q8 ajusté pèse 118 371 400 octets, soit 112,9 Mio. GitHub bloque tout fichier de plus de 100 Mio : il ne peut être ni versionné, ni servi par GitHub Pages depuis le dépôt.
-* **Solution.** Le site charge déjà son modèle depuis le Hub de Hugging Face, au dépôt et à la révision inscrits dans l'en-tête de l'index (`front/src/recherche/moteur.js`). Si l'ajusté est retenu, il est publié dans un dépôt public de modèle sur le Hub, avec ses fichiers de configuration et de tokeniseur ; l'en-tête désigne ce dépôt à une révision figée, et le fichier ONNX publié doit avoir l'empreinte de la section 2.
-* **Fiche du modèle.** Licence MIT de l'encodeur d'origine, provenance des passages (fiches du ministère, Etalab 2.0) et des questions générées (Qwen2.5-7B-Instruct, Apache 2.0), renvoi vers ce protocole.
-* **Identifiants.** Le membre qui publie utilise son propre compte ; aucun jeton n'est partagé ni versionné.
-* **Contrôle.** Après la publication, le contrôle 4 du notebook 02 (intégrité de l'export, vérifiée dans le navigateur) est rejoué sur le site avec le nouvel en-tête.
+* **Contrainte.** Le q8 ajusté pèse 118 371 400 octets, soit 112,9 Mio. GitHub bloque tout fichier de plus de 100 Mio : en l'état, il ne peut être ni versionné, ni servi par GitHub Pages.
+* **Solution : l'élagage sans perte du vocabulaire (#50).** On retire du tokeniseur et de la table des mots les pièces qui contiennent une lettre d'un autre alphabet que le latin ou le grec, sans requantifier les lignes gardées. Pour tout texte écrit avec les caractères gardés, le découpage en jetons est inchangé, donc les vecteurs aussi. C'est ainsi que le site sert l'encodeur de base, depuis le dépôt (`front/public/modele/`), dans un dossier nommé d'après l'empreinte du fichier pour qu'aucun cache ne serve une ancienne version.
+* **Ce qu'il donne sur l'encodeur de base.** Le fichier passe de 112,9 à 65,7 Mio. Le découpage est identique pour tous nos textes français (requêtes de contrôle, questions de la mesure, CDTN, passages), et les 822 vecteurs de contrôle sont identiques bit à bit dans le navigateur.
+* **Condition pour l'ajusté.** La mesure de la section 3 porte sur le q8 ajusté complet. S'il est retenu, il est élagué par le même script, et sa version élaguée doit redonner bit à bit, dans le navigateur, les vecteurs de la version complète sur les 822 requêtes de contrôle ; sinon, il n'est pas servi.
+* **Seuil d'abstention.** L'ajustement change la distribution des scores : le seuil est recalculé par `scripts/evaluation/cdtn_seuil.py`, selon la règle de la section 8.2 du protocole du notebook 03, avec les variantes du CDTN encodées dans le navigateur par l'encodeur retenu. Tant qu'il ne l'est pas, le moteur du site n'applique aucun seuil.
+* **Licence.** Licence MIT de l'encodeur d'origine, jointe au modèle ; provenance des passages (fiches du ministère, Etalab 2.0) et des questions générées (Qwen2.5-7B-Instruct, Apache 2.0).
+* **Contrôle.** Avant la fusion, le contrôle 4 du notebook 02 (intégrité de l'export, vérifiée dans le navigateur) est rejoué avec le nouvel en-tête.
 
 ---
 
@@ -81,7 +83,7 @@ L'empreinte du témoin a été reproduite indépendamment, à partir du script ;
 | 13 octobre | Recette figée et déclaration ; recette d'export, témoin et contrôles de fidélité dans le navigateur | Remy, vérifié par Mahé |
 | 14 octobre | Protocole figé au Weekly 5 ; notebook 05 en mode développement ; transmission privée de l'ajusté, en PyTorch et en ONNX | Remy, Mahé |
 | 15 octobre | Import des trois relectures du CDTN ; parité de l'ajusté ; mesure unique et exécution de contrôle | Mahé, Remy |
-| 16 octobre | Décision selon la section 4 ; rapport ; si l'ajusté est retenu, publication sur le Hub | Mahé, Remy |
+| 16 octobre | Décision selon la section 4 ; rapport ; si l'ajusté est retenu, élagage, contrôle d'identité dans le navigateur et nouveau seuil d'abstention | Mahé, Remy |
 | 17 octobre | Index et en-tête du modèle retenu dans le site ; contrôle 4 du notebook 02 | Maïmouna, Vaneck |
 
 ---
@@ -90,3 +92,4 @@ L'empreinte du témoin a été reproduite indépendamment, à partir du script ;
 
 * **10 octobre 2026.** Protocole proposé.
 * **13 octobre 2026.** Complété avant toute mesure de l'encodeur ajusté : recette d'export et empreintes, fidélité constatée, témoin descriptif, encodage dans le navigateur seulement, notebook de mesure, hébergement sur le Hub, calendrier.
+* **14 octobre 2026.** Hébergement par élagage sans perte du vocabulaire, depuis le dépôt, à la place du Hub ; contrôle d'identité de l'ajusté élagué ; seuil d'abstention recalculé pour l'encodeur retenu. Toujours avant toute mesure de l'encodeur ajusté ; la règle de décision ne change pas.
