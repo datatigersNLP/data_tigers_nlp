@@ -12,6 +12,8 @@ probe.*
 __pycache__/
 # donnees : corpus brut et prepare, reconstruits par script (ticket #27)
 data/
+# environnements Python, reconstruits depuis les fichiers requirements-lock.txt
+.venv*/
 # site du volet A : dépendances et construction, regénérées par npm
 node_modules/
 front/dist/
