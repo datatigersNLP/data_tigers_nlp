@@ -1,11 +1,7 @@
-// Page de préfiguration du volet A (ticket #29) : elle valide la mise en ligne à l'URL définitive.
-// La recherche sémantique sera branchée ensuite, sur l'index produit par le notebook 02.
+// Site du volet A : recherche sémantique dans les fiches pratiques, exécutée dans le navigateur (#29, #48).
 
-const EXEMPLES = [
-  "Combien de jours de congés payés par an ?",
-  "Quelle est la durée d'une période d'essai en CDI ?",
-  "Mon employeur peut-il refuser une rupture conventionnelle ?",
-];
+import Conversation from "./composants/Conversation.jsx";
+import { useMoteur } from "./recherche/useMoteur.js";
 
 const ETAPES = [
   {
@@ -49,91 +45,6 @@ function EnTete() {
         </span>
       </div>
     </header>
-  );
-}
-
-function BulleAssistant({ children }) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-clair text-accent">
-        <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-          <path d="M9 3a6 6 0 104.47 10l3.27 3.27a1 1 0 001.42-1.42L14.9 11.6A6 6 0 009 3zm-4 6a4 4 0 118 0 4 4 0 01-8 0z" />
-        </svg>
-      </div>
-      <div className="max-w-prose rounded-2xl rounded-tl-sm border border-filet bg-white px-4 py-3 text-[15px] leading-relaxed shadow-sm">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function Conversation() {
-  return (
-    <section
-      aria-label="Recherche"
-      className="flex min-h-[26rem] flex-col overflow-hidden rounded-3xl border border-filet bg-fond/60 shadow-[0_1px_3px_rgba(22,24,29,0.06),0_12px_32px_-12px_rgba(22,24,29,0.12)]"
-    >
-      <div className="flex-1 space-y-5 p-4 sm:p-6">
-        <BulleAssistant>
-          <p>
-            Bonjour. Posez une question sur le droit du travail : je vous montrerai les passages des fiches pratiques
-            du ministère qui y répondent, avec le lien vers chaque source.
-          </p>
-        </BulleAssistant>
-
-        <div className="pl-11">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gris">Exemples de questions</p>
-          <ul className="flex flex-wrap gap-2">
-            {EXEMPLES.map((q) => (
-              <li key={q}>
-                <button
-                  type="button"
-                  disabled
-                  className="cursor-not-allowed rounded-full border border-filet bg-white px-3 py-1.5 text-left text-sm text-encre/70"
-                >
-                  {q}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-filet bg-white p-3 sm:p-4">
-        <div
-          role="status"
-          className="mb-3 flex items-center gap-2 rounded-xl bg-accent-clair px-3 py-2 text-sm text-accent"
-        >
-          <span className="relative flex h-2 w-2" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-          </span>
-          La recherche est en cours d'intégration et sera disponible prochainement.
-        </div>
-        <form className="flex items-end gap-2" onSubmit={(e) => e.preventDefault()}>
-          <label htmlFor="question" className="sr-only">
-            Votre question
-          </label>
-          <textarea
-            id="question"
-            rows={1}
-            disabled
-            placeholder="Posez votre question…"
-            className="min-h-11 flex-1 resize-none rounded-xl border border-filet bg-fond px-4 py-2.5 text-[15px] placeholder:text-gris disabled:cursor-not-allowed"
-          />
-          <button
-            type="submit"
-            disabled
-            aria-label="Rechercher"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-white opacity-40 disabled:cursor-not-allowed"
-          >
-            <svg viewBox="0 0 20 20" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-              <path d="M3.4 16.6l14.2-6.1a.55.55 0 000-1L3.4 3.4a.55.55 0 00-.77.62L4.1 9.2l7.4.8-7.4.8-1.47 5.18a.55.55 0 00.77.62z" />
-            </svg>
-          </button>
-        </form>
-      </div>
-    </section>
   );
 }
 
@@ -187,6 +98,7 @@ function PiedDePage() {
 }
 
 export default function App() {
+  const moteur = useMoteur();
   return (
     <div className="flex min-h-screen flex-col">
       <EnTete />
@@ -200,7 +112,7 @@ export default function App() {
             navigateur.
           </p>
         </div>
-        <Conversation />
+        <Conversation moteur={moteur} />
         <CommentCaMarche />
       </main>
       <PiedDePage />

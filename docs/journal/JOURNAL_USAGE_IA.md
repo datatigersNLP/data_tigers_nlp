@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 25 septembre 2026, session 9
+**Dernière mise à jour** 13 octobre 2026, session 19
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -398,6 +398,74 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Données du CDTN sans licence : lues au commit figé dans `data/`, jamais versionnées.
 
+### Session 17, 11 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Reporter les charges de #27, #29 et #44 et préparer la relecture CDTN de Jibril.
+
+**Produit.**
+- Lignes de suivi : #27, 8 h estimées et 10 h réelles, du 26 au 28 septembre ; #29, 3 h estimées et 1 h 30 réelle, le 30 septembre. Données déclarées par Vaneck et transmises par Jibril ; soutien de Jibril sur #27.
+- #44 : 18 h cumulées pour Jibril, Maïmouna et Vaneck, sans répartition individuelle. Dates du 03/10 au 07/10 et mention « non estimée » reprises le 13/10 selon la demande de Jibril et la revue de Mahé.
+- Extraction locale hors du dépôt de 52 requêtes et 232 formulations CDTN attribuées à JIBZZOU. Aucun texte CDTN ajouté au dépôt.
+- Note initialement consignée le 11/10 dans un fichier séparé, transférée ici le 13/10 à la demande de Mahé.
+
+**Mesures exécutées.**
+- Tickets et références relus ; écarts vérifiés : +2 h pour #27 et -1,5 h pour #29.
+- Source CDTN au commit figé et empreinte SHA-256 vérifiés ; sélection depuis les identifiants de la PR #62.
+- Aucun modèle exécuté, aucune mesure sur le lot de test, aucun verdict CDTN produit par cette extraction.
+
+**Résultats retenus.**
+- Charges déclarées conservées, sans estimation initiale reconstruite.
+- Dépassement de #27 attribué par Vaneck au mauvais découpage du corpus source (#35, PR #39).
+
+**Ce qui a été écarté, et pourquoi.**
+- Publication de textes CDTN : données sans licence, fiche destinée à un échange privé.
+- Modification du jeu figé : le tag `jeu-questions-v1` reste la référence ; la discussion rapportée par Jibril sur la PR #65 ne vaut pas approbation GitHub d'un autre membre.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #69 relue et approuvée par Vaneck le 11/10 ; Mahé a demandé les corrections de dates, de mention et de journal. Jibril a demandé leur application et la fusion le 13/10.
+- Relecture CDTN annoncée complète et exploitable dans le message de Mahé transmis par Jibril le 13/10. Jibril confirme ensuite, le même jour, avoir envoyé la fiche en privé à Mahé par Discord le dimanche 11/10 et supprimé le commentaire public de #56. Suppression vérifiée dans la liste des commentaires ; envoi privé déclaré par Jibril, sans lecture de Discord.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps reconstruit.
+
+**Difficultés rencontrées.**
+- Note séparée absente du PDF du journal : intégration en session selon le modèle de la section 5.
+- Estimations initiales manquantes : conserver « non estimée » pour les travaux déjà commencés.
+
+### Session 19, 13 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Résoudre le blocage de compilation du PDF du journal pour les PR #69 et #38.
+
+**Produit.**
+- Environnement LaTeX local complété : Babel français, règles de césure françaises, polices Libertinus, Inter, Fira Mono et Font Awesome 5.
+- Format XeLaTeX local reconstruit avec la césure française ; chaîne `docs/latex` du dépôt inchangée.
+- Journal de #69 synchronisé avec dev : sessions 14 à 16 préservées, session 17 ajoutée. La session 18 est portée par #38.
+- PDFs du journal régénérés avec les entrées propres à chaque branche.
+
+**Mesures exécutées.**
+- Archives locales contrôlées avant extraction ; contrôles de compilation : erreurs, débordements, caractères manquants et règles de césure.
+- Relecture du rendu des pages et contrôle de présence des entrées ajoutées dans le PDF.
+- Aucun calcul de modèle ou résultat d'évaluation.
+
+**Résultats retenus.**
+- Le défaut provenait des dépendances de l'environnement ; les polices et la mise en page du dépôt sont conservées.
+- La césure française supprime le débordement observé après la première compilation.
+
+**Ce qui a été écarté, et pourquoi.**
+- Archives de paquets volumineux téléchargées incomplètement, rejetées au contrôle d'intégrité ; composants ciblés récupérés depuis CTAN.
+- Remplacement des polices ou modification du préambule pour contourner les dépendances.
+
+**Ce que l'équipe a validé, et par qui.**
+- Jibril a demandé la résolution du blocage. La fusion de #69 était déjà autorisée ; #38 attend la relecture indépendante de sa nouvelle version.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps reconstruit.
+
+**Difficultés rencontrées.**
+- Installation système empêchée par les permissions ; installation dans un TEXMF local.
+- Format XeLaTeX initial sans césure française : reconstruction locale nécessaire, en plus du module de langue.
+
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -467,3 +535,4 @@ Trois sections du rapport final s'appuieront directement sur ce document.
 - **Analyse technique.** Les mesures consignées ici fournissent les chiffres de coût, de latence et de qualité demandés.
 - **Retour d'expérience.** La section 4 documente les difficultés réelles et leur résolution, que le sujet demande de traiter de façon factuelle.
 - **Cinq outils novateurs.** Les temps d'appropriation, les échecs et les comparaisons entre outils consignés au fil de l'eau constituent la matière de cette section, qui vaut jusqu'à trois points et dont la grille valorise au moins une critique argumentée.
+
