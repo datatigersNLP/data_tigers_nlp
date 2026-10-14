@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 25 septembre 2026, session 9
+**Dernière mise à jour** 13 octobre 2026, session 19
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -34,7 +34,7 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 | Outil | Nature | Membres | Usage |
 |---|---|---|---|
-| Claude Opus 5 | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Opus 5, puis Claude Opus 5.5 (sessions 12 et 13) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
 | Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
@@ -262,6 +262,246 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Prise en charge des dépendances spécifiques : installation et configuration requises de `nltk` pour les ressources Snowball françaises.
 
+### Session 12, 4 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Consignée le 6 octobre 2026**, deux jours après la session : la règle de tenue du jour même (section 5) n'a pas été respectée.
+
+**Objet.** Relecture de la validation des métriques sur PIAF (#45, PR #55), puis analyse du jeu de questions de l'équipe (#44) et des jeux de questions externes.
+
+**Produit.**
+- Corrections poussées sur la PR #55 : module de métriques, script de validation sur PIAF, rapport et PDF.
+- Issue #56 (complément CDTN), mise à jour de #46, commentaires sur la PR #54 et sur l'issue #47.
+
+**Mesures exécutées.**
+- Reproduction des chiffres de la première version et recalcul des rangs sans tri, sur les 3 835 questions de PIAF.
+- Quatre variantes de BM25 sur PIAF ; tests appariés avec questions groupées par paragraphe et par article.
+- Appariement des requêtes du CDTN aux passages M2 ; contrôle des extraits du jeu de l'équipe contre les passages M2.
+
+**Résultats retenus.**
+- Recall@k aligné sur la convention de l'équipe (au moins un passage pertinent dans le top k), entrées invalides refusées.
+- Sur PIAF, l'avantage de l'encodeur sur BM25 dépend du réglage de BM25 : de 6,1 à 2,3 points de Recall@5. PIAF ne sert qu'à valider le code.
+- Jeu de l'équipe en analyse principale, CDTN en analyse secondaire, variantes groupées par requête.
+
+**Ce qui a été écarté, et pourquoi.**
+- La valeur p calculée en supposant les questions indépendantes : elles sont groupées par paragraphe et par article, ce qui la rend trop optimiste.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le complément CDTN, demandé par Jibril BENSALEM, Vaneck DAGAR et Maïmouna SIGNATE, validé par Mahé BEGNIS. La PR #55, fusionnée par Remy RAYANE le 6 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- La chaîne `docs/latex` n'affiche ni les formules, ni les liens Markdown, ni les listes imbriquées dans une liste numérotée : documents réécrits en conséquence.
+
+### Session 13, 6 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit de l'état du dépôt et du jeu de questions, remise au propre des pull requests et des tickets, correction de la PR #58 (#47).
+
+**Produit.**
+- PR #59, qui reporte le notebook 02 dans `dev` ; corrections poussées sur la PR #58 : module et script des références lexicales, rapport et PDF, PDF du journal.
+- Index des réunions complété (PR #36) ; comptes rendus de #6 et #26 rétablis, dates des Weekly et jalons corrigés, branches fusionnées supprimées.
+
+**Mesures exécutées.**
+- Reproduction du script de la PR #57, comparaison des listes de mots vides, mesure réelle du poids de l'index, recoupement avec `rank_bm25`.
+- Contrôle du jeu de questions contre les règles de son README et contre les passages M2.
+- Recherche de secrets dans l'historique du dépôt, audit des dépendances (`npm audit`, `pip-audit`).
+
+**Résultats retenus.**
+- Le notebook 02 n'était pas dans `dev` : la PR #40 avait été fusionnée dans une branche déjà intégrée.
+- Références lexicales sur la liste Snowball figée, BM25 avec la formule de Lucene par défaut, poids mesuré (0,65 Mio en gzip pour V3).
+- Avant le gel du jeu : 57 pré-annotations à valider et 21 doubles annotations à faire.
+
+**Ce qui a été écarté, et pourquoi.**
+- Les comparaisons entre BM25 et l'encodeur du premier rapport lexical : non mesurées, et contredites sur deux requêtes.
+
+**Ce que l'équipe a validé, et par qui.**
+- Les PR #55, #58 et #59, fusionnées par Remy RAYANE le 6 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- L'assistant ne peut ni fusionner une PR sans relecture, ni approuver une PR qui contient ses propres commits : ces actions reviennent à un autre membre.
+
+### Session 14, 6 octobre 2026 (après-midi), Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit du jeu de questions fusionné (#44), gel du jeu, règle de pertinence et dossier du Weekly 4.
+
+**Produit.**
+- `scripts/evaluation/controle_jeu.py` (contrôle du jeu et accord entre annotateurs) ; règle de pertinence D4 amendée et protocole mis à jour (PR #62).
+- Tag `jeu-questions-v1`, posé avec l'accord de Mahé ; audit publié en commentaire de la PR #54 ; dossier du Weekly 4.
+
+**Mesures exécutées.**
+- Contrôles du jeu sur les cinq découpages, accord calculé sur l'annotation d'avant l'arbitrage de Q062.
+- Règle de pertinence vérifiée par trois implémentations sur 470 couples découpage et extrait.
+
+**Résultats retenus.**
+- Accord sur le type 20 fois sur 21 (kappa 0,88) ; mêmes passages pertinents 7 fois sur 15.
+- Avec la règle initiale, deux réponses en liste (Q046, Q052) n'avaient aucun passage pertinent possible dans les petits découpages.
+
+**Ce qui a été écarté, et pourquoi.**
+- La lecture des résultats de la PR #63 sur le lot de test : le protocole devait rester indépendant de ces chiffres.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le gel du jeu par Mahé BEGNIS ; la règle amendée au Weekly 4.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Le dossier temporaire de l'assistant a été vidé : environnement d'exécution à reconstruire depuis le fichier figé.
+
+### Session 15, 7 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Préparation et suivi du Weekly 4 (#10).
+
+**Produit.**
+- Synthèse des sept décisions à prendre, avec leurs options et une recommandation ; message de répartition des tâches pour l'équipe.
+
+**Résultats retenus.**
+- Les sept recommandations ont été validées par l'équipe ; échéance du volet A fixée au 18 octobre.
+
+**Ce que l'équipe a validé, et par qui.**
+- Les décisions, par l'équipe réunie au Weekly 4.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+### Session 16, 10 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt, application des décisions du Weekly 4, préparation de la mesure du notebook 03 (#46).
+
+**Produit.**
+- Décisions du Weekly 4 publiées sur #10 ; protection de `dev` et `main` (une approbation requise) ; quatre branches fusionnées supprimées.
+- `scripts/evaluation/cdtn_seuil.py` : seuil d'abstention tiré du CDTN ; protocole figé ; empreintes et verrou dans le notebook ; générateur des tableaux du rapport (PR #62).
+- Audit statistique du protocole par simulation, test de non-infériorité de Tango corrigé de l'effet de plan (`03_audit_statistique.md`) ; jeu complémentaire du CDTN et sa règle figée (`04_cdtn.md`, #56) ; proposition de protocole pour l'encodeur ajusté (`05_protocole_ajustement.md`, #49) (PR #62).
+- Moteur de recherche du site, avec tests et parité (PR #67, #48) ; fiches d'outils Transformers.js, ONNX Runtime et `uv` (PR #68, #25).
+
+**Mesures exécutées.**
+- Seuil calculé avant la mesure (0,8560, sur 479 variantes du CDTN), recalculé de façon indépendante ; fidélité des vecteurs du navigateur au fp32.
+- Verrou testé : mesure refusée si le jeu, le protocole ou le seuil est modifié d'un octet.
+- Simulation de 10 000 tirages par scénario sur la structure du lot de test (73 questions, 61 fiches), sans aucune donnée de mesure.
+- Parité du moteur du site sur les 24 requêtes du contrôle, en Node puis dans le navigateur.
+
+**Résultats retenus.**
+- Aucun calcul sur le lot de test : la mesure attend la relecture de la PR #62.
+- La règle figée du critère du J2 conclut à tort dans 3,0 à 5,2 % des cas à la marge, au lieu de 2,5 % ; le score de Tango corrigé tient 1,9 à 2,5 %. Amendement proposé, à décider avant la mesure.
+- CDTN : 155 requêtes et 607 formulations appariées ; moteur du site identique à la page de contrôle sur 24 requêtes sur 24.
+
+**Ce que l'équipe a validé, et par qui.**
+- Relecture de la PR #62 demandée à Remy RAYANE.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Données du CDTN sans licence : lues au commit figé dans `data/`, jamais versionnées.
+
+### Session 17, 11 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Reporter les charges de #27, #29 et #44 et préparer la relecture CDTN de Jibril.
+
+**Produit.**
+- Lignes de suivi : #27, 8 h estimées et 10 h réelles, du 26 au 28 septembre ; #29, 3 h estimées et 1 h 30 réelle, le 30 septembre. Données déclarées par Vaneck et transmises par Jibril ; soutien de Jibril sur #27.
+- #44 : 18 h cumulées pour Jibril, Maïmouna et Vaneck, sans répartition individuelle. Dates du 03/10 au 07/10 et mention « non estimée » reprises le 13/10 selon la demande de Jibril et la revue de Mahé.
+- Extraction locale hors du dépôt de 52 requêtes et 232 formulations CDTN attribuées à JIBZZOU. Aucun texte CDTN ajouté au dépôt.
+- Note initialement consignée le 11/10 dans un fichier séparé, transférée ici le 13/10 à la demande de Mahé.
+
+**Mesures exécutées.**
+- Tickets et références relus ; écarts vérifiés : +2 h pour #27 et -1,5 h pour #29.
+- Source CDTN au commit figé et empreinte SHA-256 vérifiés ; sélection depuis les identifiants de la PR #62.
+- Aucun modèle exécuté, aucune mesure sur le lot de test, aucun verdict CDTN produit par cette extraction.
+
+**Résultats retenus.**
+- Charges déclarées conservées, sans estimation initiale reconstruite.
+- Dépassement de #27 attribué par Vaneck au mauvais découpage du corpus source (#35, PR #39).
+
+**Ce qui a été écarté, et pourquoi.**
+- Publication de textes CDTN : données sans licence, fiche destinée à un échange privé.
+- Modification du jeu figé : le tag `jeu-questions-v1` reste la référence ; la discussion rapportée par Jibril sur la PR #65 ne vaut pas approbation GitHub d'un autre membre.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #69 relue et approuvée par Vaneck le 11/10 ; Mahé a demandé les corrections de dates, de mention et de journal. Jibril a demandé leur application et la fusion le 13/10.
+- Relecture CDTN annoncée complète et exploitable dans le message de Mahé transmis par Jibril le 13/10. Jibril confirme ensuite, le même jour, avoir envoyé la fiche en privé à Mahé par Discord le dimanche 11/10 et supprimé le commentaire public de #56. Suppression vérifiée dans la liste des commentaires ; envoi privé déclaré par Jibril, sans lecture de Discord.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps reconstruit.
+
+**Difficultés rencontrées.**
+- Note séparée absente du PDF du journal : intégration en session selon le modèle de la section 5.
+- Estimations initiales manquantes : conserver « non estimée » pour les travaux déjà commencés.
+
+### Session 18, 13 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Terminer la PR #38 après ses revues et inscrire une estimation provisoire de #53.
+
+**Produit.**
+- Inventaire de 46 issues, séparé des dates et charges de travail ; jalons et réunions actualisés dans `docs/suivi/SUIVI.md`.
+- Estimation de planification de #53 : 16 h cumulées pour Vaneck et Jibril, à la demande de Jibril, explicitement provisoire et à réviser.
+- Conservation des charges déclarées de #25, #27, #29, #44, #45 et #47, et des estimations documentées de #31 et #51.
+
+**Mesures exécutées.**
+- Lecture des issues et de leurs commentaires, comparaison des références de dev et de la PR #38, contrôle des lignes et calcul des écarts connus.
+- Vérification de l'absence du commentaire public contenant la fiche CDTN sur #56. Envoi privé le 11/10 déclaré par Jibril, sans lecture de Discord.
+- Aucun moteur, modèle ou lot d'évaluation exécuté.
+
+**Résultats retenus.**
+- Les réunions du 19/09 et du 23/09 restent distinctes ; participants non documentés laissés NR.
+- Dates GitHub converties à l'heure de Paris ; elles ne remplacent pas les dates de travail.
+- Charges historiques absentes laissées NR ; une issue fermée ne prouve ni validation du dernier livrable ni statut Done du board.
+
+**Ce qui a été écarté, et pourquoi.**
+- Reconstitution des charges ou des comptes rendus manquants.
+- Publication de textes CDTN et modification du jeu ou du protocole.
+- Modification implicite des échéances : les contradictions sont signalées aux responsables.
+
+**Ce que l'équipe a validé, et par qui.**
+- Jibril a demandé de terminer #38 et autorisé une estimation plausible, révisable, pour #53.
+- Les revues antérieures de Mahé sont prises en compte. Relecture indépendante du dernier diff attendue avant fusion.
+- La session 17 reste portée par la PR #69 ; le numéro 18 évite de remplacer cette entrée encore en attente d'intégration.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps déduit de la durée de l'échange.
+
+**Difficultés rencontrées.**
+- Le PDF du journal ne peut pas encore être régénéré dans cet environnement : la chaîne du dépôt exige le support LaTeX français et des polices absents. Aucun PDF incomplet publié.
+- Le statut du Project Board n'est pas consulté ; les états d'issues sont explicitement distingués.
+- Les corps de certains tickets gardent des dates historiques malgré des plannings récents différents.
+
+### Session 19, 13 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Résoudre le blocage de compilation du PDF du journal pour les PR #69 et #38.
+
+**Produit.**
+- Environnement LaTeX local complété : Babel français, règles de césure françaises, polices Libertinus, Inter, Fira Mono et Font Awesome 5.
+- Format XeLaTeX local reconstruit avec la césure française ; chaîne `docs/latex` du dépôt inchangée.
+- Journal de #69 synchronisé avec dev : sessions 14 à 16 préservées, session 17 ajoutée. La session 18 est portée par #38.
+- PDFs du journal régénérés avec les entrées propres à chaque branche.
+
+**Mesures exécutées.**
+- Archives locales contrôlées avant extraction ; contrôles de compilation : erreurs, débordements, caractères manquants et règles de césure.
+- Relecture du rendu des pages et contrôle de présence des entrées ajoutées dans le PDF.
+- Aucun calcul de modèle ou résultat d'évaluation.
+
+**Résultats retenus.**
+- Le défaut provenait des dépendances de l'environnement ; les polices et la mise en page du dépôt sont conservées.
+- La césure française supprime le débordement observé après la première compilation.
+
+**Ce qui a été écarté, et pourquoi.**
+- Archives de paquets volumineux téléchargées incomplètement, rejetées au contrôle d'intégrité ; composants ciblés récupérés depuis CTAN.
+- Remplacement des polices ou modification du préambule pour contourner les dépendances.
+
+**Ce que l'équipe a validé, et par qui.**
+- Jibril a demandé la résolution du blocage. La fusion de #69 était déjà autorisée ; #38 attend la relecture indépendante de sa nouvelle version.
+
+**Temps d'appropriation constaté.**
+- Non relevé ; aucun temps reconstruit.
+
+**Difficultés rencontrées.**
+- Installation système empêchée par les permissions ; installation dans un TEXMF local.
+- Format XeLaTeX initial sans césure française : reconstruction locale nécessaire, en plus du module de langue.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -286,6 +526,13 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
 | 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
 | 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage | fichier de sortie vide alors que le processus était terminé | écriture directe vers un fichier, tampon vidé explicitement |
+| 04/10 | Test de McNemar pour questions groupées attribué à Durkalski (2003), alors que la formule employée est celle d'Obuchowski (1998) | lecture du code source d'une implémentation publiée | attribution et formule corrigées avant publication |
+| 04/10 | Appariement du CDTN à nos passages : 189 requêtes le matin, 175 l'après-midi, selon la règle employée | recalcul indépendant | règle d'appariement à écrire et figer avant la mesure (#56) |
+| 06/10 | Aperçu des résultats de l'encodeur calculé sur le jeu de test avant l'écriture du protocole, puis un commentaire affirmant qu'aucune mesure n'avait été faite | relecture de la méthode, puis du commentaire avant envoi | aperçu ni utilisé ni diffusé aux annotateurs, phrase corrigée avant envoi, protocole à écrire avant toute mesure |
+| 06/10 | Règle de pertinence proposée qui excluait par construction les réponses en liste des petits découpages | audit du jeu final contre les cinq découpages | seconde condition ajoutée avant la validation du protocole, d'après les seules annotations |
+| 10/10 | Nombre de fiches visées par le seuil du CDTN annoncé à 61 au lieu de 50, compté sur toutes les requêtes appariées | recomptage avant le commit | corrigé avant le gel du protocole |
+| 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
+| 10/10 | Chiffres de l'audit statistique tirés d'un essai préliminaire, à une autre graine, et non du script versionné | réexécution du script avant le commit | chiffres alignés sur la sortie reproductible |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
@@ -324,3 +571,4 @@ Trois sections du rapport final s'appuieront directement sur ce document.
 - **Analyse technique.** Les mesures consignées ici fournissent les chiffres de coût, de latence et de qualité demandés.
 - **Retour d'expérience.** La section 4 documente les difficultés réelles et leur résolution, que le sujet demande de traiter de façon factuelle.
 - **Cinq outils novateurs.** Les temps d'appropriation, les échecs et les comparaisons entre outils consignés au fil de l'eau constituent la matière de cette section, qui vaut jusqu'à trois points et dont la grille valorise au moins une critique argumentée.
+

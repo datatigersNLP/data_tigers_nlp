@@ -1,0 +1,42 @@
+{
+  "format": "index-e5-v1",
+  "modele": {
+    "emplacement": "site",
+    "depot": "multilingual-e5-small-q8-elague-4499d46b",
+    "revision": null,
+    "dtype": "q8",
+    "fichier": "onnx/model_quantized.onnx",
+    "sha256": "4499d46b6ffc94746da7e91782977ec49699a035ffd4fba5d33393f86e4480d9",
+    "origine": {
+      "depot": "Xenova/multilingual-e5-small",
+      "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "transformation": "élagage sans perte du vocabulaire (#50, scripts/allegement/elaguer_vocabulaire.py)"
+    }
+  },
+  "requete": {
+    "prefixe": "query: ",
+    "pooling": "mean",
+    "normalize": true
+  },
+  "index": {
+    "fichier": "index_m2.f32",
+    "type": "float32",
+    "ordre_octets": "little-endian",
+    "disposition": "ligne par ligne",
+    "nb_vecteurs": 4240,
+    "dimension": 384,
+    "sha256": "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
+    "moteur": "PyTorch fp32 (intfloat/multilingual-e5-small)"
+  },
+  "metadonnees": {
+    "fichier": "passages_m2.json",
+    "nb_passages": 4240,
+    "sha256": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d"
+  },
+  "source": {
+    "decoupage": "m2",
+    "empreinte_contenu_notebook_01": "c41868ec369fb5f810119bfa996b5a1b22643d00452cde151901e3f26cf432b0"
+  },
+  "produit_le": "2026-09-30T16:15:07+00:00"
+}

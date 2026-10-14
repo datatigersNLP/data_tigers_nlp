@@ -26,7 +26,7 @@ import math
 from typing import List, Dict, Set, Union, Any, Tuple, Optional, Sequence
 
 import numpy as np
-from scipy import stats
+from scipy import optimize, stats
 
 # collections lues comme plusieurs identifiants pertinents ; tout autre objet est un identifiant
 COLLECTIONS = (set, frozenset, list, tuple, np.ndarray)
@@ -155,25 +155,45 @@ def _clustered_se(residuals: np.ndarray, groups: Sequence[Any]) -> Tuple[float, 
     return math.sqrt(n_groups / (n_groups - 1) * np.sum(sums ** 2)) / len(residuals), n_groups
 
 
+def _wilson(p: float, n: float, z: float) -> Tuple[float, float]:
+    """Intervalle de Wilson d'une proportion p observée sur un effectif n, éventuellement non entier."""
+    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
+    demi = z / (1 + z * z / n) * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return float(max(0.0, centre - demi)), float(min(1.0, centre + demi))
+
+
 def proportion_ci(
     successes: Sequence[Union[bool, float]],
     groups: Optional[Sequence[Any]] = None,
-    level: float = 0.95
+    level: float = 0.95,
+    method: str = "wald"
 ) -> Tuple[float, float]:
     """
     Intervalle de confiance d'une proportion de succès (par exemple Recall@5 : un succès par question).
 
     Sans groupes : intervalle de Wilson, qui suppose les questions indépendantes. Avec groups (une étiquette par
-    question : fiche, article, contexte) : intervalle de Wald à erreur type robuste aux groupes, car des questions
-    d'un même groupe se ressemblent et l'intervalle de Wilson serait alors trop étroit.
+    question : fiche, article, contexte), des questions d'un même groupe se ressemblent, et l'intervalle de Wilson
+    serait trop étroit :
+    - method="wald" : intervalle de Wald à erreur type robuste aux groupes (celui de la validation sur PIAF) ;
+      il peut sortir de [0, 1] quand la proportion est proche d'une borne ou l'effectif petit ;
+    - method="wilson" : intervalle de Wilson calculé sur l'effectif corrigé de l'effet de plan,
+      n / (variance robuste aux groupes / variance sans groupes), la variance sans groupes valant p(1 - p) / (n - 1).
+      Il reste dans [0, 1], et se réduit exactement au Wilson classique quand chaque groupe compte une question.
+      Quand p vaut 0 ou 1, l'effet de plan n'est pas défini : on prend le Wilson classique.
     """
     s = np.asarray(successes, dtype=float)
-    if groups is None:
-        ci = stats.binomtest(int(s.sum()), len(s)).proportion_ci(confidence_level=level, method="wilson")
-        return float(ci.low), float(ci.high)
-    se, _ = _clustered_se(s - s.mean(), groups)
+    n, p = len(s), float(s.mean())
     z = stats.norm.ppf(0.5 + level / 2)
-    return float(s.mean() - z * se), float(s.mean() + z * se)
+    if groups is None or (method == "wilson" and p in (0.0, 1.0)):
+        ci = stats.binomtest(int(s.sum()), n).proportion_ci(confidence_level=level, method="wilson")
+        return float(ci.low), float(ci.high)
+    se, _ = _clustered_se(s - p, groups)
+    if method == "wald":
+        return float(p - z * se), float(p + z * se)
+    if method == "wilson":
+        effet_de_plan = se ** 2 / (p * (1 - p) / (n - 1))
+        return _wilson(p, n / effet_de_plan, z)
+    raise ValueError(f"Méthode inconnue : {method}")
 
 
 def compute_mcnemar_test(
@@ -204,14 +224,50 @@ def compute_mcnemar_test(
         raise ValueError("Il faut une étiquette de groupe par question.")
 
     # 1 si succès à Recall@k, 0 sinon
-    success_a = np.array([recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_a, ground_truth)])
-    success_b = np.array([recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_b, ground_truth)])
+    success_a = [recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_a, ground_truth)]
+    success_b = [recall_at_k(p, gt, k) == 1.0 for p, gt in zip(preds_b, ground_truth)]
+    return {"k": k, **paired_success_test(success_a, success_b, groups=groups, level=level)}
+
+
+def _agresti_min(n_10: int, n_01: int, n_total: int, z: float) -> Tuple[float, float]:
+    """
+    Intervalle d'Agresti et Min (Statistics in Medicine, 2005) pour l'écart de deux proportions appariées : une
+    demi-observation est ajoutée à chacune des quatre cases, puis l'intervalle de Wald est calculé sur ces effectifs.
+    Il ne dégénère pas quand les paires discordantes sont rares ou absentes, contrairement au Wald ; il suppose les
+    questions indépendantes.
+    """
+    m = n_total + 2
+    p10, p01 = (n_10 + 0.5) / m, (n_01 + 0.5) / m
+    d = p10 - p01
+    se = math.sqrt(max(0.0, (p10 + p01) - d * d) / m)
+    return float(d - z * se), float(d + z * se)
+
+
+def paired_success_test(
+    success_a: Sequence[bool],
+    success_b: Sequence[bool],
+    groups: Optional[Sequence[Any]] = None,
+    level: float = 0.95
+) -> Dict[str, Any]:
+    """
+    Cœur du test apparié de compute_mcnemar_test, à partir des succès question par question de deux systèmes.
+
+    Sert quand les deux systèmes n'ont pas la même vérité terrain, par exemple deux découpages dont les passages
+    pertinents diffèrent : chaque succès est alors calculé avec la vérité terrain de son propre système. Mêmes
+    sorties que compute_mcnemar_test, sans la clé "k".
+    """
+    if len(success_a) != len(success_b):
+        raise ValueError("Les deux vecteurs de succès doivent avoir la même longueur.")
+    if groups is not None and len(groups) != len(success_a):
+        raise ValueError("Il faut une étiquette de groupe par question.")
+    success_a = np.asarray(success_a, dtype=bool)
+    success_b = np.asarray(success_b, dtype=bool)
 
     n_00 = int(np.sum(~success_a & ~success_b))  # Échec A, Échec B
     n_01 = int(np.sum(~success_a & success_b))   # Échec A, Succès B
     n_10 = int(np.sum(success_a & ~success_b))   # Succès A, Échec B
     n_11 = int(np.sum(success_a & success_b))    # Succès A, Succès B
-    n_total = len(ground_truth)
+    n_total = len(success_a)
 
     discordant = n_01 + n_10
     if discordant == 0:
@@ -231,7 +287,6 @@ def compute_mcnemar_test(
     z = stats.norm.ppf(0.5 + level / 2)
 
     result = {
-        "k": k,
         "n_total": n_total,
         "contingency_table": {
             "n_00": n_00,  # Deux échecs
@@ -244,6 +299,7 @@ def compute_mcnemar_test(
         "p_value": p_value,
         "difference": difference,
         "ci_difference": (float(difference - z * se), float(difference + z * se)),
+        "ci_difference_agresti_min": _agresti_min(n_10, n_01, n_total, z),
     }
     decision_p = p_value
     if groups is not None:
@@ -255,6 +311,115 @@ def compute_mcnemar_test(
         result.update({"n_groups": n_groups, "chi2_obuchowski": chi2_groups, "p_value_groups": decision_p})
     result["significant_5pct"] = bool(decision_p < 0.05)
     return result
+
+
+def _tango_p01(n_10: int, n_01: int, n_total: int, d0: float) -> float:
+    """
+    Estimateur du maximum de vraisemblance de p01 (B seul réussit) sous la contrainte p10 - p01 = d0 (Tango, 1998) :
+    racine positive de 2n q² + (-(n10 + n01) + (2n - n10 + n01) d0) q - n01 d0 (1 - d0) = 0, ramenée dans le domaine
+    où les quatre probabilités restent positives.
+    """
+    a = 2.0 * n_total
+    b = -(n_10 + n_01) + (2.0 * n_total - n_10 + n_01) * d0
+    c = -n_01 * d0 * (1.0 - d0)
+    q = (-b + math.sqrt(max(0.0, b * b - 4.0 * a * c))) / (2.0 * a)
+    return min(max(q, max(0.0, -d0)), (1.0 - d0) / 2.0)
+
+
+def noninferiority_tango(
+    success_a: Sequence[bool],
+    success_b: Sequence[bool],
+    margin: float,
+    groups: Optional[Sequence[Any]] = None,
+    level: float = 0.95
+) -> Dict[str, Any]:
+    """
+    Test de non-infériorité de A face à B (écart de proportions appariées p_A - p_B), par le score de Tango
+    (Statistics in Medicine, 1998), corrigé de l'effet de plan quand les questions sont groupées.
+
+    H0 : p_A - p_B <= -margin. La statistique est Z(d0) = (d - d0) / racine(V(d0) / n), où d est l'écart observé et
+    V(d0) = 2 p01~ + d0 - d0² la variance de l'écart sous la contrainte p10 - p01 = d0, p01~ étant l'estimateur
+    contraint. La variance est donc calculée à la marge, et non à l'écart observé comme le Wald, qui sous-estime
+    l'incertitude sur un petit effectif. Avec groups, Z est divisé par la racine de l'effet de plan, rapport des
+    variances robuste aux groupes et sans groupes de l'écart (au moins 1), comme le Wilson à effectif corrigé de
+    proportion_ci. A est déclaré non inférieur si Z(-margin) dépasse le quantile bilatéral de level, soit un
+    risque unilatéral de (1 - level) / 2. L'intervalle est celui du score : les d0 que le test ne rejette pas ;
+    la décision équivaut à une borne basse supérieure à -margin.
+    """
+    a = np.asarray(success_a, dtype=bool)
+    b = np.asarray(success_b, dtype=bool)
+    if len(a) != len(b):
+        raise ValueError("Les deux vecteurs de succès doivent avoir la même longueur.")
+    n = len(a)
+    n_10, n_01 = int(np.sum(a & ~b)), int(np.sum(~a & b))
+    d = (n_10 - n_01) / n
+    effet_de_plan = 1.0
+    if groups is not None:
+        diff = a.astype(float) - b.astype(float)
+        se_groupes, _ = _clustered_se(diff - d, groups)
+        variance_sans = float(np.var(diff, ddof=1)) / n if n > 1 else 0.0
+        if variance_sans > 0:
+            effet_de_plan = max(1.0, se_groupes ** 2 / variance_sans)
+    z_crit = float(stats.norm.ppf(0.5 + level / 2))
+
+    def score(d0: float) -> float:
+        q = _tango_p01(n_10, n_01, n, d0)
+        variance = max(2.0 * q + d0 - d0 * d0, 1e-15) / n
+        return (d - d0) / math.sqrt(variance * effet_de_plan)
+
+    z = score(-margin)
+    eps = 1e-9
+    bas = -1.0 + eps if score(-1.0 + eps) <= z_crit else optimize.brentq(lambda x: score(x) - z_crit, -1.0 + eps, d)
+    haut = 1.0 - eps if score(1.0 - eps) >= -z_crit else optimize.brentq(lambda x: score(x) + z_crit, d, 1.0 - eps)
+    return {
+        "n_total": n, "n_10_A_only": n_10, "n_01_B_only": n_01, "difference": d,
+        "margin": margin, "design_effect": effet_de_plan, "z": float(z),
+        "p_value_one_sided": float(stats.norm.sf(z)), "ci_score": (float(bas), float(haut)),
+        "noninferior": bool(z > z_crit),
+    }
+
+
+def holm(p_values: Sequence[float]) -> List[float]:
+    """
+    Valeurs p ajustées par la méthode de Holm (1979), dans l'ordre des entrées.
+
+    Triées par ordre croissant, la i-ième (à partir de 0) est multipliée par m - i, puis on impose la monotonie par
+    un maximum cumulé, et l'on plafonne à 1. Une hypothèse est rejetée au seuil alpha si sa valeur ajustée est
+    inférieure à alpha ; le risque de rejeter à tort au moins une hypothèse de la famille reste alors sous alpha.
+    """
+    m = len(p_values)
+    order = sorted(range(m), key=lambda i: p_values[i])
+    adjusted, running = [0.0] * m, 0.0
+    for rank, i in enumerate(order):
+        running = max(running, min(1.0, (m - rank) * p_values[i]))
+        adjusted[i] = running
+    return adjusted
+
+
+def random_expectations(
+    n_relevant: int,
+    n_docs: int,
+    k_values: Tuple[int, ...] = (1, 3, 5, 10),
+    depth: int = 10
+) -> Dict[str, float]:
+    """
+    Espérance exacte de Recall@k et du MRR@depth pour un classement tiré uniformément au hasard, quand une question
+    a n_relevant passages pertinents parmi n_docs (loi hypergéométrique).
+
+    Avec q_j la probabilité qu'aucun pertinent ne figure dans les j - 1 premiers rangs,
+    q_j = produit pour t de 0 à j - 2 de (N - r - t) / (N - t), le premier pertinent est au rang j avec la
+    probabilité q_j * r / (N - j + 1). Recall@k vaut 1 - q_(k+1), et MRR@depth la somme, pour j de 1 à depth, de
+    q_j * r / (N - j + 1) / j.
+    """
+    if not 1 <= n_relevant <= n_docs:
+        raise ValueError("Il faut au moins un passage pertinent, et pas plus que de passages.")
+    r, n = n_relevant, n_docs
+    no_hit = [1.0]   # no_hit[j - 1] = q_j
+    for t in range(max(max(k_values), depth) + 1):
+        no_hit.append(no_hit[-1] * max(0.0, (n - r - t) / (n - t)) if n - t > 0 else 0.0)
+    out = {f"recall@{k}": 1.0 - no_hit[k] for k in k_values}
+    out["mrr"] = sum(no_hit[j - 1] * r / (n - j + 1) / j for j in range(1, depth + 1) if n - j + 1 > 0)
+    return out
 
 
 def sanity_check_manual_examples() -> bool:
@@ -350,6 +515,53 @@ def sanity_check_manual_examples() -> bool:
     assert np.isclose(mcn["chi2_obuchowski"], 4.0 / 9.0)
     se = math.sqrt(7.0) / 6.0
     assert np.allclose(mcn["ci_difference"], (1.0 / 3.0 - 1.959964 * se, 1.0 / 3.0 + 1.959964 * se))
+
+    # Exemple 10 : le test sur vecteurs de succès redonne exactement compute_mcnemar_test
+    direct = paired_success_test([1, 1, 1, 0, 1, 0], [0, 0, 1, 1, 0, 0], groups=["g1", "g1", "g2", "g2", "g3", "g3"])
+    assert {"k": 1, **direct} == mcn
+
+    # Exemple 11 : Holm sur (0,01 ; 0,04 ; 0,03) : triées 0,01 x 3, 0,03 x 2, 0,04 x 1, puis maximum cumulé
+    assert np.allclose(holm([0.01, 0.04, 0.03]), [0.03, 0.06, 0.06])
+
+    # Exemple 12 : tirage aléatoire, 4 passages
+    one = random_expectations(1, 4, k_values=(1, 2))      # un pertinent : k / N, et MRR = (1 + 1/2 + 1/3 + 1/4) / 4
+    assert np.allclose([one["recall@1"], one["recall@2"], one["mrr"]], [0.25, 0.5, 25 / 48])
+    two = random_expectations(2, 4, k_values=(1, 2))      # deux pertinents : 1/2, 1 - C(2,2)/C(4,2) = 5/6, MRR = 13/18
+    assert np.allclose([two["recall@1"], two["recall@2"], two["mrr"]], [0.5, 5 / 6, 13 / 18])
+    assert np.isclose(random_expectations(1, 761)["recall@5"], 5 / 761)   # valeur de PIAF
+
+    # Exemple 13 : Wilson à effectif corrigé ; un groupe par question redonne le Wilson classique
+    succes = [1] * 81 + [0] * 182
+    assert np.allclose(proportion_ci(succes, groups=list(range(263)), method="wilson"), proportion_ci(succes))
+    # six questions en trois groupes, succès 1 1 0 0 1 0 : p = 1/2, variance robuste 3/2 * 2 / 36 = 1/12,
+    # variance sans groupes 0,25 / 5 = 1/20, effet de plan 5/3, effectif 3,6 ; Wilson(1/2 ; 3,6) = [0,1408 ; 0,8592]
+    bas, haut = proportion_ci([1, 1, 0, 0, 1, 0], groups=["g1", "g1", "g2", "g2", "g3", "g3"], method="wilson")
+    assert (round(bas, 4), round(haut, 4)) == (0.1408, 0.8592)
+    assert proportion_ci([1, 1, 1], groups=["a", "b", "c"], method="wilson") == proportion_ci([1, 1, 1])
+
+    # Exemple 14 : Agresti et Min ; A seul 1, B seul 0, sur 5 questions : effectifs 7, (1,5 - 0,5) / 7 = 1/7,
+    # variance (2/7 - 1/49) / 7, intervalle [-0,2387 ; 0,5244] ; sans aucune discordance, il ne dégénère pas
+    t = paired_success_test([1, 0, 1, 0, 0], [0, 0, 1, 0, 0])
+    assert tuple(round(x, 4) for x in t["ci_difference_agresti_min"]) == (-0.2387, 0.5244)
+    assert t["ci_difference"] != t["ci_difference_agresti_min"]
+    nul = paired_success_test([1, 0, 1, 0, 0], [1, 0, 1, 0, 0])
+    assert nul["ci_difference"] == (0.0, 0.0) and nul["ci_difference_agresti_min"][0] < 0 < nul["ci_difference_agresti_min"][1]
+
+    # Exemple 15 : score de Tango. À d0 = 0, l'estimateur contraint vaut (b + c) / 2n et le score se réduit à la
+    # statistique de McNemar (b - c) / racine(b + c) : b = 5, c = 3 donne 2 / racine(8) = 0,7071
+    assert abs(_tango_p01(5, 3, 73, 0.0) - 8 / 146) < 1e-12
+    a = [1] * 5 + [0] * 3 + [1] * 60 + [0] * 5
+    b = [0] * 5 + [1] * 3 + [1] * 60 + [0] * 5
+    r = noninferiority_tango(a, b, margin=0.0)
+    assert abs(r["z"] - 2 / math.sqrt(8)) < 1e-12 and r["design_effect"] == 1.0
+    # la décision équivaut à une borne basse du score supérieure à -marge, et l'intervalle contient l'écart observé
+    for m in (0.05, 0.15):
+        r = noninferiority_tango(a, b, margin=m)
+        assert r["noninferior"] == (r["ci_score"][0] > -m) and r["ci_score"][0] < r["difference"] < r["ci_score"][1]
+    # sans aucune discordance, A et B identiques sont déclarés non inférieurs à 15 points
+    assert noninferiority_tango([1, 0] * 40, [1, 0] * 40, margin=0.15)["noninferior"]
+    # avec des groupes d'une question, l'effet de plan vaut 1, à l'arrondi près
+    assert abs(noninferiority_tango(a, b, 0.15, groups=list(range(73)))["design_effect"] - 1.0) < 1e-9
 
     return True
 

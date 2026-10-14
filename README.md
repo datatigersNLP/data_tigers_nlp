@@ -21,7 +21,7 @@ A3 constitue la couche de récupération de B1 : corpus, découpage, encodage et
 docs/
   jalons/    rapports de jalon, en Markdown et en PDF
   journal/   journal d'usage de l'IA
-  suivi/     classeur de suivi des tâches et des charges
+  suivi/     classeur de suivi des tâches et des charges, suivi des outils novateurs
   etudes/    audit du sujet et étude comparative des cas d'usage
   latex/     chaîne de conversion Markdown vers PDF
 ```
