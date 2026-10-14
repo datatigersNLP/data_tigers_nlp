@@ -151,8 +151,13 @@ def main():
         config = json.loads((source / "config.json").read_text(encoding="utf-8"))
         config["vocab_size"] = len(gardes)
         (sortie / "config.json").write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        # recopiés tels quels s'ils existent : un modèle sauvegardé par sentence-transformers n'a pas toujours
+        # special_tokens_map.json, et Transformers.js n'en a pas besoin
+        if not (source / "tokenizer_config.json").exists():
+            raise ValueError("tokenizer_config.json manquant dans le modèle source")
         for f in ("tokenizer_config.json", "special_tokens_map.json"):
-            shutil.copyfile(source / f, sortie / f)
+            if (source / f).exists():
+                shutil.copyfile(source / f, sortie / f)
         (sortie / "LICENSE").write_text(LICENCE_MIT, encoding="utf-8")
 
         empreinte = sha256(sortie / "onnx/model_quantized.onnx")
