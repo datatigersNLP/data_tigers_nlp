@@ -1,6 +1,6 @@
 # Allègement du modèle servi (#50)
 
-Le q8 de `multilingual-e5-small` pèse 112,9 Mio, au-delà de la limite de 100 Mio par fichier de GitHub : il ne pouvait être servi que depuis le Hub de Hugging Face. 81 % de son poids est la table des mots, qui couvre une centaine de langues. Ce dossier en retire, sans perte pour le français, les pièces des autres alphabets, pour que le site serve lui-même un modèle de 65,7 Mio.
+Le q8 de `multilingual-e5-small` pèse 112,8 Mio, au-delà de la limite de 100 Mio par fichier de GitHub : il ne pouvait être servi que depuis le Hub de Hugging Face. 81 % de son poids est la table des mots, qui couvre une centaine de langues. Ce dossier en retire, sans perte pour le français, les pièces des autres alphabets, pour que le site serve lui-même un modèle de 65,7 Mio.
 
 ## Fichiers
 

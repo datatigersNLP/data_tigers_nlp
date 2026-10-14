@@ -21,7 +21,7 @@
 
 1. Ajouter Transformers.js à la version figée du site : `npm install @huggingface/transformers@4.3.0 --save-exact`, dans `front/`.
 2. Les trois fichiers de l'index sont versionnés dans `front/public/index/` (12,3 Mio ; option A, validée le 11 octobre 2026). Ne pas les régénérer : voir `front/public/index/SOURCES.md`.
-3. Le modèle, élagué sans perte (65,7 Mio au lieu de 112,9 ; #50), est versionné dans `front/public/modele/`, dans un dossier nommé d'après son empreinte : voir `front/public/modele/SOURCES.md`.
+3. Le modèle, élagué sans perte (65,7 Mio au lieu de 112,8 ; #50), est versionné dans `front/public/modele/`, dans un dossier nommé d'après son empreinte : voir `front/public/modele/SOURCES.md`.
 4. Dans le composant :
 
 ```

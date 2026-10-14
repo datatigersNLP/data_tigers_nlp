@@ -1,7 +1,7 @@
 """
 Élagage sans perte du vocabulaire du modèle servi (#50).
 
-Le q8 de multilingual-e5-small pèse 112,9 Mio, dont 81 % pour la table des mots (250 037 lignes de 384 octets), au-delà
+Le q8 de multilingual-e5-small pèse 112,8 Mio, dont 81 % pour la table des mots (250 037 lignes de 384 octets), au-delà
 de la limite de 100 Mio par fichier de GitHub. Le script retire du tokeniseur et de cette table les pièces qui
 contiennent une lettre d'un autre alphabet que le latin ou le grec, et recopie les lignes gardées telles quelles, sans
 les requantifier.
