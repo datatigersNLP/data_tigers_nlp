@@ -75,14 +75,26 @@ def rapport(r):
     a = r.get("abstention")
     if a:
         h, d = a["hors_rejetees"], a["dans_conservees"]
+
+        def part(x):
+            """Effectif, part et, s'il a été enregistré, intervalle de Wilson à 95 % (protocole, 8.2)."""
+            texte = f"{x[0]}/{x[1]} ({pct(x[0] / x[1]) if x[1] else '-'})"
+            return texte + (f", IC [{pct(x[2])} ; {pct(x[3])}]" if len(x) >= 4 else "")
+
         blocs.append("### Abstention\n\n" + tableau(
             ["AUC", "IC 95 %", "Seuil", "Origine", "Hors corpus rejetées", "Dans le corpus conservées"],
             [[nb(a["auc"]), f"[{nb(a['auc_ic'][0])} ; {nb(a['auc_ic'][1])}]", nb(a["seuil"], 4), a["origine_seuil"],
-              f"{h[0]}/{h[1]} ({pct(h[0] / h[1]) if h[1] else '-'})",
-              f"{d[0]}/{d[1]} ({pct(d[0] / d[1]) if d[1] else '-'})"]]))
+              part(h), part(d)]]))
     if r.get("sigles"):
         cles = list(r["sigles"][0])
-        blocs.append("### Sigles\n\n" + tableau(cles, [[s[k] for k in cles] for s in r["sigles"]]))
+
+        def rang(v):
+            """Rang du premier passage pertinent ; au-delà des 10 premiers résultats, la liste s'arrête."""
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                return "au-delà de 10" if math.isinf(v) else str(int(v))
+            return v
+
+        blocs.append("### Sigles\n\n" + tableau(cles, [[rang(s[k]) for k in cles] for s in r["sigles"]]))
     f = r.get("fidelite_q8")
     if f:
         blocs.append(f"Fidélité des vecteurs du navigateur au fp32 : cosinus minimal {nb(f['cosinus_min'], 4)}, "
