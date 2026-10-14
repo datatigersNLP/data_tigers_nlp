@@ -5,7 +5,7 @@
 **Ticket** Issue #56, analyse secondaire du notebook 03 (#46)  
 **Responsable principal** Mahé BEGNIS  
 **Relecture des requêtes** Jibril BENSALEM, Maïmouna SIGNATE, Vaneck DAGAR  
-**Statut** règle et plan figés le 10 octobre 2026, avant la mesure du notebook 03 ; relecture des requêtes à faire  
+**Statut** règle et plan figés le 10 octobre 2026, avant la mesure du notebook 03 ; licence corrigée le 14 octobre (section 2) ; relecture des requêtes à faire  
 
 ---
 
@@ -19,7 +19,9 @@ Le jeu de l'équipe (#44) tranche le critère du rapport J2 ; il compte 73 quest
 
 * **Dépôt** `SocialGouv/datafiller-data`, archivé, commit `6d16869` du 19 avril 2021 (hash complet dans le script), fichier `data/requests.json`.
 * **Contrôle** : SHA-256 `02ee32bfb6359bc5d061b769fd10e42a0b288d441381c725fddbd3a64d579a7c`, vérifié avant toute lecture.
-* **Licence** : aucune n'est déclarée. Les données sont lues dans `data/`, qui n'est pas versionné ; seuls le code, des identifiants et des verdicts le sont.
+* **Licence** : Apache-2.0. Le dépôt n'a pas de fichier de licence, mais son `package.json` la déclare, et le paquet npm `@socialgouv/datafiller-data` 2.20.0, publié sous cette licence, contient le même `data/requests.json`, à l'empreinte près. Elle autorise la redistribution, avec une copie de la licence et l'attribution au CDTN. La version du 10 octobre affirmait à tort qu'aucune licence n'était déclarée, faute d'avoir lu le `package.json`.
+* **Données personnelles** : les titres et variantes sont des requêtes réelles d'usagers. Un contrôle par motifs (adresses électroniques, numéros de téléphone, suites d'au moins 9 chiffres, civilités suivies d'un nom, adresses web) n'en trouve aucune dans les 5 433 textes.
+* **Stockage** : les données sont lues dans `data/`, qui n'est pas versionné ; seuls le code, des identifiants et des verdicts le sont.
 * **Contenu** : 298 requêtes, 5 135 variantes, 2 086 références classées, dont 652 vers des fiches du ministère du Travail.
 
 ---
@@ -54,7 +56,7 @@ Les 32 appariements par le début du titre ont été contrôlés un à un : ce s
 ## 5. Relecture humaine, avant l'analyse
 
 * **Répartition.** Les 155 requêtes sont réparties à tour de rôle : Jibril 52 (232 formulations), Maïmouna 52 (194), Vaneck 51 (181).
-* **Fiche de relecture.** `data/evaluation/cdtn/relecture_<identifiant GitHub>.csv`, générée par le script et transmise hors du dépôt, puisqu'elle contient les textes du CDTN. Elle donne pour chaque requête ses formulations, les sections de notre corpus appariées et leurs liens profonds.
+* **Fiche de relecture.** `data/evaluation/cdtn/relecture_<identifiant GitHub>.csv`, générée par le script et transmise hors du dépôt, comme tout fichier de `data/` ; partagée publiquement, elle devrait être accompagnée de la licence Apache-2.0 et de l'attribution au CDTN. Elle donne pour chaque requête ses formulations, les sections de notre corpus appariées et leurs liens profonds.
 * **Deux jugements.** Sur la première ligne de chaque requête, `verdict_requete` : `oui` si les sections citées répondent à la requête, `partiel` si elles n'y répondent qu'en partie, `non` sinon. Sur chaque ligne, `formulation_a_ecarter` : `oui` si la formulation ne correspond pas à la requête.
 * **Indépendance.** La règle de #56 interdisait de consulter le CDTN avant le tag du jeu de l'équipe, posé le 6 octobre ; la source n'a été téléchargée que le 10 octobre. La relecture se fait avant toute mesure sur ce jeu.
 * **Import.** `scripts/evaluation/cdtn_jeu.py importer` écrit `evaluation/cdtn/jugements.csv`, avec seulement des identifiants et des verdicts. Une remarque ne recopie jamais un texte du CDTN.
@@ -79,3 +81,10 @@ Les 32 appariements par le début du titre ont été contrôlés un à un : ce s
 * **Couverture partielle.** Seules 371 des 652 références vers des fiches du ministère visent une fiche de notre corpus par son identifiant exact ; 24 sections ont disparu depuis 2021.
 * **Mots-clés.** Les titres de requête sont surtout des mots-clés, qui peuvent avantager BM25 : d'où leur analyse à part.
 * **Pas de question hors corpus.** Ce jeu ne mesure pas l'abstention ; il sert seulement à fixer son seuil (protocole du notebook 03, section 8.2).
+
+---
+
+## 8. Historique
+
+* **10 octobre 2026.** Règle d'appariement et plan d'analyse figés, avant la mesure du notebook 03.
+* **14 octobre 2026.** Section 2 corrigée : la source est sous licence Apache-2.0, déclarée dans son `package.json` et confirmée par le paquet npm qui contient le même fichier ; aucune donnée personnelle détectée. La règle et le plan ne changent pas.
