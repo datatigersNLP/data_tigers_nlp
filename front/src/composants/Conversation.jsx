@@ -16,10 +16,14 @@ const EXEMPLES = [
   "Mon employeur peut-il refuser une rupture conventionnelle ?",
 ];
 const NB_RESULTATS = 5;
-// premier chargement : modèle q8 (113 Mio) et vocabulaire du tokeniseur (16 Mio) ; 52 à 56 s mesurés à la PR #71
-const POIDS_PREMIER_CHARGEMENT = "130 Mo";
+// premier chargement : modèle élagué servi par le site (65,7 Mio, #78), taille demandée par le compte rendu du Weekly,
+// et vocabulaire du tokeniseur (4,1 Mio). Mesuré le 14/10/2026 sur le site en ligne, profil vierge : prêt en 23 à 30 s
+// (le serveur compresse le modèle : 45,9 Mio transférés). Avant la #78 : 113 Mio depuis le Hub, 52 à 56 s
+const POIDS_MODELE = "65,7 Mio";
 
-const mo = (octets) => (octets / 2 ** 20).toLocaleString("fr-FR", { maximumFractionDigits: 0 });
+// tailles en Mio (2^20 octets), l'unité de l'équipe ; une décimale, pour que la progression reste lisible
+const mio = (octets) =>
+  (octets / 2 ** 20).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 // identifiants des chats et des échanges : uniques dans la session
 let compteur = 0;
 const nouvelId = () => ++compteur;
@@ -189,8 +193,8 @@ function BandeauEtat({ moteur }) {
     <div className="mb-2.5 rounded-[14px] bg-accent-clair px-3.5 py-2.5 text-sm text-accent-texte">
       <p>
         {pourcent === null
-          ? `Préparation de la recherche : premier téléchargement d'environ ${POIDS_PREMIER_CHARGEMENT}, comptez environ une minute.`
-          : `Téléchargement ${p.quoi} : ${mo(p.charge)} Mo sur ${mo(p.total)} Mo${restant ? ` · ${restant}` : ""}`}
+          ? `Préparation de la recherche : premier téléchargement du modèle (${POIDS_MODELE}), comptez une trentaine de secondes.`
+          : `Téléchargement ${p.quoi} : ${mio(p.charge)} Mio sur ${mio(p.total)} Mio${restant ? ` · ${restant}` : ""}`}
       </p>
       <div
         className="mt-2 h-1.5 overflow-hidden rounded-full bg-white"
