@@ -1,0 +1,50 @@
+{
+  "objet": "élagage sans perte du vocabulaire (#50), scripts/allegement/elaguer_vocabulaire.py",
+  "source": {
+    "depot": "Xenova/multilingual-e5-small",
+    "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "sha256_onnx": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "sha256_tokenizer": "0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39"
+  },
+  "regle": "une pièce est gardée si chacune de ses lettres appartient à l'alphabet latin ou grec ; chiffres, ponctuation, symboles, espaces et diacritiques combinants sont toujours gardés, comme les jetons spéciaux",
+  "pieces": {
+    "source": 250002,
+    "gardees": 121271
+  },
+  "table_des_mots": {
+    "lignes_source": 250037,
+    "lignes": 121271
+  },
+  "fichiers": {
+    "LICENSE": {
+      "octets": 1083,
+      "sha256": "b5cb7ff7859e7d282d98fc43ab081b0dda5dc659dc3385cf65740c759a7e6a6c"
+    },
+    "config.json": {
+      "octets": 658,
+      "sha256": "0cb92497dc627619529923b5ee0e6a845fded65d80cf62df3231e349c504625d"
+    },
+    "onnx/model_quantized.onnx": {
+      "octets": 68862041,
+      "sha256": "4499d46b6ffc94746da7e91782977ec49699a035ffd4fba5d33393f86e4480d9"
+    },
+    "special_tokens_map.json": {
+      "octets": 167,
+      "sha256": "d05497f1da52c5e09554c0cd874037a083e1dc1b9cfd48034d1c717f1afc07a7"
+    },
+    "tokenizer.json": {
+      "octets": 4335981,
+      "sha256": "b4f51d4228181f14ef705d2afec4d2fda41096e67ba0df359cb83ee20ebdc2c6"
+    },
+    "tokenizer_config.json": {
+      "octets": 443,
+      "sha256": "a1d6bc8734a6f635dc158508bef000f8e2e5a759c7d92f984b2c86e5ff53425b"
+    }
+  },
+  "outils": {
+    "python": "3.12.11",
+    "onnx": "1.23.2",
+    "numpy": "2.5.3"
+  },
+  "licence": "MIT (multilingual-e5-small, Microsoft), fichier LICENSE"
+}

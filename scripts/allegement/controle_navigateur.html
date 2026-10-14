@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrôle du modèle élagué dans le navigateur</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: Canvas; color: CanvasText; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Contrôle du modèle élagué dans le navigateur (#50)</h1>
+<p>À servir depuis la racine du dépôt, sur la seule interface locale : <code>python3 -m http.server 8765 --bind
+127.0.0.1</code>, puis ouvrir <code>http://127.0.0.1:8765/scripts/allegement/controle_navigateur.html</code>. La page
+charge le modèle que désigne l'en-tête du site (<code>front/public/index/index_m2.json</code>), depuis
+<code>front/public/modele/</code>, comme le site, encode les 822 requêtes de contrôle du notebook 02, et compare chaque
+vecteur, bit à bit, à celui du q8 de Xenova mesuré dans le navigateur au notebook 02
+(<code>data/indexation/controle/fidelite_navigateur.json</code>, précision q8). Résultat dans
+<code>window.RESULTATS</code>.</p>
+<pre id="journal">Chargement...</pre>
+<script type="module">
+// même bibliothèque et même version que le site
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
+const noter = (texte) => { document.getElementById("journal").textContent += "\n" + texte; };
+try {
+  const entete = await (await fetch("../../front/public/index/index_m2.json")).json();
+  if (entete.modele.emplacement !== "site") throw new Error("l'en-tête du site ne désigne pas un modèle servi par le site");
+  // même chargement que le site (front/src/recherche/moteur.js) : le dossier des modèles est déclaré comme hôte distant
+  env.allowLocalModels = false;
+  env.allowRemoteModels = true;
+  env.remoteHost = new URL("../../front/public/modele/", location.href).href;
+  env.remotePathTemplate = "{model}/";
+  const reference = await (await fetch("../../data/indexation/controle/fidelite_navigateur.json")).json();
+  if (reference.depot !== entete.modele.origine.depot || reference.revision !== entete.modele.origine.revision)
+    throw new Error("la référence n'a pas été mesurée avec le modèle d'origine de l'en-tête");
+  const attendus = reference.resultats.q8.vecteurs;
+  const extracteur = await pipeline("feature-extraction", entete.modele.depot, { dtype: entete.modele.dtype, device: "wasm" });
+  noter(`modèle chargé : ${entete.modele.depot}, ${entete.modele.dtype}`);
+  let identiques = 0, ecartMax = 0;
+  const debut = performance.now();
+  for (let i = 0; i < reference.requetes.length; i++) {
+    const v = (await extracteur(reference.prefixe + reference.requetes[i],
+      { pooling: entete.requete.pooling, normalize: entete.requete.normalize })).data;
+    // comparaison en float32, comme les vecteurs eux-mêmes
+    const a = Float32Array.from(attendus[i]);
+    let egal = v.length === a.length;
+    for (let j = 0; j < a.length; j++) { const d = Math.abs(v[j] - a[j]); if (d > 0) egal = false; if (d > ecartMax) ecartMax = d; }
+    identiques += egal;
+  }
+  const encodage_ms = performance.now() - debut;
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, modele: entete.modele.depot,
+    sha256: entete.modele.sha256, requetes: reference.requetes.length, identiques, ecart_max: ecartMax,
+    ms_par_requete: encodage_ms / reference.requetes.length };
+  noter(`${identiques} vecteurs identiques bit à bit sur ${reference.requetes.length} ; écart maximal ${ecartMax} ; ` +
+    `${(encodage_ms / reference.requetes.length).toFixed(1)} ms par requête`);
+  noter(identiques === reference.requetes.length ? "ÉLAGAGE SANS PERTE DANS LE NAVIGATEUR" : "ÉCHEC");
+} catch (erreur) {
+  window.RESULTATS = { erreur: String(erreur) };
+  noter("ERREUR : " + erreur);
+}
+</script>
+</body>
+</html>
