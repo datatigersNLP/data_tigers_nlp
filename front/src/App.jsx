@@ -6,7 +6,8 @@ import { useMoteur } from "./recherche/useMoteur.js";
 const ETAPES = [
   {
     titre: "Votre question reste chez vous",
-    texte: "Le modèle de langage s'exécute dans votre navigateur. Aucune question n'est envoyée à un serveur.",
+    // revue de #42 : un encodeur ne génère rien, « modèle de langage » évoquerait un assistant génératif
+    texte: "Le modèle qui analyse votre question s'exécute dans votre navigateur : elle n'est envoyée à aucun serveur.",
   },
   {
     titre: "Une recherche par le sens",
@@ -14,7 +15,9 @@ const ETAPES = [
   },
   {
     titre: "Des réponses sourcées",
-    texte: "Chaque résultat indique la fiche et la section d'origine, avec un lien vers le passage exact.",
+    // revue de #42 : le lien par fragment de texte n'atteint pas toujours le passage (13 liens sur 18 à la #39)
+    texte:
+      "Chaque résultat indique la fiche et la section d'origine, avec un lien vers la fiche, positionné sur le passage quand c'est possible.",
   },
 ];
 
@@ -73,23 +76,27 @@ function PiedDePage() {
   return (
     <footer className="mt-16 border-t border-filet bg-white">
       <div className="mx-auto max-w-5xl space-y-2 px-4 py-6 text-xs leading-relaxed text-gris sm:px-6">
+        {/* revue de #42 : le texte indexé vient de l'instantané SocialGouv (front/public/index/SOURCES.md), et sa
+            date compte, une règle ayant pu changer depuis */}
         <p>
-          Source : fiches pratiques du site{" "}
+          Source : fiches pratiques du ministère chargé du Travail, publiées sur{" "}
           <a
             href="https://travail-emploi.gouv.fr"
-            className="font-medium text-accent underline-offset-2 hover:underline"
+            className="font-medium text-accent underline underline-offset-2 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             target="_blank"
             rel="noreferrer"
           >
             travail-emploi.gouv.fr
+            <span className="sr-only"> (nouvel onglet)</span>
           </a>
-          , via le jeu de données public AgentPublic/travail-emploi.
+          , dans l'instantané du 11 septembre 2026 publié par SocialGouv (fiches-travail-data), sous Licence Ouverte
+          Etalab 2.0. Une règle a pu changer depuis : le lien de chaque résultat ouvre la fiche à jour.
         </p>
         <p>
           Ce site est un projet étudiant (NLP 2, M2 Data &amp; IA, FGES). Il n'est pas un service officiel et ne
           remplace pas un conseil juridique.
         </p>
-        <p className="font-mono text-[11px] text-gris/80">
+        <p className="font-mono text-[11px] text-gris">
           version {__VERSION__} · construite le {__DATE_CONSTRUCTION__}
         </p>
       </div>
