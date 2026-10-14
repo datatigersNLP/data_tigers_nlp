@@ -29,9 +29,11 @@ Chaque membre tient sa propre ligne à jour.
   - (Vaneck) Les pages à tester doivent être servies par HTTP (`vite preview` pour le site,
     `python -m http.server 8765 --bind 127.0.0.1` pour les pages de contrôle du notebook 02) : le site vérifie
     l'empreinte de l'index avec `crypto.subtle`, disponible seulement en HTTPS ou sur localhost.
-- Difficultés non expliquées par la documentation :
-  - (Vaneck) Chaque contexte de navigateur part d'un cache vide : le modèle de 113 Mo est retéléchargé à chaque
-    exécution, ce qui ajoute environ 50 s par parcours.
+- Difficultés rencontrées :
+  - (Vaneck) Mon script crée à chaque exécution un contexte neuf et non persistant (`browser.newContext()`), qui part
+    d'un cache vide : le modèle de 113 Mo est retéléchargé, ce qui ajoute environ 50 s par parcours. Ce n'est pas une
+    limite de Playwright : un contexte persistant (`launchPersistentContext`) garde le cache d'une exécution à l'autre.
+    En revanche, `page.route()`, que j'utilise pour simuler une coupure réseau, désactive le cache HTTP du contexte.
 
 ## Usage réel
 - Tâche réalisée, ticket ou pull request :
@@ -42,8 +44,8 @@ Chaque membre tient sa propre ligne à jour.
   - (Vaneck) Pages de contrôle : attente du lien de téléchargement (`#telechargement a`), puis lecture directe de
     `window.RESULTATS` par `page.evaluate`, sans cliquer sur le lien ni gérer de téléchargement de fichier.
   - (Vaneck) Chat : attente que la recherche soit prête, clic sur un exemple, question tapée au clavier
-    (`page.fill`, `Enter`), comptage des passages, relevé des liens, captures pleine page en largeur ordinateur et
-    téléphone (`isMobile`, 375 px).
+    (`page.fill`, `Enter`), comptage des passages, relevé des liens, captures pleine page en largeur ordinateur et en
+    émulation d'un téléphone dans Edge (`isMobile`, 375 px), sans essai sur un téléphone physique.
   - (Vaneck) État d'erreur : `page.route()` bloque Hugging Face pour simuler une coupure réseau, puis le débloque avant
     un clic sur « Réessayer ».
 - Résultat obtenu :
@@ -52,7 +54,8 @@ Chaque membre tient sa propre ligne à jour.
     fonctionnels, aucune erreur JavaScript relevée (`pageerror`, `console`).
 - Temps gagné ou perdu, s'il peut être estimé :
   - (Vaneck) Un parcours complet rejoué en environ 2 min à chaque modification, au lieu de cliquer à la main ; c'est
-    une capture de ce parcours qui a révélé une barre de progression fausse (« 1 Mo sur 16 Mo »).
+    une capture de ce parcours qui a révélé une barre de progression fausse (« 1 Mo sur 16 Mo », alors que le modèle
+    pèse 113 Mo).
 
 ## Qualités observées
 - (Vaneck) Utilise un navigateur déjà installé : rien de lourd à télécharger.
@@ -65,7 +68,8 @@ Chaque membre tient sa propre ligne à jour.
   - (Vaneck) Une expression régulière écrite dans un sélecteur de texte, à l'intérieur d'une chaîne JavaScript, a perdu
     son antislash : le test a échoué alors que le site fonctionnait. Les localisateurs filtrés
     (`locator("p", { hasText: … })`) évitent ce piège.
-  - (Vaneck) Cache vide à chaque contexte : voir « Mise en place ».
+  - (Vaneck) Cache vide avec les contextes non persistants que crée mon script, et cache HTTP désactivé par
+    `page.route()` : voir « Mise en place ».
 
 ## Comparaison
 - Méthode ou outil utilisé auparavant :
@@ -84,12 +88,16 @@ Chaque membre tient sa propre ligne à jour.
 ## À retenir pour le rapport
 - Apport : rejouer en deux minutes le parcours complet du site, erreurs réseau comprises, dans le navigateur déjà
   installé.
-- Principale limite : chaque exécution repart d'un cache vide et retélécharge le modèle de 113 Mo.
-- Ce que la documentation ne dit pas : qu'on peut éviter le téléchargement des navigateurs avec `playwright-core` et
-  `channel: "msedge"`, et lire directement les résultats d'une page (`window.RESULTATS`) au lieu de gérer ses
-  téléchargements.
+- Principale limite : avec un contexte neuf à chaque exécution, comme dans mon script, le modèle de 113 Mo est
+  retéléchargé à chaque parcours. Un contexte persistant (`launchPersistentContext`) l'évite, sauf pour les scénarios
+  qui interceptent le réseau avec `page.route()`, qui désactive le cache HTTP.
+- Ce que la documentation ne dit pas : la page des navigateurs explique que Playwright peut piloter le Chrome ou l'Edge
+  déjà installés (`channel: "msedge"`), mais ni elle ni la page de la bibliothèque ne précisent que `playwright-core`
+  ne télécharge aucun navigateur. On peut aussi lire directement les résultats d'une page (`window.RESULTATS`) au lieu
+  de gérer ses téléchargements.
 
 ## Preuves
 - Rapport J2 et document de décisions du J2 : Chromium piloté par Playwright pour la mesure de faisabilité (19,8 ms par requête).
 - PR #71 : tableau des vérifications du parcours de chat, faites avec Playwright.
-- Journal d'usage de l'IA, sessions 23 et 24 de Vaneck : reproduction du notebook 02 et parcours du chat.
+- Journal d'usage de l'IA, sessions 26 et 27 de Vaneck (11 octobre 2026) : reproduction du notebook 02 et parcours du
+  chat. Ces sessions sont en cours d'intégration au journal par Mahé.
