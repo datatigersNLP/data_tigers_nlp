@@ -30,10 +30,12 @@ Chaque membre tient sa propre ligne à jour.
     `python -m http.server 8765 --bind 127.0.0.1` pour les pages de contrôle du notebook 02) : le site vérifie
     l'empreinte de l'index avec `crypto.subtle`, disponible seulement en HTTPS ou sur localhost.
 - Difficultés rencontrées :
-  - (Vaneck) Mon script crée à chaque exécution un contexte neuf et non persistant (`browser.newContext()`), qui part
-    d'un cache vide : le modèle de 113 Mo est retéléchargé, ce qui ajoute environ 50 s par parcours. Ce n'est pas une
-    limite de Playwright : un contexte persistant (`launchPersistentContext`) garde le cache d'une exécution à l'autre.
-    En revanche, `page.route()`, que j'utilise pour simuler une coupure réseau, désactive le cache HTTP du contexte.
+  - (Vaneck) Transformers.js range le modèle dans l'API Cache du navigateur (`caches.open("transformers-cache")`), et
+    non dans le cache HTTP. Mon script crée à chaque exécution un contexte neuf et non persistant
+    (`browser.newContext()`), dont l'API Cache est vide : le modèle de 113 Mio est retéléchargé, ce qui ajoute environ
+    50 s par parcours. Ce n'est pas une limite de Playwright : un contexte persistant (`launchPersistentContext`) garde
+    l'API Cache d'une exécution à l'autre. `page.route()`, que j'utilise pour simuler une coupure réseau, désactive le
+    cache HTTP, mais n'empêche pas de retrouver le modèle rangé dans l'API Cache.
 
 ## Usage réel
 - Tâche réalisée, ticket ou pull request :
@@ -55,7 +57,7 @@ Chaque membre tient sa propre ligne à jour.
 - Temps gagné ou perdu, s'il peut être estimé :
   - (Vaneck) Un parcours complet rejoué en environ 2 min à chaque modification, au lieu de cliquer à la main ; c'est
     une capture de ce parcours qui a révélé une barre de progression fausse (« 1 Mo sur 16 Mo », alors que le modèle
-    pèse 113 Mo).
+    pèse 113 Mio).
 
 ## Qualités observées
 - (Vaneck) Utilise un navigateur déjà installé : rien de lourd à télécharger.
@@ -68,8 +70,8 @@ Chaque membre tient sa propre ligne à jour.
   - (Vaneck) Une expression régulière écrite dans un sélecteur de texte, à l'intérieur d'une chaîne JavaScript, a perdu
     son antislash : le test a échoué alors que le site fonctionnait. Les localisateurs filtrés
     (`locator("p", { hasText: … })`) évitent ce piège.
-  - (Vaneck) Cache vide avec les contextes non persistants que crée mon script, et cache HTTP désactivé par
-    `page.route()` : voir « Mise en place ».
+  - (Vaneck) Modèle retéléchargé à chaque exécution avec les contextes non persistants que crée mon script, dont l'API
+    Cache est vide : voir « Mise en place ».
 
 ## Comparaison
 - Méthode ou outil utilisé auparavant :
@@ -88,9 +90,9 @@ Chaque membre tient sa propre ligne à jour.
 ## À retenir pour le rapport
 - Apport : rejouer en deux minutes le parcours complet du site, erreurs réseau comprises, dans le navigateur déjà
   installé.
-- Principale limite : avec un contexte neuf à chaque exécution, comme dans mon script, le modèle de 113 Mo est
-  retéléchargé à chaque parcours. Un contexte persistant (`launchPersistentContext`) l'évite, sauf pour les scénarios
-  qui interceptent le réseau avec `page.route()`, qui désactive le cache HTTP.
+- Principale limite : avec un contexte neuf à chaque exécution, comme dans mon script, l'API Cache où Transformers.js
+  range le modèle est vide, et le modèle de 113 Mio est retéléchargé à chaque parcours. Un contexte persistant
+  (`launchPersistentContext`) l'évite, y compris pour les scénarios qui interceptent le réseau avec `page.route()`.
 - Ce que la documentation ne dit pas : la page des navigateurs explique que Playwright peut piloter le Chrome ou l'Edge
   déjà installés (`channel: "msedge"`), mais ni elle ni la page de la bibliothèque ne précisent que `playwright-core`
   ne télécharge aucun navigateur. On peut aussi lire directement les résultats d'une page (`window.RESULTATS`) au lieu
