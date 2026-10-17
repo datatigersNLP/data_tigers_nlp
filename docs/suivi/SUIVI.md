@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 13 octobre 2026
+**Dernière mise à jour** 17 octobre 2026 (tags, branche d'observation et points #43, #46, #49, #50 et #56, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -47,6 +47,8 @@ La répartition par domaine est conservée. Les responsabilités d'un ticket peu
 | J4 Soutenance | Ouvert | 07/12/2026 | Date à confirmer par écrit (#8), malgré la date enregistrée dans GitHub. |
 
 Le calendrier officiel reste à confirmer par écrit dans #8. L'échéance opérationnelle du volet A, retenue au Weekly 4, est le 18/10/2026 ; elle ne remplace pas une confirmation officielle des jalons.
+
+**Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. Le tag de fin du volet A, `volet-a-v1`, sera posé sur `main` après sa dernière mise à jour depuis `dev` (la PR #74 l'a mise à jour le 17/10).
 
 ## Inventaire des tickets au 13/10/2026
 
@@ -177,15 +179,15 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 |---|---|---|
 | #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. |
 | #23 | 03/10, cible provisoire dans le corps | Ouvert ; la mise à jour du suivi ne clôture pas la validation collective du backlog. |
-| #43 | Date officielle du mi-parcours | Ouvert ; ne pas reprendre l'ancienne échéance du 01/10. |
+| #43 | Date officielle du mi-parcours | Au 17/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori ; `main` mise à jour par la PR #74 (Jibril) ; restent la dernière mise à jour de `main` et le tag `volet-a-v1`. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
-| #46 | 14/10, proposition dans le ticket | Ouvert ; PR #62 fusionnée. Exécution de la mesure et résultats non déduits de la fusion. |
-| #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Ouvert, PR #63 ouverte ; calendrier du corps et planning récent à harmoniser par les responsables. Le protocole proposé doit être arrêté avant la mesure. |
-| #50 | 24/10, proposition dans le ticket | Ouvert ; dépend de la mesure de référence avant de juger la réduction. |
+| #46 | 14/10, proposition dans le ticket | Au 17/10 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73) ; ticket à fermer. |
+| #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. |
+| #50 | 24/10, proposition dans le ticket | Au 17/10 : élagage sans perte livré le 14/10 (PR #78), modèle de 65,7 Mio servi par le site ; la réduction avec perte sort du volet A. |
 | #51 | 10/10, proposition historique dans le corps | Ouvert ; chaîne RAG complète non déduite du test d'inférence de #31. Échéance à actualiser par les responsables. |
 | #52 | 17/10, proposition dans le ticket | Ouvert ; dépend du jeu figé et de la chaîne RAG. |
 | #53 | 17/10, demandé à Jibril avec Vaneck | Ouvert ; #48 fermé, finition UI/UX, contrôles et estimation provisoire à réviser. |
-| #56 | Avant la première mesure de #46 | Ouvert ; relecture CDTN de Jibril transmise en privé à Mahé le dimanche 11/10, selon Jibril. Cela ne clôture pas la relecture de toute l'équipe ni l'import des verdicts. |
+| #56 | Avant la première mesure de #46 | Fermé le 14/10 ; les trois relectures sont importées (PR #79, fusionnée le 17/10) : 182 jugements, 155 requêtes. |
 
 Les échéances anciennes encore écrites dans les tickets ne sont pas corrigées implicitement par ce classeur. Le jeu de 60 questions figurant dans l'ancien planning n'est plus une tâche à créer : #44 existe et est fermé. Les détails du jeu et de son gel font foi dans ses documents de référence.
 
