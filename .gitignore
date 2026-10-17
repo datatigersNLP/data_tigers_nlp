@@ -10,3 +10,15 @@ probe.*
 # systeme
 .DS_Store
 __pycache__/
+# donnees : corpus brut et prepare, reconstruits par script (ticket #27)
+data/
+# environnements Python, reconstruits depuis les fichiers requirements-lock.txt
+.venv*/
+# modeles et poids volumineux (>100 Mio hors Git)
+models/
+*.safetensors
+*.pt
+*.bin
+# site du volet A : dépendances et construction, regénérées par npm
+node_modules/
+front/dist/

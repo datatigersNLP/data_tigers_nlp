@@ -1,0 +1,18 @@
+# Dépendances de l'élagage sans perte du vocabulaire du modèle servi (ticket #50), Python 3.12.
+#
+# onnx modifie la table des mots du fichier q8 ; ONNX Runtime et tokenizers vérifient que le découpage et les
+# sorties restent identiques ; huggingface-hub télécharge le modèle source à sa révision figée.
+# requirements-lock.txt fige toutes les versions, en imposant celles de l'indexation (notebook 02). Depuis la
+# racine du dépôt :
+#
+#   uv venv --seed --python 3.12 .venv-allegement
+#   uv pip sync --python .venv-allegement/bin/python scripts/allegement/requirements-lock.txt
+#
+# Après modification de ce fichier, régénérer le fichier figé :
+#   uv pip compile scripts/allegement/requirements.txt --universal --python-version 3.12 -c scripts/indexation/requirements-lock.txt -o scripts/allegement/requirements-lock.txt
+
+onnx==1.23.2
+onnxruntime==1.30.0
+tokenizers==0.23.2
+huggingface-hub==1.33.0
+numpy==2.5.3

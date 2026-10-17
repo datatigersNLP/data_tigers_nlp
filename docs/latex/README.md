@@ -1,13 +1,14 @@
 # Chaîne de conversion Markdown vers LaTeX
 
-Convertit un document Markdown du dossier en `.tex`, puis en PDF.
+Convertit un document Markdown en `.tex`, puis en PDF. Depuis la racine du dépôt :
 
 ```bash
-python3 latex/build.py 05_RAPPORT_J2.md      # écrit 05_RAPPORT_J2.tex
-latexmk -xelatex 05_RAPPORT_J2.tex           # produit le PDF
+python3 docs/latex/build.py docs/journal/JOURNAL_USAGE_IA.md   # écrit docs/journal/JOURNAL_USAGE_IA.tex
+cd docs/journal && latexmk -xelatex JOURNAL_USAGE_IA.tex        # produit le PDF
 ```
 
-Sans argument, le script traite `03_SUPPORT_REUNION_J2.md`.
+Le script exige un argument. Le `.tex` produit est un fichier intermédiaire : seuls le
+Markdown et le PDF sont versionnés.
 
 ## Fichiers
 
