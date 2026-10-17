@@ -48,7 +48,7 @@ La répartition par domaine est conservée. Les responsabilités d'un ticket peu
 
 Le calendrier officiel reste à confirmer par écrit dans #8. L'échéance opérationnelle du volet A, retenue au Weekly 4, est le 18/10/2026 ; elle ne remplace pas une confirmation officielle des jalons.
 
-**Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. Le tag de fin du volet A, `volet-a-v1`, sera posé sur `main` après la PR #74.
+**Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. Le tag de fin du volet A, `volet-a-v1`, sera posé sur `main` après sa dernière mise à jour depuis `dev` (la PR #74 l'a mise à jour le 17/10).
 
 ## Inventaire des tickets au 13/10/2026
 
@@ -179,7 +179,7 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 |---|---|---|
 | #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. |
 | #23 | 03/10, cible provisoire dans le corps | Ouvert ; la mise à jour du suivi ne clôture pas la validation collective du backlog. |
-| #43 | Date officielle du mi-parcours | Au 17/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori ; restent la PR #74 (`dev` vers `main`) et le tag `volet-a-v1`. |
+| #43 | Date officielle du mi-parcours | Au 17/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori ; `main` mise à jour par la PR #74 (Jibril) ; restent la dernière mise à jour de `main` et le tag `volet-a-v1`. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
 | #46 | 14/10, proposition dans le ticket | Au 17/10 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73) ; ticket à fermer. |
 | #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. |

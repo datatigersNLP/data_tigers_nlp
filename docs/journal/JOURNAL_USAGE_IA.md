@@ -609,18 +609,20 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Objet.** État des lieux du dépôt avant la fin du volet A, revue de la PR #80 de Vaneck (#53), documentation de clôture et jalon de mi-parcours (#43).
 
 **Produit.**
-- Revue et approbation de la PR #80, interface finale du site.
+- Revue de la PR #80, interface finale du site : approuvée, puis remplacée par une demande de modification après la vérification de Jibril (voir les difficultés).
+- PR #81 : moteur d'exécution d'ONNX Runtime Web servi par le site, et non plus par jsDelivr.
 - README du dépôt réécrit : adresse du site, chaîne de traitement, résultats, arborescence réelle, licences, branches et tags.
 - Tag annoté `mi-parcours`, posé a posteriori sur la version en ligne au mi-parcours (`ac84ed3`, déployée le 30 septembre), et branche d'observation `observation/mi-parcours`.
 - Journal : sessions 28 à 31, erreurs de la période en section 4, outils de la section 2 complétés.
 
 **Mesures exécutées.**
-- PR #80 construite (`npm ci --ignore-scripts`, `npm run build`) et parcourue dans Chromium : 5 passages ordonnés avec score, section et lien ; question gardée pendant un chargement retardé, puis traitée ; message hors périmètre pour « azerty » ; aucune requête vers Hugging Face, Google Fonts ou jsDelivr ; aucun débordement à 375, 768 et 1 280 px ; aucune erreur dans la console.
+- PR #80 construite (`npm ci --ignore-scripts`, `npm run build`) et parcourue dans Chromium : 5 passages ordonnés avec score, section et lien ; question gardée pendant un chargement retardé, puis traitée ; message hors périmètre pour « azerty » ; aucune requête vers Hugging Face ni Google Fonts ; aucun débordement à 375, 768 et 1 280 px ; aucune erreur dans la console.
+- Essai décisif, cache vidé et jsDelivr bloqué au niveau du contexte du navigateur : la version de `dev` échoue (« Le modèle n'a pas pu être téléchargé ») ; avec la correction de la PR #81, jsDelivr et Hugging Face bloqués, le moteur démarre, aucune requête n'est tentée hors du site, et le classement est inchangé ; 15 tests sur 15.
 - Audit du dépôt : aucun secret trouvé ; un seul fichier de plus de 10 Mio, le modèle servi ; 62 commits de `dev` portent une adresse e-mail personnelle, tous antérieurs au 13 octobre.
 
 **Résultats retenus.**
 - La mesure de l'encodeur ajusté n'a pas été faite avant le 16 octobre : le notebook 05 n'était pas construit, et l'import des relectures n'a été fusionné que le 17 octobre. La règle de repli du protocole 05 s'applique : le site sert l'encodeur de base pour la fin du volet A. La mesure reste possible après, à titre descriptif, pour le rapport.
-- La branche principale avait 175 commits de retard, et aucun tag de mi-parcours n'était posé.
+- La branche principale avait 175 commits de retard, et aucun tag de mi-parcours n'était posé ; Jibril a mis `main` à jour le jour même (PR #74).
 
 **Ce qui a été écarté, et pourquoi.**
 - Écrire le résultat dans le protocole 05 : son empreinte, que le notebook de mesure doit contrôler, aurait changé ; le résultat est consigné dans le README, dans ce journal et dans le classeur de suivi.
@@ -628,13 +630,14 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Réécrire l'historique pour retirer les adresses : interdit sur une branche partagée ; chaque membre règle son compte GitHub pour éviter de nouvelles expositions.
 
 **Ce que l'équipe a validé, et par qui.**
-- Documentation de clôture soumise à la relecture de Jibril BENSALEM.
+- PR #74 approuvée et fusionnée par Jibril BENSALEM ; documentation de clôture et PR #81 soumises à la relecture de Jibril BENSALEM et Vaneck DAGAR.
 
 **Temps d'appropriation constaté.**
 - Non relevé sur le moment.
 
 **Difficultés rencontrées.**
 - `git log --since` arrête le parcours au premier commit plus ancien que la date : un premier audit des adresses a conclu à tort qu'il n'y en avait aucune.
+- Mon test de la PR #80 écoutait les requêtes au niveau de la page : celles du moteur d'exécution vers jsDelivr n'y apparaissaient pas. Jibril l'a relevé dans sa vérification ; l'essai avec le CDN bloqué l'a confirmé.
 
 ---
 
@@ -678,12 +681,13 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 14/10 | Hypothèse de l'assistant, publiée dans une revue de la PR #72 : avec le modèle en cache, bloquer Hugging Face par `page.route()` n'empêcherait pas le chargement | essai sur le site en ligne : le chargement échoue | hypothèse retirée dans un commentaire de suivi ; Vaneck a mesuré le cas réel et corrigé sa fiche |
 | 14/10 | QCM du Weekly : la bonne réponse était la plus longue dans 13 questions sur 20 | script de contrôle des longueurs | réponses rééquilibrées, 3 cas sur 20 |
 | 17/10 | Audit des adresses e-mail concluant à zéro exposition, `git log --since` ayant arrêté le parcours trop tôt | contradiction avec un commit connu | historique parcouru en entier : 62 commits concernés |
+| 17/10 | Revue publiée de la PR #80 affirmant « aucune requête vers jsDelivr », les requêtes ayant été écoutées au niveau de la page seulement | vérification de Jibril, puis essai avec le CDN bloqué : la recherche échoue | revue corrigée en demande de modification ; moteur d'exécution servi par le site (PR #81) |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
-**Bilan du 11 au 17 octobre.** Onze erreurs ou pièges détectés et traités. **Six figuraient déjà dans une pull request ou un document publié** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB et l'hypothèse sur `page.route()`. Comme les précédentes, toutes ont été trouvées par une mesure, un essai ou la lecture d'une source primaire.
+**Bilan du 11 au 17 octobre.** Douze erreurs ou pièges détectés et traités. **Sept figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()` et la revue de la PR #80. Deux ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant. Comme les précédentes, toutes ont été trouvées par une mesure, un essai ou la lecture d'une source primaire.
 
 ---
 
