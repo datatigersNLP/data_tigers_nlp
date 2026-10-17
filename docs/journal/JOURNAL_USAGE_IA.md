@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 13 octobre 2026, session 19
+**Dernière mise à jour** 17 octobre 2026, sessions 28 à 31, consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -34,11 +34,12 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 | Outil | Nature | Membres | Usage |
 |---|---|---|---|
-| Claude Opus 5, puis Claude Opus 5.5 (sessions 12 et 13) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Opus 5, puis Claude Opus 5.5 (à partir de la session 12) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS, Vaneck DAGAR | architecture, décisions, recherches, critique, rédaction assistée |
 | Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
 | ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
+| Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN, compilation du PDF du journal (sessions 17 à 19) |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
 
@@ -502,6 +503,139 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Installation système empêchée par les permissions ; installation dans un TEXMF local.
 - Format XeLaTeX initial sans césure française : reconstruction locale nécessaire, en plus du module de langue.
 
+**Sessions 20 à 27.** Réservées aux huit sessions de Vaneck DAGAR, transmises dans sa fiche d'usage, que sa PR #72 cite déjà (sessions 26 et 27, du 11 octobre). Elles seront reportées ici depuis cette fiche.
+
+**Sessions 28 à 31, consignées a posteriori.** Contrairement à la règle de la section 5, ces sessions de Mahé BEGNIS n'ont pas été consignées le jour même. Elles l'ont été le 17 octobre, à partir de l'historique de la conversation avec l'assistant et des commits, pull requests et tickets datés. Le temps d'appropriation n'a pas été relevé sur le moment.
+
+### Session 28, 11 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Demande de Vaneck sur les fichiers de l'index du site (#48), et pull requests en attente de Mahé.
+
+**Produit.**
+- PR #70 : index de recherche versionné dans `front/public/index/` (option A), avec `SOURCES.md` (source, licence, date) et une règle `.gitattributes` qui interdit la conversion des fins de ligne.
+- Fusion des PR #66 (journal, sessions 14 à 16) et #67 (moteur du site), approuvées par Maïmouna sur leur dernier commit ; commentaire de revue sur la PR #69 de Jibril.
+
+**Mesures exécutées.**
+- Licence vérifiée sur la carte du jeu Hugging Face, au commit `98744a6` : Licence Ouverte Etalab 2.0, qui autorise la rediffusion en citant la source.
+- Recherche de données personnelles dans les passages : les adresses et les sept numéros trouvés sont ceux d'organismes cités par le ministère.
+- Clone simulé avec `core.autocrlf=true` : avec la règle `.gitattributes`, les trois empreintes de l'index sont retrouvées à l'identique ; sans elle, 34 retours chariot s'inséraient dans l'en-tête.
+
+**Résultats retenus.**
+- Le site sert l'index mesuré au notebook 03 (empreinte `2ec45586…`), et non un index reconstruit sur une autre machine.
+
+**Ce qui a été écarté, et pourquoi.**
+- Transmettre les fichiers à Vaneck pour qu'il les intègre : reconstruit chez lui, sous Windows, l'index aurait pu différer de l'index mesuré ; la relecture de la PR #39 avait déjà montré des empreintes différentes sous Windows.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #70 approuvée et fusionnée par Vaneck DAGAR, le 11 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Un commentaire publié sous le compte de Mahé parlait de lui à la troisième personne ; corrigé aussitôt, la première version restant visible dans l'historique des modifications de GitHub.
+
+### Session 29, 13 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Amendement statistique du critère du J2, mesure unique du notebook 03 (#46) et son rapport, audit de l'ajustement de Remy (#49), seuil d'abstention du moteur (#53).
+
+**Produit.**
+- Protocole du notebook 03 amendé et figé à nouveau : verdict du critère du J2 par le score de Tango corrigé de l'effet de plan, nouvelle empreinte inscrite dans le notebook (PR #62, commits `a7ab3af` et `45355fb`).
+- Mesure unique du notebook 03 sur le lot de test (`f1044e0`) et rapport `docs/etudes/evaluation/03_evaluation.md` (`23efdb0`), PR #73.
+- Protocole de la mesure de l'encodeur ajusté complété avant son gel : recette d'export, témoin, encodage dans le navigateur (`44152df`, PR #75).
+- Seuil d'abstention dans le moteur du site, appliqué seulement au modèle et à l'index pour lesquels il a été calculé (`24c2707`, PR #76).
+
+**Mesures exécutées.**
+- Notebook 03 exécuté une fois en mode mesure, après contrôle des empreintes du protocole, du jeu et du seuil ; une seconde exécution a donné des résultats identiques octet par octet.
+- Audit du q8 de Xenova et de la recette d'export de Remy : 72 poids MatMul en int8 par canal, tables des mots en uint8 symétrique ; avec `ActivationSymmetric`, la recette redonne 74 des 75 tenseurs quantifiés. La quantification dynamique calcule son échelle sur tout le lot : les contrôles de fidélité se font requête par requête. En Python, le résultat dépend du processeur (791 et 762 sur 822 pour le même fichier) ; dans le navigateur, il est identique entre les machines.
+
+**Résultats retenus.**
+- Critère du J2 satisfait : Recall@5 de 43,8 % pour l'encodeur servi contre 42,5 % pour BM25 de référence, écart de +1,4 point, intervalle à 95 % de -11,5 à +14,3 points ; aucun des deux n'est démontré meilleur (McNemar, p = 1,000).
+- Abstention : AUC de 0,841 ; le seuil garde 72 des 73 questions du corpus et n'écarte que 9 des 24 questions hors corpus.
+
+**Ce qui a été écarté, et pourquoi.**
+- La règle de Wald du 10 octobre : la simulation de la session 16 la montrait trop permissive. L'amendement, décidé avant la mesure et sans aucune donnée du lot de test, rend la conclusion plus difficile à obtenir, jamais plus facile.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #62 approuvée et fusionnée par Remy RAYANE ; PR #73 approuvée par Remy RAYANE ; PR #76 approuvée et fusionnée par Vaneck DAGAR, le 14 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Le fichier de sauvegarde des vecteurs du navigateur portait un nom couvert par le motif des fichiers de mesure, et il apparaît dans la sortie du notebook : déclaré dans le commit, la PR et le rapport, sans retouche du notebook.
+
+### Session 30, 14 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Intégration avant le Weekly 5 : licence du CDTN (#56), modèle élagué servi par le site (#50), vérification de l'encodeur ajusté livré par Remy et gel du protocole 05 (#49), relectures et import du CDTN, QCM du Weekly.
+
+**Produit.**
+- PR #73 fusionnée (mesure du notebook 03).
+- PR #77 : licence du CDTN corrigée, Apache-2.0, avec les conditions de redistribution et la portée du contrôle des données personnelles.
+- PR #78 : élagage sans perte du vocabulaire (`scripts/allegement/`) et modèle de 65,7 Mio servi par le site, à la place des 112,8 Mio téléchargés depuis Hugging Face.
+- PR #75 : protocole 05 complété (fidélité de l'ajusté livré, reproductibilité, empreintes), puis figé après le Weekly (`75a39bd`, empreinte `f2c8169d…`) : tokeniseur de l'encodeur de base, aucune dérogation au calendrier.
+- PR #79 : import des trois relectures du CDTN (`evaluation/cdtn/jugements.csv`), fusionnée le 17 octobre.
+- Revues : approbation de la PR #63 de Remy, sans lecture des chiffres exploratoires du lot de test, réservée à l'après-mesure ; revues de la PR #72 de Vaneck.
+- Hors dépôt : QCM de 20 questions du Weekly 5 (page privée, et classeur importable dans Kahoot) ; décisions non arbitrées en séance consignées sur #11.
+
+**Mesures exécutées.**
+- Élagage : 121 271 pièces gardées sur 250 002 ; q8 ramené de 118 308 185 à 68 862 041 octets ; découpage identique sur les 822 requêtes de contrôle, les 113 textes de la mesure, les 5 433 textes du CDTN et les 4 240 passages ; 822 vecteurs sur 822 identiques bit à bit dans le navigateur.
+- Encodeur ajusté de Remy : fichiers conformes à son manifeste, réexport bit à bit depuis les poids, parité fp32 (cosinus minimal de 1,00000000) ; fidélité du q8 livré dans le navigateur : 769 sur 822, contre 761 pour le témoin (McNemar exact, 53 contre 45, p = 0,48).
+- Licence du CDTN lue dans le `package.json` de la source et dans le paquet npm 2.20.0, qui contient le même fichier de requêtes.
+- Fiches de relecture : format, identifiants et valeurs contrôlés ; deux verdicts « Oui » ramenés à « oui », avec l'accord de Jibril ; import simulé puis réel : 182 jugements, 155 requêtes, dont 131 jugées « oui » ou « partiel ».
+- Site en ligne : avant la #78, la recherche échouait si Hugging Face était bloqué, même avec le modèle en cache ; après la #78, aucune requête vers Hugging Face.
+- Serveur de contrôle de la PR #63, lancé dans un dossier isolé : 11 essais sur l'en-tête Host, l'origine et le type de contenu, tous conformes.
+
+**Résultats retenus.**
+- Le site sert lui-même un modèle de 65,7 Mio, aux mêmes vecteurs que le q8 d'origine.
+- La fidélité de l'ajusté livré ne s'écarte pas significativement de celle du témoin.
+
+**Ce qui a été écarté, et pourquoi.**
+- Héberger l'encodeur ajusté sur le Hub de Hugging Face : remplacé par l'élagage sans perte, qui garde le modèle dans le dépôt.
+- Lire les chiffres du lot de test de la PR #63 avant la mesure : la mesure de l'ajusté doit rester en aveugle.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #77 et #79 approuvées par Jibril BENSALEM ; PR #78 par Vaneck DAGAR ; PR #75 approuvée et fusionnée par Remy RAYANE ; PR #63 fusionnée par Remy après l'approbation de Mahé.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Repointer la PR #78 sur `dev` a invalidé ses deux approbations, ce que la documentation de GitHub ne signale pas.
+- Une partie des actions de l'assistant sur GitHub (fusions, commentaires) a été refusée par son contrôle des permissions ; Mahé les a lancées lui-même.
+
+### Session 31, 17 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt avant la fin du volet A, revue de la PR #80 de Vaneck (#53), documentation de clôture et jalon de mi-parcours (#43).
+
+**Produit.**
+- Revue et approbation de la PR #80, interface finale du site.
+- README du dépôt réécrit : adresse du site, chaîne de traitement, résultats, arborescence réelle, licences, branches et tags.
+- Tag annoté `mi-parcours`, posé a posteriori sur la version en ligne au mi-parcours (`ac84ed3`, déployée le 30 septembre), et branche d'observation `observation/mi-parcours`.
+- Journal : sessions 28 à 31, erreurs de la période en section 4, outils de la section 2 complétés.
+
+**Mesures exécutées.**
+- PR #80 construite (`npm ci --ignore-scripts`, `npm run build`) et parcourue dans Chromium : 5 passages ordonnés avec score, section et lien ; question gardée pendant un chargement retardé, puis traitée ; message hors périmètre pour « azerty » ; aucune requête vers Hugging Face, Google Fonts ou jsDelivr ; aucun débordement à 375, 768 et 1 280 px ; aucune erreur dans la console.
+- Audit du dépôt : aucun secret trouvé ; un seul fichier de plus de 10 Mio, le modèle servi ; 62 commits de `dev` portent une adresse e-mail personnelle, tous antérieurs au 13 octobre.
+
+**Résultats retenus.**
+- La mesure de l'encodeur ajusté n'a pas été faite avant le 16 octobre : le notebook 05 n'était pas construit, et l'import des relectures n'a été fusionné que le 17 octobre. La règle de repli du protocole 05 s'applique : le site sert l'encodeur de base pour la fin du volet A. La mesure reste possible après, à titre descriptif, pour le rapport.
+- La branche principale avait 175 commits de retard, et aucun tag de mi-parcours n'était posé.
+
+**Ce qui a été écarté, et pourquoi.**
+- Écrire le résultat dans le protocole 05 : son empreinte, que le notebook de mesure doit contrôler, aurait changé ; le résultat est consigné dans le README, dans ce journal et dans le classeur de suivi.
+- Poser `mi-parcours` sur l'état actuel du dépôt, qui ne représente pas le jalon ; nommer la branche d'observation comme le tag, ce que git signale comme ambigu.
+- Réécrire l'historique pour retirer les adresses : interdit sur une branche partagée ; chaque membre règle son compte GitHub pour éviter de nouvelles expositions.
+
+**Ce que l'équipe a validé, et par qui.**
+- Documentation de clôture soumise à la relecture de Jibril BENSALEM.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- `git log --since` arrête le parcours au premier commit plus ancien que la date : un premier audit des adresses a conclu à tort qu'il n'y en avait aucune.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -533,10 +667,23 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 10/10 | Nombre de fiches visées par le seuil du CDTN annoncé à 61 au lieu de 50, compté sur toutes les requêtes appariées | recomptage avant le commit | corrigé avant le gel du protocole |
 | 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
 | 10/10 | Chiffres de l'audit statistique tirés d'un essai préliminaire, à une autre graine, et non du script versionné | réexécution du script avant le commit | chiffres alignés sur la sortie reproductible |
+| 13/10 | Recalcul indépendant de l'effet de plan différent de celui du module de métriques | écart entre les deux calculs | écart dû au degré de liberté de l'estimateur ; avec `ddof=1`, accord à 1e-14, le module était juste |
+| 14/10 | Fidélité de l'encodeur ajusté publiée à 753 sur 822, mesurée sur un export q8 antérieur, quantifié sans `ActivationSymmetric` | nouvelle mesure du q8 livré, dans le navigateur | 769 sur 822 ; protocole 05 et rapport de Remy corrigés |
+| 14/10 | Données du CDTN déclarées « sans licence » le 10/10, faute de fichier LICENSE, alors que leur `package.json` déclare Apache-2.0 | relecture de la source et du paquet npm | `04_cdtn.md` corrigé (PR #77) ; l'alerte et la demande au support de GitHub du 13/10 reposaient sur cette erreur |
+| 14/10 | Première règle d'élagage qui retirait les diacritiques combinants et la lettre μ : un passage sur 4 240 changeait de découpage | comparaison du découpage sur tous nos textes | diacritiques et lettres grecques gardés ; découpage identique partout |
+| 14/10 | Taille du q8 de Xenova écrite 112,9 Mio au lieu de 112,8 dans la PR #78 et trois de ses fichiers | recalcul depuis le nombre d'octets | corrigé (`a9a71c5`) ; 112,9 Mio est la taille du témoin de Remy |
+| 14/10 | `.gitignore` de la PR #63 ignorant tous les fichiers `.onnx`, donc le modèle servi par le site | test des règles d'exclusion, puis essai dans un dépôt jetable : `git add` d'un dossier l'omettait sans avertissement | ligne retirée par Remy avant la fusion |
+| 14/10 | Premier test de ces règles invalide : option non reconnue, erreurs masquées, donc aucune détection | listes vides jugées suspectes, règle témoin ajoutée | test refait avec `core.excludesFile` |
+| 14/10 | Cache du navigateur attribué à IndexedDB, alors que Transformers.js 4.3.0 utilise l'API Cache | lecture du code source de la bibliothèque | `caches.delete` à la place de `indexedDB.deleteDatabase` (PR #63) |
+| 14/10 | Hypothèse de l'assistant, publiée dans une revue de la PR #72 : avec le modèle en cache, bloquer Hugging Face par `page.route()` n'empêcherait pas le chargement | essai sur le site en ligne : le chargement échoue | hypothèse retirée dans un commentaire de suivi ; Vaneck a mesuré le cas réel et corrigé sa fiche |
+| 14/10 | QCM du Weekly : la bonne réponse était la plus longue dans 13 questions sur 20 | script de contrôle des longueurs | réponses rééquilibrées, 3 cas sur 20 |
+| 17/10 | Audit des adresses e-mail concluant à zéro exposition, `git log --since` ayant arrêté le parcours trop tôt | contradiction avec un commit connu | historique parcouru en entier : 62 commits concernés |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
+
+**Bilan du 11 au 17 octobre.** Onze erreurs ou pièges détectés et traités. **Six figuraient déjà dans une pull request ou un document publié** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB et l'hypothèse sur `page.route()`. Comme les précédentes, toutes ont été trouvées par une mesure, un essai ou la lecture d'une source primaire.
 
 ---
 
