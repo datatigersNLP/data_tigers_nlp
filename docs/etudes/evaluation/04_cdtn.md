@@ -61,6 +61,7 @@ Les 32 appariements par le début du titre ont été contrôlés un à un : ce s
 * **Deux jugements.** Sur la première ligne de chaque requête, `verdict_requete` : `oui` si les sections citées répondent à la requête, `partiel` si elles n'y répondent qu'en partie, `non` sinon. Sur chaque ligne, `formulation_a_ecarter` : `oui` si la formulation ne correspond pas à la requête.
 * **Indépendance.** La règle de #56 interdisait de consulter le CDTN avant le tag du jeu de l'équipe, posé le 6 octobre ; la source n'a été téléchargée que le 10 octobre. La relecture se fait avant toute mesure sur ce jeu.
 * **Import.** `scripts/evaluation/cdtn_jeu.py importer` écrit `evaluation/cdtn/jugements.csv`, avec seulement des identifiants et des verdicts. Une remarque ne recopie jamais un texte du CDTN.
+* **Relectures du 14 octobre.** Les trois fiches, reçues hors du dépôt et contrôlées, sont complètes : 155 requêtes jugées (104 `oui`, 27 `partiel`, 24 `non`) et 27 formulations écartées, soit 182 jugements. La population de l'analyse compte 131 requêtes et 494 formulations (131 titres et 363 variantes en question). Deux verdicts saisis « Oui » par Jibril ont été ramenés à `oui`, avec son accord, avant l'import ; aucune autre valeur n'a été modifiée. Empreinte SHA-256 de `evaluation/cdtn/jugements.csv` : `0ddf16834b9ebdb2c9c71eeb78df2f2412130473dc9f3af892c7f757cc131968`.
 
 ---
 
@@ -89,3 +90,4 @@ Les 32 appariements par le début du titre ont été contrôlés un à un : ce s
 
 * **10 octobre 2026.** Règle d'appariement et plan d'analyse figés, avant la mesure du notebook 03.
 * **14 octobre 2026.** Section 2 corrigée : la source est sous licence Apache-2.0, déclarée dans son `package.json` et confirmée par le paquet npm qui contient le même fichier ; conditions de redistribution précisées ; aucun des motifs de données personnelles recherchés n'est détecté. La règle et le plan ne changent pas.
+* **14 octobre 2026, après le Weekly 5.** Import des trois relectures (182 jugements), avant la mesure de l'encodeur ajusté ; population de l'analyse : 131 requêtes, 494 formulations.
