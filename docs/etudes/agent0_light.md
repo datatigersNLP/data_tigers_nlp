@@ -1,12 +1,12 @@
-# Agent0 Light : contrat, sources et aperçu des prompts (#91 à #93)
+# Agent0 Light : contrat, sources, prompts et budget Qwen (#91 à #93)
 
 ## 1. Périmètre et état
 
 Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`).
 État au 18 octobre 2026 : contrat et préparateur de sources implémentés ; 44 tests, contrôle du corpus et première
-sélection réussis sur le Windows de Jibril. Le premier incrément de #93 ajoute un aperçu des prompts, avec 58 tests
-réussis dans l'environnement de développement ; son essai Windows reste à faire. La relecture des deux membres
-reste attendue. La PR RAG #85 est préservée.
+sélection réussis sur le Windows de Jibril. L'aperçu de #93 a également passé les 58 tests et la préparation Windows.
+Le deuxième incrément ajoute le contrôle local du modèle/gabarit/budget : 75 tests réussis ici, essai Windows
+de ce nouveau mode attendu. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -364,12 +364,122 @@ est simulée pour la commande car cette copie locale de contrôle n'est pas un c
 Les fonctions ont aussi été exécutées sur les vrais JSON M2 avec une sélection reconstruite à graine 20261018 :
 le premier passage est bien `m2-article374529-0004`, de 318 caractères, conservés intégralement dans les deux
 prompts. Ce contrôle n'est pas une lecture du fichier Windows de Jibril et ne revendique aucune provenance Git
-réelle pour sa sélection reconstruite. L'essai Windows du nouvel aperçu reste attendu.
+réelle pour sa sélection reconstruite. L'essai Windows du premier aperçu a depuis réussi ; voir le retour ci-dessous.
 
 La lecture des helpers publics de #85 confirme leur intérêt pour le contrôle du modèle, du gabarit et des
 tokens. Ils ne sont pas présents sur cette branche, et l'aperçu n'importe pas le RAG. Le prochain incrément
-traitera `client_qwen.py`, le budget, la fin de génération, les sorties brutes, les rejets et le stockage des
-candidats. Aucun module de #85 n'est modifié. #93 reste ouverte et sa PR en brouillon ; l'estimation globale
+ajoutera la fin de génération, les sorties brutes, les rejets et le stockage des candidats. Le client et le budget
+sont désormais ajoutés par le deuxième incrément décrit en section 11. Aucun module de #85 n'est modifié. #93 reste ouverte et sa PR en brouillon ; l'estimation globale
 de 6 h du ticket reste une prévision, sans temps réel inventé.
 
 [Note d'assistance IA #93](../journal/2026-10-18_agent0_light_93.md).
+
+
+### Retour Windows du premier aperçu, transmis le 18 octobre
+
+La trace de Jibril montre le passage à `feat/93-agent0-generation`, un statut propre, puis les **58 tests**
+réussis (`Ran 58 tests in 0.364s`, `OK`). La commande d'aperçu retourne `prompt_prepare`, catégorie
+`simple`, cible `easy`, source `m2-article374529-0004`, version `agent0-simple-reformulation-v1`.
+Elle rapporte Python 3.12.15, le commit `89202adefea0f33da154cb2e5dd7c8993cbc5c7d` et `git_dirty: false`.
+
+L'empreinte du prompt
+`161c5588984933f6bd73ad9155c651de52383a91559ee06e4557a2b965429a5e`
+est identique à celle obtenue ici. Les empreintes de `generate.py`, `prompts.py` et `schema.py`
+correspondent exactement à leurs octets CRLF, vérifiés contre les blobs LF exécutés ici.
+La trace annonce la sauvegarde dans `data/synthetic/preparations/simple_001.json` ; son contenu complet n'a
+pas été transmis. `ollama_appele`, `matrice_lue` et `budget_tokens_verifie` sont à `false`.
+C'est la réussite de la préparation hors ligne, sans question générée ni validation sémantique.
+
+## 11. Deuxième incrément de #93 : vérifier la place avant génération
+
+Le contexte de Qwen ressemble à une valise : consigne, schéma, passage et réponse future doivent tenir ensemble.
+`client_qwen.py` prépare la requête sans l'envoyer. Il reprend les garde-fous des helpers publics de #85
+au commit `df91b85`, avec une adaptation explicite dans ce seul fichier : aucun import du RAG non fusionné,
+aucune modification de #85. Après sa stabilisation, une éventuelle mutualisation pourra être discutée séparément.
+
+### Contrôles et paramètres
+
+- Appels locaux limités à `/api/version`, `/api/tags` et `/api/show` sur `127.0.0.1:11434`.
+  Le client refuse d'appeler `/api/generate` à cet incrément.
+- Modèle unique, digest de #31/#85, format GGUF, famille qwen2, quantification Q4_K_M, version et gabarit non vides.
+  Les métadonnées retournées, y compris le gabarit et les paramètres déclarés par le modèle, sont conservées.
+- Tokeniseur `Qwen/Qwen2.5-7B-Instruct`, révision `a09a35458c702b33eeacc393d103063234e8bc28`.
+  Cache local par défaut, `trust_remote_code=False`. Une option explicite autorise son téléchargement si nécessaire.
+- Gabarit Ollama rendu une fois et comparé au format Qwen system/user attendu, puis compté avec
+  `add_special_tokens=False` et `truncation=False`.
+- Contexte **8 192**, réponse réservée **512**, marge **64** : entrée au plus **7 616 tokens** selon le tokeniseur HF.
+  Un dépassement est refusé ; le programme ne coupe pas un passage pour le faire tenir.
+- La requête préparée utilise `raw: true`, `stream: false`, `format` avec le schéma JSON, température 0,
+  graine 20261018 et maintien du modèle 30 minutes. Elle est enregistrée, jamais envoyée par ce mode.
+
+`budget_tokens_verifie: true` signifie que le contrôle préliminaire HF a réussi.
+`comptage_ollama_compare: false` rappelle qu'il faudra comparer ce compte à `prompt_eval_count` après
+la première génération réelle. Aucun résultat de Qwen, fin de génération ou qualité de question n'est encore validé.
+Le futur appel devra refaire ces contrôles, plutôt qu'envoyer aveuglément une ancienne requête sauvegardée.
+
+### Dépendances
+
+`requirements.txt` ajoute `transformers==5.17.0` et `jinja2==3.1.6`.
+Le verrou complet a été résolu avec uv 0.12.23, Python cible 3.12 et contraintes du verrou existant du notebook 02,
+en conservant les cinq versions de #91. Il inclut les marqueurs Windows/Linux et s'installe avec pip.
+Les fichiers de contraintes du notebook 02 et du RAG ne changent pas.
+
+Le verrou a été installé dans un environnement neuf ici : `pip check` réussit.
+Transformers 5.17.0, Tokenizers 0.23.2 et Jinja2 3.1.6 sont importables sans torch.
+Le message « PyTorch was not found » est attendu : seuls les outils de tokenisation sont utilisés côté Python ;
+Qwen reste exécuté par Ollama. Aucun poids Qwen ni encodeur E5 n'est installé par ce verrou.
+
+Commande de résolution utilisée ici, avec une copie locale du verrou d'indexation comme contrainte supplémentaire :
+
+```bash
+uv pip compile scripts/synthetic/requirements.txt --universal --python-version 3.12 --no-header --no-annotate -c /chemin/vers/la-copie-du-verrou-indexation.txt -o /chemin/vers/le-nouveau-verrou.txt
+```
+
+La résolution n'est pas à relancer pour l'essai Windows : installer le verrou versionné suffit.
+
+### Commandes Windows, sur la branche #93
+
+Vérifier l'état local avant la mise à jour ; exécuter une commande à la fois et arrêter en cas d'erreur.
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m pip install -r .\scripts\synthetic\requirements-lock.txt
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Avec Ollama démarré, préparer le budget de la même source, dans un nouveau fichier :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-qwen --sources .\data\synthetic\sources\selection_001.json --group 1 --type simple --difficulty easy --output .\data\synthetic\preparations\budget_simple_001.json
+```
+
+Résultat attendu : `requete_preparee`, `ollama_appele: true` (métadonnées seulement),
+`budget_tokens_verifie: true`, `generation_appelee: false`, plus le nombre `nb_tokens_hf`.
+Le mode `--prepare-only` reste utilisable hors ligne avec son comportement initial.
+
+Si le tokeniseur figé manque dans le cache, la commande refuse et explique l'option
+`--allow-tokenizer-download`. Rejouer alors la même commande avec cette option autorise uniquement
+le téléchargement du tokeniseur depuis Hugging Face. L'aperçu `simple_001.json` reste conservé.
+Ne pas changer le modèle, le digest ou les limites pour contourner une erreur.
+
+### Vérifications du deuxième incrément et limites
+
+**75 tests réussis ici**, dont 17 nouveaux tests du client et de son intégration à la CLI.
+Serveur et tokeniseur Qwen simulés dans la suite, erreurs HTTP/délai/JSON, modèle absent ou ambigu,
+mauvais digest/gabarit, limite exacte et dépassement d'un token, cache, sauvegarde et refus de génération.
+Compilation et cohérence des dépendances vérifiées.
+
+Un essai complémentaire utilise réellement les bibliothèques installées et le moteur Jinja avec un tokeniseur
+WordLevel technique minimal : rendu et comptage réussis, 13 tokens sur cette fixture. Ce n'est ni le tokeniseur
+Qwen réel ni une inférence ; ce chiffre n'est pas une mesure du prompt réglementaire.
+Le cache/tokeniseur Qwen réel, le gabarit retourné par Ollama et le budget de Jibril restent à vérifier sur son PC.
+
+La PR #101 reste en brouillon, le ticket #93 ouvert et la génération de candidats à implémenter après ce retour.
+Les échecs de préparation sont affichés avec un code retour non nul ; les traces persistantes des appels et
+échecs de génération seront ajoutées avec le stockage du prochain incrément. Aucune charge réelle n'est déduite.
+
+Références techniques consultées le 18 octobre 2026 :
+[Ollama, génération raw et schéma JSON](https://docs.ollama.com/api/generate),
+[Hugging Face, gabarits de conversation](https://huggingface.co/docs/transformers/chat_templating),
+[tokeniseurs et absence de troncature](https://huggingface.co/docs/transformers/main_classes/tokenizer).

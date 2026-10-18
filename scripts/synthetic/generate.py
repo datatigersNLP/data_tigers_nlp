@@ -1,4 +1,4 @@
-"""Préparer une consigne Agent0 Light (#93), sans Ollama ni tokeniseur."""
+"""Préparer une consigne Agent0 Light (#93), éventuellement son budget, sans génération."""
 
 import argparse
 import hashlib
@@ -92,8 +92,12 @@ def preparer(selection: dict, empreinte: str, groupe: int, categorie: str,
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--prepare-only", action="store_true", required=True,
-                        help="seul mode disponible : aucune génération")
+    modes = parser.add_mutually_exclusive_group(required=True)
+    modes.add_argument("--prepare-only", action="store_true", help="aperçu hors ligne")
+    modes.add_argument("--prepare-qwen", action="store_true",
+                       help="vérifier modèle, gabarit et budget, sans génération")
+    parser.add_argument("--allow-tokenizer-download", action="store_true",
+                        help="autoriser le téléchargement du seul tokeniseur figé")
     parser.add_argument("--sources", type=Path, required=True, help="manifeste produit par corpus.py")
     parser.add_argument("--group", type=int, default=1, help="groupe de la sélection, à partir de 1")
     parser.add_argument("--type", choices=prompts.CATEGORIES, required=True)
@@ -101,6 +105,8 @@ def main(argv=None) -> int:
     parser.add_argument("--index-dir", type=Path, default=corpus.DOSSIER_INDEX)
     parser.add_argument("--output", type=Path, help="nouveau fichier UTF-8, sans écrasement")
     args = parser.parse_args(argv)
+    if args.allow_tokenizer_download and not args.prepare_qwen:
+        parser.error("--allow-tokenizer-download exige --prepare-qwen")
     try:
         if args.output and args.output.exists():
             raise ErreurPreparation("Le fichier de sortie existe déjà ; choisir un autre nom")
@@ -111,6 +117,17 @@ def main(argv=None) -> int:
         preparation["code"]["sha256_fichiers"] = {
             nom: hashlib.sha256(Path(__file__).with_name(nom).read_bytes()).hexdigest()
             for nom in ("generate.py", "prompts.py", "schema.py")}
+        if args.prepare_qwen:
+            if __package__:
+                from . import client_qwen
+            else:
+                import client_qwen
+            preparation["qwen"] = client_qwen.preparer_requete(
+                preparation["prompt"], args.allow_tokenizer_download)
+            preparation.update({"statut": "requete_preparee", "ollama_appele": True,
+                                "budget_tokens_verifie": True, "generation_appelee": False})
+            preparation["code"]["sha256_fichiers"]["client_qwen.py"] = hashlib.sha256(
+                Path(client_qwen.__file__).read_bytes()).hexdigest()
         if args.output:
             corpus.enregistrer_manifeste(preparation, args.output)
             resultat = {c: preparation[c] for c in ("statut", "type", "difficulty_target", "code",
@@ -118,6 +135,11 @@ def main(argv=None) -> int:
             resultat.update({"passage_id": preparation["source"]["passage_id"],
                              "version_prompt": preparation["prompt"]["version"],
                              "output": str(args.output.resolve())})
+            if args.prepare_qwen:
+                resultat.update({"generation_appelee": False, "ollama": {
+                    c: preparation["qwen"]["ollama"][c] for c in ("version", "modele", "digest")},
+                    "budget": {c: v for c, v in preparation["qwen"]["entree"].items()
+                               if c != "texte"}, "versions": preparation["qwen"]["versions"]})
         else:
             resultat = preparation
     except (ValueError, OSError, UnicodeDecodeError) as exc:

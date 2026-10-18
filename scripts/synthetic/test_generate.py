@@ -11,9 +11,10 @@ import unittest
 from unittest.mock import patch
 
 if __package__:
-    from . import corpus, generate, prompts, schema
+    from . import client_qwen, corpus, generate, prompts, schema
     from .test_corpus import exporter, passages_techniques
 else:
+    import client_qwen
     import corpus
     import generate
     import prompts
@@ -182,6 +183,47 @@ class PreparationTests(unittest.TestCase):
                 with self.assertRaises(SystemExit) as erreur:
                     generate.main(arguments)
                 self.assertEqual(erreur.exception.code, 2)
+
+    def test_cli_budget_et_requete_sauvegardes_sans_generation(self):
+        sortie = self.dossier / "budget.json"
+        qwen = {"ollama": {"version": "fixture", "modele": "fixture", "digest": "fixture"},
+                "entree": {"texte": "fixture raw", "nb_tokens_hf": 12}, "versions": {},
+                "requete": {"prompt": "fixture raw"}, "generation_appelee": False}
+        arguments = ["--prepare-qwen", *self.arguments()[1:], "--output", str(sortie)]
+        with (patch.object(corpus, "provenance_code", return_value=copy.deepcopy(self.code)),
+              patch.object(client_qwen, "preparer_requete", return_value=qwen) as preparer,
+              contextlib.redirect_stdout(io.StringIO()) as stdout):
+            self.assertEqual(generate.main(arguments), 0)
+        sauvegarde = json.loads(sortie.read_text(encoding="utf-8"))
+        self.assertEqual(sauvegarde["statut"], "requete_preparee")
+        self.assertTrue(sauvegarde["budget_tokens_verifie"])
+        self.assertTrue(sauvegarde["ollama_appele"])
+        self.assertFalse(sauvegarde["generation_appelee"])
+        self.assertEqual(sauvegarde["qwen"], qwen)
+        self.assertEqual(json.loads(stdout.getvalue())["budget"]["nb_tokens_hf"], 12)
+        self.assertEqual(preparer.call_args.args[0], sauvegarde["prompt"])
+        self.assertFalse(preparer.call_args.args[1])
+
+    def test_cli_refus_budget_sans_fichier_et_sortie_existante_sans_api(self):
+        sortie = self.dossier / "budget.json"
+        arguments = ["--prepare-qwen", *self.arguments()[1:], "--output", str(sortie)]
+        with (patch.object(corpus, "provenance_code", return_value=copy.deepcopy(self.code)),
+              patch.object(client_qwen, "preparer_requete", side_effect=client_qwen.ErreurQwen("budget")),
+              contextlib.redirect_stderr(io.StringIO())):
+            self.assertEqual(generate.main(arguments), 1)
+        self.assertFalse(sortie.exists())
+        sortie.write_bytes(b"a conserver")
+        with (patch.object(client_qwen, "preparer_requete") as preparer,
+              contextlib.redirect_stderr(io.StringIO())):
+            self.assertEqual(generate.main(arguments), 1)
+        preparer.assert_not_called()
+        self.assertEqual(sortie.read_bytes(), b"a conserver")
+
+    def test_cli_refuse_telechargement_en_mode_hors_ligne(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as erreur:
+                generate.main(self.arguments() + ["--allow-tokenizer-download"])
+        self.assertEqual(erreur.exception.code, 2)
 
 
 if __name__ == "__main__":
