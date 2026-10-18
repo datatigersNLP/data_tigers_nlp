@@ -4,9 +4,10 @@ Responsables : Jibril BENSALEM et Maïmouna SIGNATE. Soutien : Remy RAYANE et Ma
 
 ## État au 18 octobre 2026
 
-Les étapes 1 (chargement de l'index) et 2 (récupération Python fp32) sont implémentées.
+Les étapes 1 (chargement de l'index), 2 (récupération Python fp32) et 3 (contexte numéroté) sont implémentées.
 Le contrôle de l'index réel a réussi sur le Legion, d'après la sortie transmise par Jibril le 18 octobre.
-L'étape 2 reste à exécuter avec le vrai encodeur E5 sur cette machine. Aucun appel à Ollama n'est implémenté.
+L'étape 2 a également réussi sur Q036, selon la trace transmise par Jibril. Le contexte a été construit ici depuis
+ses cinq résultats réels, sans réexécuter E5. Aucun appel à Ollama n'est implémenté.
 La chaîne RAG complète reste à construire ; ces étapes ne valident pas les critères de clôture de #51.
 
 L'estimation de 16 h cumulées est inscrite dans le ticket et le classeur avant le développement.
@@ -100,7 +101,7 @@ attendues. Aucune sortie des tests unitaires Windows n'a été transmise ; on ne
 | Tests Python sur exports artificiels | 15 réussis |
 | Métadonnées réelles | Empreinte et schéma contrôlés |
 | Matrice réelle, sur le Legion | Contrôle réussi, sortie transmise par Jibril |
-| Encodage E5 et récupération | Implémentés, exécution réelle à faire |
+| Encodage E5 et récupération | Réussis pour Q036, trace transmise par Jibril |
 | Appel réel à Ollama | Aucun |
 | RAG complet | Non validé |
 
@@ -136,7 +137,32 @@ Q036 est utilisée mot pour mot : « Quelles sont les obligations légales de l'
 Le JSON doit afficher `recuperation_effectuee`, `top_k: 5`, `e5_charge: true`, `ollama_appele: false`, la question et
 son commit source, les versions et les cinq résultats. Chaque résultat contient rang, indice, score et toutes les
 métadonnées du passage, dont son texte original. Le score de similarité n'est ni une probabilité ni une preuve que
-le texte suffit pour répondre. Aucun résultat, classement ou temps réel pour Q036 n'est encore rapporté.
+le texte suffit pour répondre.
+
+### Résultat réel de Q036 transmis le 18 octobre
+
+Source : fichier « Texte collé.txt » transmis par Jibril, SHA-256
+`4694b24bb9deea5ab6c9f10920e21059c6e57ce2f9aa61522564dc8dbb808114`.
+Ce résultat provient de son Legion ; l'assistant n'a pas exécuté E5 à distance.
+Code exécuté : `a5d264a`. Versions rapportées : Python 3.12.15, NumPy 2.5.3,
+Sentence Transformers 6.1.0, PyTorch 2.14.0, Transformers 5.17.0.
+Le résumé confirme la révision E5 prévue, fp32 sur CPU, les empreintes de l'index et des passages,
+`e5_charge: true` et `ollama_appele: false`.
+
+| Rang | Passage | Indice | Score | Lecture qualitative des sources |
+|---|---|---:|---:|---|
+| 1 | `m2-article115181-0002` | 1085 | 0.8619567155838013 | Mesures de prévention et conditions d'application, fiche « Chaleur et canicule au travail » |
+| 2 | `m2-article115181-0003` | 1086 | 0.8556755781173706 | Recommandations aux travailleurs ; ne pas les transformer en obligations de l'employeur |
+| 3 | `m2-article374930-0019` | 2857 | 0.8504210114479065 | Obligations lors de l'embauche, moins directement liées à la question |
+| 4 | `m2-article112732-0007` | 748 | 0.8481160998344421 | Suivi de santé du secteur du particulier employeur, moins directement lié à la question |
+| 5 | `m2-article115181-0001` | 1084 | 0.8480237126350403 | Cadre de prévention du risque chaleur, même fiche que le premier passage |
+
+Contrôle effectué ici sur la trace : chaque objet `passage` est identique à celui des métadonnées versionnées
+à l'indice indiqué. Les passages 1 et 5 contiennent des éléments utiles pour une réponse conditionnelle.
+Cette lecture qualitative de calibration n'est ni une mesure officielle D4 ni une validation juridique exhaustive.
+Les scores proches de passages moins pertinents illustrent pourquoi ils ne doivent pas être lus comme des probabilités.
+Les avertissements du Hub (accès sans jeton et cache Windows sans liens symboliques) n'ont pas empêché cette exécution.
+La trace ne fournit pas de durée isolée d'encodage ou de recherche : aucun temps correspondant n'est inventé.
 
 Contrôles exécutés ici après cette extension : **27 tests réussis** avec Python 3.12.14 et NumPy 2.3.5.
 Ils couvrent notamment le préfixe et la conservation de la question humaine, la limite sans troncature, les
@@ -144,13 +170,41 @@ dimensions et normes, les égalités de score, la correspondance des passages, l
 de la commande. Le chargement E5 et sa sortie sont simulés dans ces tests : ils ne prouvent ni la disponibilité
 des poids, ni le vrai encodage, ni la qualité de récupération. L'exécution locale ci-dessus reste nécessaire.
 
-## 5. Suite prévue après la récupération
+## 5. Étape 3 : préparer la consigne et le contexte
 
-1. Contrôler la récupération réelle sur le Legion.
-2. Construire le contexte numéroté et conserver la correspondance `[P1]` → `passage_id` → source.
-3. Finaliser le prompt et le budget de contexte, puis appeler le Qwen local validé dans #31.
-4. Distinguer réponse citée, abstention du modèle, sortie invalide et erreur technique.
-5. Documenter des sorties réellement obtenues, dont une abstention, sans modifier les questions.
+`construire_contexte()` produit deux textes séparés : `system` (règles du RAG) et `prompt` (question inchangée,
+puis cinq documents numérotés). Chaque document porte `[P1]` à `[P5]`, le titre de fiche, la section, les intertitres,
+la date de mise à jour et le texte original intégral. Les textes ne sont ni résumés ni tronqués.
+La table `sources`, séparée du prompt, associe chaque référence à son identifiant permanent et à ses URL.
+Les vecteurs, scores et annotations attendues ne sont pas envoyés au générateur.
+
+La consigne `rag-b1-v1`, dans `CONSIGNE_RAG`, reprend la proposition discutée : seules les sources fournies,
+citations contrôlées, conditions et exceptions conservées, abstention explicite. Une précision sur la distinction entre
+obligations et recommandations est motivée par le seul exemple de calibration Q036. Aucun réglage ne vient du lot de test.
+La phrase d'abstention est : « Je ne peux pas répondre à cette question à partir des passages fournis. »
+Les empreintes du système et du prompt sont consignées pour identifier exactement les textes utilisés ensuite.
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\rag\rag.py --prepare-context --question-id Q036
+```
+
+Ce mode refait la récupération puis affiche `contexte_prepare`, le contexte et sa table des sources.
+Il ne contacte pas Ollama. La construction du contexte a été exécutée ici sur les cinq résultats réels transmis
+par Jibril : 815 caractères pour le système, 7 769 pour le prompt ; les cinq textes y sont conservés intégralement.
+Empreinte du système : `550e2a7bd98bee9d1ce681be3f32089077c6e9ed669573175525366d5d41b8fa`.
+Empreinte du prompt de cet exemple : `99c15c28e74bee42811a2a790d64f67c97cd3f68207e7efd2522e06b42f7b3fa`.
+Les nombres de caractères ne sont **pas** des nombres de tokens Qwen et ne valident pas le budget de contexte.
+
+Après cette extension : **30 tests réussis** dans l'environnement de l'assistant, ainsi que le contrôle distinct
+sur la trace réelle de récupération. Le vrai générateur n'a pas été appelé ; la vérification du gabarit Ollama et du
+budget de tokens reste nécessaire avant le premier appel de génération.
+
+## 6. Suite prévue après le contexte
+
+1. Vérifier la version, le modèle et le gabarit effectivement utilisés par Ollama sur le Legion.
+2. Contrôler le budget avec les tokens Qwen, puis appeler le Qwen local validé dans #31.
+3. Distinguer réponse citée, abstention du modèle, sortie invalide et erreur technique.
+4. Documenter des sorties réellement obtenues, dont une abstention, sans modifier les questions.
 
 Pour les premiers essais, les questions Q036 (`dans_corpus`) et Q003 (`hors_corpus`) du lot de **calibration** au tag
 `jeu-questions-v1` ont été proposées avant exécution dans la conception. Leur texte restera inchangé.

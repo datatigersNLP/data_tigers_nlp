@@ -15,7 +15,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 
 from rag import (ErreurIndex, ErreurRecuperation, IndexCommun, JEU_COMMIT,
-                 MODELE_E5, REVISION_E5, charger_encodeur, charger_index,
+                 ABSTENTION, MODELE_E5, REVISION_E5, charger_encodeur, charger_index, construire_contexte,
                  encoder_question, lire_question_calibration, main, recuperer_passages)
 
 
@@ -325,6 +325,48 @@ class RecuperationTests(unittest.TestCase):
         self.assertEqual(resultat["statut"], "recuperation_effectuee")
         self.assertEqual(len(resultat["resultats"]), 5)
         self.assertFalse(resultat["ollama_appele"])
+
+
+class ContexteTests(unittest.TestCase):
+    def setUp(self):
+        # Question humaine de calibration ; documents artificiels de test.
+        self.question = "Quelles sont les obligations légales de l'empoyeur en période de forte chaleur ?"
+        self.resultats = [{"rang": i, "score": 0.5, "passage": {
+            "passage_id": f"fixture-{i}", "titre_fiche": "Fiche de contrôle",
+            "section_titre": "Section", "chemin": ["Intertitre"], "date_maj": "2026-10-18",
+            "texte": f"  Texte original {i}.\n- Liste conservée.\n",
+            "url": "https://example.org/source", "url_citation": "https://example.org/source#texte",
+        }} for i in range(1, 6)]
+
+    def test_numerotation_textes_question_et_sources(self):
+        contexte = construire_contexte(self.question, self.resultats)
+        self.assertIn(self.question, contexte["prompt"])
+        self.assertEqual([s["reference"] for s in contexte["sources"]],
+                         [f"[P{i}]" for i in range(1, 6)])
+        for i, resultat in enumerate(self.resultats, 1):
+            self.assertIn(resultat["passage"]["texte"], contexte["prompt"])
+            self.assertEqual(contexte["sources"][i-1]["passage_id"], resultat["passage"]["passage_id"])
+        self.assertEqual(contexte["sha256_prompt"], hashlib.sha256(contexte["prompt"].encode()).hexdigest())
+        self.assertEqual(contexte["sha256_system"], hashlib.sha256(contexte["system"].encode()).hexdigest())
+        self.assertIn(ABSTENTION, contexte["system"])
+
+    def test_scores_et_metadonnees_de_reponse_exclus_du_prompt(self):
+        self.resultats[0]["passage"]["annotation_attendue"] = "SECRET_DE_TEST"
+        contexte = construire_contexte(self.question, self.resultats)
+        self.assertNotIn("SECRET_DE_TEST", contexte["prompt"])
+        self.assertNotIn("https://example.org/source", contexte["prompt"])
+        self.assertNotIn("0.5", contexte["prompt"])
+
+    def test_nombre_rangs_et_doublons_refuses(self):
+        with self.assertRaises(ErreurRecuperation):
+            construire_contexte(self.question, self.resultats[:4])
+        self.resultats[1]["rang"] = 3
+        with self.assertRaises(ErreurRecuperation):
+            construire_contexte(self.question, self.resultats)
+        self.resultats[1]["rang"] = 2
+        self.resultats[1]["passage"]["passage_id"] = "fixture-1"
+        with self.assertRaises(ErreurRecuperation):
+            construire_contexte(self.question, self.resultats)
 
 
 if __name__ == "__main__":
