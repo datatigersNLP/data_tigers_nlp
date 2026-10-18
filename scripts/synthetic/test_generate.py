@@ -46,7 +46,7 @@ class PreparationTests(unittest.TestCase):
     def test_source_exacte_et_schema_communs_aux_deux_prompts(self):
         passage = passages_techniques()[0]
         avant = copy.deepcopy(passage)
-        for categorie in prompts.CATEGORIES:
+        for categorie in ("simple", "reformulation"):
             with self.subTest(categorie=categorie):
                 prompt = prompts.preparer_prompt(passage, categorie, "medium")
                 self.assertEqual(prompt["version"], prompts.VERSION_PROMPT)

@@ -659,3 +659,82 @@ réussite général. Le code ne change pas après ces retours. #93 reste ouverte
 Rémy reste demandé sur ces PR. Aucune review de #101 n'est encore déposée au moment du contrôle.
 L'ordre d'intégration reste #99, #100, puis #101 ; préserver les éventuelles corrections avant chaque intégration.
 Les remarques non bloquantes des reviews #99/#100 ne sont pas transformées en modifications du contrat dans cette mise à jour documentaire.
+
+
+## 13. #94 — Première préparation multi-passage
+
+Cet incrément prépare deux sources avant d'activer leur génération. #94 reste partielle : les contrôles
+de sortie multi-passage, les catégories adversarial/hors_corpus et leur exécution restent à réaliser.
+Le schéma de #91 connaît déjà ces catégories ; aucune modification de ce contrat ni du sélecteur #92.
+
+### Paire fournie et limite méthodologique
+
+Le retour Windows de Jibril annonce une sélection `paires_001.json`, mode `paires`, graine `20261018`,
+un groupe contenant, dans cet ordre, `m2-article374529-0002` et `m2-article374529-0000`.
+Les empreintes M2 sont conformes ; la provenance annoncée est `e6d6a640769d394155940fdd13226199c5192001`,
+copie propre, Python 3.12.15, sans appel Ollama ni lecture de matrice. Le fichier Windows complet n'a pas
+été transmis ; ses octets et son empreinte ne sont pas prétendus lus ici.
+
+La reconstruction locale du tirage retrouve ces mêmes identifiants. Les textes versionnés comportent
+respectivement **1 184** et **575 caractères**, fiche « Le congé sans solde ».
+Le premier détaille notamment l'exercice d'une autre activité, les clauses du contrat et la loyauté ;
+le second présente l'accord avec l'employeur, la rémunération et les effets de l'absence.
+Les passages se recouvrent aussi sur l'absence de réglementation. La paire est un point de départ potentiel,
+pas une preuve qu'une véritable question de combinaison existe ou a été obtenue.
+
+Le prompt demande une seule question cohérente, une information propre à chaque source, une preuve
+exacte par passage et une justification de leur apport dans `generation_reason`. Cette justification reste
+une proposition de Qwen. La relecture devra vérifier **nécessité et suffisance des deux sources** : citer
+deux passages ou juxtaposer deux questions indépendantes ne suffit pas.
+
+### Fichiers et formats
+
+- `prompts.py` : nouveau prompt `agent0-multi-passage-v1`, sans exemple réglementaire ni réponse attendue.
+- `generate.py` : groupe de deux passages pour `multi_passage`, un seul pour simple/reformulation.
+- `test_multi_passage.py` : tests techniques de préparation, de sauvegarde et de blocage avant génération.
+- `test_generate.py` : la vérification des deux anciens prompts continue de porter explicitement sur ces deux catégories.
+
+Les anciens aperçus `agent0-preparation-v1` conservent leur objet `source` et leurs prompts inchangés.
+L'aperçu multi-passage est explicitement `agent0-preparation-v2`, avec un tableau `sources` de deux objets
+documentaires complets dans l'ordre du groupe. Il n'a pas de champ `source` singulier. Les règles de
+provenance, empreintes, absence de troncature et refus d'écrasement restent communes.
+
+`--prepare-only` fonctionne sans réseau. `--prepare-qwen` peut vérifier le budget avec le client existant,
+sans génération et avec les mêmes réserves 8192/512/64 ; ce contrôle sur la paire réelle reste attendu.
+`--generate --type multi_passage` est refusé avant lecture du corpus, API ou création de run, tant que
+le validateur de sortie n'a pas été étendu. Aucun candidat multi-passage n'est déclaré par cet incrément.
+
+### Essai Windows suivant
+
+Exécuter une commande à la fois, et arrêter si elle échoue. Le statut Git doit être propre avant de changer
+de branche ; conserver les éventuels changements locaux et les examiner avant de poursuivre.
+
+```powershell
+git status --short --branch
+git fetch origin
+git switch --track origin/feat/94-agent0-categories
+git status --short --branch
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium --output .\data\synthetic\preparations\multi_passage_001.json
+```
+
+Résultat attendu : `prompt_prepare`, deux `source_ids`, `version_prompt: agent0-multi-passage-v1`,
+`ollama_appele: false`, `budget_tokens_verifie: false`. `medium` désigne une difficulté souhaitée,
+pas une mesure. Empreinte du prompt reconstruit :
+`f17fbef77a24d5b765ed4a8fd8f7a6ac3016ade28468b3c6f90410de97539c4e`.
+Elle concerne le prompt avec cette paire et cette difficulté ; elle ne constitue pas l'empreinte du fichier Windows.
+Attendre le retour de cet aperçu avant l'incrément de validation/génération.
+
+### Vérifications et état
+
+**101 tests réussis** sous Python 3.12.14 : les 93 précédents et 8 nouveaux, sur documents techniques
+artificiels et client simulé. Couverture supplémentaire : deux sources exactes et ordonnées, paramètres
+invalides, cardinalité, format versionné, reproductibilité, sauvegarde sans réseau, budget simulé sans génération,
+génération bloquée avant ses effets et protection d'un fichier existant. Compilation et aide CLI contrôlées.
+Reconstruction sur le corpus réel sans modèle ; empreinte du prompt simple toujours identique à celle du
+premier aperçu Windows. Aucun appel réel au tokeniseur Qwen ou à Ollama n'est réalisé ici.
+
+Travail isolé sur `feat/94-agent0-categories`, depuis #101 au commit `f725321` ; PR en brouillon vers `dev`,
+dépendante de #99/#100/#101, avec Mahé et Remy demandés en relecture. Les branches RAG et #93 restent
+inchangées. Pas de verdict humain, de gel du Challenge Set, de fusion ou de clôture. L'estimation #94 reste
+7 h de travail actif prévisionnel pour l'ensemble des trois catégories ; aucune durée réelle n'est attribuée.
