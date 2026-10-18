@@ -52,3 +52,19 @@ sur chaque puce. Cette lecture qualitative est documentée dans `docs/etudes/rag
 mesure systématique ni une validation juridique exhaustive. Les indicateurs sémantiques automatiques restent à false.
 Le code, la réponse brute, les questions et les paramètres ne sont pas modifiés. Q003 reste à exécuter dans la même
 configuration pour observer l'abstention. La relecture du binôme et la validation globale de #51 restent attendues.
+
+## Retour local ultérieur : abstention Q003
+
+Jibril transmet ensuite la trace « Texte collé(2).txt », SHA-256
+`58a6acffbf0397ae61a7982e407700214c411cf03a00173d432fc22848f43f19`.
+Le modèle local répond exactement : « Je ne peux pas répondre à cette question à partir des passages fournis. »
+Le rapport indique `abstention_modele`, aucun incident technique, 1 822 tokens d'entrée pour les deux comptages
+HF/Ollama et 17 tokens de sortie, fin `stop`. Ollama rapporte 1,1602394 s au total ; ce n'est pas le temps de toute
+la chaîne Python. Le modèle, la consigne et les paramètres sont identiques à Q036 ; aucune question n'est modifiée.
+
+L'assistant vérifie les cinq passages contre les métadonnées versionnées, reproduit le contrôle d'abstention et
+contrôle l'empreinte de l'entrée. Les passages reçus ne fournissent pas les règles de cumul d'activités d'un
+fonctionnaire. Le score maximal de similarité, environ 0,8585, ne garantit pas une réponse possible ; aucun seuil
+n'est ajouté. Le résultat et ses limites sont documentés dans l'étude RAG. Les deux exemples réels ne constituent
+pas une évaluation systématique et ne corrigent pas les limites de Q036. Les tests Windows, la relecture du binôme
+et la présentation à l'équipe restent à confirmer. La PR #85 reste en brouillon et #51 reste ouverte.

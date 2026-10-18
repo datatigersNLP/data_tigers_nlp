@@ -10,8 +10,9 @@ L'étape 2 a également réussi sur Q036, selon la trace transmise par Jibril. L
 ses cinq résultats réels, sans réexécuter E5. Le client Ollama et le contrôle structurel des citations sont implémentés
 dans `scripts/rag/generation.py`. Jibril a ensuite transmis une première exécution complète sur Q036 : réponse citée,
 références existantes et comptes de tokens concordants. La lecture des passages révèle toutefois des conditions
-d'application omises et des citations regroupées en introduction. L'abstention reste à observer sur Q003 ;
-la validation globale de #51 reste ouverte.
+d'application omises et des citations regroupées en introduction. Une seconde trace sur Q003 confirme une
+abstention réelle avec la même configuration. La relecture du binôme, les tests Windows et la présentation à
+l'équipe restent à confirmer ; la validation globale de #51 reste ouverte.
 
 L'estimation de 16 h cumulées est inscrite dans le ticket et le classeur avant le développement.
 La charge réelle n'est pas renseignée avant la clôture.
@@ -105,8 +106,8 @@ attendues. Aucune sortie des tests unitaires Windows n'a été transmise ; on ne
 | Métadonnées réelles | Empreinte et schéma contrôlés |
 | Matrice réelle, sur le Legion | Contrôle réussi, sortie transmise par Jibril |
 | Encodage E5 et récupération | Réussis pour Q036, trace transmise par Jibril |
-| Appel réel à Ollama | Réussi pour Q036 sur le Legion, trace transmise par Jibril |
-| RAG complet | Premier parcours Q036 exécuté ; limites de réponse relevées, abstention et validation globale en attente |
+| Appel réel à Ollama | Réussi pour Q036 et Q003 sur le Legion, traces transmises par Jibril |
+| RAG complet | Q036 : réponse citée avec limites relevées ; Q003 : abstention ; validation globale en attente |
 
 ## 4. Étape 2 : récupérer cinq passages avec E5
 
@@ -295,8 +296,8 @@ Après lecture de Q036, exécuter l'autre exemple prévu, sans reformuler la que
 .\.venv\Scripts\python.exe .\scripts\rag\rag.py --generate --question-id Q003 --output .\data\rag\Q003_rag.json
 ```
 
-Q003 est annotée `hors_corpus` dans le lot de calibration. On doit observer si Qwen s'abstient réellement ;
-le programme n'utilise pas ce type annoté pour forcer la réponse. Aucune abstention réelle n'est encore rapportée.
+Q003 est annotée `hors_corpus` dans le lot de calibration. Le programme n'utilise pas ce type annoté pour forcer
+la réponse. L'abstention réelle obtenue avec cette commande est documentée ci-dessous.
 
 ### Validation avant le premier appel réel
 
@@ -305,8 +306,8 @@ Ils vérifient notamment budget limite/dépassé, absence d'appel quand le budge
 quantification, requête UTF-8 locale et raw, citations inconnues/mal formées, conservation de la réponse interrompue,
 distinction abstention/erreur et sauvegarde sans écrasement. Compilation Python et contrôle du diff exécutés.
 Ces tests ne valident pas le vrai tokeniseur Qwen, le compte GGUF, la génération ni les ressources du Legion.
-La trace réelle de Q036, analysée ci-dessous, complète ces tests. Q003 et la relecture du binôme restent nécessaires
-avant de valider #51.
+Les traces réelles de Q036 et Q003, analysées ci-dessous, complètent ces tests. Les tests dans l'environnement Windows,
+la relecture du binôme et la présentation à l'équipe restent à confirmer avant de valider #51.
 
 Pour les premiers essais, les questions Q036 (`dans_corpus`) et Q003 (`hors_corpus`) du lot de **calibration** au tag
 `jeu-questions-v1` ont été proposées avant exécution dans la conception. Leur texte restera inchangé.
@@ -359,6 +360,58 @@ empreinte du gabarit : `d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229
   du format des références ; il ne vaut pas validation sémantique ou juridique de la réponse.
 
 Les indicateurs `justification_semantique_verifiee` et `couverture_des_affirmations_verifiee` restent à `false`.
-La réponse brute n'est pas corrigée. Avant tout éventuel ajustement documenté sur calibration, conserver cette
-baseline et exécuter Q003 avec la même consigne et les mêmes paramètres. Aucune abstention réelle n'est encore
-observée à ce stade ; aucune question ni aucun protocole d'évaluation n'est modifié.
+La réponse brute n'est pas corrigée. Cette baseline a été conservée pour exécuter ensuite Q003 avec la même
+consigne et les mêmes paramètres, comme prévu avant les essais. Aucune question ni aucun protocole d'évaluation
+n'est modifié.
+
+### Second résultat RAG réel : Q003, abstention, 18 octobre 2026
+
+Source : trace terminal « Texte collé(2).txt » transmise par Jibril, SHA-256
+`58a6acffbf0397ae61a7982e407700214c411cf03a00173d432fc22848f43f19`.
+Le terminal confirme l'enregistrement de `data/rag/Q003_rag.json` sur son Legion. L'assistant analyse cette trace
+sans exécuter Qwen à distance. Question humaine du lot de calibration, conservée mot pour mot :
+
+> Un fonctionnaire peut-il avoir une autre activité à coté de son travail ?
+
+Réponse brute intégrale :
+
+> Je ne peux pas répondre à cette question à partir des passages fournis.
+
+| Contrôle ou mesure de cette exécution | Résultat |
+|---|---|
+| Statut | `abstention_modele`, `e5_charge: true`, `ollama_appele: true` |
+| Entrée, tokeniseur HF / `prompt_eval_count` Ollama | 1 822 / 1 822 tokens, concordants |
+| Budget contrôlé | 1 822 + 512 + 64 = 2 398 ≤ 8 192 |
+| Sortie | 17 tokens, `done: true`, `done_reason: stop` |
+| Citations / erreurs techniques | Aucune citation, aucune erreur technique rapportée |
+| `total_duration` Ollama | 1,1602394 s |
+| `load_duration` Ollama | 0,0041829 s |
+| `prompt_eval_duration` Ollama | 0,724377 s |
+| `eval_duration` Ollama | 0,28686 s |
+
+| Référence | Passage | Indice | Score | Sujet |
+|---|---|---:|---:|---|
+| P1 | `m2-article101113-0001` | 367 | 0.8584688901901245 | Incompatibilité entre conseiller prud'homal en activité et conseiller du salarié |
+| P2 | `m2-article115944-0006` | 1098 | 0.8544212579727173 | Déclaration des activités de services à la personne |
+| P3 | `m2-article376807-0030` | 3712 | 0.8535135984420776 | Commissions supplémentaires du CSE |
+| P4 | `m2-article376115-0001` | 3443 | 0.8534690141677856 | Fonctions du collaborateur médecin du travail |
+| P5 | `m2-article115944-0003` | 1095 | 0.8525987863540649 | Champ des activités de services à la personne |
+
+Lecture qualitative limitée aux cinq passages : ils ne fournissent pas les règles de cumul d'activités d'un
+fonctionnaire. L'abstention est donc cohérente avec le contexte reçu. La récupération renvoie toujours cinq voisins,
+même lorsque leurs textes ne suffisent pas. Le score maximal de 0,8585 environ n'est ni une probabilité de réponse
+correcte ni un seuil à adopter. Aucun seuil n'a été ajouté et aucune annotation n'a été envoyée au générateur.
+
+Contrôles effectués ici sur la trace : les cinq textes et métadonnées correspondent exactement aux objets de
+`passages_m2.json` aux indices rapportés ; le validateur reproduit `abstention_modele` sur la réponse brute ;
+l'empreinte de l'entrée formatée est cohérente. Les consignes, options de génération, modèles, versions Python
+et dépendances, ainsi que les empreintes de l'index et des passages, sont identiques à Q036.
+Empreinte de l'entrée formatée : `df707a86d15c876a335e921c2f16fe25ffd320afb31a7e9b8b6f5c6b9e229cd0`.
+Les durées viennent d'Ollama ; elles ne mesurent pas la chaîne Python entière. La durée très faible de chargement
+est compatible avec un modèle déjà chargé, mais ne prouve pas son placement CPU/GPU. Les deux exemples ont des
+entrées et longueurs de sortie différentes : leur durée ne mesure pas à elle seule un gain de performance.
+
+Nous disposons désormais d'un exemple réel avec références existantes et d'un exemple réel d'abstention.
+Ces deux cas de calibration ne donnent aucun taux de réussite, aucune qualité générale des citations et aucune
+garantie d'abstention sur d'autres questions. Les limites de Q036 restent ouvertes. Aucun réglage n'est modifié
+sur la base de ces résultats et aucune mesure systématique de #52 n'est lancée.
