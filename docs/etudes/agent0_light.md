@@ -905,3 +905,70 @@ En cas de rejet, lire la réponse brute de ce nouveau run dans ses traces. Atten
 nouvelle modification ou les catégories suivantes. #103 reste en brouillon, Mahé/Remy demandés ; #94 partielle.
 Aucun candidat multi-passage admis, gel, fusion, clôture, entraînement ou temps réel déclaré.
 L'estimation globale #94 reste 7 h actives prévisionnelles.
+
+
+## 16. #94 — Deuxième essai : citations exactes, question à mieux cadrer
+
+### Résultat transmis et lecture assistée
+
+Jibril transmet **110 tests Windows réussis** (`Ran 110 tests in 0.588s`, `OK`), puis le résumé de
+`multi_passage_002` et le candidat complet `SYN_multi_passage_002_0001`.
+Le run annonce un candidat, aucun rejet, fin `stop`, **2023 tokens HF / Ollama**, **452 tokens générés**.
+Avec 512 de sortie réservés et 64 de marge, le budget représente **2599/8192**. Ces valeurs concernent
+le deuxième essai ; elles ne sont pas reportées sur le prochain prompt. Le manifeste complet n'est pas transmis.
+
+Les deux extraits reçus sont retrouvés exactement dans leurs passages M2. Le candidat conserve, dans cet
+ordre, `m2-article374529-0002` et `m2-article374529-0000`, `automatic: passed`, `human: pending`,
+`answerable_confirmed: null`, sans relecteur, note ou point attendu. La cible de difficulté reste `medium`.
+
+Question reçue : « Quelles sont les conditions et obligations du salarié lorsqu'il sollicite un congé sans
+solde, et comment cela se compare-t-il avec les congés réglementés par le Code du travail ? »
+
+La lecture assistée relève deux ambiguïtés, distinctes des contrôles automatiques réussis :
+
+- **Comparaison non cadrée.** Les sources mentionnent des congés réglementés sans détailler leurs conditions.
+  La question ne fixe aucun critère précis de comparaison et risque de demander une information absente.
+- **Contexte déplacé.** La preuve sur les clauses du contrat et la loyauté concerne l'exercice d'une autre
+  activité pendant le congé ; la question place les obligations au moment où le salarié le sollicite.
+
+La justification du générateur ne résout pas ces ambiguïtés : c'est une proposition, pas une validation.
+L'avis assisté est de ne pas intégrer ce cas sous cette forme dans le lot figé. **Aucun verdict humain n'est
+attribué** : le JSON demeure en attente et n'est pas réécrit. Les deux sources doivent être nécessaires et
+suffisantes pour une demande précisément cadrée avant admission au benchmark.
+
+### Consignes v3 et vérifications
+
+`agent0-multi-passage-v3` ajoute trois consignes générales : chaque élément demandé doit être documenté,
+une comparaison exige des éléments décrits sur le même critère, et une règle doit garder sa situation et son
+moment d'application. Aucun exemple réglementaire ni point attendu n'est injecté dans le prompt.
+Schéma, sources, validateur, client, budget, formats et prompts simple/reformulation restent inchangés.
+
+**110 tests réussis ici** sous Python 3.12.14 / Pydantic 2.14.0 et compilation contrôlée. La suite vérifie les
+parcours et garde-fous existants, pas la qualité sémantique du nouveau prompt. Aucun test ne prétend mesurer
+le sens d'une question par la présence d'un mot dans les consignes. Aucun nouvel appel réel au modèle ici.
+Sources complètes et ordre conservés ; empreinte du prompt simple initiale retrouvée. Prompt multi v3
+`medium` reconstruit sur la paire :
+`7e96af896875af56ba0ad213dac99dbd646928d28df4c6f8b7cd1f5970a84d7a`.
+
+### Essai suivant
+
+Sur `feat/94-agent0-categories`, exécuter une commande à la fois, avec dépôt propre et arrêt en cas d'échec :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id multi_passage_003 --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium
+```
+
+Le contrôle du budget est refait avant l'appel. Les deux précédents runs restent conservés. Après
+`candidat_prepare`, transmettre aussi le candidat complet :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\multi_passage_003\candidates.jsonl
+```
+
+Ces essais successifs sur une même paire servent à la mise au point des consignes ; ils ne mesurent pas la
+performance de la catégorie multi-passage. Le pilote #95 devra inclure d'autres sources et une relecture
+indépendante. Attendre ce retour avant la suite ; #103 reste en brouillon avec Mahé/Remy demandés,
+#94 partielle, estimation globale de 7 h inchangée. Aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
