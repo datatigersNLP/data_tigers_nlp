@@ -743,6 +743,8 @@ inchangées. Pas de verdict humain, de gel du Challenge Set, de fusion ou de cl�
 
 ## 14. #94 — Contrôles de sortie et premier essai multi-passage
 
+État de l'activation au commit `53d4da2` ; le résultat réel et l'ajustement suivant sont en section 15.
+
 ### Retours Windows de l'aperçu et du budget
 
 Jibril transmet le checkout propre de `feat/94-agent0-categories`, les **101 tests réussis**
@@ -820,3 +822,86 @@ contrôlées. Aucune nouvelle inférence réelle, modification de dépendance ou
 PR #103 toujours en brouillon ; Mahé et Remy restent demandés. L'essai Windows de cette génération et
 la relecture sémantique sont attendus. Les catégories adversarial/hors_corpus restent à réaliser dans #94.
 Pas de fusion, clôture, admission au lot figé ou temps réel déclaré ; estimation globale de 7 h inchangée.
+
+
+## 15. #94 — Premier rejet réel : liste aplatie et prompt v2
+
+### Résultat reçu et diagnostic
+
+Le terminal transmis par Jibril montre le fast-forward `2cb10c1..53d4da2`, puis **109 tests Windows
+réussis** (`Ran 109 tests in 0.641s`, `OK`). Le run `multi_passage_001` reçoit une réponse Qwen complète :
+`done: true`, `done_reason: stop`, **1925 tokens HF / 1925 Ollama**, **438 tokens générés**.
+Le comptage est comparé ; la limite de sortie de 512 n'est pas atteinte.
+
+Le résumé annonce `rejet_automatique`, **0 candidat, 1 rejet**, motif « Extrait non retrouvé mot pour mot
+dans le passage fourni ». Le fichier des candidats affiché est vide, conformément à ce rejet.
+Jibril transmet ensuite le JSON brut extrait des traces. Le manifeste complet et les autres traces du run
+ne sont pas transmis ; aucun état Git d'exécution détaillé n'est attribué au seul résumé.
+
+Question réellement proposée : « Quelles sont les conditions d'organisation d'un congé sans solde et
+pourquoi est-il préférable d'envisager un autre type de congé selon le Code du travail ? »
+
+La comparaison avec les textes M2 figés établit :
+
+| Preuve | Contrôle sur le corpus |
+|---|---|
+| `m2-article374529-0000` | Extrait exact et continu. |
+| `m2-article374529-0002` | Six sauts de ligne de la liste remplacés par six espaces ; aucun autre écart sur cet extrait. |
+
+Le second extrait devient identique au segment source si ses `\n` sont remplacés par des espaces.
+C'est une altération de mise en forme du texte cité, pas un mot inventé dans cet extrait. Le validateur
+strict a correctement appliqué le contrat de copie exacte. La proposition rejetée reste dans les traces,
+sans réparation silencieuse, réadmission ou verdict humain attribué.
+
+La lecture sémantique assistée relève aussi une nuance : la source dit « il peut être plus intéressant »
+et lie le choix au projet du salarié ; la question et sa justification disent « préférable ». Le risque est
+d'en faire une recommandation générale. La formulation juxtapose également deux demandes reliées par « et » ;
+la cohérence d'une véritable combinaison reste à examiner. Ces remarques sont des points de relecture,
+distincts du motif de rejet automatique, et ne constituent pas une évaluation du RAG.
+
+### Ajustement limité au prompt
+
+`prompts.py` passe uniquement le prompt multi à **`agent0-multi-passage-v2`** :
+
+- demander un segment court sur une seule ligne par source, sans liste ni assemblage ;
+- interdire explicitement le remplacement d'un saut de ligne par un espace ;
+- conserver les nuances de possibilité, d'obligation et de comparaison ;
+- faire dépendre une même décision ou explication des deux informations.
+
+Le validateur est inchangé : la consigne de génération privilégie les segments courts sur une ligne,
+mais un extrait multiligne réellement exact reste recevable structurellement. La fidélité ne se confond
+pas avec la longueur ou le nombre de lignes. Le schéma, le client, le budget, les sources et les prompts
+simple/reformulation sont inchangés. Aucun exemple de question réglementaire ni point attendu n'est ajouté
+aux consignes ou aux tests.
+
+Un test de régression technique accepte une liste copiée exactement, puis rejette sa version aplatie.
+**110 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0 ; compilation contrôlée.
+Le prompt simple conserve son empreinte initiale ; reconstruction du prompt multi v2 `medium` sur la même paire :
+`90a34805e7843a170dcbaaefd8767e211129dcd423eb8f4d86f619a0c4bef526`.
+Aucune nouvelle génération réelle n'est exécutée ici. Cet ajustement sera évalué au prochain run ;
+il ne garantit pas à lui seul une copie parfaite ni une meilleure question.
+
+### Nouvel essai après mise à jour
+
+Exécuter une commande à la fois sur `feat/94-agent0-categories`, avec un dépôt propre et arrêt en cas d'échec :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id multi_passage_002 --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium
+```
+
+Le nouveau run utilise un dossier distinct ; `multi_passage_001` et les aperçus v1 restent conservés.
+La commande refait le contrôle modèle/tokeniseur/budget sur le nouveau prompt avant l'unique appel.
+Le budget HF changera avec ces consignes ; les 1925 tokens appartiennent au prompt v1 du run rejeté.
+La réserve de sortie reste 512 ; pas de relance automatique. Après un résumé `candidat_prepare` :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\multi_passage_002\candidates.jsonl
+```
+
+En cas de rejet, lire la réponse brute de ce nouveau run dans ses traces. Attendre ce retour avant une
+nouvelle modification ou les catégories suivantes. #103 reste en brouillon, Mahé/Remy demandés ; #94 partielle.
+Aucun candidat multi-passage admis, gel, fusion, clôture, entraînement ou temps réel déclaré.
+L'estimation globale #94 reste 7 h actives prévisionnelles.

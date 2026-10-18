@@ -234,6 +234,20 @@ class PreparationMultipleTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "doublon"):
             self.valider(self.proposition(), vues=vues)
 
+    def test_liste_aplatie_refusee_et_extrait_multiligne_exact_accepte(self):
+        preparation = self.preparation()
+        texte = "Diagnostic :\n- voyant rouge éteint ;\n- voyant vert allumé."
+        preparation["sources"] = copy.deepcopy(preparation["sources"])
+        preparation["sources"][1]["texte"] = texte
+        proposition = self.proposition()
+        proposition["evidence"][1]["excerpt"] = texte
+        candidat = self.valider(proposition, preparation)
+        self.assertEqual(candidat.evidence[1].excerpt, texte)
+        self.assertEqual(candidat.validation.human, "pending")
+        proposition["evidence"][1]["excerpt"] = texte.replace("\n", " ")
+        with self.assertRaisesRegex(ValueError, "mot pour mot"):
+            self.valider(proposition, preparation)
+
     def test_validation_refuse_verdict_injecte_et_parametres_differents(self):
         for changement in [{"validation": {"human": "accepted"}}, {"answerable_proposed": False},
                            {"difficulty_target": "hard"}, {"type": "adversarial"}]:
