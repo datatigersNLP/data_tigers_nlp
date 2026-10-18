@@ -1,12 +1,13 @@
-# Agent0 Light : contrat, sources, prompts et budget Qwen (#91 à #93)
+# Agent0 Light : génération synthétique locale (#91 à #93)
 
 ## 1. Périmètre et état
 
 Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`).
 État au 18 octobre 2026 : contrat et préparateur de sources implémentés ; 44 tests, contrôle du corpus et première
 sélection réussis sur le Windows de Jibril. L'aperçu de #93 a également passé les 58 tests et la préparation Windows.
-Le deuxième incrément ajoute le contrôle local du modèle/gabarit/budget : 75 tests réussis ici, essai Windows
-de ce nouveau mode attendu. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
+Le contrôle du modèle/gabarit/budget a également réussi sur Windows : 75 tests, entrée HF de 1 259 tokens.
+La génération simple/reformulée et ses contrôles sont maintenant implémentés, avec 93 tests réussis ici ;
+les premiers appels réels de génération restent à faire. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -483,3 +484,111 @@ Références techniques consultées le 18 octobre 2026 :
 [Ollama, génération raw et schéma JSON](https://docs.ollama.com/api/generate),
 [Hugging Face, gabarits de conversation](https://huggingface.co/docs/transformers/chat_templating),
 [tokeniseurs et absence de troncature](https://huggingface.co/docs/transformers/main_classes/tokenizer).
+
+
+### Retour Windows du budget, transmis le 18 octobre
+
+L'installation pip du verrou enrichi réussit, y compris les dépendances Windows. Les **75 tests** sont `ok`,
+résumé `Ran 75 tests in 0.527s`, puis `OK`. Le mode `--prepare-qwen` produit `requete_preparee`,
+commit `1ab3530a3938044861e187f24aad42b108e71e46`, copie propre, Python 3.12.15.
+Il rapporte Ollama 0.40.5, le digest Qwen attendu, Transformers 5.17.0, Tokenizers 0.23.2 et Jinja2 3.1.6.
+
+L'entrée HF est de **1 259 tokens** : avec 512 de réponse et 64 de marge, le total prévu est **1 835 / 8 192**.
+Le compte d'Ollama reste à comparer après une génération. Le gabarit rapporté a l'empreinte
+`d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229097fa9a4`.
+L'empreinte de l'entrée raw
+`87a09564d05c27576497f226e047f89553f35a59a95034ce0bf59240fdc844ed`
+correspond exactement au texte reconstruit ici depuis les messages et le format Qwen contrôlé.
+Le prompt garde l'empreinte précédente `161c5588…`.
+
+La trace annonce la sauvegarde de `budget_simple_001.json` sur son PC ; le fichier complet n'a pas été transmis.
+`ollama_appele: true` concerne les métadonnées, `generation_appelee: false` confirme le mode préparatoire.
+Le message d'absence de PyTorch est attendu. Aucune génération n'est déduite de ce contrôle du budget.
+
+## 12. Troisième incrément de #93 : un appel, un candidat ou un rejet
+
+Le programme donne maintenant la fiche d'exercice à Qwen. Il conserve sa copie brute avant de la contrôler.
+Un JSON conforme et un extrait retrouvé ne prouvent toujours pas que la question ou sa réponse sont correctes.
+
+| Fichier | Responsabilité |
+|---|---|
+| `client_qwen.py` | Refaire les contrôles du modèle/budget, puis envoyer un seul appel local avec délai de 300 s |
+| `validation.py` | Vérifier le contrat, la demande, les extraits exacts et les doublons |
+| `run.py` | Réserver un dossier, tracer l'exécution et enregistrer candidat, rejet et résumé |
+| `generate.py` | Exposer les trois modes et leurs arguments, sans appeler le RAG |
+
+### Contrôles et fichiers produits
+
+La fin doit être `done: true`, `done_reason: stop`. Le modèle retourné doit être celui demandé.
+`prompt_eval_count` doit égaler le compte HF et `eval_count` être un entier positif au plus égal à 512.
+Toute incohérence est une **erreur technique**, même si la réponse contient un JSON apparemment correct.
+
+Après ces contrôles, le parseur strict de #91 refuse toute réparation implicite, métadonnée ajoutée par Qwen
+ou JSON ambigu. Le type et la difficulté doivent correspondre à la commande. Chaque preuve doit utiliser
+l'identifiant fourni et un extrait retrouvé mot pour mot dans le texte complet, sans normalisation de l'extrait.
+
+La déduplication compare les questions après NFKC, passage en minuscules Unicode, remplacement de la ponctuation
+par des espaces et réduction des espaces. Elle lit uniquement les `*/candidates.jsonl` du même dossier
+`data/synthetic/`, sans Gold Set. Les chemins relatifs et empreintes de ces fichiers sont tracés.
+Elle ne détecte pas tous les doublons de sens ; un fichier de candidats corrompu bloque le run avant le modèle.
+Les runs de cette V1 s'exécutent l'un après l'autre ; aucun coordinateur de runs concurrents n'est ajouté.
+
+Le dossier `data/synthetic/<run_id>/` doit être nouveau et contient :
+
+| Fichier | Contenu |
+|---|---|
+| `manifest.json` | Configuration initiale, source et prompt complets, provenance, empreintes du code |
+| `traces.jsonl` | État de déduplication, modèle/budget/requête, début d'appel, réponse brute ou erreur |
+| `candidates.jsonl` | Un cas ayant passé les contrôles, ou fichier vide |
+| `rejected.jsonl` | Un rejet automatique ou échec technique expliqué, ou fichier vide |
+| `summary.json` | Statut final, compteurs, mesures techniques et identifiant éventuel |
+
+Le manifeste et les trois fichiers JSONL sont créés avant l'appel. Les événements sont vidés vers le fichier
+à chaque écriture. Une réponse reçue est tracée avant validation ; une erreur HTTP ou un corps invalide conserve
+aussi les octets disponibles en base64 dans le diagnostic. Il n'y a ni relance automatique ni effacement d'un run.
+
+Un dossier interrompu reste protégé et peut ne pas avoir de résumé final. Une panne d'écriture est signalée
+comme erreur ; les fichiers déjà créés restent à inspecter. Utiliser un nouveau `run_id` pour un autre essai.
+
+Un candidat a `validation.automatic: passed`, `human: pending`, `answerable_confirmed: null`
+et aucun point de réponse confirmé. Son identifiant est `SYN_<run_id>_0001`.
+Le texte de la question et ses extraits restent ceux reçus. Aucun candidat n'entre automatiquement dans le lot
+figé de #95, et aucune règle d'entraînement ou d'évaluation officielle n'est modifiée.
+
+### Premier essai Windows
+
+Sur la branche #93, récupérer le code puis exécuter la suite. Les dépendances restent celles déjà installées.
+Exécuter une commande à la fois et arrêter en cas d'erreur.
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Avec Ollama démarré, générer **un seul candidat simple** :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id simple_001 --sources .\data\synthetic\sources\selection_001.json --group 1 --type simple --difficulty easy
+```
+
+Le résumé doit annoncer soit `candidat_prepare` avec une question à relire, soit `rejet_automatique` ou
+`erreur_technique` avec un motif et les traces. Le code retour est 0 pour un candidat préparé, 1 pour un rejet
+ou échec opérationnel, 2 pour des arguments incompatibles. Attendre le premier résultat avant l'essai reformulé.
+Le délai de l'appel est au plus de 300 s côté client ; ce n'est pas une prévision de durée.
+
+Après ce retour, l'autre catégorie s'utilise avec un nouveau `run_id`, par exemple `reformulation_001`,
+et `--type reformulation`. `--output` reste réservé aux modes préparatoires ; les runs de génération
+ont leur emplacement fixe dans `data/synthetic/`. Les anciens aperçus ne sont pas modifiés.
+
+### Preuves et validation restante
+
+**93 tests réussis ici**, Python 3.12.14 et Pydantic 2.14.0 : les 75 existants et 18 tests supplémentaires
+de validation, client et stockage. Les deux catégories sont vérifiées avec des réponses techniques simulées.
+Les tests couvrent un appel unique, erreurs HTTP/délai, réponse tronquée, comptes incohérents, JSON invalide,
+source/extrait inventés, doublons, précédent fichier corrompu et refus de réutiliser un dossier.
+Compilation, aide CLI et conservation des empreintes du prompt/raw Windows sont contrôlées.
+Aucun appel réel à Qwen n'est prétendu ici.
+
+Les premiers appels Windows simple et reformulation, leur lecture qualitative et la relecture de Mahé/Remy
+restent attendus. #93 et la PR #101 restent ouvertes ; aucune fusion ou charge réelle n'est déclarée.

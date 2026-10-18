@@ -1,4 +1,4 @@
-"""Préparer une consigne Agent0 Light (#93), éventuellement son budget, sans génération."""
+"""Préparer ou générer un candidat Agent0 Light traçable (#93)."""
 
 import argparse
 import hashlib
@@ -11,6 +11,9 @@ if __package__:
 else:
     import corpus
     import prompts
+
+
+DOSSIER_RUNS = corpus.RACINE / "data" / "synthetic"
 
 
 class ErreurPreparation(ValueError):
@@ -96,6 +99,8 @@ def main(argv=None) -> int:
     modes.add_argument("--prepare-only", action="store_true", help="aperçu hors ligne")
     modes.add_argument("--prepare-qwen", action="store_true",
                        help="vérifier modèle, gabarit et budget, sans génération")
+    modes.add_argument("--generate", action="store_true", help="un appel, un candidat ou un rejet tracé")
+    parser.add_argument("--run-id", help="nouveau lot, requis avec --generate")
     parser.add_argument("--allow-tokenizer-download", action="store_true",
                         help="autoriser le téléchargement du seul tokeniseur figé")
     parser.add_argument("--sources", type=Path, required=True, help="manifeste produit par corpus.py")
@@ -105,8 +110,12 @@ def main(argv=None) -> int:
     parser.add_argument("--index-dir", type=Path, default=corpus.DOSSIER_INDEX)
     parser.add_argument("--output", type=Path, help="nouveau fichier UTF-8, sans écrasement")
     args = parser.parse_args(argv)
-    if args.allow_tokenizer_download and not args.prepare_qwen:
-        parser.error("--allow-tokenizer-download exige --prepare-qwen")
+    if args.allow_tokenizer_download and not (args.prepare_qwen or args.generate):
+        parser.error("--allow-tokenizer-download exige --prepare-qwen ou --generate")
+    if args.generate and (not args.run_id or args.output):
+        parser.error("--generate exige --run-id et n'utilise pas --output")
+    if not args.generate and args.run_id is not None:
+        parser.error("--run-id s'utilise seulement avec --generate")
     try:
         if args.output and args.output.exists():
             raise ErreurPreparation("Le fichier de sortie existe déjà ; choisir un autre nom")
@@ -117,6 +126,14 @@ def main(argv=None) -> int:
         preparation["code"]["sha256_fichiers"] = {
             nom: hashlib.sha256(Path(__file__).with_name(nom).read_bytes()).hexdigest()
             for nom in ("generate.py", "prompts.py", "schema.py")}
+        if args.generate:
+            if __package__:
+                from . import run
+            else:
+                import run
+            resultat = run.executer(preparation, args.run_id, DOSSIER_RUNS, args.allow_tokenizer_download)
+            print(json.dumps(resultat, ensure_ascii=False, indent=2))
+            return 0 if resultat["statut"] == "candidat_prepare" else 1
         if args.prepare_qwen:
             if __package__:
                 from . import client_qwen

@@ -1,13 +1,15 @@
-"""Modèle et budget Qwen de #93 ; aucun appel de génération dans cet incrément.
+"""Modèle, budget et appel unique Qwen de #93.
 
 Garde-fous adaptés des helpers publics de scripts/rag/generation.py, PR #85,
 commit df91b85981607c722f191f0205fc3072f0a62b8c. Aucun import du RAG en review.
 """
 
+import base64
 import copy
 import hashlib
 from importlib.metadata import PackageNotFoundError, version
 import json
+import urllib.error
 import urllib.request
 
 
@@ -27,20 +29,35 @@ OPTIONS = {"temperature": 0.0, "seed": 20261018, "num_ctx": NUM_CTX,
 class ErreurQwen(ValueError):
     """Échec technique, jamais un jugement sur la qualité d'une question."""
 
+    def __init__(self, message: str, diagnostic: dict | None = None):
+        super().__init__(message)
+        self.diagnostic = diagnostic or {}
+
 
 def _api(route: str, donnees=None) -> dict:
     if route not in ("/api/version", "/api/tags", "/api/show"):
         raise ErreurQwen("Seules les métadonnées Ollama sont accessibles à cet incrément")
+    return _http(route, donnees, timeout=5)
+
+
+def _http(route: str, donnees, timeout: int) -> dict:
     octets = None if donnees is None else json.dumps(donnees, ensure_ascii=False).encode("utf-8")
     requete = urllib.request.Request(API_OLLAMA + route, data=octets,
                                     headers={"Content-Type": "application/json; charset=utf-8"})
+    diagnostic = {"route": route, "requete": donnees, "timeout": timeout}
     try:
-        with urllib.request.urlopen(requete, timeout=5) as reponse:
-            resultat = json.loads(reponse.read().decode("utf-8"))
+        with urllib.request.urlopen(requete, timeout=timeout) as reponse:
+            corps = reponse.read()
+        diagnostic["corps_http_base64"] = base64.b64encode(corps).decode("ascii")
+        resultat = json.loads(corps.decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        diagnostic["http_status"] = exc.code
+        diagnostic["corps_http_base64"] = base64.b64encode(exc.read()).decode("ascii")
+        raise ErreurQwen(f"Ollama {route} : HTTP {exc.code}", diagnostic) from exc
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ErreurQwen(f"Ollama {route} : {exc}") from exc
+        raise ErreurQwen(f"Ollama {route} : {exc}", diagnostic) from exc
     if not isinstance(resultat, dict) or resultat.get("error"):
-        raise ErreurQwen(f"Ollama {route} : objet JSON attendu, sans erreur du serveur")
+        raise ErreurQwen(f"Ollama {route} : objet JSON attendu, sans erreur du serveur", diagnostic)
     return resultat
 
 
@@ -138,3 +155,25 @@ def preparer_requete(prompt: dict, autoriser_telechargement: bool = False) -> di
                         "format": copy.deepcopy(prompt["response_schema"]),
                         "options": copy.deepcopy(OPTIONS)},
             "generation_appelee": False}
+
+
+def generer(qwen: dict) -> dict:
+    """Un seul appel, sans réparation ni relance ; réponse reçue toujours conservée."""
+    requete = qwen["requete"]
+    resultat = _http("/api/generate", requete, timeout=300)
+    erreurs = []
+    if resultat.get("done") is not True or resultat.get("done_reason") != "stop":
+        erreurs.append("generation_incomplete")
+    if (type(resultat.get("prompt_eval_count")) is not int
+            or resultat["prompt_eval_count"] != qwen["entree"]["nb_tokens_hf"]):
+        erreurs.append("comptage_hf_ollama_different")
+    if (type(resultat.get("eval_count")) is not int
+            or not 0 < resultat["eval_count"] <= requete["options"]["num_predict"]):
+        erreurs.append("nombre_tokens_sortie_invalide")
+    if resultat.get("model") != MODELE_QWEN:
+        erreurs.append("modele_retourne_inattendu")
+    texte = resultat.get("response")
+    if not isinstance(texte, str):
+        erreurs.append("reponse_textuelle_absente")
+    return {"reponse_ollama": resultat, "reponse_brute": texte,
+            "erreurs_techniques": erreurs, "comptage_ollama_compare": True}
