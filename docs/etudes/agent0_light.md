@@ -7,8 +7,9 @@ Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis
 sélection réussis sur le Windows de Jibril. L'aperçu de #93 a également passé les 58 tests et la préparation Windows.
 Le contrôle du modèle/gabarit/budget a également réussi sur Windows : 75 tests, entrée HF de 1 259 tokens.
 La génération simple/reformulée et ses contrôles sont implémentés : 93 tests réussis ici et sur Windows.
-Un premier candidat simple réel a passé les contrôles techniques ; sa lecture complète et l'essai reformulé
-restent à faire. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
+Deux candidats réels, simple et reformulation, ont passé les contrôles techniques ; leurs objets complets ont
+été transmis et comparés à la source. La provenance du cas simple est confirmée. La relecture indépendante
+de #93 et les verdicts humains sur les cas restent attendus. La PR RAG #85 est préservée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -591,8 +592,9 @@ source/extrait inventés, doublons, précédent fichier corrompu et refus de ré
 Compilation, aide CLI et conservation des empreintes du prompt/raw Windows sont contrôlées.
 Aucun appel réel à Qwen n'est prétendu ici.
 
-Les premiers appels Windows simple et reformulation, leur lecture qualitative et la relecture de Mahé/Remy
-restent attendus. #93 et la PR #101 restent ouvertes ; aucune fusion ou charge réelle n'est déclarée.
+Les premiers appels Windows simple et reformulation ont depuis réussi, avec une lecture assistée des deux
+candidats ci-dessous. La relecture indépendante de Mahé/Remy et les verdicts humains restent attendus.
+#93 et la PR #101 restent ouvertes ; aucune fusion ou charge réelle n'est déclarée.
 
 
 ### Premier candidat simple réel, retour Windows du 18 octobre
@@ -608,10 +610,52 @@ Le résumé annonce `done: true`, `done_reason: stop`, **1 259 tokens HF et 1 25
 Il s'agit de la première génération synthétique réelle rapportée, distincte des réponses simulées des tests.
 Aucune durée, mesure de mémoire ou d'utilisation GPU n'est fournie par ce résumé.
 
-La trace annonce le dossier `data/synthetic/simple_001/`. Le candidat complet, le manifeste et les traces
-n'ont pas encore été transmis : l'extrait choisi comme preuve et la provenance détaillée du run restent à lire.
-Le fast-forward observé situe la session ; il ne remplace pas la provenance enregistrée dans le manifeste.
+Jibril a ensuite transmis le candidat complet et les blocs `preparation.code` / `preparation.source` du manifeste.
+La provenance confirme `823621b18535f245ad05bb99a762dbff39bc2ae0`, `git_dirty: false`, Python 3.12.15.
+Les fichiers de traces complets n'ont pas été transmis.
 
 Ce résultat confirme un premier passage de bout en bout, pas une mesure générale de qualité, une validation
-humaine du cas ou son admission au lot figé. Prochaine étape : lire le candidat et sa source, puis exécuter
-une reformulation dans un autre run. La PR #101 reste en brouillon et #93 ouverte.
+humaine du cas ou son admission au lot figé. La lecture du cas et l'exécution reformulée ont ensuite été
+réalisées ; leur comparaison est consignée ci-dessous. #93 reste ouverte.
+
+
+### Comparaison des deux candidats et proposition à la relecture
+
+Les deux objets JSON complets transmis par Jibril portent sur `m2-article374529-0004`, fiche
+« Le congé sans solde », section « La rémunération est-elle maintenue pendant le congé ? ».
+Ils citent exactement la même phrase du texte M2 :
+
+> Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue.
+
+| Cas | Question reçue | Entrée HF / Ollama | Tokens générés |
+|---|---|---:|---:|
+| `SYN_simple_001_0001` | Pendant le congé sans solde, le salaire du salarié est-il maintenu ? | 1 259 / 1 259 | 173 |
+| `SYN_reformulation_001_0001` | Qu'arrive-t-il à la rémunération d'un employé pendant qu'il est en congé sans solde ? | 1 284 / 1 284 | 171 |
+
+Le run reformulé rapporte `candidat_prepare`, un candidat, aucun rejet, `done: true`,
+`done_reason: stop` et comparaison de tokens effectuée. Son résumé et son candidat complet sont fournis ;
+son manifeste et ses traces complets ne le sont pas. Aucun SHA de code exécuté pour cette seconde inférence
+n'est déduit du seul résumé. Le cas simple conserve la provenance explicitement lue ci-dessus.
+
+La vérification locale de ces données reçues confirme l'extrait exact dans le corpus M2 versionné et deux
+questions distinctes après normalisation. La reformulation reste légère : syntaxe ouverte et « employé »
+pour « salarié », avec une bonne part du vocabulaire source conservée. Sa difficulté reste une cible `easy`,
+sans difficulté mesurée ni performance de retrieval déduite.
+
+Cette lecture assistée est favorable à la cohérence documentaire des exemples ; elle n'est pas la relecture
+humaine indépendante de #95. Le passage complet conserve aussi l'information conditionnelle sur le CET.
+Pour la variante plus ouverte, les relecteurs pourront préciser si cette nuance doit figurer dans les attentes
+et si l'extrait court suffit. Aucun point attendu ni verdict humain n'est attribué ici.
+
+Les deux objets gardent `automatic: passed`, `human: pending`, `answerable_confirmed: null`,
+aucun nom/note de relecture et aucun point confirmé. Ils restent des candidats synthétiques, hors lot figé.
+
+La V1 simple/reformulation est proposée à la relecture de la PR #101. Les **93 tests Windows** et les deux
+appels réels constituent les preuves techniques disponibles ; ces deux exemples ne donnent aucun taux de
+réussite général. Le code ne change pas après ces retours. #93 reste ouverte, avec son estimation initiale de
+6 h ; aucun temps réel, fusion ou clôture n'est déclaré.
+
+État GitHub vérifié le 18 octobre : Mahé a approuvé #99 sur `521286d` et #100 sur `b8b6118`.
+Rémy reste demandé sur ces PR. Aucune review de #101 n'est encore déposée au moment du contrôle.
+L'ordre d'intégration reste #99, #100, puis #101 ; préserver les éventuelles corrections avant chaque intégration.
+Les remarques non bloquantes des reviews #99/#100 ne sont pas transformées en modifications du contrat dans cette mise à jour documentaire.
