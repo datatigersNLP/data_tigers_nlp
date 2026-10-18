@@ -865,11 +865,15 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - PR #82 : trois points de la revue de Jibril appliqués (inférence locale documentée, critère de #43 non satisfait par le tag historique, #46 fermée), et cette session.
 - #43 fermée avec sa réserve, critère par critère ; classeur de suivi comparé ligne à ligne avec l'API GitHub : #11, #46, #50 et #56, fermées, y figuraient encore comme ouvertes (PR #83).
 - Journal : sessions 33 à 35 de Remy (PR #86) relues et intégrées, avec huit corrections vérifiées sur le dépôt et l'API GitHub ; sessions 20 à 27, 36 et 37 de Vaneck reportées depuis sa fiche, avec une correction ; bilan de la section 4 recompté.
+- PR #88, en relecture : `onnxruntime-web` déclaré dans `front/package.json`, à la version qu'épingle Transformers.js, sur la remarque de Vaneck à la #81 ; une fois fusionnée, les tests du moteur passeront avant chaque déploiement. Le site construit reste identique octet pour octet.
+- PR #84 fusionnée dans `main` (`8955962`) et tag annoté `volet-a-v1` posé sur ce commit, qui contient la première inférence locale.
 
 **Mesures exécutées.**
 - PR #83, première version (`74f3e39`), site construit et servi en local, accès à jsDelivr, Hugging Face et Google Fonts bloqués : 5 passages aux scores de référence ; focus rendu au bouton du menu après Échap, au champ de saisie après un exemple ou un chat ; menu fermé au passage en largeur d'ordinateur ; périmètre visible à 375 et 1 280 px ; aucune erreur. L'essai de 14 Tab puis 6 Maj+Tab, publié comme « le focus ne sort jamais du panneau », comptait le document (BODY) comme acceptable : le focus en sortait aux frontières (voir les difficultés).
 - PR #83, version corrigée (`e6cd210`), toute requête hors du site bloquée, focus relevé après chaque frappe : 22 frappes (14 Tab, 8 Maj+Tab) dans le panneau ; les deux frontières ; le scénario de la revue (dernier bouton, Tab, Échap) ; Tab, Maj+Tab et Échap depuis BODY ; 14 frappes pendant une recherche en cours, exemples désactivés ; tabulation libre en largeur d'ordinateur ; recherche aboutie, seul le site contacté, aucune erreur.
 - Site en ligne, version `74524a7`, cache vidé, les mêmes accès bloqués : 5 passages en 8 s, seule l'adresse du site contactée, aucune erreur ni aucun avertissement.
+- Site en ligne, version `c3cf075`, après la #83, Cache API vidée, toute requête hors du site bloquée : version et périmètre affichés ; 20 frappes Tab et Maj+Tab sans sortie du menu, puis Échap ; 5 passages aux scores de référence ; aucune requête externe tentée, aucune erreur.
+- PR #88 : SHA-256 des 23 fichiers du site construit, avant et après, identiques ; dans un clone vierge sans `data/`, 10 tests réussis et 5 ignorés ; écart de version simulé, 1 échec attendu.
 
 **Résultats retenus.**
 - Le site en ligne ne dépend plus d'aucun service externe pour se charger.
@@ -879,7 +883,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Lever la protection de `dev` pour fusionner les #83 et #82 sans approbation : refusé par le contrôle des permissions de l'assistant ; ces fusions reviennent à Mahé ou attendent une approbation.
 
 **Ce que l'équipe a validé, et par qui.**
-- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, puis approuvée par Vaneck DAGAR et Jibril BENSALEM sur `c69042e`, et fusionnée par Vaneck DAGAR.
+- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, puis approuvée par Vaneck DAGAR et Jibril BENSALEM sur `c69042e`, et fusionnée par Vaneck DAGAR. PR #87 approuvée et fusionnée par Remy RAYANE ; PR #84 approuvée par Jibril BENSALEM sur `bef1ca5`, puis fusionnée par Mahé ; la PR #86 est alors marquée fusionnée par GitHub, son commit étant dans `main`. PR #88 soumise à Vaneck DAGAR et Jibril BENSALEM.
 
 **Temps d'appropriation constaté.**
 - Non relevé.

@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1`, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -48,7 +48,7 @@ La répartition par domaine est conservée. Les responsabilités d'un ticket peu
 
 Le calendrier officiel reste à confirmer par écrit dans #8. L'échéance opérationnelle du volet A, retenue au Weekly 4, est le 18/10/2026 ; elle ne remplace pas une confirmation officielle des jalons.
 
-**Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. Le tag de fin du volet A, `volet-a-v1`, sera posé sur `main` après sa dernière mise à jour depuis `dev` (la PR #74 l'a mise à jour le 17/10).
+**Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. `volet-a-v1`, tag annoté de fin du volet A posé le 18/10/2026 sur `8955962`, fusion dans `main` de la PR #84 approuvée par Jibril ; il contient la première inférence locale (PR #41).
 
 ## Inventaire des tickets au 13/10/2026
 
