@@ -3,7 +3,20 @@
 // la fonction de recherche.
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { creerMoteur, horsPerimetre } from "./moteur.js";
+import { creerMoteur, horsPerimetre, servirOrtDepuisLeSite } from "./moteur.js";
+// fichiers d'exécution d'ONNX Runtime Web, publiés par Vite avec le site : la version est celle qu'épingle
+// Transformers.js, installée par le package-lock.json ; deux variantes, Transformers.js choisissant selon le navigateur
+import ortMjs from "onnxruntime-web/ort-wasm-simd-threaded.mjs?url";
+import ortWasm from "onnxruntime-web/ort-wasm-simd-threaded.wasm?url";
+import ortMjsAsyncify from "onnxruntime-web/ort-wasm-simd-threaded.asyncify.mjs?url";
+import ortWasmAsyncify from "onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url";
+
+const ORT_DANS_LE_SITE = {
+  "ort-wasm-simd-threaded.mjs": ortMjs,
+  "ort-wasm-simd-threaded.wasm": ortWasm,
+  "ort-wasm-simd-threaded.asyncify.mjs": ortMjsAsyncify,
+  "ort-wasm-simd-threaded.asyncify.wasm": ortWasmAsyncify,
+};
 
 // dossiers de l'index et du modèle dans le site : sous le chemin de base de GitHub Pages en ligne, à la racine en local
 const DOSSIER_INDEX = import.meta.env.BASE_URL + "index/";
@@ -37,6 +50,9 @@ export function useMoteur() {
       try {
         // import différé : Transformers.js n'est chargé qu'une fois la page affichée
         const { pipeline, env } = await import("@huggingface/transformers");
+        // avant toute création de session : le moteur d'exécution vient du site, pas de jsDelivr
+        if (!servirOrtDepuisLeSite(env, ORT_DANS_LE_SITE))
+          console.warn("ONNX Runtime : chemins par défaut inattendus, fichiers d'exécution laissés à Transformers.js");
         // l'en-tête de l'index dit d'où vient le modèle : du site (dossier DOSSIER_MODELES) ou du Hub ; moteur.js
         // règle env en conséquence
         const instance = await creerMoteur(pipeline, DOSSIER_INDEX, {

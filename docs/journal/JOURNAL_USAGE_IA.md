@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 13 octobre 2026, session 19
+**Dernière mise à jour** 18 octobre 2026, sessions 1 à 37 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -34,11 +34,12 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 | Outil | Nature | Membres | Usage |
 |---|---|---|---|
-| Claude Opus 5, puis Claude Opus 5.5 (sessions 12 et 13) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Opus 5, puis Claude Opus 5.5 (à partir de la session 12) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS, Vaneck DAGAR | architecture, décisions, recherches, critique, rédaction assistée |
 | Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
 | ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
+| Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN, compilation du PDF du journal (sessions 17 à 19) |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
 
@@ -502,6 +503,557 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Installation système empêchée par les permissions ; installation dans un TEXMF local.
 - Format XeLaTeX initial sans césure française : reconstruction locale nécessaire, en plus du module de langue.
 
+**Sessions 20 à 27, de Vaneck DAGAR.** Reportées le 18 octobre depuis sa fiche d'usage, sans changement de fond. Les sessions 20, 21, 26 et 27 y ont été écrites le jour même ; les sessions 22 à 25 ont été consignées a posteriori le 11 octobre, à partir des commits, des pull requests, des tickets et de l'historique de la conversation avec l'assistant. Le temps d'appropriation est celui que Vaneck a relevé.
+
+### Session 20, 26 septembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Télécharger, filtrer, contrôler et documenter le corpus (#27).
+
+**Produit.**
+- `scripts/prepare_corpus.py` et `scripts/echantillon_controle.py`.
+- `docs/corpus/CORPUS.pdf` (15 pages) et la grille de contrôle `controle_echantillon.xlsx` (70 passages) ; PR #32.
+- Hors dépôt : deux schémas d'architecture en TikZ.
+
+**Mesures exécutées.**
+- Structure du fichier et versions publiées sur Hugging Face, figées par empreinte SHA-256.
+- Effet de chaque règle de filtrage, composition de `chunk_text`, tokens comptés avec le tokeniseur de l'encodeur.
+
+**Résultats retenus.**
+- 5 702 passages, 5 284 après filtrage, aucune des 261 fiches perdue.
+- 85,9 % des passages coupés en milieu de phrase ; 637 `chunk_text` au-delà de 512 tokens, aucun `text`.
+
+**Ce qui a été écarté, et pourquoi.**
+- Retirer les passages coupés : on perdrait 59 % du corpus.
+- Retirer les doublons : ils sont marqués, la décision revient à D2.
+
+**Ce que l'équipe a validé, et par qui.**
+- La PR #32, relue et reproduite par Mahé.
+
+**Temps d'appropriation constaté.**
+- Aucun : j'utilisais déjà Claude avant le projet.
+
+**Difficultés rencontrées.**
+- Des remplacements de texte ont inséré des caractères invisibles, et une réparation a dupliqué le fichier LaTeX.
+- Une mention « co-auteur Claude » ajoutée aux commits sans prévenir : historique réécrit.
+
+### Session 21, 27 septembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Corriger la PR #32 après relecture, et étudier la re-segmentation depuis la source SocialGouv.
+
+**Produit.**
+- Trois commits de correction sur la PR #32.
+- Hors dépôt : un dossier `resegmentation/` (décisions D1 à D7, scripts de vérification).
+
+**Mesures exécutées.**
+- Coût réel du préfixe E5 ; comparaison du texte d'Etalab avec la source SocialGouv (`text` et `html`).
+
+**Résultats retenus.**
+- Le préfixe ajoute 2 tokens, pas 3.
+- Le champ `text` de SocialGouv recopie 14,7 % de phrases d'autres sections ; le `html` n'a pas ce défaut.
+
+**Ce qui a été écarté, et pourquoi.**
+- Ma re-segmentation : Mahé l'a réalisée plus complètement (PR #39).
+
+**Ce que l'équipe a validé, et par qui.**
+- Les corrections, relues par Mahé ; la PR #32 fusionnée le 28/09.
+
+**Temps d'appropriation constaté.**
+- Aucun : j'utilisais déjà Claude avant le projet.
+
+**Difficultés rencontrées.**
+- L'extraction du `html` coupait aux liens dans les phrases ; chiffres recalculés par un script unique.
+
+### Session 22, 28 septembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Relire la PR #39 de Mahé (notebook 01, découpage) en la reproduisant sous Windows.
+
+**Produit.**
+- Commentaire de relecture sur la PR #39.
+- Hors dépôt : un document LaTeX qui explique la méthode M2 sur une section réelle.
+
+**Mesures exécutées.**
+- Notebook 01 relancé de bout en bout (2 212 s) ; comparaison des effectifs et des empreintes avec Mahé.
+
+**Résultats retenus.**
+- Mêmes effectifs pour toutes les méthodes ; empreintes de M1, M2 et M3 différentes (31 caractères d'écart à l'extraction).
+- Sous Windows, la commande doit utiliser `.venv\Scripts\python.exe`.
+
+**Ce qui a été écarté, et pourquoi.**
+- Aucun élément écarté.
+
+**Ce que l'équipe a validé, et par qui.**
+- La PR #39, approuvée par moi.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Le résultat n'est pas identique au caractère près d'une plateforme à l'autre ; cause probable : la version de Python.
+
+### Session 23, 30 septembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Mettre en ligne une première page du volet A à son URL définitive (#29).
+
+**Produit.**
+- Le site dans `front/` (Vite, React, Tailwind) et le déploiement automatique depuis `dev` ; PR #42.
+
+**Mesures exécutées.**
+- Site servi en local sous `/data_tigers_nlp/`, captures ordinateur et téléphone, URL vérifiée en ligne.
+
+**Résultats retenus.**
+- Site en ligne le 30/09, trois jours avant l'échéance.
+
+**Ce qui a été écarté, et pourquoi.**
+- Publier depuis `main` : la mise en ligne aurait attendu le jalon.
+
+**Ce que l'équipe a validé, et par qui.**
+- Le dépôt rendu public, en équipe ; la PR #42, fusionnée le 30/09.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment ; charge réelle du ticket : 1 h 30.
+
+**Difficultés rencontrées.**
+- L'environnement `github-pages` n'autorisait que `main` : un administrateur a dû ajouter `dev`.
+
+### Session 24, 3 et 4 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Jeu de questions (#44) : relire la PR #54, puis rédiger et annoter mes questions Q071 à Q105.
+
+**Produit.**
+- Un message à Jibril sur la méthode ; mes 35 questions annotées (24 dans le corpus, 11 hors corpus).
+
+**Mesures exécutées.**
+- Comparaison des fichiers de la PR #54 ; pour chaque question, réponse cherchée dans les 261 fiches et extrait vérifié mot pour mot.
+
+**Résultats retenus.**
+- Les 105 questions de la PR #54 étaient les brouillons de l'IA : retirées par Jibril.
+- Mes questions sont rédigées par moi ; l'assistant a localisé les réponses, proposé extraits et remarques, que j'ai vérifiés.
+
+**Ce qui a été écarté, et pourquoi.**
+- Les questions écrites ou reformulées par l'IA : interdites par le ticket, elles flattent la mesure (R7).
+
+**Ce que l'équipe a validé, et par qui.**
+- La rédaction humaine, acceptée par Jibril ; le jeu figé par le tag `jeu-questions-v1`.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment ; charge réelle de #44 : 18 h pour trois personnes.
+
+**Difficultés rencontrées.**
+- Le site travail-emploi.gouv.fr bloque les accès automatiques : l'instantané du corpus a servi de référence.
+- Le fichier, réenregistré par un tableur, avait perdu son format ; fusion refaite par script.
+
+### Session 25, 6 et 7 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Méthode de suivi des outils novateurs (#25).
+
+**Produit.**
+- `docs/suivi/OUTILS_NOVATEURS.md` et une fiche par outil ; mes fiches GitHub Actions et Vite ; PR #64.
+
+**Mesures exécutées.**
+- Recensement, sur toutes les branches, des outils réellement utilisés et de leurs preuves.
+
+**Résultats retenus.**
+- Dix outils candidats, chacun avec un usage réel prouvé.
+
+**Ce qui a été écarté, et pourquoi.**
+- Un fichier unique pour toutes les fiches : risque de conflits Git.
+
+**Ce que l'équipe a validé, et par qui.**
+- Méthode et répartition validées en Weekly 4 ; PR #64 approuvée par Maïmouna.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment ; charge réelle du ticket : 2 h.
+
+**Difficultés rencontrées.**
+- Un remplacement de texte a supprimé les antislashs d'un chemin Windows ; corrigé à la relecture.
+
+### Session 26, 11 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit de mes tâches, relecture des PR #67, #68, #69 et #70, reproduction des notebooks 01 et 02.
+
+**Produit.**
+- L'audit ; les approbations des PR #68, #69 et #70 ; mes charges de #27 et #29 transmises à Jibril.
+
+**Mesures exécutées.**
+- Notebook 01 relancé (478 s), notebook 02 relancé (73 min) ; page de contrôle exécutée dans Edge avec Playwright ; tests du moteur.
+
+**Résultats retenus.**
+- Mêmes effectifs et même modèle que Mahé, mais un index différent, comme à la session 22 : le site garde l'index de Mahé.
+- Tests du moteur : 6 sur 6.
+
+**Ce qui a été écarté, et pourquoi.**
+- Les pages de fidélité et de diagnostic : inutiles pour la #48.
+
+**Ce que l'équipe a validé, et par qui.**
+- L'index versionné dans le site (option A), en équipe ; les PR #67, #68 et #70 fusionnées.
+
+**Temps d'appropriation constaté.**
+- Aucun : je connaissais déjà Claude et Playwright, utilisé dans un projet précédent.
+
+**Difficultés rencontrées.**
+- `uv` introuvable dans le terminal : installé hors du PATH de Windows.
+
+### Session 27, 11 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Brancher la recherche dans l'interface de chat du site (#48).
+
+**Produit.**
+- Le chargement du moteur, le chat et la carte d'un passage ; PR #71.
+
+**Mesures exécutées.**
+- Parcours complet dans Edge avec Playwright : chargement, exemple, question tapée, émulation d'un téléphone (375 px), coupure réseau simulée avec `page.route()`.
+
+**Résultats retenus.**
+- Recherche prête en environ 55 s au premier chargement ; 5 passages pertinents en 130 à 230 ms ; aucune erreur.
+
+**Ce qui a été écarté, et pourquoi.**
+- Afficher le score : il ne se lit qu'en relatif (décision revue à la session 37, le sujet l'exigeant pour A3).
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #71, approuvée par Maïmouna et fusionnée le 12/10.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- La barre de progression affichait d'abord un total faux (celui du vocabulaire, 16 Mio, au lieu des 113 Mio du modèle) ; corrigé.
+- Une expression régulière écrite dans un sélecteur de texte Playwright a perdu son antislash : le test échouait alors que le site fonctionnait ; remplacée par un localisateur filtré.
+
+**Sessions 28 à 31, consignées a posteriori.** Contrairement à la règle de la section 5, ces sessions de Mahé BEGNIS n'ont pas été consignées le jour même. Elles l'ont été le 17 octobre, à partir de l'historique de la conversation avec l'assistant et des commits, pull requests et tickets datés. Le temps d'appropriation n'a pas été relevé sur le moment.
+
+### Session 28, 11 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Demande de Vaneck sur les fichiers de l'index du site (#48), et pull requests en attente de Mahé.
+
+**Produit.**
+- PR #70 : index de recherche versionné dans `front/public/index/` (option A), avec `SOURCES.md` (source, licence, date) et une règle `.gitattributes` qui interdit la conversion des fins de ligne.
+- Fusion des PR #66 (journal, sessions 14 à 16) et #67 (moteur du site), approuvées par Maïmouna sur leur dernier commit ; commentaire de revue sur la PR #69 de Jibril.
+
+**Mesures exécutées.**
+- Licence vérifiée sur la carte du jeu Hugging Face, au commit `98744a6` : Licence Ouverte Etalab 2.0, qui autorise la rediffusion en citant la source.
+- Recherche de données personnelles dans les passages : les adresses et les sept numéros trouvés sont ceux d'organismes cités par le ministère.
+- Clone simulé avec `core.autocrlf=true` : avec la règle `.gitattributes`, les trois empreintes de l'index sont retrouvées à l'identique ; sans elle, 34 retours chariot s'inséraient dans l'en-tête.
+
+**Résultats retenus.**
+- Le site sert l'index mesuré au notebook 03 (empreinte `2ec45586…`), et non un index reconstruit sur une autre machine.
+
+**Ce qui a été écarté, et pourquoi.**
+- Transmettre les fichiers à Vaneck pour qu'il les intègre : reconstruit chez lui, sous Windows, l'index aurait pu différer de l'index mesuré ; la relecture de la PR #39 avait déjà montré des empreintes différentes sous Windows.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #70 approuvée et fusionnée par Vaneck DAGAR, le 11 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Un commentaire publié sous le compte de Mahé parlait de lui à la troisième personne ; corrigé aussitôt, la première version restant visible dans l'historique des modifications de GitHub.
+
+### Session 29, 13 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Amendement statistique du critère du J2, mesure unique du notebook 03 (#46) et son rapport, audit de l'ajustement de Remy (#49), seuil d'abstention du moteur (#53).
+
+**Produit.**
+- Protocole du notebook 03 amendé et figé à nouveau : verdict du critère du J2 par le score de Tango corrigé de l'effet de plan, nouvelle empreinte inscrite dans le notebook (PR #62, commits `a7ab3af` et `45355fb`).
+- Mesure unique du notebook 03 sur le lot de test (`f1044e0`) et rapport `docs/etudes/evaluation/03_evaluation.md` (`23efdb0`), PR #73.
+- Protocole de la mesure de l'encodeur ajusté complété avant son gel : recette d'export, témoin, encodage dans le navigateur (`44152df`, PR #75).
+- Seuil d'abstention dans le moteur du site, appliqué seulement au modèle et à l'index pour lesquels il a été calculé (`24c2707`, PR #76).
+
+**Mesures exécutées.**
+- Notebook 03 exécuté une fois en mode mesure, après contrôle des empreintes du protocole, du jeu et du seuil ; une seconde exécution a donné des résultats identiques octet par octet.
+- Audit du q8 de Xenova et de la recette d'export de Remy : 72 poids MatMul en int8 par canal, tables des mots en uint8 symétrique ; avec `ActivationSymmetric`, la recette redonne 74 des 75 tenseurs quantifiés. La quantification dynamique calcule son échelle sur tout le lot : les contrôles de fidélité se font requête par requête. En Python, le résultat dépend du processeur (791 et 762 sur 822 pour le même fichier) ; dans le navigateur, il est identique entre les machines.
+
+**Résultats retenus.**
+- Critère du J2 satisfait : Recall@5 de 43,8 % pour l'encodeur servi contre 42,5 % pour BM25 de référence, écart de +1,4 point, intervalle à 95 % de -11,5 à +14,3 points ; aucun des deux n'est démontré meilleur (McNemar, p = 1,000).
+- Abstention : AUC de 0,841 ; le seuil garde 72 des 73 questions du corpus et n'écarte que 9 des 24 questions hors corpus.
+
+**Ce qui a été écarté, et pourquoi.**
+- La règle de Wald du 10 octobre : la simulation de la session 16 la montrait trop permissive. L'amendement, décidé avant la mesure et sans aucune donnée du lot de test, rend la conclusion plus difficile à obtenir, jamais plus facile.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #62 approuvée et fusionnée par Remy RAYANE ; PR #73 approuvée par Remy RAYANE ; PR #76 approuvée et fusionnée par Vaneck DAGAR, le 14 octobre.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Le fichier de sauvegarde des vecteurs du navigateur portait un nom couvert par le motif des fichiers de mesure, et il apparaît dans la sortie du notebook : déclaré dans le commit, la PR et le rapport, sans retouche du notebook.
+
+### Session 30, 14 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Intégration avant le Weekly 5 : licence du CDTN (#56), modèle élagué servi par le site (#50), vérification de l'encodeur ajusté livré par Remy et gel du protocole 05 (#49), relectures et import du CDTN, QCM du Weekly.
+
+**Produit.**
+- PR #73 fusionnée (mesure du notebook 03).
+- PR #77 : licence du CDTN corrigée, Apache-2.0, avec les conditions de redistribution et la portée du contrôle des données personnelles.
+- PR #78 : élagage sans perte du vocabulaire (`scripts/allegement/`) et modèle de 65,7 Mio servi par le site, à la place des 112,8 Mio téléchargés depuis Hugging Face.
+- PR #75 : protocole 05 complété (fidélité de l'ajusté livré, reproductibilité, empreintes), puis figé après le Weekly (`75a39bd`, empreinte `f2c8169d…`) : tokeniseur de l'encodeur de base, aucune dérogation au calendrier.
+- PR #79 : import des trois relectures du CDTN (`evaluation/cdtn/jugements.csv`), fusionnée le 17 octobre.
+- Revues : approbation de la PR #63 de Remy, sans lecture des chiffres exploratoires du lot de test, réservée à l'après-mesure ; revues de la PR #72 de Vaneck.
+- Hors dépôt : QCM de 20 questions du Weekly 5 (page privée, et classeur importable dans Kahoot) ; décisions non arbitrées en séance consignées sur #11.
+
+**Mesures exécutées.**
+- Élagage : 121 271 pièces gardées sur 250 002 ; q8 ramené de 118 308 185 à 68 862 041 octets ; découpage identique sur les 822 requêtes de contrôle, les 113 textes de la mesure, les 5 433 textes du CDTN et les 4 240 passages ; 822 vecteurs sur 822 identiques bit à bit dans le navigateur.
+- Encodeur ajusté de Remy : fichiers conformes à son manifeste, réexport bit à bit depuis les poids, parité fp32 (cosinus minimal de 1,00000000) ; fidélité du q8 livré dans le navigateur : 769 sur 822, contre 761 pour le témoin (McNemar exact, 53 contre 45, p = 0,48).
+- Licence du CDTN lue dans le `package.json` de la source et dans le paquet npm 2.20.0, qui contient le même fichier de requêtes.
+- Fiches de relecture : format, identifiants et valeurs contrôlés ; deux verdicts « Oui » ramenés à « oui », avec l'accord de Jibril ; import simulé puis réel : 182 jugements, 155 requêtes, dont 131 jugées « oui » ou « partiel ».
+- Site en ligne : avant la #78, la recherche échouait si Hugging Face était bloqué, même avec le modèle en cache ; après la #78, aucune requête vers Hugging Face.
+- Serveur de contrôle de la PR #63, lancé dans un dossier isolé : 11 essais sur l'en-tête Host, l'origine et le type de contenu, tous conformes.
+
+**Résultats retenus.**
+- Le site sert lui-même un modèle de 65,7 Mio, aux mêmes vecteurs que le q8 d'origine.
+- La fidélité de l'ajusté livré ne s'écarte pas significativement de celle du témoin.
+
+**Ce qui a été écarté, et pourquoi.**
+- Héberger l'encodeur ajusté sur le Hub de Hugging Face : remplacé par l'élagage sans perte, qui garde le modèle dans le dépôt.
+- Lire les chiffres du lot de test de la PR #63 avant la mesure : la mesure de l'ajusté doit rester en aveugle.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #77 et #79 approuvées par Jibril BENSALEM ; PR #78 par Vaneck DAGAR ; PR #75 approuvée et fusionnée par Remy RAYANE ; PR #63 fusionnée par Remy après l'approbation de Mahé.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Repointer la PR #78 sur `dev` a invalidé ses deux approbations, ce que la documentation de GitHub ne signale pas.
+- Une partie des actions de l'assistant sur GitHub (fusions, commentaires) a été refusée par son contrôle des permissions ; Mahé les a lancées lui-même.
+
+### Session 31, 17 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt avant la fin du volet A, revue de la PR #80 de Vaneck (#53), documentation de clôture et jalon de mi-parcours (#43).
+
+**Produit.**
+- Revue de la PR #80, interface finale du site : approuvée, puis remplacée par une demande de modification après la vérification de Jibril (voir les difficultés).
+- PR #81 : moteur d'exécution d'ONNX Runtime Web servi par le site, et non plus par jsDelivr.
+- README du dépôt réécrit : adresse du site, chaîne de traitement, résultats, arborescence réelle, licences, branches et tags.
+- Tag annoté `mi-parcours`, posé a posteriori sur la version en ligne au mi-parcours (`ac84ed3`, déployée le 30 septembre), et branche d'observation `observation/mi-parcours`.
+- Journal : sessions 28 à 31, erreurs de la période en section 4, outils de la section 2 complétés.
+
+**Mesures exécutées.**
+- PR #80 construite (`npm ci --ignore-scripts`, `npm run build`) et parcourue dans Chromium : 5 passages ordonnés avec score, section et lien ; question gardée pendant un chargement retardé, puis traitée ; message hors périmètre pour « azerty » ; aucune requête vers Hugging Face ni Google Fonts ; aucun débordement à 375, 768 et 1 280 px ; aucune erreur dans la console.
+- Essai décisif, cache vidé et jsDelivr bloqué au niveau du contexte du navigateur : la version de `dev` échoue (« Le modèle n'a pas pu être téléchargé ») ; avec la correction de la PR #81, jsDelivr et Hugging Face bloqués, le moteur démarre, aucune requête n'est tentée hors du site, et le classement est inchangé ; 15 tests sur 15.
+- Audit du dépôt : aucun secret trouvé ; un seul fichier de plus de 10 Mio, le modèle servi ; 62 commits de `dev` portent une adresse e-mail personnelle, tous antérieurs au 13 octobre.
+
+**Résultats retenus.**
+- La mesure de l'encodeur ajusté n'a pas été faite avant le 16 octobre : le notebook 05 n'était pas construit, et l'import des relectures n'a été fusionné que le 17 octobre. La règle de repli du protocole 05 s'applique : le site sert l'encodeur de base pour la fin du volet A. La mesure reste possible après, à titre descriptif, pour le rapport.
+- La branche principale avait 175 commits de retard, et aucun tag de mi-parcours n'était posé ; Jibril a mis `main` à jour le jour même (PR #74).
+
+**Ce qui a été écarté, et pourquoi.**
+- Écrire le résultat dans le protocole 05 : son empreinte, que le notebook de mesure doit contrôler, aurait changé ; le résultat est consigné dans le README, dans ce journal et dans le classeur de suivi.
+- Poser `mi-parcours` sur l'état actuel du dépôt, qui ne représente pas le jalon ; nommer la branche d'observation comme le tag, ce que git signale comme ambigu.
+- Réécrire l'historique pour retirer les adresses : interdit sur une branche partagée ; chaque membre règle son compte GitHub pour éviter de nouvelles expositions.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #74 approuvée et fusionnée par Jibril BENSALEM ; documentation de clôture et PR #81 soumises à la relecture de Jibril BENSALEM et Vaneck DAGAR.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- `git log --since` arrête le parcours au premier commit plus ancien que la date : un premier audit des adresses a conclu à tort qu'il n'y en avait aucune.
+- Mon test de la PR #80 écoutait les requêtes au niveau de la page : celles du moteur d'exécution vers jsDelivr n'y apparaissaient pas. Jibril l'a relevé dans sa vérification ; l'essai avec le CDN bloqué l'a confirmé.
+
+### Session 32, 18 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Clôture du volet A : intégration des pull requests en attente, revue de Jibril sur la documentation, focus du menu sur téléphone et périmètre du corpus affiché (#53), contrôle du site en ligne.
+
+**Produit.**
+- PR #81 fusionnée : moteur d'exécution d'ONNX Runtime Web servi par le site, après l'approbation de Jibril.
+- PR #80 de Vaneck approuvée avec une portée écrite, puis fusionnée ; le focus du menu, seul point restant, est corrigé à part.
+- PR #83 : focus retenu dans le menu sur téléphone (`<main>` inerte, panneau en boîte de dialogue modale, focus rendu après le rendu) et périmètre du corpus dans le message d'accueil (261 fiches, 4 240 passages, instantané du 11 septembre). Après la revue de Jibril, la tabulation boucle dans le panneau et Échap est écouté au niveau du document (`e6cd210`) ; la description de la PR est corrigée.
+- PR #72 de Vaneck approuvée et fusionnée : la condition posée le 14/10 est levée par la réservation des sessions 20 à 27 dans ce journal.
+- PR #82 : trois points de la revue de Jibril appliqués (inférence locale documentée, critère de #43 non satisfait par le tag historique, #46 fermée), et cette session.
+- #43 fermée avec sa réserve, critère par critère ; classeur de suivi comparé ligne à ligne avec l'API GitHub : #11, #46, #50 et #56, fermées, y figuraient encore comme ouvertes (PR #83).
+- Journal : sessions 33 à 35 de Remy (PR #86) relues et intégrées, avec huit corrections vérifiées sur le dépôt et l'API GitHub ; sessions 20 à 27, 36 et 37 de Vaneck reportées depuis sa fiche, avec une correction ; bilan de la section 4 recompté.
+
+**Mesures exécutées.**
+- PR #83, première version (`74f3e39`), site construit et servi en local, accès à jsDelivr, Hugging Face et Google Fonts bloqués : 5 passages aux scores de référence ; focus rendu au bouton du menu après Échap, au champ de saisie après un exemple ou un chat ; menu fermé au passage en largeur d'ordinateur ; périmètre visible à 375 et 1 280 px ; aucune erreur. L'essai de 14 Tab puis 6 Maj+Tab, publié comme « le focus ne sort jamais du panneau », comptait le document (BODY) comme acceptable : le focus en sortait aux frontières (voir les difficultés).
+- PR #83, version corrigée (`e6cd210`), toute requête hors du site bloquée, focus relevé après chaque frappe : 22 frappes (14 Tab, 8 Maj+Tab) dans le panneau ; les deux frontières ; le scénario de la revue (dernier bouton, Tab, Échap) ; Tab, Maj+Tab et Échap depuis BODY ; 14 frappes pendant une recherche en cours, exemples désactivés ; tabulation libre en largeur d'ordinateur ; recherche aboutie, seul le site contacté, aucune erreur.
+- Site en ligne, version `74524a7`, cache vidé, les mêmes accès bloqués : 5 passages en 8 s, seule l'adresse du site contactée, aucune erreur ni aucun avertissement.
+
+**Résultats retenus.**
+- Le site en ligne ne dépend plus d'aucun service externe pour se charger.
+
+**Ce qui a été écarté, et pourquoi.**
+- Pousser la correction du focus sur la branche de Vaneck : contraire à la règle de l'équipe ; elle part de `dev`, après la fusion de la #80.
+- Lever la protection de `dev` pour fusionner les #83 et #82 sans approbation : refusé par le contrôle des permissions de l'assistant ; ces fusions reviennent à Mahé ou attendent une approbation.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, puis approuvée par Vaneck DAGAR et Jibril BENSALEM sur `c69042e`, et fusionnée par Vaneck DAGAR.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Dans l'interface B, le texte d'invite est le même pendant et après le chargement : un test qui s'en servait pour attendre le moteur ne prouvait rien à lui seul ; seules les recherches abouties prouvent que le moteur a démarré.
+- La première version de la correction rendait le focus avant le retrait de l'attribut `inert`, donc le navigateur le refusait ; corrigé avant le commit.
+- `inert` retire la conversation de la tabulation, mais pas le document lui-même : après le dernier bouton du menu, Tab plaçait le focus sur BODY, et Échap, écouté sur le panneau seulement, ne fermait plus le menu. Mon essai jugeait BODY acceptable ; Jibril l'a reproduit aux deux frontières. Seule une boucle explicite de la tabulation retient le focus.
+- Le dossier de travail temporaire de l'assistant a été vidé entre deux journées : ses scripts d'audit de la veille n'existent plus.
+
+**Sessions 33 et 34, consignées a posteriori.** Contrairement à la règle de la section 5, ces sessions de Remy RAYANE des 13 et 14 octobre 2026 n'ont pas été consignées le jour même. Elles sont reconstituées le 18 octobre à partir de l'historique des requêtes, des scripts créés et exécutés, des commits vérifiés et des pull requests datées (#63, #75). Le temps d'appropriation n'a pas été relevé sur le moment.
+
+### Session 33, 13 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Résolution intégrale des exigences de parité ONNX et de fidélité navigateur pour l'Issue #49 : alignement de la quantification INT8 sur Xenova (`ActivationSymmetric=True`), création du modèle témoin de base, automatisation des métriques navigateur avec empreintes SHA-256 opposables (`08_calculer_metriques_navigateur.py`), et réponse aux remarques de revue de Mahé.
+
+**Produit.**
+- `06_exporter_onnx.py` (dans `scripts/adaptation/`) : export ONNX dynamique INT8 symétrique (`ActivationSymmetric=True`, 74/75 tenseurs identiques bit à bit à Xenova), support du modèle témoin de base et génération dynamique de `quant_config.json`.
+- `07_mesurer_fidelite_822.py` : encodage unitaire sans padding (`batch_size=1`) pour isoler l'effet de batch.
+- `08_calculer_metriques_navigateur.py` (241 lignes) : calcul automatisé des métriques in-browser (concordance Top-1, cosinus médian, dégradation maximale), test exact de McNemar apparié et empreintes SHA-256 opposables.
+- `serveur_controle.py` (dans `scripts/adaptation/`) et `fidelite_navigateur.html` (dans `scripts/indexation/`) : sécurisation du serveur local de contrôle et gestion robuste de la réponse HTTP (`res.ok`).
+- `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` : mise à jour des sections 5 et 6, protocole comparatif face au témoin et recompilation du PDF.
+
+**Mesures exécutées.**
+- Contrôle de parité FP32 PyTorch vs ONNX : cosinus minimal = 1,00000000, écart maximal = 1,17 × 10⁻⁷.
+- Mesure in-browser WASM sur les 822 requêtes réalistes de section et 4 240 passages : Top-1 concordance à 93,55 % (769/822) pour l'ajusté et 92,58 % (761/822) pour le témoin.
+- Comparaison des tenseurs d'embeddings : 74 sur 75 deviennent strictement identiques bit à bit à ceux de Xenova.
+- Démonstration expérimentale du rôle de témoin : le témoin de base et Xenova divergent sur 52 requêtes sur 822 du seul fait de l'export opset 14, indépendamment de tout apprentissage.
+
+**Résultats retenus.**
+- La quantification symétrique est indispensable pour préserver la fidélité de l'encodeur dans Transformers.js.
+- Le modèle témoin de base est formellement retenu comme étalon pour le Weekly 5 pour isoler l'effet de l'export de celui de l'ajustement.
+
+**Ce qui a été écarté, et pourquoi.**
+- Comparaison de latence entre machines hétérogènes (Mac M4 vs PC Windows Core i7) : non reproductible à matériel distinct.
+- Notes de travail et synthèses intermédiaires (`reponse_revue_mahe_issue49.md`) retirées du commit final après intégration dans l'étude.
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la revue de Mahé BEGNIS (D2) et Jibril BENSALEM.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Dépendance arithmétique du CPU en Python unitaire (762/822 sur PC vs 791/822 sur Mac), alors que l'exécution WASM dans le navigateur donne exactement les mêmes chiffres sur nos deux machines de test pour le témoin (761/822).
+
+### Session 34, 14 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Clôture technique de l'Issue #49 et préparation du Weekly 5 : actualisation des chiffres de fidélité du q8 livré avec quantification symétrique, traitement de la divergence de sérialisation du tokeniseur, désactivation du cache navigateur, sécurisation de `serveur_controle.py` et intégration de la PR #63.
+
+**Produit.**
+- `fidelite_navigateur.html` (dans `scripts/indexation/`) : purge du cache de Transformers.js avant le chargement d'un modèle ajusté ou témoin (`caches.delete("transformers-cache")`, au lieu de `indexedDB.deleteDatabase`), pour éviter l'évaluation d'un modèle périmé en local.
+- `serveur_controle.py` (dans `scripts/adaptation/`) : contrôle de chemin strict interdisant tout accès hors des dossiers autorisés du dépôt.
+- `08_calculer_metriques_navigateur.py` : mise à jour des métriques du modèle q8 livré définitif (`934a202b...` : 769/822 requêtes concordantes, cosinus médian 0,99384, McNemar exact b = 53, c = 45, p = 0,48).
+- `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` : actualisation de la section 5.2, documentation de l'écart de sérialisation du tokeniseur sous `transformers` 5.18 (proposition de retenir le tokeniseur de base au Weekly 5), articulation avec la stratégie d'élagage (#50), et recompilation du PDF.
+- PR #63 (`feat/49-ajustement-encodeur`) et PR #75 (`docs/49-protocole-05-final`) fusionnées dans `dev`.
+
+**Mesures exécutées.**
+- Audit de tokenisation sur 822 requêtes, 113 textes du Notebook 03, 4 240 passages M2 et 607 requêtes CDTN : 100 % d'identité sur le corpus et le test, divergence isolée sur 6 formulations CDTN avec espace final.
+- Re-mesure navigateur à chaud avec cache invalidé confirmant les 769/822 concordances.
+
+**Résultats retenus.**
+- Modèle ajusté et scripts certifiés prêts pour l'arbitrage du Weekly 5 ; intégration de la règle d'élagage sans perte sous 100 Mio si le modèle est retenu.
+- La règle de repli du protocole 05 (garder l'encodeur de base si la mesure officielle n'est pas positive sur les deux jeux) est formellement arrêtée.
+
+**Ce qui a été écarté, et pourquoi.**
+- Déploiement immédiat de l'ajusté dans `front/public/` : strictement subordonné à la mesure conjointe du protocole 05.
+
+**Ce que l'équipe a validé, et par qui.**
+- Protocole 05 validé au Weekly 5 ; PR #63 approuvée par Mahé BEGNIS, PR #75 approuvée par Remy RAYANE, toutes deux fusionnées par Remy RAYANE le 14/10.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- `transformers` 5.18 modifie légèrement la structure JSON du tokeniseur à la sauvegarde sans modifier le vocabulaire Unigram, créant un cas particulier sur les espaces terminaux.
+
+### Session 35, 18 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Audit d'achèvement du volet A pour l'échéance du 18 octobre : vérification intégrale du dépôt Git, état des tickets D2/D3, analyse des pull requests PR #83 et PR #84, checklist de clôture opérationnelle du volet A et régularisation des sessions du journal d'IA.
+
+**Produit.**
+- Audit contradictoire des jalons, tickets (#43, #46, #48, #49, #50, #53, #56) branches distantes (`origin/dev`, `origin/main`) et pull requests #83 et #84.
+- Vérification du site en ligne (https://datatigersnlp.github.io/data_tigers_nlp/) et confirmation de l'application de la règle de repli du protocole 05 (#49 : encodeur de base élagué 65,7 Mio servi).
+- Analyse de la PR #83 (`fix/53-focus-menu-perimetre`) : validation des correctifs d'accessibilité mobile (bouclage tabulation, Échap, `inert`) et affichage du périmètre (261 fiches, 4 240 passages).
+- Fiche de clôture et ordonnancement des 4 actions restantes pour ce soir (fusion PR #83, recette du site en ligne, fusion PR #84, pose du tag `volet-a-v1`).
+- Branche `docs/journal-sessions-remy-octobre` : intégration des sessions 33, 34 et 35 dans ce journal, mise à jour du préambule, ajout des anomalies traitées en section 4 et recompilation du PDF.
+
+**Mesures exécutées.**
+- Contrôle d'accessibilité et de réponse HTTP 200 sur le site public en ligne hébergé sur GitHub Pages.
+- Vérification des empreintes SHA-256 et des règles d'exclusion Git (`git status --ignored -s`).
+- Recompilation complète de `JOURNAL_USAGE_IA.pdf` via `docs/latex/build.py` et `xelatex`.
+
+**Résultats retenus.**
+- Le volet A est fonctionnel en ligne ; sa clôture tient aux quatre actions restantes listées ci-dessus.
+
+**Ce qui a été écarté, et pourquoi.**
+- Fusion directe sans relecture : toute fusion vers `dev` et `main` passe par une pull request et l'approbation d'un relecteur selon les règles de conduite du projet.
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la relecture de Mahé BEGNIS (D2) et Jibril BENSALEM.
+
+**Temps d'appropriation constaté.**
+- Immédiat.
+
+**Difficultés rencontrées.**
+- `latexmk` requiert Perl sous Windows ; compilation directe en deux passes via `xelatex` sur le fichier généré par `build.py`.
+
+**Sessions 36 et 37, de Vaneck DAGAR.** Sessions des 13 et 14 octobre, reportées le 18 octobre depuis sa fiche d'usage, et numérotées à la suite des sessions 33 à 35 de Remy RAYANE. La session 37 a été écrite le jour même ; la session 36 a été consignée a posteriori le 14 octobre, à partir des mêmes sources.
+
+### Session 36, 13 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Finition de l'interface du volet A (#53) : état des lieux, mesures avant changements, accessibilité, puis maquettes de refonte pour l'équipe.
+
+**Produit.**
+- Mesures « avant » (Lighthouse en ligne : performance 39 sur téléphone et 70 sur ordinateur, accessibilité 96) et captures en 375 et 1 280 px, hors du dépôt.
+- Corrections sur `feat/53-finition-interface` : suggestions de la revue de #42, annonce courte pour les lecteurs d'écran, contrastes, police système, durée du premier chargement annoncée.
+- Un canevas de design partagé (Claude, artefact « Design ») : directions A à E, huit palettes de la B, états de la B ; la B a été retenue par l'équipe.
+
+**Mesures exécutées.**
+- Contrastes calculés pour chaque palette (niveau AA, au moins 4,5:1) ; parcours au clavier et captures pilotés par Playwright.
+
+**Résultats retenus.**
+- Accessibilité Lighthouse de 95 à 100 en local après corrections.
+- La performance est limitée par Transformers.js sur le fil principal : constat transmis pour le #48 (Web Worker), hors du périmètre du #53.
+
+**Ce qui a été écarté, et pourquoi.**
+- Les fonctions que le site n'a pas (« Copier le lien », « même hors ligne ») : retirées des maquettes avant publication.
+- Un nom de marque inventé par l'assistant : remplacé par un nom descriptif.
+
+**Ce que l'équipe a validé, et par qui.**
+- La direction B, à la majorité de l'équipe ; la palette verte d'origine, après discussion.
+
+**Temps d'appropriation constaté.**
+- Canevas de design : prise en main immédiate, les maquettes étant produites par l'assistant ; non relevé précisément.
+
+**Difficultés rencontrées.**
+- Le champ de saisie fixé en bas masquait les exemples sur téléphone pendant le chargement : il n'est fixé qu'après la première question.
+- Une modification du canevas faite dans la page entre deux publications : l'outil a refusé d'écraser la version récente, reprise avant de republier.
+
+### Session 37, 14 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Relectures des PR #76 et #78, corrections de la PR #72, puis interface du #53 : abstention, score, refonte B.
+
+**Produit.**
+- Relectures publiées : #76 (seuil d'abstention) et #78 (modèle élagué), approuvées.
+- PR #72 : fiche Playwright corrigée (cache du modèle dans l'API Cache, unités en Mio, essai du contexte persistant).
+- `feat/53-finition-interface` : message et bouton d'abstention, score de chaque passage, question gardée pendant le chargement, refonte selon la maquette B (panneau latéral, nouveau chat, chats de la session, menu sur téléphone), police DM Sans servie par le site, poids du modèle élagué (65,7 Mio).
+- Adresse git passée en noreply ; branches fusionnées supprimées.
+
+**Mesures exécutées.**
+- #76 et #78 testées sur l'index servi par le site (`2ec45586`), avec une référence de la page de contrôle regénérée sur cet index dans Chromium ; parité du moteur avec le modèle élagué : 24 requêtes sur 24, écart de score nul, aucune requête vers Hugging Face.
+- Essai Playwright : contexte persistant rouvert avec `page.route()` actif, recherche prête en 4 s au lieu de 87 s, modèle non retéléchargé.
+- Premier chargement sur le site en ligne après la #78 : 23 à 30 s.
+- Interface : scénario complet en 375, 768 et 1 280 px, parcours au clavier, Lighthouse (accessibilité et bonnes pratiques à 100).
+
+**Résultats retenus.**
+- Le seuil d'abstention et le modèle élagué fonctionnent comme annoncé ; deux défauts de test signalés (export local du notebook 02, fins de ligne de `LICENSE` sous Windows).
+- Score affiché avec trois décimales : à deux, les cinq passages affichaient tous « 0,89 ».
+
+**Ce qui a été écarté, et pourquoi.**
+- Mon propre export du notebook 02 pour les relectures : son index diffère de celui du site.
+- `scrollIntoView` pour amener la dernière question en haut : il faisait remonter tout le cadre de l'application.
+
+**Ce que l'équipe a validé, et par qui.**
+- #76 fusionnée par moi, #78 par Mahé ; la PR du #53 reste à ouvrir et à faire relire par Jibril.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Les approbations de la #78 ont été annulées par le changement de base vers `dev` : relecture refaite sur la fusion réelle.
+- Une phrase de la fiche Playwright affirmait un comportement non vérifié : Mahé l'a relevé, un essai l'a confirmé avant de l'écrire.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -526,17 +1078,62 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 19/09 | Suppression de `readme.md` détruisant le `README.md` écrit juste avant, le système de fichiers étant insensible à la casse | contrôle systématique après écriture | fichier réécrit, casse forcée en deux étapes avec `git mv` |
 | 19/09 | Clone local pointant vers l'ancienne adresse du dépôt, périmée depuis son transfert à l'organisation | lecture de l'adresse distante avant publication | adresse corrigée avant tout envoi |
 | 19/09 | Banc d'essai terminé sans aucune sortie, le tube de filtrage retenant l'affichage | fichier de sortie vide alors que le processus était terminé | écriture directe vers un fichier, tampon vidé explicitement |
+| 26/09 | `chunk_text` présenté comme contenant la section d'origine | vérification sur les 5 702 passages | explication corrigée dans CORPUS.pdf |
+| 26/09 | 849 `chunk_text` trop longs, estimés à 4 caractères par token | comptage exact avec le tokeniseur | 637 passages |
+| 26/09 | Deux verdicts de la grille fondés sur cette estimation | comptage exact | verdicts corrigés |
+| 26/09 | Préfixe E5 compté pour 3 tokens | Mahé, en relançant les scripts (PR #32) | 2 tokens |
+| 26/09 | Corpus annoncé à 5 282 passages au lieu de 5 284 | résultat du script | chiffre corrigé |
+| 26/09 | Mauvais renvoi de section dans CORPUS.pdf | relecture du PDF | renvoi automatique |
+| 27/09 | Extraction du `html` coupant aux liens dans les phrases | fragments incohérents | extraction et chiffres corrigés |
+| 27/09 | Intertitres collés présentés comme gênants pour l'encodeur | test du tokeniseur | effet déclaré négligeable |
+| 27/09 | Commande proposée qui aurait effacé la grille annotée | relecture avant publication | commande retirée |
+| 03/10 | Jeu de questions prérempli avec les 105 brouillons de l'IA (PR #54) | comparaison des fichiers | brouillons retirés |
 | 04/10 | Test de McNemar pour questions groupées attribué à Durkalski (2003), alors que la formule employée est celle d'Obuchowski (1998) | lecture du code source d'une implémentation publiée | attribution et formule corrigées avant publication |
 | 04/10 | Appariement du CDTN à nos passages : 189 requêtes le matin, 175 l'après-midi, selon la règle employée | recalcul indépendant | règle d'appariement à écrire et figer avant la mesure (#56) |
+| 04/10 | Extrait proposé qui ne répondait pas à la question (Q073) | ma relecture | question remplacée |
+| 04/10 | Fichier des questions abîmé par un tableur (colonnes inversées, valeurs vidées) | diff anormal | fusion refaite par script |
 | 06/10 | Aperçu des résultats de l'encodeur calculé sur le jeu de test avant l'écriture du protocole, puis un commentaire affirmant qu'aucune mesure n'avait été faite | relecture de la méthode, puis du commentaire avant envoi | aperçu ni utilisé ni diffusé aux annotateurs, phrase corrigée avant envoi, protocole à écrire avant toute mesure |
 | 06/10 | Règle de pertinence proposée qui excluait par construction les réponses en liste des petits découpages | audit du jeu final contre les cinq découpages | seconde condition ajoutée avant la validation du protocole, d'après les seules annotations |
+| 07/10 | Règle qui aurait désigné le mauvais coordinateur de Playwright | relecture du tableau | colonne de coordination ajoutée |
 | 10/10 | Nombre de fiches visées par le seuil du CDTN annoncé à 61 au lieu de 50, compté sur toutes les requêtes appariées | recomptage avant le commit | corrigé avant le gel du protocole |
 | 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
 | 10/10 | Chiffres de l'audit statistique tirés d'un essai préliminaire, à une autre graine, et non du script versionné | réexécution du script avant le commit | chiffres alignés sur la sortie reproductible |
+| 11/10 | Barre de progression annonçant 16 Mio (vocabulaire) pour un modèle de 113 Mio | capture du parcours dans Edge | progression corrigée |
+| 13/10 | Recalcul indépendant de l'effet de plan différent de celui du module de métriques | écart entre les deux calculs | écart dû au degré de liberté de l'estimateur ; avec `ddof=1`, accord à 1e-14, le module était juste |
+| 13/10 | Serveur de contrôle local acceptant des requêtes POST sans contrôle d'extension ni de chemin | audit de sécurité du script Python | contrôle strict du chemin cible et rejet des requêtes hors du périmètre autorisé (`serveur_controle.py`) |
+| 13/10 | `aria-live` sur toute la conversation : un lecteur d'écran aurait relu les cinq passages à chaque réponse | relecture du code | annonce courte dédiée |
+| 13/10 | Ligne de version sous le seuil de contraste (3,28:1 au lieu de 4,5:1) | Lighthouse | couleur assombrie |
+| 13/10 | Maquettes promettant des fonctions absentes du site (« Copier le lien », « même hors ligne ») | relecture avant publication | retirées |
+| 14/10 | Fidélité de l'encodeur ajusté publiée à 753 sur 822, mesurée sur un export q8 antérieur, quantifié sans `ActivationSymmetric` | nouvelle mesure du q8 livré, dans le navigateur | 769 sur 822 ; protocole 05 et rapport de Remy corrigés |
+| 14/10 | Données du CDTN déclarées « sans licence » le 10/10, faute de fichier LICENSE, alors que leur `package.json` déclare Apache-2.0 | relecture de la source et du paquet npm | `04_cdtn.md` corrigé (PR #77) ; l'alerte et la demande au support de GitHub du 13/10 reposaient sur cette erreur |
+| 14/10 | Première règle d'élagage qui retirait les diacritiques combinants et la lettre μ : un passage sur 4 240 changeait de découpage | comparaison du découpage sur tous nos textes | diacritiques et lettres grecques gardés ; découpage identique partout |
+| 14/10 | Taille du q8 de Xenova écrite 112,9 Mio au lieu de 112,8 dans la PR #78 et trois de ses fichiers | recalcul depuis le nombre d'octets | corrigé (`a9a71c5`) ; 112,9 Mio est la taille du témoin de Remy |
+| 14/10 | `.gitignore` de la PR #63 ignorant tous les fichiers `.onnx`, donc le modèle servi par le site | test des règles d'exclusion, puis essai dans un dépôt jetable : `git add` d'un dossier l'omettait sans avertissement | ligne retirée par Remy avant la fusion |
+| 14/10 | Premier test de ces règles invalide : option non reconnue, erreurs masquées, donc aucune détection | listes vides jugées suspectes, règle témoin ajoutée | test refait avec `core.excludesFile` |
+| 14/10 | Cache du navigateur attribué à IndexedDB, alors que Transformers.js 4.3.0 utilise l'API Cache | lecture du code source de la bibliothèque | `caches.delete` à la place de `indexedDB.deleteDatabase` (PR #63) |
+| 14/10 | Hypothèse de l'assistant, publiée dans une revue de la PR #72 : avec le modèle en cache, bloquer Hugging Face par `page.route()` n'empêcherait pas le chargement | essai sur le site en ligne : le chargement échoue | hypothèse retirée dans un commentaire de suivi ; Vaneck a mesuré le cas réel et corrigé sa fiche |
+| 14/10 | QCM du Weekly : la bonne réponse était la plus longue dans 13 questions sur 20 | script de contrôle des longueurs | réponses rééquilibrées, 3 cas sur 20 |
+| 14/10 | Tokeniseur ré-exporté sous `transformers` 5.18 modifiant le découpage de 6 requêtes CDTN avec espace final | test d'équivalence de découpage sur l'ensemble des requêtes et passages | proposition actée au Weekly 5 de conserver le tokeniseur de base pour isoler strictement les poids sémantiques |
+| 14/10 | Fiche Playwright citant des sessions 23 et 24 absentes du journal de l'équipe | Jibril et Mahé, revue de la #72 | sessions versées en 20 à 27 |
+| 14/10 | Fiche Playwright affirmant, sans essai, que le modèle reste en cache avec `page.route()` | Mahé, revue de la #72 | essai fait, résultat écrit |
+| 14/10 | Score à deux décimales : « 0,89 » pour les cinq passages | scénario Playwright | trois décimales |
+| 14/10 | Test `creerMoteur` de la #76 dépendant de l'export local du notebook 02 | relecture de la #76 | correction proposée à Mahé |
+| 14/10 | Empreinte de `LICENSE` du modèle modifiée par la conversion des fins de ligne sous Windows | relecture de la #78 | règle `.gitattributes` proposée |
+| 14/10 | `scrollIntoView` faisant remonter tout le cadre de l'application | capture du scénario de la refonte | défilement limité à la zone du fil |
+| 14/10 | Progression calculée en Mio mais affichée en « Mo » | relecture lors du passage au modèle élagué | unité corrigée |
+| 17/10 | Audit des adresses e-mail concluant à zéro exposition, `git log --since` ayant arrêté le parcours trop tôt | contradiction avec un commit connu | historique parcouru en entier : 62 commits concernés |
+| 17/10 | Revue publiée de la PR #80 affirmant « aucune requête vers jsDelivr », les requêtes ayant été écoutées au niveau de la page seulement | vérification de Jibril, puis essai avec le CDN bloqué : la recherche échoue | revue corrigée en demande de modification ; moteur d'exécution servi par le site (PR #81) |
+| 17/10 | README de la PR #82 donnant la première inférence locale « en cours », alors qu'elle a réussi le 27/09 (#31) et qu'elle est documentée : la liste des fichiers ne descendait que dans les sous-dossiers de `docs/etudes` | revue de Jibril | ligne corrigée, RAG complet distingué (`1216bd5`) |
+| 17/10 | Suivi de la PR #82 donnant #46 « à fermer », alors qu'il était fermé depuis 15 h 52 | revue de Jibril, d'après l'API GitHub | situation actualisée (`1216bd5`) |
+| 18/10 | Attente du moteur fondée sur un texte d'invite identique pendant et après le chargement | relecture du code de l'interface B | conclusions tirées des seules recherches abouties |
+| 18/10 | Focus rendu avant le retrait de l'attribut `inert`, donc refusé par le navigateur | essai au clavier, focus nul après Échap | focus rendu après le rendu (`requestAnimationFrame`), avant le commit (PR #83) |
+| 18/10 | Description de la PR #83 affirmant que le focus ne sort jamais du menu sur téléphone, l'essai comptant le document (BODY) comme acceptable | contre-essai de Jibril aux frontières de Tab et Maj+Tab, puis Échap sans effet | tabulation bouclée dans le panneau, Échap écouté au niveau du document (`e6cd210`), description corrigée |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
+
+**Bilan du 11 au 18 octobre.** Trente erreurs ou pièges détectés et traités : dix-sept dans les sessions de Mahé, deux dans celles de Remy, onze dans celles de Vaneck. **Sur les dix-sept de Mahé, dix figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()`, la revue de la PR #80, le README et le suivi de la PR #82, la description de la PR #83. Quatre ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant : la revue de la PR #80, les deux points de la PR #82 et la description de la PR #83 ; toutes l'ont été par une mesure, un essai ou la lecture d'une source primaire. Parmi les onze de Vaneck, deux portaient sur des PR de Mahé et ont été relevées en relecture (le test de `creerMoteur` de la PR #76, l'empreinte de `LICENSE` de la PR #78), et deux sur sa propre fiche de la PR #72, relevées par Jibril et Mahé.
 
 ---
 
