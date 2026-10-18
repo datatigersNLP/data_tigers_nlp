@@ -1,10 +1,12 @@
-# Agent0 Light : contrat et préparation des sources (#91, #92)
+# Agent0 Light : contrat, sources et aperçu des prompts (#91 à #93)
 
 ## 1. Périmètre et état
 
 Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`).
 État au 18 octobre 2026 : contrat et préparateur de sources implémentés ; 44 tests, contrôle du corpus et première
-sélection réussis sur le Windows de Jibril. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
+sélection réussis sur le Windows de Jibril. Le premier incrément de #93 ajoute un aperçu des prompts, avec 58 tests
+réussis dans l'environnement de développement ; son essai Windows reste à faire. La relecture des deux membres
+reste attendue. La PR RAG #85 est préservée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -173,7 +175,7 @@ Mahé et Remy reste à effectuer ; #91 n'est ni clôturée ni fusionnée sur la 
 - [Note d'assistance IA de cette étape](../journal/2026-10-18_agent0_light_91.md).
 
 Le contrat #91 a passé les tests Windows ; la préparation des sources #92 est ajoutée ci-dessous sur une autre
-branche. Le générateur #93, le benchmark #96/#97 et la boucle #98 restent à implémenter. Les charges réelles ne
+branche. L'appel Qwen et les contrôles de sortie de #93, le benchmark #96/#97 et la boucle #98 restent à implémenter. Les charges réelles ne
 sont pas déduites des durées de conversation ; elles seront déclarées par les contributeurs à la clôture.
 
 ## 9. Préparer les sources M2 (#92)
@@ -291,3 +293,83 @@ Les commits documentaires suivants ne modifient pas les sources utilisées pour 
 correctement la provenance de son exécution initiale.
 
 [Note d'assistance IA #92](../journal/2026-10-18_agent0_light_92.md).
+
+
+## 10. Premier incrément de #93 : inspecter la consigne avant l'inférence
+
+Jibril a vérifié son serveur local le 18 octobre : l'API annonce Ollama **0.40.5** et le catalogue renvoie
+`qwen2.5-7b-instruct:q4_k_m-local`, digest
+`6ec54444a8511aae6c2116b172eb3685d1416c523bfee0252ca33c7e55c481e4`.
+Cela confirme le serveur et l'identité déclarée du modèle, pas encore le gabarit ni le budget de la future requête.
+
+Cet incrément prépare la fiche d'exercice avant de la confier à Qwen. Il ne produit aucune question :
+
+- `prompts.py` définit une consigne système commune et deux consignes distinctes, simple et reformulation.
+  Version : `agent0-simple-reformulation-v1`. Le passage complet et le schéma de `Proposition` sont inclus.
+- `generate.py --prepare-only` relit un manifeste #92, vérifie ses empreintes de corpus et chaque passage contre
+  le corpus chargé. Il refuse un identifiant inconnu, une source modifiée ou dupliquée et un JSON ambigu.
+- Le groupe demandé est numéroté à partir de 1 et doit contenir un seul passage. Une paire n'est pas traitée
+  silencieusement comme un passage. Les autres catégories attendent #94.
+- Le fichier `agent0-preparation-v1` conserve la source, les messages, le schéma de sortie, leur empreinte,
+  la provenance de la sélection et celle du code actuel. L'empreinte de la sélection porte sur les octets de son
+  fichier ; celle du prompt porte sur son objet JSON sérialisé en UTF-8 avec clés triées.
+- Aucune dépendance supplémentaire : les fichiers de #91/#92 et leurs verrous restent inchangés.
+  Ni Ollama, ni tokeniseur, ni matrice, ni Gold Set ne sont appelés ou lus par cette commande.
+
+Les instructions demandent une proposition autonome en français, des extraits continus exacts et la conservation
+des conditions utiles. La difficulté reste une cible imposée. Ces instructions ne prouvent pas leur respect par
+le futur modèle ; les contrôles des sorties et la relecture humaine sont des étapes séparées.
+
+### Essai Windows de l'aperçu
+
+La branche `feat/93-agent0-generation` part de la tête `b8b6118` de #100. Sa PR cible `dev`, mais dépend
+des PR #99 puis #100 : les intégrer avant elle, puis synchroniser en préservant les éventuelles corrections.
+Le diff global inclut ces dépendances tant qu'elles ne sont pas fusionnées.
+
+Depuis la racine du dépôt, vérifier d'abord que `git status --short --branch` ne montre pas de modifications
+locales à préserver. Puis récupérer la branche et exécuter les tests avec l'environnement déjà installé :
+
+```powershell
+git fetch origin
+git switch --track origin/feat/93-agent0-generation
+git status --short --branch
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Arrêter à la première erreur. Pour préparer le premier groupe du fichier déjà créé par Jibril :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\selection_001.json --group 1 --type simple --difficulty easy --output .\data\synthetic\preparations\simple_001.json
+```
+
+Le résumé doit annoncer `prompt_prepare`, `m2-article374529-0004`, `ollama_appele: false` et
+`budget_tokens_verifie: false`. Ce dernier point est volontaire : l'aperçu ne permet pas de lancer une
+inférence. Pour lire la consigne préparée dans le terminal :
+
+```powershell
+$apercuAgent0 = Get-Content -Raw -Encoding UTF8 .\data\synthetic\preparations\simple_001.json | ConvertFrom-Json
+$apercuAgent0.prompt.messages | Format-List role, content
+```
+
+Pour l'autre consigne, remplacer `--type simple` par `--type reformulation` et choisir une nouvelle sortie,
+par exemple `reformulation_001.json`. Sans `--output`, le programme affiche toute la préparation JSON.
+Un fichier existant est refusé ; ne pas supprimer la première trace pour refaire un essai.
+
+### Preuves et limites
+
+**58 tests réussis ici**, Python 3.12.14 et Pydantic 2.14.0 : les 44 existants et 14 nouveaux tests.
+La compilation et l'aide CLI sont contrôlées. Les tests utilisent des fixtures techniques ; la provenance Git
+est simulée pour la commande car cette copie locale de contrôle n'est pas un checkout Git complet.
+
+Les fonctions ont aussi été exécutées sur les vrais JSON M2 avec une sélection reconstruite à graine 20261018 :
+le premier passage est bien `m2-article374529-0004`, de 318 caractères, conservés intégralement dans les deux
+prompts. Ce contrôle n'est pas une lecture du fichier Windows de Jibril et ne revendique aucune provenance Git
+réelle pour sa sélection reconstruite. L'essai Windows du nouvel aperçu reste attendu.
+
+La lecture des helpers publics de #85 confirme leur intérêt pour le contrôle du modèle, du gabarit et des
+tokens. Ils ne sont pas présents sur cette branche, et l'aperçu n'importe pas le RAG. Le prochain incrément
+traitera `client_qwen.py`, le budget, la fin de génération, les sorties brutes, les rejets et le stockage des
+candidats. Aucun module de #85 n'est modifié. #93 reste ouverte et sa PR en brouillon ; l'estimation globale
+de 6 h du ticket reste une prévision, sans temps réel inventé.
+
+[Note d'assistance IA #93](../journal/2026-10-18_agent0_light_93.md).
