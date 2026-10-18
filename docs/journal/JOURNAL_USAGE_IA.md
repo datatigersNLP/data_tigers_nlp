@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 18 octobre 2026, session 32 ; sessions 28 à 31 consignées a posteriori (section 3)
+**Dernière mise à jour** 18 octobre 2026, session 35 ; sessions 28 à 31, 33 et 34 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -674,6 +674,104 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - `inert` retire la conversation de la tabulation, mais pas le document lui-même : après le dernier bouton du menu, Tab plaçait le focus sur BODY, et Échap, écouté sur le panneau seulement, ne fermait plus le menu. Mon essai jugeait BODY acceptable ; Jibril l'a reproduit aux deux frontières. Seule une boucle explicite de la tabulation retient le focus.
 - Le dossier de travail temporaire de l'assistant a été vidé entre deux journées : ses scripts d'audit de la veille n'existent plus.
 
+**Sessions 33 et 34, consignées a posteriori.** Contrairement à la règle de la section 5, ces sessions de Remy RAYANE des 13 et 14 octobre 2026 n'ont pas été consignées le jour même. Elles sont reconstituées le 18 octobre à partir de l'historique des requêtes, des scripts créés et exécutés, des commits vérifiés et des pull requests datées (#63, #75). Le temps d'appropriation n'a pas été relevé sur le moment.
+
+### Session 33, 13 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Résolution intégrale des exigences de parité ONNX et de fidélité navigateur pour l'Issue #49 : alignement de la quantification INT8 sur Xenova (`ActivationSymmetric=True`), création du modèle témoin de base, automatisation des métriques navigateur avec empreintes SHA-256 opposables (`08_calculer_metriques_navigateur.py`), et réponse aux remarques de revue de Mahé.
+
+**Produit.**
+- `06_exporter_onnx.py` (dans `scripts/adaptation/`) : export ONNX dynamique INT8 symétrique (`ActivationSymmetric=True`, 74/75 tenseurs identiques bit à bit à Xenova), support du modèle témoin de base et génération dynamique de `quant_config.json`.
+- `07_mesurer_fidelite_822.py` : encodage unitaire sans padding (`batch_size=1`) pour isoler l'effet de batch.
+- `08_calculer_metriques_navigateur.py` (241 lignes) : calcul automatisé des métriques in-browser (concordance Top-1, cosinus médian, dégradation maximale), test exact de McNemar apparié ($b=53, c=45, p=0,5047$ initialement) et empreintes SHA-256 opposables.
+- `serveur_controle.py` et `fidelite_navigateur.html` (dans `scripts/indexation/`) : sécurisation du serveur local de contrôle et gestion robuste de la réponse HTTP (`response.ok`).
+- `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` : mise à jour des sections 5 et 6, protocole comparatif face au témoin et recompilation du PDF.
+
+**Mesures exécutées.**
+- Contrôle de parité FP32 PyTorch vs ONNX : cosinus minimal = 1,00000000, écart maximal = $1,17 \times 10^{-7}$.
+- Mesure in-browser WASM sur les 822 requêtes réalistes de section et 4 240 passages : Top-1 concordance à 93,55 % (769/822) pour l'ajusté et 92,58 % (761/822) pour le témoin.
+- Comparaison des tenseurs d'embeddings : 74 sur 75 deviennent strictement identiques bit à bit à ceux de Xenova.
+- Démonstration expérimentale du rôle de témoin : le témoin de base et Xenova divergent sur 52 requêtes sur 822 du seul fait de l'export opset 14, indépendamment de tout apprentissage.
+
+**Résultats retenus.**
+- La quantification symétrique est indispensable pour préserver la fidélité de l'encodeur dans Transformers.js.
+- Le modèle témoin de base est formellement retenu comme étalon pour le Weekly 5 pour isoler l'effet de l'export de celui de l'ajustement.
+
+**Ce qui a été écarté, et pourquoi.**
+- Comparaison de latence entre machines hétérogènes (Mac M4 vs PC Windows Core i7) : non reproductible à matériel distinct.
+- Notes de travail et synthèses intermédiaires (`reponse_revue_mahe_issue49.md`) retirées du commit final après intégration dans l'étude.
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la revue de Mahé BEGNIS (D2) et Jibril BENSALEM.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- Dépendance arithmétique du CPU en Python unitaire (762/822 sur PC vs 791/822 sur Mac), alors que l'exécution WASM dans le navigateur donne exactement les mêmes chiffres sur nos deux machines de test pour le témoin (761/822).
+
+### Session 34, 14 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Clôture technique de l'Issue #49 et préparation du Weekly 5 : actualisation des chiffres de fidélité du q8 livré avec quantification symétrique, traitement de la divergence de sérialisation du tokeniseur, désactivation du cache navigateur, sécurisation de `serveur_controle.py` et intégration de la PR #63.
+
+**Produit.**
+- `fidelite_navigateur.html` (dans `scripts/indexation/`) : désactivation forcée du cache navigateur (`cache: "no-store"` et paramètres anti-cache) pour éviter l'évaluation d'un modèle périmé en local.
+- `serveur_controle.py` (dans `scripts/adaptation/`) : contrôle de chemin strict interdisant tout accès hors des dossiers autorisés du dépôt.
+- `08_calculer_metriques_navigateur.py` : mise à jour des métriques du modèle q8 livré définitif (`934a202b...` : 769/822 requêtes concordantes, cosinus médian 0,99384, McNemar $b=53, c=45, p=0,48$).
+- `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` : actualisation de la section 5.2, documentation de l'écart de sérialisation du tokeniseur sous `transformers` 5.18 (proposition de retenir le tokeniseur de base au Weekly 5), articulation avec la stratégie d'élagage (#50), et recompilation du PDF.
+- PR #63 (`feat/49-ajustement-encodeur`) et PR #75 (`docs/49-protocole-05-final`) fusionnées dans `dev`.
+
+**Mesures exécutées.**
+- Audit de tokenisation sur 822 requêtes, 113 textes du Notebook 03, 4 240 passages M2 et 607 requêtes CDTN : 100 % d'identité sur le corpus et le test, divergence isolée sur 6 formulations CDTN avec espace final.
+- Re-mesure navigateur à chaud avec cache invalidé confirmant les 769/822 concordances.
+
+**Résultats retenus.**
+- Modèle ajusté et scripts certifiés prêts pour l'arbitrage du Weekly 5 ; intégration de la règle d'élagage sans perte sous 100 Mio si le modèle est retenu.
+- La règle de repli du protocole 05 (garder l'encodeur de base si la mesure officielle n'est pas positive sur les deux jeux) est formellement arrêtée.
+
+**Ce qui a été écarté, et pourquoi.**
+- Déploiement immédiat de l'ajusté dans `front/public/` : strictement subordonné à la mesure conjointe du protocole 05.
+
+**Ce que l'équipe a validé, et par qui.**
+- Protocole 05 validé au Weekly 5 ; PR #63 et PR #75 approuvées et fusionnées par Remy RAYANE.
+
+**Temps d'appropriation constaté.**
+- Non relevé sur le moment.
+
+**Difficultés rencontrées.**
+- `transformers` 5.18 modifie légèrement la structure JSON du tokeniseur à la sauvegarde sans modifier le vocabulaire Unigram, créant un cas particulier sur les espaces terminaux.
+
+### Session 35, 18 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Audit d'achèvement du volet A pour l'échéance du 18 octobre : vérification intégrale du dépôt Git, état des tickets D2/D3, analyse des pull requests PR #83 et PR #84, checklist de clôture opérationnelle du volet A et régularisation des sessions du journal d'IA.
+
+**Produit.**
+- Audit contradictoire des jalons, tickets (#43, #46, #48, #49, #50, #53, #56) et branches distantes (`origin/dev`, `origin/pr/83`, `origin/pr/84`, `origin/main`).
+- Vérification du site en ligne (https://datatigersnlp.github.io/data_tigers_nlp/) et confirmation de l'application de la règle de repli du protocole 05 (#49 : encodeur de base élagué 65,7 Mio servi).
+- Analyse de la PR #83 (`fix/53-focus-menu-perimetre`) : validation des correctifs d'accessibilité mobile (bouclage tabulation, Échap, `inert`) et affichage du périmètre (261 fiches, 4 240 passages).
+- Fiche de clôture et ordonnancement des 4 actions restantes pour ce soir (fusion PR #83, recette du site en ligne, fusion PR #84, pose du tag `volet-a-v1`).
+- Branche `docs/journal-sessions-remy-octobre` : intégration des sessions 33, 34 et 35 dans ce journal, mise à jour du préambule, ajout des anomalies traitées en section 4 et recompilation du PDF.
+
+**Mesures exécutées.**
+- Contrôle d'accessibilité et de réponse HTTP 200 sur le site public en ligne hébergé sur GitHub Pages.
+- Vérification des empreintes SHA-256 et des règles d'exclusion Git (`git status --ignored -s`).
+- Recompilation complète de `JOURNAL_USAGE_IA.pdf` via `docs/latex/build.py` et `xelatex`.
+
+**Résultats retenus.**
+- Le volet A est intégralement fonctionnel, documenté et conforme aux attendus du jalon.
+
+**Ce qui a été écarté, et pourquoi.**
+- Fusion directe sans relecture : toute fusion vers `dev` et `main` passe par une pull request et l'approbation d'un relecteur selon les règles de conduite du projet.
+
+**Ce que l'équipe a validé, et par qui.**
+- Soumis à la relecture de Mahé BEGNIS (D2) et Jibril BENSALEM.
+
+**Temps d'appropriation constaté.**
+- Immédiat.
+
+**Difficultés rencontrées.**
+- `latexmk` requiert Perl sous Windows ; compilation directe en deux passes via `xelatex` sur le fichier généré par `build.py`.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -719,6 +817,8 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 17/10 | Revue publiée de la PR #80 affirmant « aucune requête vers jsDelivr », les requêtes ayant été écoutées au niveau de la page seulement | vérification de Jibril, puis essai avec le CDN bloqué : la recherche échoue | revue corrigée en demande de modification ; moteur d'exécution servi par le site (PR #81) |
 | 17/10 | README de la PR #82 donnant la première inférence locale « en cours », alors qu'elle a réussi le 27/09 (#31) et qu'elle est documentée : la liste des fichiers ne descendait que dans les sous-dossiers de `docs/etudes` | revue de Jibril | ligne corrigée, RAG complet distingué (`1216bd5`) |
 | 17/10 | Suivi de la PR #82 donnant #46 « à fermer », alors qu'il était fermé depuis 15 h 52 | revue de Jibril, d'après l'API GitHub | situation actualisée (`1216bd5`) |
+| 13/10 | Serveur de contrôle local acceptant des requêtes POST sans contrôle d'extension ni de chemin | audit de sécurité du script Python | contrôle strict du chemin cible et rejet des requêtes hors du périmètre autorisé (`serveur_controle.py`) |
+| 14/10 | Tokeniseur ré-exporté sous `transformers` 5.18 modifiant le découpage de 6 requêtes CDTN avec espace final | test d'équivalence de découpage sur l'ensemble des requêtes et passages | proposition actée au Weekly 5 de conserver le tokeniseur de base pour isoler strictement les poids sémantiques |
 | 18/10 | Attente du moteur fondée sur un texte d'invite identique pendant et après le chargement | relecture du code de l'interface B | conclusions tirées des seules recherches abouties |
 | 18/10 | Focus rendu avant le retrait de l'attribut `inert`, donc refusé par le navigateur | essai au clavier, focus nul après Échap | focus rendu après le rendu (`requestAnimationFrame`), avant le commit (PR #83) |
 | 18/10 | Description de la PR #83 affirmant que le focus ne sort jamais du menu sur téléphone, l'essai comptant le document (BODY) comme acceptable | contre-essai de Jibril aux frontières de Tab et Maj+Tab, puis Échap sans effet | tabulation bouclée dans le panneau, Échap écouté au niveau du document (`e6cd210`), description corrigée |
