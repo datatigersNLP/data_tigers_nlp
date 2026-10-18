@@ -109,6 +109,7 @@ Aucune licence n'est déclarée pour le code du dépôt.
 | `jalon-j2` | jalon J2, 27 septembre 2026 |
 | `jeu-questions-v1` | jeu de questions figé avant toute mesure, 6 octobre 2026 |
 | `mi-parcours` | version du site en ligne au mi-parcours (déployée le 30 septembre), tag posé a posteriori le 17 octobre |
+| `volet-a-v1` | fin du volet A, 18 octobre 2026 : `main` après la PR #84 (`8955962`) |
 
 ## Commits
 
