@@ -34,3 +34,21 @@ Aucun appel au modèle sur la machine de Jibril n'est réalisé par l'assistant.
 fournies ; les sorties réelles, la concordance des tokens HF/GGUF, les ressources et la relecture humaine restent
 attendues. La validité structurelle d'une citation ne prouve pas sa justification sémantique.
 La PR #85 reste en brouillon, sans fusion ni clôture de #51. Aucune charge réelle n'est inventée.
+
+## Retour local ultérieur : première réponse Q036
+
+Jibril transmet ensuite la trace « Texte collé(1).txt », SHA-256
+`1cc87a6c42eb998534cc1ba648e8a52a50e994ab485f62ed3a94d103757b322a`.
+Cette exécution sur son Legion produit `reponse_citee`, `e5_charge: true`, `ollama_appele: true`.
+Le modèle est Qwen local au digest prévu, servi par Ollama 0.40.5. L'entrée contient 2 317 tokens pour les deux
+comptages HF/Ollama ; la sortie contient 381 tokens et se termine par `stop`. Les références `[P1]` et `[P5]`
+existent parmi les cinq passages. Aucune erreur technique n'est rapportée. Ollama indique 46,2005116 s au total,
+dont 21,9012127 s de chargement, 18,503807 s de traitement du prompt et 5,774473 s de génération.
+Ce temps ne couvre pas toute la chaîne Python ; aucune occupation mémoire ou GPU n'est rapportée.
+
+L'assistant compare la réponse aux passages : les huit mesures de P1 sont reprises, mais les conditions
+d'application présentes dans P1 et P5 sont omises. Les citations sont regroupées en introduction, sans référence
+sur chaque puce. Cette lecture qualitative est documentée dans `docs/etudes/rag_51.md` ; elle ne devient pas une
+mesure systématique ni une validation juridique exhaustive. Les indicateurs sémantiques automatiques restent à false.
+Le code, la réponse brute, les questions et les paramètres ne sont pas modifiés. Q003 reste à exécuter dans la même
+configuration pour observer l'abstention. La relecture du binôme et la validation globale de #51 restent attendues.

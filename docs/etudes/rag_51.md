@@ -7,9 +7,11 @@ Responsables : Jibril BENSALEM et Maïmouna SIGNATE. Soutien : Remy RAYANE et Ma
 Les étapes 1 (chargement de l'index), 2 (récupération Python fp32) et 3 (contexte numéroté) sont implémentées.
 Le contrôle de l'index réel a réussi sur le Legion, d'après la sortie transmise par Jibril le 18 octobre.
 L'étape 2 a également réussi sur Q036, selon la trace transmise par Jibril. Le contexte a été construit ici depuis
-ses cinq résultats réels, sans réexécuter E5. Le client Ollama et le contrôle structurel des citations sont maintenant
-implémentés dans `scripts/rag/generation.py`, mais aucune génération réelle n'a encore été transmise.
-La chaîne complète est prête pour son premier essai local ; elle n'est pas encore validée et #51 reste ouverte.
+ses cinq résultats réels, sans réexécuter E5. Le client Ollama et le contrôle structurel des citations sont implémentés
+dans `scripts/rag/generation.py`. Jibril a ensuite transmis une première exécution complète sur Q036 : réponse citée,
+références existantes et comptes de tokens concordants. La lecture des passages révèle toutefois des conditions
+d'application omises et des citations regroupées en introduction. L'abstention reste à observer sur Q003 ;
+la validation globale de #51 reste ouverte.
 
 L'estimation de 16 h cumulées est inscrite dans le ticket et le classeur avant le développement.
 La charge réelle n'est pas renseignée avant la clôture.
@@ -103,8 +105,8 @@ attendues. Aucune sortie des tests unitaires Windows n'a été transmise ; on ne
 | Métadonnées réelles | Empreinte et schéma contrôlés |
 | Matrice réelle, sur le Legion | Contrôle réussi, sortie transmise par Jibril |
 | Encodage E5 et récupération | Réussis pour Q036, trace transmise par Jibril |
-| Appel réel à Ollama | Client implémenté, premier essai RAG à exécuter |
-| RAG complet | Non validé |
+| Appel réel à Ollama | Réussi pour Q036 sur le Legion, trace transmise par Jibril |
+| RAG complet | Premier parcours Q036 exécuté ; limites de réponse relevées, abstention et validation globale en attente |
 
 ## 4. Étape 2 : récupérer cinq passages avec E5
 
@@ -240,7 +242,7 @@ Le comptage porte sur les tokens Qwen, et non ceux d'E5 ni les caractères.
 
 Ces valeurs sont une baseline documentée, pas un optimum démontré. La graine ne garantit pas une identité
 des sorties entre versions ou matériels. Le contexte de 8192 donne de la place aux cinq passages ; son
-exécution et ses ressources sur le Legion ne sont pas encore validées.
+exécution a réussi pour Q036 sur le Legion. La trace ne mesure pas l'utilisation du CPU, du GPU ou de la mémoire.
 
 Si `tokens_entrée + 512 + 64 > 8192`, la génération est refusée sans supprimer de passage ni tronquer la question.
 Le texte formaté est envoyé à `POST http://127.0.0.1:11434/api/generate` avec **`raw: true`** : Ollama n'ajoute pas
@@ -303,7 +305,8 @@ Ils vérifient notamment budget limite/dépassé, absence d'appel quand le budge
 quantification, requête UTF-8 locale et raw, citations inconnues/mal formées, conservation de la réponse interrompue,
 distinction abstention/erreur et sauvegarde sans écrasement. Compilation Python et contrôle du diff exécutés.
 Ces tests ne valident pas le vrai tokeniseur Qwen, le compte GGUF, la génération ni les ressources du Legion.
-Les traces de Q036 puis Q003 et la relecture du binôme restent nécessaires avant de valider #51.
+La trace réelle de Q036, analysée ci-dessous, complète ces tests. Q003 et la relecture du binôme restent nécessaires
+avant de valider #51.
 
 Pour les premiers essais, les questions Q036 (`dans_corpus`) et Q003 (`hors_corpus`) du lot de **calibration** au tag
 `jeu-questions-v1` ont été proposées avant exécution dans la conception. Leur texte restera inchangé.
@@ -311,3 +314,51 @@ Le lot de test, les métriques, la calibration et les décisions de #52 ne sont 
 
 Une référence qui existe parmi les passages fournis est structurellement valide ; cela ne prouve pas que le passage
 justifie la phrase. Cette distinction devra rester explicite dans les résultats.
+
+### Premier résultat RAG réel : Q036, 18 octobre 2026
+
+Source : trace terminal « Texte collé(1).txt » transmise par Jibril, SHA-256
+`1cc87a6c42eb998534cc1ba648e8a52a50e994ab485f62ed3a94d103757b322a`.
+Elle rapporte l'exécution locale de la commande Q036 ci-dessus et l'enregistrement dans `data/rag/Q036_rag.json`.
+L'assistant analyse cette trace ; il n'a pas lancé Qwen sur la machine de Jibril.
+La question humaine, y compris « empoyeur », et le commit du jeu sont inchangés. Les cinq passages et leurs scores
+correspondent à la récupération documentée en section 4. Le modèle et son digest correspondent à la référence #31.
+Les versions Python et des dépendances correspondent à celles de la récupération réelle déjà rapportée.
+La consigne reste `rag-b1-v1` et les paramètres restent ceux fixés avant cet essai.
+
+| Contrôle ou mesure de cette exécution | Résultat |
+|---|---|
+| Statut | `reponse_citee`, `e5_charge: true`, `ollama_appele: true` |
+| Entrée, tokeniseur HF / `prompt_eval_count` Ollama | 2 317 / 2 317 tokens, concordants |
+| Budget contrôlé | 2 317 + 512 + 64 = 2 893 ≤ 8 192 |
+| Sortie | 381 tokens, `done: true`, `done_reason: stop` |
+| Références détectées | `[P1]`, `[P5]` ; aucune citation invalide détectée |
+| Erreurs techniques rapportées | Aucune |
+| `total_duration` Ollama | 46,2005116 s |
+| `load_duration` Ollama | 21,9012127 s |
+| `prompt_eval_duration` Ollama | 18,503807 s |
+| `eval_duration` Ollama | 5,774473 s |
+
+Les durées sont celles renvoyées par Ollama, converties de nanosecondes en secondes. `total_duration` n'est pas
+une durée de la chaîne Python entière : elle ne mesure pas l'encodage E5, la récupération ou les téléchargements.
+Ce résultat unique ne constitue pas une mesure systématique de performance, ni une observation des ressources.
+Empreinte de l'entrée formatée : `ae84983d856c21745f83d5dcd05af26289c770815fe58bbc0f185190b44a77e5` ;
+empreinte du gabarit : `d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229097fa9a4`.
+
+**Lecture qualitative de la réponse, par comparaison aux passages fournis :**
+
+- Qwen reprend les huit mesures de prévention énumérées dans P1, sans transformer les conseils aux travailleurs
+  de P2 en obligations de l'employeur ; les passages moins directement pertinents P3 et P4 ne sont pas cités.
+- L'introduction présente ces mesures de manière générale. Elle ne reprend pas la condition de P5 concernant
+  l'identification du risque par l'évaluation des risques, ni celle de P1 sur l'application en cas d'épisode de chaleur
+  intense et l'adaptation en cas d'intensification. La portée de la réponse est donc trop générale par rapport aux sources.
+- `[P1][P5]` figure dans l'introduction ; les huit puces ne portent pas chacune leur référence. La consigne demandant
+  une citation accompagnant chaque affirmation n'est donc pas suivie dans sa forme prévue. Le contrôle structurel
+  accepte néanmoins ces références existantes : il ne mesure pas la couverture des affirmations.
+- La réponse reprend une longue liste plutôt qu'une synthèse brève. Le statut `reponse_citee` constate le respect
+  du format des références ; il ne vaut pas validation sémantique ou juridique de la réponse.
+
+Les indicateurs `justification_semantique_verifiee` et `couverture_des_affirmations_verifiee` restent à `false`.
+La réponse brute n'est pas corrigée. Avant tout éventuel ajustement documenté sur calibration, conserver cette
+baseline et exécuter Q003 avec la même consigne et les mêmes paramètres. Aucune abstention réelle n'est encore
+observée à ce stade ; aucune question ni aucun protocole d'évaluation n'est modifié.
