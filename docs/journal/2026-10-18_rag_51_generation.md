@@ -68,3 +68,16 @@ fonctionnaire. Le score maximal de similarité, environ 0,8585, ne garantit pas 
 n'est ajouté. Le résultat et ses limites sont documentés dans l'étude RAG. Les deux exemples réels ne constituent
 pas une évaluation systématique et ne corrigent pas les limites de Q036. Les tests Windows, la relecture du binôme
 et la présentation à l'équipe restent à confirmer. La PR #85 reste en brouillon et #51 reste ouverte.
+
+## Retour local ultérieur : suite Python sur Windows
+
+Jibril transmet la sortie de `python -m unittest discover -s scripts/rag -p "test_*.py" -v`, exécuté avec le Python
+du `.venv` depuis la racine du dépôt. Les 45 tests sont marqués `ok` ; résumé : `Ran 45 tests in 1.360s`, puis `OK`.
+Cette durée concerne la suite de tests, pas une inférence Qwen ni la chaîne RAG réelle. Le commit et les versions
+ne sont pas imprimés dans cette sortie et ne sont pas inventés. Les deux traces RAG réelles restent des preuves
+distinctes des tests avec modèles et serveur simulés.
+
+L'assistant met à jour l'état de validation et prépare une grille de relecture pour Maïmouna dans l'étude RAG :
+index et récupération, contexte, appel local et citations, reproduction, limites de Q036 et abstention Q003.
+Aucun code, paramètre, question ou protocole n'est modifié. La relecture, l'approbation d'un autre membre et la
+présentation à l'équipe restent attendues. Aucune fusion, clôture ni charge réelle n'est enregistrée.

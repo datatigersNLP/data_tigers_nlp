@@ -11,8 +11,9 @@ ses cinq résultats réels, sans réexécuter E5. Le client Ollama et le contrô
 dans `scripts/rag/generation.py`. Jibril a ensuite transmis une première exécution complète sur Q036 : réponse citée,
 références existantes et comptes de tokens concordants. La lecture des passages révèle toutefois des conditions
 d'application omises et des citations regroupées en introduction. Une seconde trace sur Q003 confirme une
-abstention réelle avec la même configuration. La relecture du binôme, les tests Windows et la présentation à
-l'équipe restent à confirmer ; la validation globale de #51 reste ouverte.
+abstention réelle avec la même configuration. Jibril a également transmis la réussite des 45 tests sur Windows
+en 1,360 s. La relecture du binôme et la présentation à l'équipe restent à confirmer ;
+la validation globale de #51 reste ouverte.
 
 L'estimation de 16 h cumulées est inscrite dans le ticket et le classeur avant le développement.
 La charge réelle n'est pas renseignée avant la clôture.
@@ -98,11 +99,13 @@ Limite d'accès : le connecteur GitHub ne restitue pas correctement le fichier b
 La lecture et les normes de la **matrice réelle** n'ont donc pas été contrôlées ici par l'assistant. Jibril a exécuté
 `--check-index` sur sa copie complète et transmis la sortie réussie le 18 octobre : Python 3.12.15, NumPy 2.5.3,
 uv 0.13.1, Windows/Legion. Le résumé affiche `index_verifie`, 4 240 passages, dimension 384 et les deux empreintes
-attendues. Aucune sortie des tests unitaires Windows n'a été transmise ; on ne les déclare pas exécutés là-bas.
+attendues. Jibril a ensuite transmis la sortie de la suite complète sur Windows : 45 tests réussis en 1,360 s,
+résultat `OK` (voir la section finale). Ce résultat complète le contrôle de l'index réel.
 
 | Niveau | État |
 |---|---|
 | Tests Python sur exports artificiels | 15 réussis |
+| Suite complète Python, après implémentation des cinq étapes | 45 réussis ici ; 45 réussis sur Windows, sortie transmise par Jibril |
 | Métadonnées réelles | Empreinte et schéma contrôlés |
 | Matrice réelle, sur le Legion | Contrôle réussi, sortie transmise par Jibril |
 | Encodage E5 et récupération | Réussis pour Q036, trace transmise par Jibril |
@@ -306,8 +309,8 @@ Ils vérifient notamment budget limite/dépassé, absence d'appel quand le budge
 quantification, requête UTF-8 locale et raw, citations inconnues/mal formées, conservation de la réponse interrompue,
 distinction abstention/erreur et sauvegarde sans écrasement. Compilation Python et contrôle du diff exécutés.
 Ces tests ne valident pas le vrai tokeniseur Qwen, le compte GGUF, la génération ni les ressources du Legion.
-Les traces réelles de Q036 et Q003, analysées ci-dessous, complètent ces tests. Les tests dans l'environnement Windows,
-la relecture du binôme et la présentation à l'équipe restent à confirmer avant de valider #51.
+Les traces réelles de Q036 et Q003, analysées ci-dessous, complètent ces tests. La suite a ensuite réussi sur Windows
+(45 tests, 1,360 s, `OK`). La relecture du binôme et la présentation à l'équipe restent à confirmer avant de valider #51.
 
 Pour les premiers essais, les questions Q036 (`dans_corpus`) et Q003 (`hors_corpus`) du lot de **calibration** au tag
 `jeu-questions-v1` ont été proposées avant exécution dans la conception. Leur texte restera inchangé.
@@ -415,3 +418,37 @@ Nous disposons désormais d'un exemple réel avec références existantes et d'u
 Ces deux cas de calibration ne donnent aucun taux de réussite, aucune qualité générale des citations et aucune
 garantie d'abstention sur d'autres questions. Les limites de Q036 restent ouvertes. Aucun réglage n'est modifié
 sur la base de ces résultats et aucune mesure systématique de #52 n'est lancée.
+
+### Suite Python sur Windows : retour de Jibril, 18 octobre 2026
+
+Commande exécutée depuis la racine du dépôt, avec le Python du `.venv` :
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s scripts/rag -p "test_*.py" -v
+```
+
+Jibril transmet dans la conversation les 45 noms de tests, tous marqués `ok`, et le résumé :
+
+```text
+Ran 45 tests in 1.360s
+
+OK
+```
+
+Cette trace prouve la réussite de la suite sur sa machine Windows. Les modèles et les réponses du serveur y sont
+simulés ; ce n'est ni une troisième inférence réelle, ni une mesure de durée du RAG. La durée de la suite ne doit
+pas être comparée aux temps Ollama. Le commit exécuté et les versions ne sont pas imprimés dans cette sortie de
+tests ; ils ne sont pas déduits du seul résumé. Les versions des deux essais RAG restent consignées séparément.
+
+### Relecture du binôme avant présentation
+
+| Fichier ou résultat | Point à vérifier avec Maïmouna |
+|---|---|
+| `scripts/rag/rag.py` | Association des lignes de l'index aux textes, E5 fp32 et `query: `, top 5, question figée, contexte numéroté |
+| `scripts/rag/generation.py` | Modèle local vérifié, budget sans troncature, appel Ollama, distinction erreur/abstention et contrôle des références |
+| `scripts/rag/requirements.txt` et procédure ci-dessus | Installation dans l'environnement du projet et commande de lancement reproductible |
+| Q036, réponse brute et passages P1/P5 | Conditions d'application omises et citations regroupées ; décider explicitement si ces limites sont acceptables pour la première baseline |
+| Q003, réponse brute et cinq passages | Abstention réelle et absence d'information suffisante dans le contexte fourni |
+
+La relecture et la présentation à l'équipe ne sont pas déclarées effectuées. L'approbation d'un autre membre et
+une demande explicite restent nécessaires avant fusion. La PR #85 reste en brouillon et #51 reste ouverte.
