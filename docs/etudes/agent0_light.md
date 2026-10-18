@@ -6,8 +6,9 @@ Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis
 État au 18 octobre 2026 : contrat et préparateur de sources implémentés ; 44 tests, contrôle du corpus et première
 sélection réussis sur le Windows de Jibril. L'aperçu de #93 a également passé les 58 tests et la préparation Windows.
 Le contrôle du modèle/gabarit/budget a également réussi sur Windows : 75 tests, entrée HF de 1 259 tokens.
-La génération simple/reformulée et ses contrôles sont maintenant implémentés, avec 93 tests réussis ici ;
-les premiers appels réels de génération restent à faire. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
+La génération simple/reformulée et ses contrôles sont implémentés : 93 tests réussis ici et sur Windows.
+Un premier candidat simple réel a passé les contrôles techniques ; sa lecture complète et l'essai reformulé
+restent à faire. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -592,3 +593,25 @@ Aucun appel réel à Qwen n'est prétendu ici.
 
 Les premiers appels Windows simple et reformulation, leur lecture qualitative et la relecture de Mahé/Remy
 restent attendus. #93 et la PR #101 restent ouvertes ; aucune fusion ou charge réelle n'est déclarée.
+
+
+### Premier candidat simple réel, retour Windows du 18 octobre
+
+La session transmise par Jibril montre le fast-forward de `1ab3530` vers `823621b`, puis les **93 tests**
+réussis : `Ran 93 tests in 0.447s`, `OK`. Le run `simple_001` retourne ensuite `candidat_prepare`,
+un candidat et aucun rejet, identifiant `SYN_simple_001_0001`.
+
+Question affichée : « Pendant le congé sans solde, le salaire du salarié est-il maintenu ? »
+
+Le résumé annonce `done: true`, `done_reason: stop`, **1 259 tokens HF et 1 259 côté Ollama**,
+**173 tokens générés**, comparaison effectuée et `relecture_humaine: pending`.
+Il s'agit de la première génération synthétique réelle rapportée, distincte des réponses simulées des tests.
+Aucune durée, mesure de mémoire ou d'utilisation GPU n'est fournie par ce résumé.
+
+La trace annonce le dossier `data/synthetic/simple_001/`. Le candidat complet, le manifeste et les traces
+n'ont pas encore été transmis : l'extrait choisi comme preuve et la provenance détaillée du run restent à lire.
+Le fast-forward observé situe la session ; il ne remplace pas la provenance enregistrée dans le manifeste.
+
+Ce résultat confirme un premier passage de bout en bout, pas une mesure générale de qualité, une validation
+humaine du cas ou son admission au lot figé. Prochaine étape : lire le candidat et sa source, puis exécuter
+une reformulation dans un autre run. La PR #101 reste en brouillon et #93 ouverte.
