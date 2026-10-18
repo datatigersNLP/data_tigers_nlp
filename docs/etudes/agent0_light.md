@@ -3,8 +3,8 @@
 ## 1. Périmètre et état
 
 Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`).
-État au 18 octobre 2026 : schéma et contrôles de cohérence implémentés, 27 tests réussis ici et sur le Windows
-de Jibril. La relecture des deux membres reste attendue. La PR RAG #85 n'est pas modifiée.
+État au 18 octobre 2026 : contrat et préparateur de sources implémentés ; 44 tests, contrôle du corpus et première
+sélection réussis sur le Windows de Jibril. La relecture des deux membres reste attendue. La PR RAG #85 est préservée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -85,7 +85,7 @@ relecture à `pending`, avec `answerable_confirmed: null`. Un schéma cohérent 
 | Niveau | Contrôle | État |
 |---|---|---|
 | Contrat #91 | Champs, types et cohérence interne | Implémenté |
-| Sources #92 | Empreinte M2, schéma des métadonnées et sélection d'identifiants existants | Implémenté, essai Windows attendu |
+| Sources #92 | Empreinte M2, schéma des métadonnées et sélection d'identifiants existants | Implémenté, tests et sélection Windows réussis |
 | Extraits #93 | Extraits de Qwen retrouvés mot pour mot dans les passages sélectionnés | À implémenter |
 | Qualité #95 | Sens, suffisance, conditions, exceptions et absence de réponse dans le corpus complet | Relecture humaine à réaliser |
 | Gel #95 | Lot, manifeste, empreintes et attentes figés avant mesure | À implémenter |
@@ -257,8 +257,37 @@ une combinaison d'arguments invalide.
 - La matrice n'est pas présente dans cette copie locale de contrôle et n'a pas été lue. Le contexte matériel, le
   tokeniseur et le budget Qwen restent hors de cet incrément.
 
-Ces contrôles ne prouvent ni pertinence juridique, ni suffisance d'une réponse. La sélection complète par la CLI
-avec la provenance du vrai checkout, la sauvegarde du manifeste et les 44 tests restent à vérifier sur le Windows
-de Jibril. Relecture de Mahé et Remy attendue avant fusion. Aucune charge réelle n'est encore renseignée.
+Ces contrôles ne prouvent ni pertinence juridique, ni suffisance d'une réponse. L'exécution Windows est désormais
+réussie, selon les traces ci-dessous. Relecture de Mahé et Remy attendue avant fusion ; aucune charge réelle n'est
+encore renseignée.
+
+### Retour Windows transmis par Jibril le 18 octobre
+
+Jibril transmet la suite complète : **44 tests `ok`**, résumé `Ran 44 tests in 0.346s`, puis `OK`.
+`--check-corpus` retourne `corpus_verifie`, 4 240 passages, 261 fiches et les deux empreintes attendues.
+La durée est celle des tests techniques, sans inférence ni mesure de performance du RAG.
+
+La commande de sélection avec `--count 5 --seed 20261018` retourne ensuite `selection_preparee` et
+`nombre_groupes: 5`. Sa trace indique la sauvegarde dans `data/synthetic/sources/selection_001.json` sur le PC
+de Jibril. Le contenu complet de ce fichier n'a pas été transmis à l'assistant ; le résumé console est la preuve
+analysée ici. Il contient les mêmes cinq identifiants que le tirage réalisé dans l'environnement de développement :
+
+- `m2-article374529-0004` ;
+- `m2-article377050-0003` ;
+- `m2-article374500-0003` ;
+- `m2-article377588-0003` ;
+- `m2-article378349-0008`.
+
+La provenance rapporte Python **3.12.15**, le commit `fea315586276f3484feec0b6b53bb1fd007f315a`,
+`git_dirty: false`, et le SHA-256 du script
+`3371face67648895dc966307b95cabd7f7c522062e88fea3c6fc83e61495edaf`. Cette empreinte correspond exactement
+au script versionné avec des fins de ligne CRLF. La copie LF du même blob Git donne
+`e8c25e53328d21e7412429bba4a1fec393b6268c693b26699a508bd2b4ebb25a` : la différence est expliquée par les
+fins de ligne, sans changement du code. L'empreinte enregistrée décrit les octets effectivement exécutés sur ce PC.
+Les JSON du corpus ont les mêmes octets sur les deux machines ; leur dossier est marqué `-text` dans `.gitattributes`.
+Contrairement au résumé des tests seul, cette trace de sélection identifie explicitement le commit exécuté.
+Le programme rapporte `ollama_appele: false` et `matrice_lue: false`. Aucun cas synthétique n'est encore généré.
+Les commits documentaires suivants ne modifient pas les sources utilisées pour ce tirage ; son manifeste garde
+correctement la provenance de son exécution initiale.
 
 [Note d'assistance IA #92](../journal/2026-10-18_agent0_light_92.md).
