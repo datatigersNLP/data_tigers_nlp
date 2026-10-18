@@ -42,7 +42,8 @@ A3 constitue la couche de récupération de B1 : corpus, découpage, encodage et
 | 3. Évaluation sur le jeu de questions | `scripts/evaluation/03_evaluation.ipynb` | `docs/etudes/evaluation/03_evaluation.md`, avec son protocole, son audit statistique et le jeu du CDTN (`04_cdtn.md`) |
 | 4. Allègement du modèle servi | `scripts/allegement/` | `scripts/allegement/README.md` |
 | 5. Ajustement de l'encodeur (étude) | `scripts/adaptation/` | `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md`, protocole `docs/etudes/evaluation/05_protocole_ajustement.md` |
-| 6. Volet B : première inférence locale | `scripts/inference/` | en cours |
+| 6. Volet B : première inférence locale (Qwen2.5-7B-Instruct, Q4_K_M), réussie le 27 septembre (#31) | `scripts/inference/` | `docs/etudes/inference_locale_qwen.md` |
+| 7. Volet B : chaîne RAG complète (#51) | à intégrer | en cours |
 
 Les dossiers de `scripts/` déclarent leurs dépendances dans `requirements.txt`, en Python 3.12, et la plupart en
 figent toutes les versions dans `requirements-lock.txt`. Les données brutes et intermédiaires vont dans `data/`, qui
@@ -68,7 +69,8 @@ scripts/       découpage, indexation, évaluation, allègement, adaptation, inf
 evaluation/    jeu de questions annoté par l'équipe ; jugements du CDTN (identifiants et verdicts seulement)
 docs/
   corpus/      description du corpus
-  etudes/      études par étape : découpage, indexation, évaluation, adaptation
+  etudes/      audit du sujet, étude comparative des cas d'usage, puis une étude par étape : découpage,
+               indexation, évaluation, adaptation, inférence locale
   jalons/      rapports de jalon, en Markdown et en PDF
   journal/     journal d'usage de l'IA
   latex/       chaîne de conversion Markdown vers PDF

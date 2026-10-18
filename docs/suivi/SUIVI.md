@@ -179,9 +179,9 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 |---|---|---|
 | #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. |
 | #23 | 03/10, cible provisoire dans le corps | Ouvert ; la mise à jour du suivi ne clôture pas la validation collective du backlog. |
-| #43 | Date officielle du mi-parcours | Au 17/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori ; `main` mise à jour par la PR #74 (Jibril) ; restent la dernière mise à jour de `main` et le tag `volet-a-v1`. |
+| #43 | Date officielle du mi-parcours | Au 18/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori le 17/10 ; `main` mise à jour par la PR #74 (Jibril). **Critère de #43 non satisfait par ce tag historique** : la première inférence locale, réussie le 27/09 (#31), n'a été fusionnée dans `dev` que le 03/10 (PR #41), après `ac84ed3`. Écart déclaré dans le message du tag ; arbitrage du 18/10 (Mahé) : le tag n'est pas déplacé, #43 est validé avec cette réserve. Restent la dernière mise à jour de `main` et le tag `volet-a-v1`. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
-| #46 | 14/10, proposition dans le ticket | Au 17/10 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73) ; ticket à fermer. |
+| #46 | 14/10, proposition dans le ticket | Fermé le 17/10 à 15 h 52 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73). |
 | #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. |
 | #50 | 24/10, proposition dans le ticket | Au 17/10 : élagage sans perte livré le 14/10 (PR #78), modèle de 65,7 Mio servi par le site ; la réduction avec perte sort du volet A. |
 | #51 | 10/10, proposition historique dans le corps | Ouvert ; chaîne RAG complète non déduite du test d'inférence de #31. Échéance à actualiser par les responsables. |
