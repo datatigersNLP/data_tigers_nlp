@@ -3,8 +3,8 @@
 ## 1. Périmètre et état
 
 Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`).
-État au 18 octobre 2026 : schéma, contrôles de cohérence et tests préparés ; relecture des deux membres et
-exécution Windows encore attendues. La PR RAG #85 n'est pas modifiée.
+État au 18 octobre 2026 : schéma et contrôles de cohérence implémentés, 27 tests réussis ici et sur le Windows
+de Jibril. La relecture des deux membres reste attendue. La PR RAG #85 n'est pas modifiée.
 
 Agent0 Light est un outil exploratoire pour proposer des exercices supplémentaires au RAG, puis étudier ses
 faiblesses. Qwen n'est ni réentraîné ni utilisé comme juge unique. Le Gold Set de #44 reste la référence humaine ;
@@ -124,15 +124,22 @@ autre lot. Les modifications du système se comparent sur le même jeu figé.
 Depuis la racine du dépôt, après récupération de la branche `feat/91-agent0-schema`, utiliser un environnement
 séparé pour ne pas modifier le `.venv` du RAG :
 
+Procédure exécutée par Jibril sous Windows, avec le Python du `.venv` existant :
+
 ```powershell
-uv venv --python 3.12 .venv-agent0
-uv pip sync --python .venv-agent0\Scripts\python.exe scripts/synthetic/requirements-lock.txt
+.\.venv\Scripts\python.exe -m venv .venv-agent0
+.\.venv-agent0\Scripts\python.exe -m pip install -r .\scripts\synthetic\requirements-lock.txt
 .\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
 ```
 
-Si cet environnement dédié existe déjà et contient un autre travail, vérifier ses paquets avant de le synchroniser.
-`uv pip sync` remplace les paquets de l'environnement indiqué. Aucun poids de modèle n'est nécessaire ; seuls
-Pydantic et ses dépendances seront installés. Les verrous et l'environnement des autres étapes ne sont pas changés.
+Exécuter les commandes l'une après l'autre et arrêter en cas d'erreur. Si `.venv-agent0` existe déjà et contient
+un autre travail, vérifier cet environnement avant d'y installer les dépendances. Le Python du `.venv` sert à
+créer un environnement indépendant ; ses paquets ne sont pas modifiés. Aucun poids de modèle n'est nécessaire.
+
+L'autre procédure documentée initialement reste possible si `uv --version` réussit : `uv venv --python 3.12
+.venv-agent0`, puis `uv pip sync --python .venv-agent0\Scripts\python.exe scripts/synthetic/requirements-lock.txt`.
+`uv pip sync` remplace les paquets du seul environnement indiqué ; ne pas l'appliquer à un environnement partagé.
+Chez Jibril, PowerShell ne trouvait pas `uv` le 18 octobre : la procédure `venv`/`pip` ci-dessus a fonctionné.
 
 Pour afficher le schéma que recevra plus tard Ollama, sans appel de modèle :
 
@@ -145,7 +152,18 @@ Compilation et export du schéma également contrôlés. Les dépendances
 directes et transitives effectivement présentes sont listées dans `scripts/synthetic/requirements-lock.txt` ; ce
 fichier a été relevé depuis les métadonnées de l'environnement, pas produit par un résolveur sur Windows.
 Les tests utilisent uniquement des fixtures techniques, sans questions réglementaires ni données du Gold Set.
-Aucun Qwen, E5, Ollama ou corpus réel n'est appelé. La sortie Windows reste à transmettre avant l'étape suivante.
+Aucun Qwen, E5, Ollama ou corpus réel n'est appelé.
+
+### Retour Windows transmis par Jibril le 18 octobre
+
+La création de `.venv-agent0` avec `venv` a réussi ; la commande de version affiche Python **3.12.15**. La sortie
+`pip` confirme l'installation des cinq versions du verrou, dont Pydantic **2.14.0**. Jibril transmet ensuite les
+27 noms de tests, tous `ok`, et le résumé `Ran 27 tests in 0.007s`, puis `OK`.
+
+Cette trace confirme la réussite de la suite technique sur son Windows ; l'assistant n'a pas exécuté de commande
+sur sa machine. Le résumé des tests ne contient pas de SHA Git : aucun commit exécuté n'est déduit du seul résumé.
+La durée est celle des tests, sans rapport avec une latence de génération ou une mesure du RAG. La relecture de
+Mahé et Remy reste à effectuer ; #91 n'est ni clôturée ni fusionnée sur la seule base de ces tests.
 
 ## 8. Références et suite
 
