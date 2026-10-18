@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 18 octobre 2026, session 35 ; sessions 28 à 31, 33 et 34 consignées a posteriori (section 3)
+**Dernière mise à jour** 18 octobre 2026, sessions 1 à 37 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -863,6 +863,8 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - PR #83 : focus retenu dans le menu sur téléphone (`<main>` inerte, panneau en boîte de dialogue modale, focus rendu après le rendu) et périmètre du corpus dans le message d'accueil (261 fiches, 4 240 passages, instantané du 11 septembre). Après la revue de Jibril, la tabulation boucle dans le panneau et Échap est écouté au niveau du document (`e6cd210`) ; la description de la PR est corrigée.
 - PR #72 de Vaneck approuvée et fusionnée : la condition posée le 14/10 est levée par la réservation des sessions 20 à 27 dans ce journal.
 - PR #82 : trois points de la revue de Jibril appliqués (inférence locale documentée, critère de #43 non satisfait par le tag historique, #46 fermée), et cette session.
+- #43 fermée avec sa réserve, critère par critère ; classeur de suivi comparé ligne à ligne avec l'API GitHub : #11, #46, #50 et #56, fermées, y figuraient encore comme ouvertes (PR #83).
+- Journal : sessions 33 à 35 de Remy (PR #86) relues et intégrées, avec huit corrections vérifiées sur le dépôt et l'API GitHub ; sessions 20 à 27, 36 et 37 de Vaneck reportées depuis sa fiche, avec une correction ; bilan de la section 4 recompté.
 
 **Mesures exécutées.**
 - PR #83, première version (`74f3e39`), site construit et servi en local, accès à jsDelivr, Hugging Face et Google Fonts bloqués : 5 passages aux scores de référence ; focus rendu au bouton du menu après Échap, au champ de saisie après un exemple ou un chat ; menu fermé au passage en largeur d'ordinateur ; périmètre visible à 375 et 1 280 px ; aucune erreur. L'essai de 14 Tab puis 6 Maj+Tab, publié comme « le focus ne sort jamais du panneau », comptait le document (BODY) comme acceptable : le focus en sortait aux frontières (voir les difficultés).
@@ -877,7 +879,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Lever la protection de `dev` pour fusionner les #83 et #82 sans approbation : refusé par le contrôle des permissions de l'assistant ; ces fusions reviennent à Mahé ou attendent une approbation.
 
 **Ce que l'équipe a validé, et par qui.**
-- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, nouvelle revue demandée sur la version corrigée, relecture de Vaneck DAGAR attendue.
+- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, puis approuvée par Vaneck DAGAR et Jibril BENSALEM sur `c69042e`, et fusionnée par Vaneck DAGAR.
 
 **Temps d'appropriation constaté.**
 - Non relevé.
@@ -1131,7 +1133,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
-**Bilan du 11 au 18 octobre.** Dix-sept erreurs ou pièges détectés et traités. **Dix figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()`, la revue de la PR #80, le README et le suivi de la PR #82, la description de la PR #83. Quatre ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant : la revue de la PR #80, les deux points de la PR #82 et la description de la PR #83. Comme les précédentes, toutes ont été trouvées par une mesure, un essai ou la lecture d'une source primaire.
+**Bilan du 11 au 18 octobre.** Trente erreurs ou pièges détectés et traités : dix-sept dans les sessions de Mahé, deux dans celles de Remy, onze dans celles de Vaneck. **Sur les dix-sept de Mahé, dix figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()`, la revue de la PR #80, le README et le suivi de la PR #82, la description de la PR #83. Quatre ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant : la revue de la PR #80, les deux points de la PR #82 et la description de la PR #83 ; toutes l'ont été par une mesure, un essai ou la lecture d'une source primaire. Parmi les onze de Vaneck, deux portaient sur des PR de Mahé et ont été relevées en relecture (le test de `creerMoteur` de la PR #76, l'empreinte de `LICENSE` de la PR #78), et deux sur sa propre fiche de la PR #72, relevées par Jibril et Mahé.
 
 ---
 
