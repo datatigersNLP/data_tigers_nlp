@@ -972,3 +972,57 @@ Ces essais successifs sur une même paire servent à la mise au point des consig
 performance de la catégorie multi-passage. Le pilote #95 devra inclure d'autres sources et une relecture
 indépendante. Attendre ce retour avant la suite ; #103 reste en brouillon avec Mahé/Remy demandés,
 #94 partielle, estimation globale de 7 h inchangée. Aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 17. #94 — Troisième essai et diversification des sources
+
+Jibril transmet **110 tests Windows réussis** (`Ran 110 tests in 0.582s`, `OK`), le résumé de
+`multi_passage_003` et le candidat complet `SYN_multi_passage_003_0001` : fin `stop`, **2101 tokens
+HF / Ollama**, **429 tokens générés**, un candidat et aucun rejet. Budget réservé : **2677/8192**.
+Le manifeste complet n'est pas transmis ; la version du code d'inférence n'est pas déduite du seul résumé.
+
+Les deux extraits sont exacts et identiques à ceux du run `002`. La question reprend la même demande :
+conditions/obligations pour bénéficier d'un congé sans solde et comparaison avec des congés réglementés.
+Le cadrage de la comparaison et le contexte des obligations restent ambigus. L'ajout des trois consignes
+n'a donc pas corrigé ce problème sur cet exemple. Aucun taux général d'efficacité n'en est déduit.
+Avis assisté : ne pas intégrer ce cas dans le lot figé sous cette forme. Le candidat reste inchangé,
+`automatic: passed`, `human: pending`, réponse non confirmée et aucun point attendu.
+
+Les questions `002` et `003` diffèrent après la normalisation existante : elles ne constituent pas un
+doublon lexical exact, tout en étant très proches par le sens. C'est une limite observée du filtre actuel,
+pas une preuve de diversité du benchmark. La relecture #95 devra aussi examiner ces quasi-doublons ;
+aucun juge LLM ni déduplication par embeddings n'est ajouté dans cet incrément.
+
+### Choix suivant : conserver v3 et changer les passages
+
+Le code, le prompt v3, les tests et le budget restent inchangés. Une nouvelle sélection de **trois paires**
+est reconstruite avec `count=3`, `seed=20261018`, selon le sélecteur #92 existant. Elle sera conservée
+dans son intégralité, sans choisir les sources en fonction d'une réponse Qwen favorable :
+
+| Groupe | Fiche | Identifiants dans l'ordre |
+|---|---|---|
+| 1 | Le congé sans solde | `m2-article374529-0003`, `m2-article374529-0004` |
+| 2 | Attributions SSCT du CSE | `m2-article377050-0017`, `m2-article377050-0003` |
+| 3 | Médaille d'honneur du travail | `m2-article374500-0003`, `m2-article374500-0000` |
+
+Le premier groupe associe procédure/accord écrit et rémunération/CET ; il appartient à la même fiche
+que les essais précédents, avec une autre paire. Les autres groupes diversifient les fiches. Ce tirage
+ne garantit pas la complémentarité ou la suffisance d'une paire. Le nombre de groupes influence le tirage :
+une graine identique avec un autre `count` ne garantit pas le même premier groupe. Les identifiants et
+le manifeste sauvegardé constituent la référence exacte.
+
+Première commande Windows, sans modèle ni matrice, avec un nouveau nom de fichier :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\corpus.py --pairs --count 3 --seed 20261018 --output .\data\synthetic\sources\paires_002.json
+```
+
+Transmettre le résumé pour vérifier les groupes avant les nouveaux appels. Ensuite, tester les groupes
+dans l'ordre et conserver chaque résultat, y compris les rejets ; ne pas présenter cette série de mise au point
+comme un score de benchmark. Le pilote #95 et les attentes humaines restent distincts.
+
+Cette mise à jour est documentaire. Les **110 tests** sont ceux du code inchangé exécuté précédemment
+ici et du nouveau retour Windows ; aucune nouvelle exécution de tests ou inférence n'est revendiquée.
+Le tirage est reconstruit ici sur le corpus contrôlé, sans création du fichier Windows ni provenance Git
+d'exécution de ce futur fichier attribuée. PR #103 en brouillon, Mahé/Remy demandés, #94 partielle,
+estimation globale 7 h inchangée ; aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
