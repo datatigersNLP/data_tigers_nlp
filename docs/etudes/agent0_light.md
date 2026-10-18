@@ -663,7 +663,8 @@ Les remarques non bloquantes des reviews #99/#100 ne sont pas transformées en m
 
 ## 13. #94 — Première préparation multi-passage
 
-Cet incrément prépare deux sources avant d'activer leur génération. #94 reste partielle : les contrôles
+Cet incrément initial prépare deux sources avant d'activer leur génération. Son état au commit `2cb10c1`
+est décrit ci-dessous ; l'activation suivante et les retours Windows figurent en section 14. Les contrôles
 de sortie multi-passage, les catégories adversarial/hors_corpus et leur exécution restent à réaliser.
 Le schéma de #91 connaît déjà ces catégories ; aucune modification de ce contrat ni du sélecteur #92.
 
@@ -738,3 +739,84 @@ Travail isolé sur `feat/94-agent0-categories`, depuis #101 au commit `f725321` 
 dépendante de #99/#100/#101, avec Mahé et Remy demandés en relecture. Les branches RAG et #93 restent
 inchangées. Pas de verdict humain, de gel du Challenge Set, de fusion ou de clôture. L'estimation #94 reste
 7 h de travail actif prévisionnel pour l'ensemble des trois catégories ; aucune durée réelle n'est attribuée.
+
+
+## 14. #94 — Contrôles de sortie et premier essai multi-passage
+
+### Retours Windows de l'aperçu et du budget
+
+Jibril transmet le checkout propre de `feat/94-agent0-categories`, les **101 tests réussis**
+(`Ran 101 tests in 0.561s`, `OK`) et l'aperçu au commit
+`2cb10c1f9589b70c2843ec4f366fc19d6af2f1f0`, copie propre, Python 3.12.15.
+Les deux `source_ids` et l'empreinte du prompt correspondent à la reconstruction de la section 13.
+Le fichier complet de préparation n'est pas transmis ; le résumé est la preuve disponible.
+
+Le mode `--prepare-qwen` réussit au même commit, copie propre : Ollama 0.40.5, digest local conforme,
+Transformers 5.17.0, Tokenizers 0.23.2 et Jinja2 3.1.6. Il annonce **1 925 tokens HF**, une réserve de
+512 tokens de sortie et 64 de marge, soit **2 501 sur 8 192**. Aucune génération n'est appelée et le
+comptage Ollama/GGUF n'est pas encore comparé. L'avertissement PyTorch absent est attendu : Python
+utilise le tokeniseur, Ollama exécute le modèle.
+
+Empreinte du texte raw rapportée :
+`39885d2ecaa9fd6d036a6a0a313fe0e45591f23bdfd34beac2582338f8ebe61d`.
+Elle est retrouvée ici par reconstruction du texte au format Qwen attendu, avec le même prompt.
+Les empreintes CRLF de `prompts.py`, `schema.py` et `client_qwen.py` correspondent aussi au résumé.
+Le tokeniseur Qwen réel n'est pas chargé ici et les 1 925 tokens ne sont pas présentés comme recomptés localement.
+
+### Extension minimale
+
+`validation.py` accepte désormais la préparation multi v2 avec deux sources distinctes et non vides.
+Il vérifie la proposition JSON stricte, la catégorie/difficulté demandée, l'appartenance de chaque preuve
+aux sources fournies et la présence de son extrait exact **dans son propre passage**. Les deux sources
+doivent être couvertes ; un troisième identifiant, une preuve unique ou dupliquée ne suffisent pas.
+Le contrôle commun des doublons normalisés reste actif entre les runs synthétiques, toutes catégories confondues.
+
+Le candidat conserve les deux `generation_source_ids` dans l'ordre de sélection, même si les preuves sont
+présentées dans l'autre ordre. Il garde `automatic: passed`, `human: pending`, `answerable_confirmed: null`
+et aucun point attendu. Le JSON candidat reste `synthetic-v1`, qui prévoyait déjà plusieurs sources.
+L'enveloppe de run reste `agent0-run-v1` et contient la préparation explicitement versionnée v2.
+Les candidats et manifestes existants ne sont ni réécrits ni transformés.
+
+Le blocage temporaire de `--generate --type multi_passage` est levé. L'orchestrateur, le client, le prompt,
+le schéma et le corpus sont inchangés : un appel au plus, métadonnées et budget vérifiés à nouveau, sortie
+brute conservée avant contrôle, puis candidat ou rejet. Le budget de sortie reste 512. Une fin `length`
+reste une erreur technique tracée, même si le JSON reçu est valide ; aucune relance ou augmentation automatique.
+
+Ces contrôles vérifient la structure et la fidélité des extraits, pas la pertinence de la question ni le besoin
+réel de combiner les passages. La justification du générateur reste à relire. Aucun juge Qwen n'est ajouté.
+
+### Premier appel réel à exécuter
+
+Rester sur `feat/94-agent0-categories`. Exécuter une commande à la fois ; arrêter en cas d'échec ou de
+modification locale inattendue, et examiner le statut avant de poursuivre.
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id multi_passage_001 --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium
+```
+
+Le run est un nouveau dossier `data/synthetic/multi_passage_001/`, distinct des deux fichiers d'aperçu dans
+`preparations/`. Attendre son résumé et le candidat complet avant d'aborder une autre catégorie :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\multi_passage_001\candidates.jsonl
+```
+
+Si le résumé annonce un rejet ou une erreur, transmettre son motif et conserver tous les fichiers du run.
+Un dossier existant ne peut pas être réutilisé, même si l'appel a échoué. Aucun candidat réel multi-passage
+n'est encore rapporté au moment de cet incrément.
+
+### Vérification et état de review
+
+**109 tests réussis** ici sous Python 3.12.14 et Pydantic 2.14.0. Huit tests ajoutés, et le test de blocage
+temporaire remplacé par un test CLI de génération simulée : un appel, deux sources, manifeste et sortie brute
+conservés, attente humaine. Les nouveaux tests couvrent aussi préparation ambiguë/incomplète/dupliquée,
+preuves manquantes ou non fournies, extrait dans le mauvais passage, doublon, verdict injecté, rejets tracés
+sans relance et sortie interrompue. Les parcours simple/reformulation restent testés. Compilation et aide CLI
+contrôlées. Aucune nouvelle inférence réelle, modification de dépendance ou lecture du Gold Set ici.
+
+PR #103 toujours en brouillon ; Mahé et Remy restent demandés. L'essai Windows de cette génération et
+la relecture sémantique sont attendus. Les catégories adversarial/hors_corpus restent à réaliser dans #94.
+Pas de fusion, clôture, admission au lot figé ou temps réel déclaré ; estimation globale de 7 h inchangée.

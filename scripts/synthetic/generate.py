@@ -119,9 +119,6 @@ def main(argv=None) -> int:
     parser.add_argument("--index-dir", type=Path, default=corpus.DOSSIER_INDEX)
     parser.add_argument("--output", type=Path, help="nouveau fichier UTF-8, sans écrasement")
     args = parser.parse_args(argv)
-    if args.generate and args.type == "multi_passage":
-        parser.error("La génération multi-passage attend les contrôles de sortie #94 ; "
-                     "utiliser --prepare-only ou --prepare-qwen")
     if args.allow_tokenizer_download and not (args.prepare_qwen or args.generate):
         parser.error("--allow-tokenizer-download exige --prepare-qwen ou --generate")
     if args.generate and (not args.run_id or args.output):
