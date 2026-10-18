@@ -68,6 +68,22 @@ export async function chargerModele(pipeline, entete, { suivre, env, dossierMode
   });
 }
 
+// Fichiers d'exécution d'ONNX Runtime Web (le .mjs et le .wasm) servis par le site, et non par jsDelivr : à son
+// import, Transformers.js 4.3.0 les fait télécharger depuis ce CDN (src/backends/onnx.js), et la recherche ne démarre
+// pas s'il est inaccessible. La variante qu'il a choisie est gardée (asyncify, ou classique pour Safari avant la
+// version 26 sans WebGPU) : seul l'hôte change. fichiers associe chaque nom de fichier à son URL dans le site. Renvoie
+// faux, sans rien modifier, si les chemins par défaut ne sont pas ceux attendus.
+export function servirOrtDepuisLeSite(env, fichiers) {
+  const wasm = env?.backends?.onnx?.wasm;
+  const chemins = wasm?.wasmPaths;
+  if (!chemins || typeof chemins !== "object") return false;
+  const nom = (url) => String(url).split("/").pop();
+  const local = { wasm: fichiers[nom(chemins.wasm)], mjs: fichiers[nom(chemins.mjs)] };
+  if (!local.wasm || !local.mjs) return false;
+  wasm.wasmPaths = local;
+  return true;
+}
+
 // Vecteur de la question, avec le préfixe et les options de l'en-tête : sans pooling ni normalisation,
 // Transformers.js renverrait un vecteur par token.
 export async function encoder(extracteur, entete, question) {

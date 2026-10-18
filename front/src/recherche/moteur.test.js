@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
-import { ABSTENTION, chargerIndex, chargerModele, classer, creerMoteur, horsPerimetre, seuilAbstention, sha256 } from "./moteur.js";
+import { ABSTENTION, chargerIndex, chargerModele, classer, creerMoteur, horsPerimetre, seuilAbstention, servirOrtDepuisLeSite, sha256 } from "./moteur.js";
 
 // racine du dépôt, ou du clone qui contient data/ (variable facultative RACINE_DONNEES)
 const RACINE = process.env.RACINE_DONNEES ?? fileURLToPath(new URL("../../../", import.meta.url));
@@ -195,3 +195,47 @@ test("abstention : le classement du site redonne le seuil et ses 24 rejets sur l
     assert.ok(Math.abs(centile - ABSTENTION.seuil) < 1e-6, `centile ${centile}`);
     assert.equal(meilleurs.filter((r) => horsPerimetre(r, ABSTENTION.seuil)).length, 24);
   });
+
+// chemins par défaut de Transformers.js 4.3.0 (src/backends/onnx.js), pour la version d'ONNX Runtime Web qu'il épingle
+const CDN = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.0-dev.20260914-8d85527a0/dist/";
+const FICHIERS_SITE = {
+  "ort-wasm-simd-threaded.mjs": "/data_tigers_nlp/assets/ort-wasm-simd-threaded-a.mjs",
+  "ort-wasm-simd-threaded.wasm": "/data_tigers_nlp/assets/ort-wasm-simd-threaded-b.wasm",
+  "ort-wasm-simd-threaded.asyncify.mjs": "/data_tigers_nlp/assets/ort-wasm-simd-threaded.asyncify-c.mjs",
+  "ort-wasm-simd-threaded.asyncify.wasm": "/data_tigers_nlp/assets/ort-wasm-simd-threaded.asyncify-d.wasm",
+};
+const envAvec = (wasmPaths) => ({ backends: { onnx: { wasm: { wasmPaths } } } });
+
+test("servirOrtDepuisLeSite : la variante choisie par Transformers.js est gardée, seul l'hôte change", () => {
+  const asyncify = envAvec({ mjs: CDN + "ort-wasm-simd-threaded.asyncify.mjs", wasm: CDN + "ort-wasm-simd-threaded.asyncify.wasm" });
+  assert.equal(servirOrtDepuisLeSite(asyncify, FICHIERS_SITE), true);
+  assert.deepEqual(asyncify.backends.onnx.wasm.wasmPaths, {
+    mjs: FICHIERS_SITE["ort-wasm-simd-threaded.asyncify.mjs"], wasm: FICHIERS_SITE["ort-wasm-simd-threaded.asyncify.wasm"] });
+  // Safari avant la version 26, sans WebGPU : variante classique
+  const classique = envAvec({ mjs: CDN + "ort-wasm-simd-threaded.mjs", wasm: CDN + "ort-wasm-simd-threaded.wasm" });
+  assert.equal(servirOrtDepuisLeSite(classique, FICHIERS_SITE), true);
+  assert.deepEqual(classique.backends.onnx.wasm.wasmPaths, {
+    mjs: FICHIERS_SITE["ort-wasm-simd-threaded.mjs"], wasm: FICHIERS_SITE["ort-wasm-simd-threaded.wasm"] });
+});
+
+test("servirOrtDepuisLeSite : des chemins inattendus ne sont pas modifiés", () => {
+  const inconnu = envAvec({ mjs: CDN + "ort-wasm-simd-threaded.jsep.mjs", wasm: CDN + "ort-wasm-simd-threaded.jsep.wasm" });
+  assert.equal(servirOrtDepuisLeSite(inconnu, FICHIERS_SITE), false);
+  assert.equal(inconnu.backends.onnx.wasm.wasmPaths.mjs, CDN + "ort-wasm-simd-threaded.jsep.mjs");
+  const prefixe = envAvec(CDN);
+  assert.equal(servirOrtDepuisLeSite(prefixe, FICHIERS_SITE), false);
+  assert.equal(prefixe.backends.onnx.wasm.wasmPaths, CDN);
+  assert.equal(servirOrtDepuisLeSite({}, FICHIERS_SITE), false);
+});
+
+// la version installée doit être celle qu'épingle Transformers.js : sinon le site servirait un autre moteur que celui
+// pour lequel la bibliothèque a été écrite
+const MODULES = fileURLToPath(new URL("../../node_modules/", import.meta.url));
+const sansModules = existsSync(MODULES + "onnxruntime-web/package.json") ? false : "dépendances npm non installées";
+test("site : la version d'ONNX Runtime Web servie est celle qu'épingle Transformers.js", { skip: sansModules }, () => {
+  const ort = JSON.parse(readFileSync(MODULES + "onnxruntime-web/package.json", "utf8"));
+  const tjs = JSON.parse(readFileSync(MODULES + "@huggingface/transformers/package.json", "utf8"));
+  assert.equal(ort.version, tjs.dependencies["onnxruntime-web"]);
+  assert.ok(CDN.includes("@" + ort.version + "/"));
+  for (const nom of Object.keys(FICHIERS_SITE)) assert.ok(existsSync(MODULES + "onnxruntime-web/dist/" + nom), nom);
+});
