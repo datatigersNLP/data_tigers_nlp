@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 17 octobre 2026, sessions 28 à 31, consignées a posteriori (section 3)
+**Dernière mise à jour** 18 octobre 2026, session 32 ; sessions 28 à 31 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -639,6 +639,39 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - `git log --since` arrête le parcours au premier commit plus ancien que la date : un premier audit des adresses a conclu à tort qu'il n'y en avait aucune.
 - Mon test de la PR #80 écoutait les requêtes au niveau de la page : celles du moteur d'exécution vers jsDelivr n'y apparaissaient pas. Jibril l'a relevé dans sa vérification ; l'essai avec le CDN bloqué l'a confirmé.
 
+### Session 32, 18 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Clôture du volet A : intégration des pull requests en attente, revue de Jibril sur la documentation, focus du menu sur téléphone et périmètre du corpus affiché (#53), contrôle du site en ligne.
+
+**Produit.**
+- PR #81 fusionnée : moteur d'exécution d'ONNX Runtime Web servi par le site, après l'approbation de Jibril.
+- PR #80 de Vaneck approuvée avec une portée écrite, puis fusionnée ; le focus du menu, seul point restant, est corrigé à part.
+- PR #83 : focus retenu dans le menu sur téléphone (`<main>` inerte, panneau en boîte de dialogue modale, focus rendu après le rendu) et périmètre du corpus dans le message d'accueil (261 fiches, 4 240 passages, instantané du 11 septembre).
+- PR #72 de Vaneck approuvée et fusionnée : la condition posée le 14/10 est levée par la réservation des sessions 20 à 27 dans ce journal.
+- PR #82 : trois points de la revue de Jibril appliqués (inférence locale documentée, critère de #43 non satisfait par le tag historique, #46 fermée), et cette session.
+
+**Mesures exécutées.**
+- PR #83, site construit et servi en local, accès à jsDelivr, Hugging Face et Google Fonts bloqués : 5 passages aux scores de référence ; 14 Tab puis 6 Maj+Tab sans que le focus sorte du menu ; focus rendu au bouton du menu après Échap, au champ de saisie après un exemple ou un chat ; menu fermé au passage en largeur d'ordinateur ; périmètre visible à 375 et 1 280 px ; aucune erreur.
+- Site en ligne, version `74524a7`, cache vidé, les mêmes accès bloqués : 5 passages en 8 s, seule l'adresse du site contactée, aucune erreur ni aucun avertissement.
+
+**Résultats retenus.**
+- Le site en ligne ne dépend plus d'aucun service externe pour se charger.
+
+**Ce qui a été écarté, et pourquoi.**
+- Pousser la correction du focus sur la branche de Vaneck : contraire à la règle de l'équipe ; elle part de `dev`, après la fusion de la #80.
+- Lever la protection de `dev` pour fusionner les #83 et #82 sans approbation : refusé par le contrôle des permissions de l'assistant ; ces fusions reviennent à Mahé ou attendent une approbation.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #83 et #82 soumises à Vaneck DAGAR et Jibril BENSALEM.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Dans l'interface B, le texte d'invite est le même pendant et après le chargement : un test qui s'en servait pour attendre le moteur ne prouvait rien à lui seul ; seules les recherches abouties prouvent que le moteur a démarré.
+- La première version de la correction rendait le focus avant le retrait de l'attribut `inert`, donc le navigateur le refusait ; corrigé avant le commit.
+- Le dossier de travail temporaire de l'assistant a été vidé entre deux journées : ses scripts d'audit de la veille n'existent plus.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -682,12 +715,14 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 14/10 | QCM du Weekly : la bonne réponse était la plus longue dans 13 questions sur 20 | script de contrôle des longueurs | réponses rééquilibrées, 3 cas sur 20 |
 | 17/10 | Audit des adresses e-mail concluant à zéro exposition, `git log --since` ayant arrêté le parcours trop tôt | contradiction avec un commit connu | historique parcouru en entier : 62 commits concernés |
 | 17/10 | Revue publiée de la PR #80 affirmant « aucune requête vers jsDelivr », les requêtes ayant été écoutées au niveau de la page seulement | vérification de Jibril, puis essai avec le CDN bloqué : la recherche échoue | revue corrigée en demande de modification ; moteur d'exécution servi par le site (PR #81) |
+| 18/10 | Attente du moteur fondée sur un texte d'invite identique pendant et après le chargement | relecture du code de l'interface B | conclusions tirées des seules recherches abouties |
+| 18/10 | Focus rendu avant le retrait de l'attribut `inert`, donc refusé par le navigateur | essai au clavier, focus nul après Échap | focus rendu après le rendu (`requestAnimationFrame`), avant le commit (PR #83) |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
-**Bilan du 11 au 17 octobre.** Douze erreurs ou pièges détectés et traités. **Sept figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()` et la revue de la PR #80. Deux ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant. Comme les précédentes, toutes ont été trouvées par une mesure, un essai ou la lecture d'une source primaire.
+**Bilan du 11 au 18 octobre.** Quatorze erreurs ou pièges détectés et traités. **Sept figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()` et la revue de la PR #80. Deux ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant. Comme les précédentes, toutes ont été trouvées par une mesure, un essai ou la lecture d'une source primaire.
 
 ---
 
