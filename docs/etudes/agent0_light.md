@@ -1,4 +1,4 @@
-# Agent0 Light : contrat des cas synthétiques (#91)
+# Agent0 Light : contrat et préparation des sources (#91, #92)
 
 ## 1. Périmètre et état
 
@@ -85,7 +85,8 @@ relecture à `pending`, avec `answerable_confirmed: null`. Un schéma cohérent 
 | Niveau | Contrôle | État |
 |---|---|---|
 | Contrat #91 | Champs, types et cohérence interne | Implémenté |
-| Sources #92/#93 | Empreinte M2, identifiants réellement existants, extraits exacts | À implémenter |
+| Sources #92 | Empreinte M2, schéma des métadonnées et sélection d'identifiants existants | Implémenté, essai Windows attendu |
+| Extraits #93 | Extraits de Qwen retrouvés mot pour mot dans les passages sélectionnés | À implémenter |
 | Qualité #95 | Sens, suffisance, conditions, exceptions et absence de réponse dans le corpus complet | Relecture humaine à réaliser |
 | Gel #95 | Lot, manifeste, empreintes et attentes figés avant mesure | À implémenter |
 
@@ -171,6 +172,93 @@ Mahé et Remy reste à effectuer ; #91 n'est ni clôturée ni fusionnée sur la 
 - [Pydantic : mode strict](https://docs.pydantic.dev/latest/concepts/strict_mode/), [schéma JSON](https://docs.pydantic.dev/latest/concepts/json_schema/) et [validateurs](https://docs.pydantic.dev/latest/concepts/validators/), consultés le 18 octobre 2026.
 - [Note d'assistance IA de cette étape](../journal/2026-10-18_agent0_light_91.md).
 
-La prochaine modification se limitera à #92, après le retour des tests Windows. Ni le générateur #93, ni le
-benchmark #96/#97, ni la boucle #98 ne sont implémentés ici. La charge réelle de #91 n'est pas déduite de la
-durée de cette conversation ; elle sera déclarée par les contributeurs à la clôture.
+Le contrat #91 a passé les tests Windows ; la préparation des sources #92 est ajoutée ci-dessous sur une autre
+branche. Le générateur #93, le benchmark #96/#97 et la boucle #98 restent à implémenter. Les charges réelles ne
+sont pas déduites des durées de conversation ; elles seront déclarées par les contributeurs à la clôture.
+
+## 9. Préparer les sources M2 (#92)
+
+### Principe et branche
+
+Un passage est un morceau de fiche. Pour éviter que les longues fiches dominent le tirage, le script choisit
+uniformément des URL distinctes, puis un passage dans chacune. Le lot initial reste un échantillon exploratoire,
+ni une sélection de passages pertinents pour une question, ni une garantie de couverture de tous les thèmes.
+
+`scripts/synthetic/corpus.py` utilise seulement la bibliothèque standard. Il lit les deux JSON de
+`front/public/index/`, jamais la matrice FP32, E5, Ollama, les questions humaines ou leurs annotations.
+`test_corpus.py` est séparé des tests du contrat pour préserver leur relecture.
+
+La branche `feat/92-agent0-sources` part du schéma testé (`521286d`, PR #99 encore ouverte au démarrage).
+Elle ne modifie pas la branche #91 ni la PR RAG #85. Sa PR cible dev et dépend de #99 : intégrer #99 et remettre
+la branche #92 à jour avant sa fusion, en préservant les éventuelles corrections de relecture.
+
+### Les trois opérations
+
+1. **Charger.** Contrôler le format du manifeste, le découpage M2, le nom du fichier, son SHA-256, le nombre
+   d'objets, les neuf champs attendus, les identifiants uniques et les identifiants/URL/textes non vides.
+2. **Sélectionner.** Trier les identifiants et les URL, puis utiliser un générateur aléatoire local à graine fixe.
+   Le programme ne modifie ni l'ordre du corpus chargé ni les textes et ne dérègle pas le générateur aléatoire global.
+3. **Tracer.** Conserver les groupes de passages avec leurs textes et métadonnées intacts, les deux empreintes
+   JSON, le mode, la graine, la version de l'algorithme, Python, le commit Git, l'état modifié de la copie et
+   l'empreinte du script dans un nouveau manifeste JSON UTF-8, sans écraser une sortie existante.
+
+Les empreintes détectent une divergence par rapport au manifeste lu ; elles n'authentifient pas un manifeste
+remplacé avec tous ses fichiers. Utiliser les exports versionnés, sans recalculer leurs empreintes pour contourner
+un refus. Le bloc `modele` du manifeste décrit le modèle q8 du navigateur ; il ne choisit aucun générateur ici.
+
+### Modes
+
+| Mode | Unité sélectionnée | Particularité |
+|---|---|---|
+| Défaut, `--count N --seed S` | N fiches distinctes, un passage chacune | 5 fiches et graine 20261018 par défaut |
+| `--pairs --count N --seed S` | N fiches distinctes ayant au moins deux passages | Deux identifiants distincts de la même fiche par groupe |
+| `--ids ID1 ID2 ...` | Un groupe par identifiant, dans l'ordre donné | Pas de tirage ni de graine ; même fiche permise, doublons refusés |
+| `--check-corpus` | Aucune sélection | Contrôle et résumé seulement ; aucun fichier écrit |
+
+Une paire ne prouve pas que ses deux passages sont nécessaires à une réponse : ce contrôle relève de #94/#95.
+Pour conserver le regroupement exact des paires, garder leur manifeste. `--ids` rejoue une liste ordonnée de
+passages indépendants. Une demande impossible est refusée, sans répétition d'une fiche pour atteindre un quota.
+La reproductibilité suppose les mêmes données, paramètres, code et environnement ; les identifiants enregistrés
+permettent de retrouver la sélection même si une autre version de Python change le comportement du tirage.
+
+### Commandes Windows, après récupération de la branche #92
+
+Depuis la racine, avec l'environnement Agent0 déjà installé :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\corpus.py --check-corpus
+```
+
+Ces contrôles doivent précéder la sélection réelle. Pour préparer ensuite cinq sources :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\corpus.py --count 5 --seed 20261018 --output .\data\synthetic\sources\selection_001.json
+```
+
+Le résumé console contient les identifiants et les empreintes ; le fichier conserve aussi les textes complets.
+Changer le nom de sortie pour une nouvelle exécution. Ce manifeste préparatoire ne contient aucune question.
+`--index-dir` permet de désigner un autre dossier de fichiers pour les contrôles, notamment les exports techniques
+des tests ; ce n'est pas une décision autorisant un autre corpus dans l'évaluation du projet.
+
+Pour une sélection, une copie Git est requise afin d'enregistrer le commit du code. Si `git_dirty` vaut `true`,
+le commit seul ne représente pas tous les changements locaux : conserver le diff avant une comparaison formelle.
+`--check-corpus` reste utilisable sans Git. Le code retour est 0 en succès, 1 pour un refus opérationnel et 2 pour
+une combinaison d'arguments invalide.
+
+### Contrôles réalisés dans l'environnement de développement
+
+- **44 tests réussis** : les 27 tests du schéma et 17 tests de chargement, diversité, répétition du tirage, paires,
+  sélection explicite, provenance simulée et sauvegarde sans écrasement. Exports techniques artificiels, aucun modèle.
+- **Contrôle réel des JSON versionnés** récupérés par le connecteur : 1 410 et 6 428 126 octets ; empreinte de l'en-tête
+  `586cf190…`, empreinte des passages `aee5bbdb…`, 4 240 passages et 261 fiches ; commande `--check-corpus` réussie.
+- Fonctions de sélection appelées sur ces métadonnées : cinq fiches distinctes, répétition identique et rejeu des
+  identifiants identique. Deux paires de passages distincts d'une même fiche ont également été préparées.
+- La matrice n'est pas présente dans cette copie locale de contrôle et n'a pas été lue. Le contexte matériel, le
+  tokeniseur et le budget Qwen restent hors de cet incrément.
+
+Ces contrôles ne prouvent ni pertinence juridique, ni suffisance d'une réponse. La sélection complète par la CLI
+avec la provenance du vrai checkout, la sauvegarde du manifeste et les 44 tests restent à vérifier sur le Windows
+de Jibril. Relecture de Mahé et Remy attendue avant fusion. Aucune charge réelle n'est encore renseignée.
+
+[Note d'assistance IA #92](../journal/2026-10-18_agent0_light_92.md).
