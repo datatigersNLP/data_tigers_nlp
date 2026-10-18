@@ -867,6 +867,9 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Journal : sessions 33 à 35 de Remy (PR #86) relues et intégrées, avec huit corrections vérifiées sur le dépôt et l'API GitHub ; sessions 20 à 27, 36 et 37 de Vaneck reportées depuis sa fiche, avec une correction ; bilan de la section 4 recompté.
 - PR #88, en relecture : `onnxruntime-web` déclaré dans `front/package.json`, à la version qu'épingle Transformers.js, sur la remarque de Vaneck à la #81 ; une fois fusionnée, les tests du moteur passeront avant chaque déploiement. Le site construit reste identique octet pour octet.
 - PR #84 fusionnée dans `main` (`8955962`) et tag annoté `volet-a-v1` posé sur ce commit, qui contient la première inférence locale.
+- #23 fermée comme non réalisée, l'horizon du mi-parcours étant dépassé ; classeur de suivi : #23 fermée et tickets #91 à #98 ajoutés (PR #102).
+- Revues approuvées des PR #99 et #100 de Jibril (Agent0 Light, volet B), avec contre-essais du schéma et du tirage des sources.
+- PR #102 : tabulation entièrement gérée dans le menu sur téléphone, après un défaut trouvé sous WebKit, le moteur de Safari.
 
 **Mesures exécutées.**
 - PR #83, première version (`74f3e39`), site construit et servi en local, accès à jsDelivr, Hugging Face et Google Fonts bloqués : 5 passages aux scores de référence ; focus rendu au bouton du menu après Échap, au champ de saisie après un exemple ou un chat ; menu fermé au passage en largeur d'ordinateur ; périmètre visible à 375 et 1 280 px ; aucune erreur. L'essai de 14 Tab puis 6 Maj+Tab, publié comme « le focus ne sort jamais du panneau », comptait le document (BODY) comme acceptable : le focus en sortait aux frontières (voir les difficultés).
@@ -874,6 +877,9 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Site en ligne, version `74524a7`, cache vidé, les mêmes accès bloqués : 5 passages en 8 s, seule l'adresse du site contactée, aucune erreur ni aucun avertissement.
 - Site en ligne, version `c3cf075`, après la #83, Cache API vidée, toute requête hors du site bloquée : version et périmètre affichés ; 20 frappes Tab et Maj+Tab sans sortie du menu, puis Échap ; 5 passages aux scores de référence ; aucune requête externe tentée, aucune erreur.
 - PR #88 : SHA-256 des 23 fichiers du site construit, avant et après, identiques ; dans un clone vierge sans `data/`, 10 tests réussis et 5 ignorés ; écart de version simulé, 1 échec attendu.
+- Site en ligne `c3cf075` sous Firefox 155 et WebKit 26.6 (moteurs de Playwright), profil neuf, requêtes hors du site bloquées : recherche aboutie aux scores de référence sur les deux ; sous WebKit, 10 frappes sur 20 sortent du menu. Version corrigée, servie en local : 0 sortie sur 20 frappes avec Chromium, Firefox et WebKit.
+- PR #99 et #100 : 27 puis 44 tests réussis sous macOS avec le verrou de Jibril ; corpus réel contrôlé (4 240 passages, 261 fiches, empreintes de l'index du site) ; tirage par défaut identique à celui de Jibril sous Windows.
+- Classeur de suivi : 54 lignes de l'inventaire comparées à l'API GitHub, aucun écart d'état ni de date.
 
 **Résultats retenus.**
 - Le site en ligne ne dépend plus d'aucun service externe pour se charger.
@@ -883,7 +889,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Lever la protection de `dev` pour fusionner les #83 et #82 sans approbation : refusé par le contrôle des permissions de l'assistant ; ces fusions reviennent à Mahé ou attendent une approbation.
 
 **Ce que l'équipe a validé, et par qui.**
-- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, puis approuvée par Vaneck DAGAR et Jibril BENSALEM sur `c69042e`, et fusionnée par Vaneck DAGAR. PR #87 approuvée et fusionnée par Remy RAYANE ; PR #84 approuvée par Jibril BENSALEM sur `bef1ca5`, puis fusionnée par Mahé ; la PR #86 est alors marquée fusionnée par GitHub, son commit étant dans `main`. PR #88 soumise à Vaneck DAGAR et Jibril BENSALEM.
+- PR #81 approuvée par Jibril BENSALEM ; PR #80 et #72 approuvées par Mahé ; PR #82 approuvée par Jibril BENSALEM sur `5740655`, puis fusionnée ; PR #83 : modification demandée par Jibril BENSALEM sur `74f3e39`, puis approuvée par Vaneck DAGAR et Jibril BENSALEM sur `c69042e`, et fusionnée par Vaneck DAGAR. PR #87 approuvée et fusionnée par Remy RAYANE ; PR #84 approuvée par Jibril BENSALEM sur `bef1ca5`, puis fusionnée par Mahé ; la PR #86 est alors marquée fusionnée par GitHub, son commit étant dans `main`. PR #88 soumise à Vaneck DAGAR et Jibril BENSALEM. PR #89 approuvée par Jibril BENSALEM, puis fusionnée par Mahé ; PR #90, #88 et #102 soumises à Jibril BENSALEM, Maïmouna SIGNATE et Vaneck DAGAR.
 
 **Temps d'appropriation constaté.**
 - Non relevé.
@@ -893,6 +899,8 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - La première version de la correction rendait le focus avant le retrait de l'attribut `inert`, donc le navigateur le refusait ; corrigé avant le commit.
 - `inert` retire la conversation de la tabulation, mais pas le document lui-même : après le dernier bouton du menu, Tab plaçait le focus sur BODY, et Échap, écouté sur le panneau seulement, ne fermait plus le menu. Mon essai jugeait BODY acceptable ; Jibril l'a reproduit aux deux frontières. Seule une boucle explicite de la tabulation retient le focus.
 - Le dossier de travail temporaire de l'assistant a été vidé entre deux journées : ses scripts d'audit de la veille n'existent plus.
+- La boucle de tabulation de la #83 laissait le navigateur avancer hors des bords de la liste : sous WebKit, dont la tabulation par défaut saute les boutons, le focus quittait le menu. Seule une gestion complète de Tab vaut pour tous les navigateurs.
+- Sous WebKit, le blocage des requêtes de l'essai rejetait une URL `blob:`, et la recherche échouait du fait du montage, non du site ; `blob:` et `data:` sont désormais laissés passer.
 
 **Sessions 33 et 34, consignées a posteriori.** Contrairement à la règle de la section 5, ces sessions de Remy RAYANE des 13 et 14 octobre 2026 n'ont pas été consignées le jour même. Elles sont reconstituées le 18 octobre à partir de l'historique des requêtes, des scripts créés et exécutés, des commits vérifiés et des pull requests datées (#63, #75). Le temps d'appropriation n'a pas été relevé sur le moment.
 
@@ -1132,12 +1140,14 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 18/10 | Attente du moteur fondée sur un texte d'invite identique pendant et après le chargement | relecture du code de l'interface B | conclusions tirées des seules recherches abouties |
 | 18/10 | Focus rendu avant le retrait de l'attribut `inert`, donc refusé par le navigateur | essai au clavier, focus nul après Échap | focus rendu après le rendu (`requestAnimationFrame`), avant le commit (PR #83) |
 | 18/10 | Description de la PR #83 affirmant que le focus ne sort jamais du menu sur téléphone, l'essai comptant le document (BODY) comme acceptable | contre-essai de Jibril aux frontières de Tab et Maj+Tab, puis Échap sans effet | tabulation bouclée dans le panneau, Échap écouté au niveau du document (`e6cd210`), description corrigée |
+| 18/10 | Boucle de tabulation de la PR #83 ne gérant que les bords de la liste : sous WebKit, dont la tabulation par défaut saute les boutons, le focus quittait le menu 10 fois sur 20 | essai du site en ligne sous WebKit 26.6, sur une limite déclarée de la #83 | tabulation entièrement gérée dans le menu (PR #102) |
+| 18/10 | Essai sous WebKit concluant à l'échec de la recherche, le blocage des requêtes rejetant une URL `blob:` | requête bloquée à l'hôte vide, relevée dans le journal de l'essai | `blob:` et `data:` laissés passer ; recherche aboutie |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
-**Bilan du 11 au 18 octobre.** Trente erreurs ou pièges détectés et traités : dix-sept dans les sessions de Mahé, deux dans celles de Remy, onze dans celles de Vaneck. **Sur les dix-sept de Mahé, dix figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()`, la revue de la PR #80, le README et le suivi de la PR #82, la description de la PR #83. Quatre ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant : la revue de la PR #80, les deux points de la PR #82 et la description de la PR #83 ; toutes l'ont été par une mesure, un essai ou la lecture d'une source primaire. Parmi les onze de Vaneck, deux portaient sur des PR de Mahé et ont été relevées en relecture (le test de `creerMoteur` de la PR #76, l'empreinte de `LICENSE` de la PR #78), et deux sur sa propre fiche de la PR #72, relevées par Jibril et Mahé.
+**Bilan du 11 au 18 octobre.** Trente-deux erreurs ou pièges détectés et traités : dix-neuf dans les sessions de Mahé, deux dans celles de Remy, onze dans celles de Vaneck. **Sur les dix-neuf de Mahé, onze figuraient déjà dans une pull request, une revue ou un document publiés** : la licence du CDTN, la fidélité de l'ajusté, la taille du q8, le `.gitignore` de la PR #63, l'attribution du cache à IndexedDB, l'hypothèse sur `page.route()`, la revue de la PR #80, le README et le suivi de la PR #82, la description de la PR #83, la boucle de tabulation de la PR #83, déployée sur le site. Quatre ont été trouvées par un relecteur de l'équipe, Jibril, et non par l'assistant : la revue de la PR #80, les deux points de la PR #82 et la description de la PR #83 ; toutes l'ont été par une mesure, un essai ou la lecture d'une source primaire. Parmi les onze de Vaneck, deux portaient sur des PR de Mahé et ont été relevées en relecture (le test de `creerMoteur` de la PR #76, l'empreinte de `LICENSE` de la PR #78), et deux sur sa propre fiche de la PR #72, relevées par Jibril et Mahé.
 
 ---
 
