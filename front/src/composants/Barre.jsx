@@ -32,6 +32,9 @@ export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauC
       <aside
         id="menu-lateral"
         aria-label="Menu"
+        // ouvert par-dessus la conversation sur téléphone : une boîte de dialogue modale, le reste de la page étant inerte
+        role={ouvert ? "dialog" : undefined}
+        aria-modal={ouvert ? "true" : undefined}
         onKeyDown={(ev) => ev.key === "Escape" && ouvert && fermer()}
         className={`${ouvert ? "flex" : "hidden"} fixed inset-y-0 left-0 z-40 w-[280px] max-w-[85vw] flex-col gap-5 overflow-y-auto border-r border-filet bg-panneau p-4 md:static md:z-auto md:flex md:w-[280px] md:max-w-none md:shrink-0`}
       >

@@ -39,8 +39,8 @@ suffit donc de fusionner une pull request dans `dev`.
 Pour redéployer sans nouveau commit : onglet **Actions**, action « Déploiement du volet A », bouton
 **Run workflow**, branche `dev`.
 
-Le pied de page affiche la version déployée (les 7 premiers caractères du commit) et la date de
-construction. Pour vérifier qu'un déploiement a abouti, on compare cette version au dernier commit de `dev`.
+Le bas du panneau latéral (le menu, sur téléphone) affiche la version déployée (les 7 premiers caractères du
+commit) et la date de construction. Pour vérifier qu'un déploiement a abouti, on compare cette version au dernier commit de `dev`.
 
 ### Réglages du dépôt, faits une seule fois
 
@@ -53,4 +53,4 @@ construction. Pour vérifier qu'un déploiement a abouti, on compare cette versi
 - La page s'ouvre sans être connecté à GitHub, dans une fenêtre de navigation privée.
 - Elle s'affiche encore après une actualisation (F5).
 - Dans les outils de développement (F12), onglet Réseau : aucun fichier en erreur 404.
-- La version du pied de page correspond au dernier commit de `dev`.
+- La version affichée en bas du panneau latéral correspond au dernier commit de `dev`.
