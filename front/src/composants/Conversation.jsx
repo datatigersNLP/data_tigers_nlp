@@ -364,8 +364,8 @@ export default function Conversation({ moteur }) {
         occupe={occupe}
       />
 
-      {/* menu ouvert sur téléphone : le reste de la page est inerte, le focus ne peut plus sortir du panneau et les
-          lecteurs d'écran ne lisent plus l'arrière-plan */}
+      {/* menu ouvert sur téléphone : le reste de la page est inerte, ni le focus ni les lecteurs d'écran n'atteignent
+          plus la conversation ; la tabulation boucle dans le panneau (Barre.jsx) */}
       <main inert={menuOuvert || undefined} className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-filet px-3 py-2 sm:px-7 sm:py-3.5">
           <button

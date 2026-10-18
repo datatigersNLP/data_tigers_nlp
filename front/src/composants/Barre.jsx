@@ -12,12 +12,18 @@ export function Logo({ className = "h-[30px] w-[30px]" }) {
   );
 }
 
+// éléments activables et visibles d'un conteneur, dans l'ordre de tabulation du document
+const ACTIVABLES = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const activables = (conteneur) =>
+  [...conteneur.querySelectorAll(ACTIVABLES)].filter((el) => el.getClientRects().length > 0);
+
 const titreRubrique = "mb-2 px-1.5 text-xs font-semibold uppercase tracking-wide text-gris";
 const elementListe =
   "w-full rounded-[9px] px-2.5 py-[9px] text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent";
 
 export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauChat, exemples, utiliserExemple, occupe }) {
   const premier = useRef(null);
+  const panneau = useRef(null);
   // chats de la session qui ont au moins une question, le plus récent en haut ; titre : leur première question
   const session = chats.filter((c) => c.echanges.length > 0).reverse();
 
@@ -26,16 +32,47 @@ export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauC
     if (ouvert) premier.current?.focus();
   }, [ouvert]);
 
+  // menu ouvert sur téléphone : la tabulation boucle dans le panneau, et Échap le ferme où que soit le focus. inert
+  // retire bien le reste de la page, mais au-delà du dernier élément le focus tomberait sur le document, d'où
+  // l'écouteur au niveau du document plutôt que sur le panneau
+  useEffect(() => {
+    if (!ouvert) return;
+    function clavier(ev) {
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        fermer();
+        return;
+      }
+      if (ev.key !== "Tab" || !panneau.current) return;
+      const liste = activables(panneau.current);
+      if (liste.length === 0) return;
+      const [debut, fin] = [liste[0], liste[liste.length - 1]];
+      const actif = document.activeElement;
+      if (!panneau.current.contains(actif)) {
+        ev.preventDefault();
+        (ev.shiftKey ? fin : debut).focus();
+      } else if (ev.shiftKey && actif === debut) {
+        ev.preventDefault();
+        fin.focus();
+      } else if (!ev.shiftKey && actif === fin) {
+        ev.preventDefault();
+        debut.focus();
+      }
+    }
+    document.addEventListener("keydown", clavier);
+    return () => document.removeEventListener("keydown", clavier);
+  }, [ouvert, fermer]);
+
   return (
     <>
       {ouvert && <div className="fixed inset-0 z-30 bg-encre/40 md:hidden" onClick={fermer} aria-hidden="true" />}
       <aside
+        ref={panneau}
         id="menu-lateral"
         aria-label="Menu"
         // ouvert par-dessus la conversation sur téléphone : une boîte de dialogue modale, le reste de la page étant inerte
         role={ouvert ? "dialog" : undefined}
         aria-modal={ouvert ? "true" : undefined}
-        onKeyDown={(ev) => ev.key === "Escape" && ouvert && fermer()}
         className={`${ouvert ? "flex" : "hidden"} fixed inset-y-0 left-0 z-40 w-[280px] max-w-[85vw] flex-col gap-5 overflow-y-auto border-r border-filet bg-panneau p-4 md:static md:z-auto md:flex md:w-[280px] md:max-w-none md:shrink-0`}
       >
         <div className="flex items-center gap-2.5 px-1 pt-1">
