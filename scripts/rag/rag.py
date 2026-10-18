@@ -1,17 +1,22 @@
-"""Chaîne RAG B1 (#51), étape 1 : lecture contrôlée de l'index commun.
+"""Chaîne RAG B1 (#51), étapes 1 et 2 : index et récupération Python fp32.
 
-Ce module ne charge ni E5 ni Qwen. La ligne i de la matrice correspond au
-passage i du JSON, dont les octets sont vérifiés avec le même manifeste.
+Le mode --check-index ne charge aucun modèle. --retrieve-only encode une
+question humaine de calibration et renvoie cinq passages, sans appeler Qwen.
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 from dataclasses import dataclass
 import hashlib
+from importlib.metadata import version
+import io
 import json
 from pathlib import Path
+import platform
 import re
+import subprocess
 import sys
 
 import numpy as np
@@ -20,10 +25,19 @@ import numpy as np
 RACINE = Path(__file__).resolve().parents[2]
 DOSSIER_INDEX = RACINE / "front" / "public" / "index"
 TOLERANCE_NORME = 1e-5  # même contrôle que le notebook 02
+MODELE_E5 = "intfloat/multilingual-e5-small"
+REVISION_E5 = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+JEU_COMMIT = "cdb48c97064de625df61703a9a41e106160e0f50"  # tag jeu-questions-v1
+FICHIER_QUESTIONS = "evaluation/questions/questions_annotees.csv"
+BUDGET_E5 = 512
 
 
 class ErreurIndex(ValueError):
     """Index absent, incompatible ou incohérent : ne pas poursuivre le RAG."""
+
+
+class ErreurRecuperation(ValueError):
+    """Question, encodeur ou vecteur incompatible avec la baseline."""
 
 
 @dataclass(frozen=True)
@@ -129,27 +143,151 @@ def charger_index(dossier: Path | str = DOSSIER_INDEX) -> IndexCommun:
     return IndexCommun(entete, matrice, passages)
 
 
+def lire_question_calibration(identifiant: str, racine: Path = RACINE) -> dict:
+    """Lit le texte humain au commit figé, jamais depuis un CSV de travail.
+
+    Cette commande de développement refuse le lot de test. URL et extrait
+    annotés ne sont pas utilisés pour rechercher les passages.
+    """
+    if re.fullmatch(r"Q[0-9]{3}", identifiant) is None:
+        raise ErreurRecuperation("Identifiant attendu : Q suivi de trois chiffres")
+    try:
+        resultat = subprocess.run(
+            ["git", "-C", str(racine), "show", f"{JEU_COMMIT}:{FICHIER_QUESTIONS}"],
+            check=True, capture_output=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise ErreurRecuperation(
+            "Jeu figé indisponible dans cette copie Git ; lancer git fetch origin --tags"
+        ) from exc
+    try:
+        lignes = csv.DictReader(io.StringIO(resultat.stdout.decode("utf-8"), newline=""))
+        trouvees = [r for r in lignes if r.get("id") == identifiant]
+    except (UnicodeDecodeError, csv.Error) as exc:
+        raise ErreurRecuperation("CSV du jeu figé illisible") from exc
+    if len(trouvees) != 1:
+        raise ErreurRecuperation(f"{identifiant} : question absente ou identifiant dupliqué")
+    ligne = trouvees[0]
+    if ligne.get("lot") != "calibration":
+        raise ErreurRecuperation("Le lot de test est réservé à l'évaluation ; choisir la calibration")
+    if (not isinstance(ligne.get("question"), str) or not ligne["question"].strip()
+            or ligne.get("type") not in {"dans_corpus", "hors_corpus"}):
+        raise ErreurRecuperation("Question de calibration vide ou annotation invalide")
+    return {**{k: ligne[k] for k in ("id", "lot", "type", "question")},
+            "commit_jeu": JEU_COMMIT, "sha256_jeu": hashlib.sha256(resultat.stdout).hexdigest()}
+
+
+def charger_encodeur():
+    """Même référence Sentence Transformers que le notebook 02 ; CPU et fp32.
+
+    Import différé : les tests du chargeur ne nécessitent toujours que NumPy.
+    La révision figée fournit notamment le pooling moyen de la référence E5.
+    """
+    try:
+        from sentence_transformers import SentenceTransformer
+    except ImportError as exc:
+        raise ErreurRecuperation(
+            "Dépendances E5 absentes ; installer scripts/rag/requirements.txt"
+        ) from exc
+    try:
+        modele = SentenceTransformer(MODELE_E5, revision=REVISION_E5, device="cpu")
+        modele.float()
+        modele.eval()
+        modele.max_seq_length = BUDGET_E5
+        return modele
+    except (OSError, RuntimeError, ValueError) as exc:
+        raise ErreurRecuperation(f"Chargement E5 impossible : {exc}") from exc
+
+
+def _verifier_vecteur(vecteur: np.ndarray, dimension: int = 384) -> None:
+    if vecteur.shape != (dimension,) or vecteur.dtype != np.float32:
+        raise ErreurRecuperation(f"Vecteur attendu : {dimension} nombres fp32")
+    if not np.isfinite(vecteur).all():
+        raise ErreurRecuperation("Vecteur de question non fini")
+    if abs(float(np.linalg.norm(vecteur)) - 1) >= TOLERANCE_NORME:
+        raise ErreurRecuperation("Vecteur de question non normalisé")
+
+
+def encoder_question(modele, question: str) -> np.ndarray:
+    """Conserve la question mot pour mot ; seul le préfixe E5 est ajouté."""
+    if not isinstance(question, str) or not question.strip():
+        raise ErreurRecuperation("Question vide")
+    entree = "query: " + question
+    tokens = modele.tokenizer(entree, truncation=False)["input_ids"]
+    if len(tokens) > BUDGET_E5:
+        raise ErreurRecuperation(
+            f"Question de {len(tokens)} tokens E5, limite {BUDGET_E5} ; aucune troncature appliquée"
+        )
+    sortie = modele.encode([entree], batch_size=32, normalize_embeddings=True,
+                           convert_to_numpy=True, show_progress_bar=False)
+    sortie = np.asarray(sortie, dtype=np.float32)
+    if sortie.shape != (1, 384):
+        raise ErreurRecuperation("L'encodeur doit produire un seul vecteur de 384 dimensions")
+    vecteur = sortie[0]
+    _verifier_vecteur(vecteur)
+    return vecteur
+
+
+def recuperer_passages(index: IndexCommun, vecteur: np.ndarray, top_k: int = 5) -> list[dict]:
+    """Produit scalaire fp32 et tri stable ; aucun seuil ni réencodage du corpus."""
+    if type(top_k) is not int or not 1 <= top_k <= len(index.passages):
+        raise ErreurRecuperation("top_k doit être compris entre 1 et le nombre de passages")
+    vecteur = np.asarray(vecteur)
+    _verifier_vecteur(vecteur, index.matrice.shape[1])
+    scores = index.matrice @ vecteur
+    ordre = np.argsort(-scores, kind="stable")[:top_k]
+    return [{"rang": rang, "indice": int(i), "score": float(scores[i]),
+             "passage": index.passages[int(i)]} for rang, i in enumerate(ordre, 1)]
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check-index", action="store_true", required=True,
+    modes = parser.add_mutually_exclusive_group(required=True)
+    modes.add_argument("--check-index", action="store_true",
                         help="contrôler l'index commun sans charger de modèle")
+    modes.add_argument("--retrieve-only", action="store_true",
+                       help="encoder une question du lot de calibration et retourner cinq passages")
+    parser.add_argument("--question-id", help="identifiant de calibration au tag jeu-questions-v1")
     parser.add_argument("--index-dir", type=Path, default=DOSSIER_INDEX,
                         help="dossier contenant index_m2.json et ses deux fichiers")
     args = parser.parse_args(argv)
+    if args.retrieve_only and not args.question_id:
+        parser.error("--retrieve-only exige --question-id")
+    if args.check_index and args.question_id:
+        parser.error("--question-id s'utilise uniquement avec --retrieve-only")
     try:
+        # Refus d'un identifiant de test avant tout téléchargement/encodage.
+        question = lire_question_calibration(args.question_id) if args.retrieve_only else None
         index = charger_index(args.index_dir)
+        sortie = {
+            "statut": "index_verifie",
+            "nb_passages": len(index.passages), "dimension": index.matrice.shape[1],
+            "sha256_index": index.entete["index"]["sha256"],
+            "sha256_passages": index.entete["metadonnees"]["sha256"],
+            "e5_charge": False, "ollama_appele": False,
+        }
+        if args.retrieve_only:
+            print("Chargement E5 fp32 sur CPU ; premier téléchargement possible (~470 Mio).", file=sys.stderr)
+            modele = charger_encodeur()
+            vecteur = encoder_question(modele, question["question"])
+            sortie.update({
+                "statut": "recuperation_effectuee", "e5_charge": True,
+                "question": question, "top_k": 5,
+                "encodeur": {"depot": MODELE_E5, "revision": REVISION_E5,
+                             "precision": "fp32", "device": "cpu", "prefixe": "query: ",
+                             "pooling": "mean", "normalisation": True,
+                             "longueur_max": BUDGET_E5, "batch_size": 32},
+                "versions": {"python": platform.python_version(), "numpy": np.__version__,
+                             **{p: version(p) for p in ("sentence-transformers", "torch", "transformers")}},
+                "resultats": recuperer_passages(index, vecteur),
+            })
     except ErreurIndex as exc:
         print(f"Index refusé : {exc}", file=sys.stderr)
         return 1
-    print(json.dumps({
-        "statut": "index_verifie",
-        "nb_passages": len(index.passages),
-        "dimension": index.matrice.shape[1],
-        "sha256_index": index.entete["index"]["sha256"],
-        "sha256_passages": index.entete["metadonnees"]["sha256"],
-        "e5_charge": False,
-        "ollama_appele": False,
-    }, ensure_ascii=False, indent=2))
+    except ErreurRecuperation as exc:
+        print(f"Récupération refusée : {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps(sortie, ensure_ascii=False, indent=2))
     return 0
 
 

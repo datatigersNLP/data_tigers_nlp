@@ -1,17 +1,22 @@
 """Tests d'intégrité sans modèle et sans questions d'évaluation (#51)."""
 
 import copy
+from contextlib import redirect_stderr, redirect_stdout
 import hashlib
+import io
 import json
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import Mock, patch
 
 import numpy as np
 
-from rag import ErreurIndex, charger_index
+from rag import (ErreurIndex, ErreurRecuperation, IndexCommun, JEU_COMMIT,
+                 MODELE_E5, REVISION_E5, charger_encodeur, charger_index,
+                 encoder_question, lire_question_calibration, main, recuperer_passages)
 
 
 class LectureIndexTests(unittest.TestCase):
@@ -192,6 +197,134 @@ class LectureIndexTests(unittest.TestCase):
         resultat = subprocess.run(commande, capture_output=True, text=True)
         self.assertEqual(resultat.returncode, 1)
         self.assertIn("Index refusé", resultat.stderr)
+
+
+class RecuperationTests(unittest.TestCase):
+    """Calcul contrôlé et doubles de test : aucune inférence E5 réelle."""
+
+    def setUp(self):
+        self.question_humaine = "Quelles sont les obligations légales de l'empoyeur en période de forte chaleur ?"
+        self.vecteur = np.eye(1, 384, dtype=np.float32)[0]
+        matrice = np.eye(6, 384, dtype=np.float32)
+        # Trois scores identiques en tête : le tri doit garder l'ordre des lignes.
+        matrice[1] = matrice[0]
+        matrice[2] = matrice[0]
+        self.index = IndexCommun({}, matrice, [{"passage_id": f"fixture-{i}", "texte": f"Document {i}"}
+                                             for i in range(6)])
+        self.modele = Mock()
+        self.modele.tokenizer.return_value = {"input_ids": [0, 1, 2]}
+        self.modele.encode.return_value = self.vecteur[None, :]
+
+    def csv_humain(self, lot="calibration"):
+        # Texte existant de Q036, copié mot pour mot, dans un CSV temporaire simulé.
+        return ("id,lot,type,question\nQ036," + lot + ",dans_corpus,"
+                + self.question_humaine + "\n").encode("utf-8")
+
+    @patch("rag.subprocess.run")
+    def test_lecture_au_commit_fige_sans_reformulation(self, git):
+        git.return_value.stdout = self.csv_humain()
+        q = lire_question_calibration("Q036")
+        self.assertEqual(q["question"], self.question_humaine)
+        self.assertEqual(q["commit_jeu"], JEU_COMMIT)
+        self.assertNotIn("url", q)
+        self.assertNotIn("extrait", q)
+        self.assertIn(JEU_COMMIT + ":evaluation/questions/questions_annotees.csv", git.call_args.args[0])
+
+    @patch("rag.subprocess.run")
+    def test_lot_test_refuse_avant_chargement_modele(self, git):
+        git.return_value.stdout = self.csv_humain(lot="test")
+        with patch("rag.charger_encodeur") as charger, redirect_stderr(io.StringIO()):
+            self.assertEqual(main(["--retrieve-only", "--question-id", "Q036"]), 1)
+            charger.assert_not_called()
+
+    @patch("rag.subprocess.run")
+    def test_question_absente_ou_commit_indisponible(self, git):
+        git.return_value.stdout = self.csv_humain()
+        with self.assertRaisesRegex(ErreurRecuperation, "absente"):
+            lire_question_calibration("Q003")
+        git.side_effect = subprocess.CalledProcessError(128, ["git"])
+        with self.assertRaisesRegex(ErreurRecuperation, "Jeu figé indisponible"):
+            lire_question_calibration("Q036")
+
+    def test_chargement_reference_revision_cpu_fp32(self):
+        # Le double vérifie le contrat ; ce test ne télécharge pas le modèle.
+        classe = Mock(return_value=self.modele)
+        module = Mock(SentenceTransformer=classe)
+        with patch.dict(sys.modules, {"sentence_transformers": module}):
+            self.assertIs(charger_encodeur(), self.modele)
+        classe.assert_called_once_with(MODELE_E5, revision=REVISION_E5, device="cpu")
+        self.modele.float.assert_called_once()
+        self.modele.eval.assert_called_once()
+        self.assertEqual(self.modele.max_seq_length, 512)
+
+    def test_encodage_prefixe_texte_et_options_notebook(self):
+        vecteur = encoder_question(self.modele, self.question_humaine)
+        entree = "query: " + self.question_humaine
+        self.modele.tokenizer.assert_called_once_with(entree, truncation=False)
+        self.modele.encode.assert_called_once_with(
+            [entree], batch_size=32, normalize_embeddings=True,
+            convert_to_numpy=True, show_progress_bar=False)
+        np.testing.assert_array_equal(vecteur, self.vecteur)
+
+    def test_aucune_troncature_silencieuse(self):
+        self.modele.tokenizer.return_value = {"input_ids": list(range(513))}
+        with self.assertRaisesRegex(ErreurRecuperation, "aucune troncature"):
+            encoder_question(self.modele, self.question_humaine)
+        self.modele.encode.assert_not_called()
+
+    def test_question_vide_refusee(self):
+        with self.assertRaisesRegex(ErreurRecuperation, "Question vide"):
+            encoder_question(self.modele, " \n")
+        self.modele.encode.assert_not_called()
+
+    def test_mauvaise_sortie_encodeur_refusee(self):
+        for sortie in (np.zeros((1, 383)), np.zeros((2, 384)), np.zeros((1, 384)),
+                       np.full((1, 384), np.nan)):
+            with self.subTest(shape=sortie.shape):
+                self.modele.encode.return_value = sortie
+                with self.assertRaises(ErreurRecuperation):
+                    encoder_question(self.modele, self.question_humaine)
+
+    def test_top5_scores_egalites_et_correspondance(self):
+        resultats = recuperer_passages(self.index, self.vecteur)
+        self.assertEqual([r["indice"] for r in resultats], [0, 1, 2, 3, 4])
+        self.assertEqual([r["rang"] for r in resultats], [1, 2, 3, 4, 5])
+        self.assertEqual([r["score"] for r in resultats], [1, 1, 1, 0, 0])
+        for r in resultats:
+            self.assertIs(r["passage"], self.index.passages[r["indice"]])
+
+    def test_meilleur_passage_au_milieu_de_la_matrice(self):
+        vecteur = np.eye(5, 384, dtype=np.float32)[4]
+        resultats = recuperer_passages(self.index, vecteur)
+        self.assertEqual([r["indice"] for r in resultats], [4, 0, 1, 2, 3])
+        self.assertEqual([r["score"] for r in resultats], [1, 0, 0, 0, 0])
+
+    def test_vecteur_ou_topk_incompatibles(self):
+        for vecteur in (np.zeros(384, dtype=np.float32), np.ones(383, dtype=np.float32),
+                        self.vecteur.astype(np.float64), np.full(384, np.inf, dtype=np.float32)):
+            with self.subTest(shape=vecteur.shape, dtype=vecteur.dtype):
+                with self.assertRaises(ErreurRecuperation):
+                    recuperer_passages(self.index, vecteur)
+        for k in (0, 7, True, 2.5):
+            with self.subTest(k=k):
+                with self.assertRaises(ErreurRecuperation):
+                    recuperer_passages(self.index, self.vecteur, k)
+
+    def test_cli_recuperation_sans_modele_reel(self):
+        # Câblage de la commande uniquement : index et encodeur contrôlés.
+        sortie = io.StringIO()
+        with (patch("rag.lire_question_calibration", return_value={"question": self.question_humaine}),
+              patch("rag.charger_index", return_value=IndexCommun(
+                  {"index": {"sha256": "matrice-test"}, "metadonnees": {"sha256": "meta-test"}},
+                  self.index.matrice, self.index.passages)),
+              patch("rag.charger_encodeur", return_value=self.modele),
+              patch("rag.version", return_value="double-de-test"),
+              redirect_stdout(sortie), redirect_stderr(io.StringIO())):
+            self.assertEqual(main(["--retrieve-only", "--question-id", "Q036"]), 0)
+        resultat = json.loads(sortie.getvalue())
+        self.assertEqual(resultat["statut"], "recuperation_effectuee")
+        self.assertEqual(len(resultat["resultats"]), 5)
+        self.assertFalse(resultat["ollama_appele"])
 
 
 if __name__ == "__main__":
