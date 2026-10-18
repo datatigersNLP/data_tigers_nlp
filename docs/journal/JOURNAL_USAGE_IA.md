@@ -683,12 +683,12 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Produit.**
 - `06_exporter_onnx.py` (dans `scripts/adaptation/`) : export ONNX dynamique INT8 symétrique (`ActivationSymmetric=True`, 74/75 tenseurs identiques bit à bit à Xenova), support du modèle témoin de base et génération dynamique de `quant_config.json`.
 - `07_mesurer_fidelite_822.py` : encodage unitaire sans padding (`batch_size=1`) pour isoler l'effet de batch.
-- `08_calculer_metriques_navigateur.py` (241 lignes) : calcul automatisé des métriques in-browser (concordance Top-1, cosinus médian, dégradation maximale), test exact de McNemar apparié ($b=53, c=45, p=0,5047$ initialement) et empreintes SHA-256 opposables.
-- `serveur_controle.py` et `fidelite_navigateur.html` (dans `scripts/indexation/`) : sécurisation du serveur local de contrôle et gestion robuste de la réponse HTTP (`response.ok`).
+- `08_calculer_metriques_navigateur.py` (241 lignes) : calcul automatisé des métriques in-browser (concordance Top-1, cosinus médian, dégradation maximale), test exact de McNemar apparié et empreintes SHA-256 opposables.
+- `serveur_controle.py` (dans `scripts/adaptation/`) et `fidelite_navigateur.html` (dans `scripts/indexation/`) : sécurisation du serveur local de contrôle et gestion robuste de la réponse HTTP (`res.ok`).
 - `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` : mise à jour des sections 5 et 6, protocole comparatif face au témoin et recompilation du PDF.
 
 **Mesures exécutées.**
-- Contrôle de parité FP32 PyTorch vs ONNX : cosinus minimal = 1,00000000, écart maximal = $1,17 \times 10^{-7}$.
+- Contrôle de parité FP32 PyTorch vs ONNX : cosinus minimal = 1,00000000, écart maximal = 1,17 × 10⁻⁷.
 - Mesure in-browser WASM sur les 822 requêtes réalistes de section et 4 240 passages : Top-1 concordance à 93,55 % (769/822) pour l'ajusté et 92,58 % (761/822) pour le témoin.
 - Comparaison des tenseurs d'embeddings : 74 sur 75 deviennent strictement identiques bit à bit à ceux de Xenova.
 - Démonstration expérimentale du rôle de témoin : le témoin de base et Xenova divergent sur 52 requêtes sur 822 du seul fait de l'export opset 14, indépendamment de tout apprentissage.
@@ -715,9 +715,9 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Objet.** Clôture technique de l'Issue #49 et préparation du Weekly 5 : actualisation des chiffres de fidélité du q8 livré avec quantification symétrique, traitement de la divergence de sérialisation du tokeniseur, désactivation du cache navigateur, sécurisation de `serveur_controle.py` et intégration de la PR #63.
 
 **Produit.**
-- `fidelite_navigateur.html` (dans `scripts/indexation/`) : désactivation forcée du cache navigateur (`cache: "no-store"` et paramètres anti-cache) pour éviter l'évaluation d'un modèle périmé en local.
+- `fidelite_navigateur.html` (dans `scripts/indexation/`) : purge du cache de Transformers.js avant le chargement d'un modèle ajusté ou témoin (`caches.delete("transformers-cache")`, au lieu de `indexedDB.deleteDatabase`), pour éviter l'évaluation d'un modèle périmé en local.
 - `serveur_controle.py` (dans `scripts/adaptation/`) : contrôle de chemin strict interdisant tout accès hors des dossiers autorisés du dépôt.
-- `08_calculer_metriques_navigateur.py` : mise à jour des métriques du modèle q8 livré définitif (`934a202b...` : 769/822 requêtes concordantes, cosinus médian 0,99384, McNemar $b=53, c=45, p=0,48$).
+- `08_calculer_metriques_navigateur.py` : mise à jour des métriques du modèle q8 livré définitif (`934a202b...` : 769/822 requêtes concordantes, cosinus médian 0,99384, McNemar exact b = 53, c = 45, p = 0,48).
 - `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` : actualisation de la section 5.2, documentation de l'écart de sérialisation du tokeniseur sous `transformers` 5.18 (proposition de retenir le tokeniseur de base au Weekly 5), articulation avec la stratégie d'élagage (#50), et recompilation du PDF.
 - PR #63 (`feat/49-ajustement-encodeur`) et PR #75 (`docs/49-protocole-05-final`) fusionnées dans `dev`.
 
@@ -733,7 +733,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Déploiement immédiat de l'ajusté dans `front/public/` : strictement subordonné à la mesure conjointe du protocole 05.
 
 **Ce que l'équipe a validé, et par qui.**
-- Protocole 05 validé au Weekly 5 ; PR #63 et PR #75 approuvées et fusionnées par Remy RAYANE.
+- Protocole 05 validé au Weekly 5 ; PR #63 approuvée par Mahé BEGNIS, PR #75 approuvée par Remy RAYANE, toutes deux fusionnées par Remy RAYANE le 14/10.
 
 **Temps d'appropriation constaté.**
 - Non relevé sur le moment.
@@ -746,7 +746,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Objet.** Audit d'achèvement du volet A pour l'échéance du 18 octobre : vérification intégrale du dépôt Git, état des tickets D2/D3, analyse des pull requests PR #83 et PR #84, checklist de clôture opérationnelle du volet A et régularisation des sessions du journal d'IA.
 
 **Produit.**
-- Audit contradictoire des jalons, tickets (#43, #46, #48, #49, #50, #53, #56) et branches distantes (`origin/dev`, `origin/pr/83`, `origin/pr/84`, `origin/main`).
+- Audit contradictoire des jalons, tickets (#43, #46, #48, #49, #50, #53, #56) branches distantes (`origin/dev`, `origin/main`) et pull requests #83 et #84.
 - Vérification du site en ligne (https://datatigersnlp.github.io/data_tigers_nlp/) et confirmation de l'application de la règle de repli du protocole 05 (#49 : encodeur de base élagué 65,7 Mio servi).
 - Analyse de la PR #83 (`fix/53-focus-menu-perimetre`) : validation des correctifs d'accessibilité mobile (bouclage tabulation, Échap, `inert`) et affichage du périmètre (261 fiches, 4 240 passages).
 - Fiche de clôture et ordonnancement des 4 actions restantes pour ce soir (fusion PR #83, recette du site en ligne, fusion PR #84, pose du tag `volet-a-v1`).
@@ -758,7 +758,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Recompilation complète de `JOURNAL_USAGE_IA.pdf` via `docs/latex/build.py` et `xelatex`.
 
 **Résultats retenus.**
-- Le volet A est intégralement fonctionnel, documenté et conforme aux attendus du jalon.
+- Le volet A est fonctionnel en ligne ; sa clôture tient aux quatre actions restantes listées ci-dessus.
 
 **Ce qui a été écarté, et pourquoi.**
 - Fusion directe sans relecture : toute fusion vers `dev` et `main` passe par une pull request et l'approbation d'un relecteur selon les règles de conduite du projet.
@@ -804,6 +804,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 10/10 | Empreinte SHA-256 débordant de 254 points dans la marge du PDF du protocole | journal de compilation | empreintes regroupées dans un bloc de code |
 | 10/10 | Chiffres de l'audit statistique tirés d'un essai préliminaire, à une autre graine, et non du script versionné | réexécution du script avant le commit | chiffres alignés sur la sortie reproductible |
 | 13/10 | Recalcul indépendant de l'effet de plan différent de celui du module de métriques | écart entre les deux calculs | écart dû au degré de liberté de l'estimateur ; avec `ddof=1`, accord à 1e-14, le module était juste |
+| 13/10 | Serveur de contrôle local acceptant des requêtes POST sans contrôle d'extension ni de chemin | audit de sécurité du script Python | contrôle strict du chemin cible et rejet des requêtes hors du périmètre autorisé (`serveur_controle.py`) |
 | 14/10 | Fidélité de l'encodeur ajusté publiée à 753 sur 822, mesurée sur un export q8 antérieur, quantifié sans `ActivationSymmetric` | nouvelle mesure du q8 livré, dans le navigateur | 769 sur 822 ; protocole 05 et rapport de Remy corrigés |
 | 14/10 | Données du CDTN déclarées « sans licence » le 10/10, faute de fichier LICENSE, alors que leur `package.json` déclare Apache-2.0 | relecture de la source et du paquet npm | `04_cdtn.md` corrigé (PR #77) ; l'alerte et la demande au support de GitHub du 13/10 reposaient sur cette erreur |
 | 14/10 | Première règle d'élagage qui retirait les diacritiques combinants et la lettre μ : un passage sur 4 240 changeait de découpage | comparaison du découpage sur tous nos textes | diacritiques et lettres grecques gardés ; découpage identique partout |
@@ -813,12 +814,11 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 14/10 | Cache du navigateur attribué à IndexedDB, alors que Transformers.js 4.3.0 utilise l'API Cache | lecture du code source de la bibliothèque | `caches.delete` à la place de `indexedDB.deleteDatabase` (PR #63) |
 | 14/10 | Hypothèse de l'assistant, publiée dans une revue de la PR #72 : avec le modèle en cache, bloquer Hugging Face par `page.route()` n'empêcherait pas le chargement | essai sur le site en ligne : le chargement échoue | hypothèse retirée dans un commentaire de suivi ; Vaneck a mesuré le cas réel et corrigé sa fiche |
 | 14/10 | QCM du Weekly : la bonne réponse était la plus longue dans 13 questions sur 20 | script de contrôle des longueurs | réponses rééquilibrées, 3 cas sur 20 |
+| 14/10 | Tokeniseur ré-exporté sous `transformers` 5.18 modifiant le découpage de 6 requêtes CDTN avec espace final | test d'équivalence de découpage sur l'ensemble des requêtes et passages | proposition actée au Weekly 5 de conserver le tokeniseur de base pour isoler strictement les poids sémantiques |
 | 17/10 | Audit des adresses e-mail concluant à zéro exposition, `git log --since` ayant arrêté le parcours trop tôt | contradiction avec un commit connu | historique parcouru en entier : 62 commits concernés |
 | 17/10 | Revue publiée de la PR #80 affirmant « aucune requête vers jsDelivr », les requêtes ayant été écoutées au niveau de la page seulement | vérification de Jibril, puis essai avec le CDN bloqué : la recherche échoue | revue corrigée en demande de modification ; moteur d'exécution servi par le site (PR #81) |
 | 17/10 | README de la PR #82 donnant la première inférence locale « en cours », alors qu'elle a réussi le 27/09 (#31) et qu'elle est documentée : la liste des fichiers ne descendait que dans les sous-dossiers de `docs/etudes` | revue de Jibril | ligne corrigée, RAG complet distingué (`1216bd5`) |
 | 17/10 | Suivi de la PR #82 donnant #46 « à fermer », alors qu'il était fermé depuis 15 h 52 | revue de Jibril, d'après l'API GitHub | situation actualisée (`1216bd5`) |
-| 13/10 | Serveur de contrôle local acceptant des requêtes POST sans contrôle d'extension ni de chemin | audit de sécurité du script Python | contrôle strict du chemin cible et rejet des requêtes hors du périmètre autorisé (`serveur_controle.py`) |
-| 14/10 | Tokeniseur ré-exporté sous `transformers` 5.18 modifiant le découpage de 6 requêtes CDTN avec espace final | test d'équivalence de découpage sur l'ensemble des requêtes et passages | proposition actée au Weekly 5 de conserver le tokeniseur de base pour isoler strictement les poids sémantiques |
 | 18/10 | Attente du moteur fondée sur un texte d'invite identique pendant et après le chargement | relecture du code de l'interface B | conclusions tirées des seules recherches abouties |
 | 18/10 | Focus rendu avant le retrait de l'attribut `inert`, donc refusé par le navigateur | essai au clavier, focus nul après Échap | focus rendu après le rendu (`requestAnimationFrame`), avant le commit (PR #83) |
 | 18/10 | Description de la PR #83 affirmant que le focus ne sort jamais du menu sur téléphone, l'essai comptant le document (BODY) comme acceptable | contre-essai de Jibril aux frontières de Tab et Maj+Tab, puis Échap sans effet | tabulation bouclée dans le panneau, Échap écouté au niveau du document (`e6cd210`), description corrigée |
