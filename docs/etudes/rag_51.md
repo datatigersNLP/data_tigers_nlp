@@ -7,8 +7,9 @@ Responsables : Jibril BENSALEM et Maïmouna SIGNATE. Soutien : Remy RAYANE et Ma
 Les étapes 1 (chargement de l'index), 2 (récupération Python fp32) et 3 (contexte numéroté) sont implémentées.
 Le contrôle de l'index réel a réussi sur le Legion, d'après la sortie transmise par Jibril le 18 octobre.
 L'étape 2 a également réussi sur Q036, selon la trace transmise par Jibril. Le contexte a été construit ici depuis
-ses cinq résultats réels, sans réexécuter E5. Aucun appel à Ollama n'est implémenté.
-La chaîne RAG complète reste à construire ; ces étapes ne valident pas les critères de clôture de #51.
+ses cinq résultats réels, sans réexécuter E5. Le client Ollama et le contrôle structurel des citations sont maintenant
+implémentés dans `scripts/rag/generation.py`, mais aucune génération réelle n'a encore été transmise.
+La chaîne complète est prête pour son premier essai local ; elle n'est pas encore validée et #51 reste ouverte.
 
 L'estimation de 16 h cumulées est inscrite dans le ticket et le classeur avant le développement.
 La charge réelle n'est pas renseignée avant la clôture.
@@ -102,7 +103,7 @@ attendues. Aucune sortie des tests unitaires Windows n'a été transmise ; on ne
 | Métadonnées réelles | Empreinte et schéma contrôlés |
 | Matrice réelle, sur le Legion | Contrôle réussi, sortie transmise par Jibril |
 | Encodage E5 et récupération | Réussis pour Q036, trace transmise par Jibril |
-| Appel réel à Ollama | Aucun |
+| Appel réel à Ollama | Client implémenté, premier essai RAG à exécuter |
 | RAG complet | Non validé |
 
 ## 4. Étape 2 : récupérer cinq passages avec E5
@@ -199,12 +200,110 @@ Après cette extension : **30 tests réussis** dans l'environnement de l'assista
 sur la trace réelle de récupération. Le vrai générateur n'a pas été appelé ; la vérification du gabarit Ollama et du
 budget de tokens reste nécessaire avant le premier appel de génération.
 
-## 6. Suite prévue après le contexte
+## 6. Étapes 4 et 5 : Qwen local et contrôle des sorties
 
-1. Vérifier la version, le modèle et le gabarit effectivement utilisés par Ollama sur le Legion.
-2. Contrôler le budget avec les tokens Qwen, puis appeler le Qwen local validé dans #31.
-3. Distinguer réponse citée, abstention du modèle, sortie invalide et erreur technique.
-4. Documenter des sorties réellement obtenues, dont une abstention, sans modifier les questions.
+### Configuration locale observée
+
+Jibril a interrogé `/api/show` et `/api/version` le 18 octobre et communiqué : Ollama **0.40.5**, modèle GGUF
+de famille `qwen2`, 7.6B, quantification `Q4_K_M`, parent `qwen2.5-7b-instruct-q4_k_m-00001-of-00002.gguf`.
+Le gabarit est le Jinja Qwen avec rôles system/user/assistant et marqueurs `<|im_start|>` / `<|im_end|>`.
+`parameters: null` ne signifie pas l'absence de réglages d'exécution : le script les fournit explicitement.
+Cette version d'Ollama diffère de 0.34.4 dans #31 ; aucune performance de #31 n'est transposée au RAG.
+
+Avant chaque génération, le client lit la version, le catalogue et les détails du modèle. Le nom local et le digest
+de #31 (`6ec54444a8511aae6c2116b172eb3685d1416c523bfee0252ca33c7e55c481e4`) doivent correspondre, ainsi que la famille,
+le format et la quantification. Un digest différent est signalé pour vérification, jamais remplacé automatiquement.
+
+### Budget et appel
+
+Le **tokeniseur seul** de `Qwen/Qwen2.5-7B-Instruct`, révision officielle figée
+`a09a35458c702b33eeacc393d103063234e8bc28`, est chargé avec Transformers. Aucun second exemplaire des poids
+génératifs n'est téléchargé. La révision a été relevée dans [l'API officielle du modèle](https://huggingface.co/api/models/Qwen/Qwen2.5-7B-Instruct).
+
+Le gabarit retourné par Ollama est rendu par `apply_chat_template()` sur deux messages, system et user, avec
+le début de réponse assistant. Pour cette baseline, le résultat doit être le format Qwen system/user attendu.
+Ce texte est tokenisé avec `add_special_tokens=False` (les marqueurs sont déjà présents) et `truncation=False`.
+Le comptage porte sur les tokens Qwen, et non ceux d'E5 ni les caractères.
+
+| Paramètre de départ | Valeur |
+|---|---|
+| Passages | 5, textes intégraux |
+| Température | 0.0 |
+| Graine de génération | 20261018 |
+| `num_ctx` | 8192 |
+| `num_predict` | 512 |
+| Marge de budget | 64 tokens |
+| `stream` | false |
+| `keep_alive` | 30m |
+| Délai de génération | 300 s |
+| Arrêts explicites | `<|im_end|>`, `<|endoftext|>`, `<|im_start|>` |
+
+Ces valeurs sont une baseline documentée, pas un optimum démontré. La graine ne garantit pas une identité
+des sorties entre versions ou matériels. Le contexte de 8192 donne de la place aux cinq passages ; son
+exécution et ses ressources sur le Legion ne sont pas encore validées.
+
+Si `tokens_entrée + 512 + 64 > 8192`, la génération est refusée sans supprimer de passage ni tronquer la question.
+Le texte formaté est envoyé à `POST http://127.0.0.1:11434/api/generate` avec **`raw: true`** : Ollama n'ajoute pas
+un second gabarit. C'est une différence explicite avec l'appel court de #31, nécessaire pour compter le texte exact
+préparé. Voir [l'API officielle](https://github.com/ollama/ollama/blob/main/docs/api.md) et
+[les gabarits Transformers](https://huggingface.co/docs/transformers/chat_templating).
+
+Le compte HF n'est pas supposé équivalent au compte GGUF sans contrôle : après l'appel, `prompt_eval_count`
+d'Ollama doit être égal au compte préparé. Un écart est une erreur technique, avec réponse brute conservée pour
+diagnostic. Une interruption (`done_reason` autre que `stop`) ou un nombre de tokens de sortie incohérent est
+également signalé. Aucune de ces situations n'est comptée comme une abstention du modèle.
+
+### Contrôle structurel des citations
+
+La réponse brute est conservée. Tout groupe entre crochets doit être une référence exacte parmi `[P1]` à `[P5]` ;
+`[P1][P2]` est accepté, `[P8]`, `[P01]`, `[p1]`, `[P1, P2]` ou une référence non fermée sont refusés.
+Le parseur est volontairement strict : les crochets ne sont pas réservés à d'autres usages dans ce format de sortie.
+
+| Statut | Sens |
+|---|---|
+| `reponse_citee` | Au moins une citation existante et aucune référence mal formée détectée |
+| `abstention_modele` | Phrase d'abstention exacte, à des espaces extérieurs près |
+| `sortie_invalide` | Réponse vide, sans citation, avec référence invalide ou abstention mélangée à une autre sortie |
+| `erreur_technique` | Génération interrompue, comptage incohérent ou métadonnées de sortie invalides |
+
+Une autre formulation de refus est à examiner manuellement : elle n'est pas automatiquement assimilée à la phrase
+contrôlée. `reponse_citee` ne prouve **ni la justification sémantique ni la couverture de chaque affirmation**.
+Les deux indicateurs restent explicitement à false dans le rapport ; leur mesure relève de #52.
+
+### Première exécution complète sur le Legion
+
+Depuis la branche #51, Ollama lancé, récupérer le code puis les dépendances :
+
+```powershell
+git pull --ff-only
+uv pip install --python .venv\Scripts\python.exe -r scripts/rag/requirements.txt
+.\.venv\Scripts\python.exe .\scripts\rag\rag.py --generate --question-id Q036 --output .\data\rag\Q036_rag.json
+```
+
+Le JSON est écrit en UTF-8 dans `data/`, ignoré par Git, et affiché dans la console. Il conserve question et provenance,
+passages, contexte, gabarit formaté envoyé, empreintes, budget, paramètres, identité du modèle, réponse brute,
+mesures renvoyées par Ollama et contrôle des citations. Un fichier existant n'est jamais écrasé : choisir un autre nom.
+Code de sortie 0 : réponse citée ou abstention contrôlée ; 1 : échec technique de préparation/appel/enregistrement ;
+2 : sortie du modèle invalide ou génération reçue mais techniquement incohérente (trace conservée).
+Une erreur d'arguments peut aussi donner le code 2, sans appel au modèle.
+
+Après lecture de Q036, exécuter l'autre exemple prévu, sans reformuler la question humaine :
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\rag\rag.py --generate --question-id Q003 --output .\data\rag\Q003_rag.json
+```
+
+Q003 est annotée `hors_corpus` dans le lot de calibration. On doit observer si Qwen s'abstient réellement ;
+le programme n'utilise pas ce type annoté pour forcer la réponse. Aucune abstention réelle n'est encore rapportée.
+
+### Validation avant le premier appel réel
+
+**45 tests réussis** ici sous Python 3.12.14 et NumPy 2.3.5, avec E5, tokeniseur Qwen et serveur Ollama simulés.
+Ils vérifient notamment budget limite/dépassé, absence d'appel quand le budget est dépassé, référence du modèle,
+quantification, requête UTF-8 locale et raw, citations inconnues/mal formées, conservation de la réponse interrompue,
+distinction abstention/erreur et sauvegarde sans écrasement. Compilation Python et contrôle du diff exécutés.
+Ces tests ne valident pas le vrai tokeniseur Qwen, le compte GGUF, la génération ni les ressources du Legion.
+Les traces de Q036 puis Q003 et la relecture du binôme restent nécessaires avant de valider #51.
 
 Pour les premiers essais, les questions Q036 (`dans_corpus`) et Q003 (`hors_corpus`) du lot de **calibration** au tag
 `jeu-questions-v1` ont été proposées avant exécution dans la conception. Leur texte restera inchangé.

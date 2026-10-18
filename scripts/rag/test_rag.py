@@ -198,6 +198,18 @@ class LectureIndexTests(unittest.TestCase):
         self.assertEqual(resultat.returncode, 1)
         self.assertIn("Index refusé", resultat.stderr)
 
+    def test_cli_sauvegarde_utf8_sans_ecrasement(self):
+        cible = self.dossier / "traces" / "controle.json"
+        commande = [sys.executable, str(Path(__file__).with_name("rag.py").resolve()),
+                    "--check-index", "--index-dir", str(self.dossier), "--output", str(cible)]
+        resultat = subprocess.run(commande, capture_output=True, text=True)
+        self.assertEqual(resultat.returncode, 0, resultat.stderr)
+        octets = cible.read_bytes()
+        self.assertEqual(json.loads(octets.decode("utf-8"))["statut"], "index_verifie")
+        resultat = subprocess.run(commande, capture_output=True, text=True)
+        self.assertEqual(resultat.returncode, 2)
+        self.assertEqual(cible.read_bytes(), octets)
+
 
 class RecuperationTests(unittest.TestCase):
     """Calcul contrôlé et doubles de test : aucune inférence E5 réelle."""
