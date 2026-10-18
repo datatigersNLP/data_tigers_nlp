@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 17 octobre 2026 (tags, branche d'observation et points #43, #46, #49, #50 et #56, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -68,7 +68,7 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #8 | Faire confirmer le calendrier officiel des jalons | transverse | Jibril | Mi-parcours | Ouvert | 20/09/2026 | - |
 | #9 | Weekly 3 - 30 septembre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 05/10/2026 |
 | #10 | Weekly 4 - 7 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 07/10/2026 |
-| #11 | Weekly 5 - 14 octobre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
+| #11 | Weekly 5 - 14 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 14/10/2026 |
 | #12 | Weekly 6 - 21 octobre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
 | #13 | Weekly 7 - 28 octobre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
 | #14 | Weekly 8 - 4 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
@@ -92,18 +92,18 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #33 | Versionner les documents préparatoires du jalon J2 | transverse | Mahé | Mi-parcours | Fermé | 27/09/2026 | 06/10/2026 |
 | #34 | Corriger la session 9 du journal d'usage IA et régénérer son PDF | transverse | Mahé, Remy | Mi-parcours | Fermé | 27/09/2026 | 28/09/2026 |
 | #35 | Explorer le découpage du corpus depuis la source SocialGouv | D1 | Mahé | J3 | Fermé | 27/09/2026 | 28/09/2026 |
-| #43 | Poser le jalon de mi-parcours : tag Git et branche d'observation | transverse | Mahé, Jibril | Mi-parcours | Ouvert | 30/09/2026 | - |
+| #43 | Poser le jalon de mi-parcours : tag Git et branche d'observation | transverse | Mahé, Jibril | Mi-parcours | Fermé | 30/09/2026 | 18/10/2026 |
 | #44 | Construire le jeu de questions annotées pour évaluer la recherche | D1, D5 | Vaneck, Jibril, Maïmouna | J3 | Fermé | 30/09/2026 | 07/10/2026 |
 | #45 | Valider la chaîne de mesure de la recherche sur le jeu PIAF | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 06/10/2026 |
-| #46 | Évaluer la recherche du volet A sur le jeu de questions (notebook 03) | D2, D5 | Mahé, Remy | J3 | Ouvert | 30/09/2026 | - |
+| #46 | Évaluer la recherche du volet A sur le jeu de questions (notebook 03) | D2, D5 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #47 | Construire les références lexicales TF-IDF et BM25 | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 13/10/2026 |
 | #48 | Brancher la recherche sémantique dans le site du volet A | D3 | Mahé, Vaneck, Remy, Maïmouna | J3 | Fermé | 30/09/2026 | 12/10/2026 |
 | #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J3 | Ouvert | 30/09/2026 | - |
-| #50 | Réduire le poids du modèle servi par réduction du vocabulaire | D2 | Mahé, Remy | J3 | Ouvert | 30/09/2026 | - |
+| #50 | Réduire le poids du modèle servi par réduction du vocabulaire | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #51 | Construire la chaîne RAG du volet B sur l'index commun | D4 | Remy, Jibril, Maïmouna | J3 | Ouvert | 30/09/2026 | - |
 | #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril | J3 | Ouvert | 30/09/2026 | - |
-| #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Ouvert | 30/09/2026 | - |
-| #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Ouvert | 04/10/2026 | - |
+| #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Fermé | 30/09/2026 | 18/10/2026 |
+| #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Fermé | 04/10/2026 | 14/10/2026 |
 
 ## Charges et dates de travail
 
@@ -179,14 +179,14 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 |---|---|---|
 | #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. |
 | #23 | 03/10, cible provisoire dans le corps | Ouvert ; la mise à jour du suivi ne clôture pas la validation collective du backlog. |
-| #43 | Date officielle du mi-parcours | Au 18/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori le 17/10 ; `main` mise à jour par la PR #74 (Jibril). **Critère de #43 non satisfait par ce tag historique** : la première inférence locale, réussie le 27/09 (#31), n'a été fusionnée dans `dev` que le 03/10 (PR #41), après `ac84ed3`. Écart déclaré dans le message du tag ; arbitrage du 18/10 (Mahé) : le tag n'est pas déplacé, #43 est validé avec cette réserve. Restent la dernière mise à jour de `main` et le tag `volet-a-v1`. |
+| #43 | Date officielle du mi-parcours | Au 18/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori le 17/10 ; `main` mise à jour par la PR #74 (Jibril). **Critère de #43 non satisfait par ce tag historique** : la première inférence locale, réussie le 27/09 (#31), n'a été fusionnée dans `dev` que le 03/10 (PR #41), après `ac84ed3`. Écart déclaré dans le message du tag ; arbitrage du 18/10 (Mahé) : le tag n'est pas déplacé, #43 est validé avec cette réserve et fermé le 18/10. Le jalon de fin du volet A est le tag `volet-a-v1`, posé sur `main` après la PR #84 ; il contient la première inférence locale. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
 | #46 | 14/10, proposition dans le ticket | Fermé le 17/10 à 15 h 52 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73). |
 | #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. |
 | #50 | 24/10, proposition dans le ticket | Au 17/10 : élagage sans perte livré le 14/10 (PR #78), modèle de 65,7 Mio servi par le site ; la réduction avec perte sort du volet A. |
 | #51 | 10/10, proposition historique dans le corps | Ouvert ; chaîne RAG complète non déduite du test d'inférence de #31. Échéance à actualiser par les responsables. |
 | #52 | 17/10, proposition dans le ticket | Ouvert ; dépend du jeu figé et de la chaîne RAG. |
-| #53 | 17/10, demandé à Jibril avec Vaneck | Ouvert ; #48 fermé, finition UI/UX, contrôles et estimation provisoire à réviser. |
+| #53 | 17/10, demandé à Jibril avec Vaneck | Au 18/10 : interface B livrée par Vaneck (PR #80), puis focus du menu sur téléphone et périmètre du corpus affiché (PR #83, revue de Jibril) ; ticket fermé à la fusion de la PR #83. Estimation provisoire de 16 h non révisée. |
 | #56 | Avant la première mesure de #46 | Fermé le 14/10 ; les trois relectures sont importées (PR #79, fusionnée le 17/10) : 182 jugements, 155 requêtes. |
 
 Les échéances anciennes encore écrites dans les tickets ne sont pas corrigées implicitement par ce classeur. Le jeu de 60 questions figurant dans l'ancien planning n'est plus une tâche à créer : #44 existe et est fermé. Les détails du jeu et de son gel font foi dans ses documents de référence.

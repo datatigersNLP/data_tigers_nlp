@@ -20,6 +20,9 @@ const NB_RESULTATS = 5;
 // et vocabulaire du tokeniseur (4,1 Mio). Mesuré le 14/10/2026 sur le site en ligne, profil vierge : prêt en 23 à 30 s
 // (le serveur compresse le modèle : 45,9 Mio transférés). Avant la #78 : 113 Mio depuis le Hub, 52 à 56 s
 const POIDS_MODELE = "65,7 Mio";
+// périmètre du corpus, affiché comme l'exige le sujet pour A3 : fiches (adresses distinctes) et passages comptés le
+// 17/10/2026 dans front/public/index/passages_m2.json ; instantané daté dans front/public/index/SOURCES.md
+const PERIMETRE = { fiches: "261", passages: "4\u00a0240", instantane: "11 sept. 2026" };
 
 // tailles en Mio (2^20 octets), l'unité de l'équipe ; une décimale, pour que la progression reste lisible
 const mio = (octets) =>
@@ -301,10 +304,26 @@ export default function Conversation({ moteur }) {
 
   const basculer = (id) => majEchange(id, (e) => ({ afficher: !e.afficher }));
 
+  // tant que le menu est ouvert, le reste de la page est inerte et refuse le focus : il n'est rendu qu'après le rendu
+  // qui retire l'attribut inert, d'où requestAnimationFrame
   function fermerMenu() {
     setMenuOuvert(false);
-    boutonMenu.current?.focus();
+    requestAnimationFrame(() => boutonMenu.current?.focus());
   }
+
+  // le menu n'est une surcouche que sur téléphone : en largeur d'ordinateur (md, 48rem), où le panneau est toujours
+  // affiché, il se ferme, sinon le reste de la page resterait inerte
+  useEffect(() => {
+    if (!menuOuvert) return;
+    const ordinateur = window.matchMedia("(min-width: 48rem)");
+    if (ordinateur.matches) {
+      setMenuOuvert(false);
+      return;
+    }
+    const changer = (ev) => ev.matches && setMenuOuvert(false);
+    ordinateur.addEventListener("change", changer);
+    return () => ordinateur.removeEventListener("change", changer);
+  }, [menuOuvert]);
 
   // un chat vide sert de nouveau chat : on n'en crée pas un second, on y place seulement le curseur
   function nouveauChat() {
@@ -321,12 +340,13 @@ export default function Conversation({ moteur }) {
   function choisirChat(id) {
     setActuel(id);
     setMenuOuvert(false);
+    requestAnimationFrame(() => saisie.current?.focus());
   }
 
   function utiliserExemple(q) {
     setMenuOuvert(false);
     // le menu se ferme sur téléphone : le focus irait sinon se perdre sur la page
-    saisie.current?.focus();
+    requestAnimationFrame(() => saisie.current?.focus());
     envoyer(q);
   }
 
@@ -344,7 +364,9 @@ export default function Conversation({ moteur }) {
         occupe={occupe}
       />
 
-      <main className="flex min-w-0 flex-1 flex-col">
+      {/* menu ouvert sur téléphone : le reste de la page est inerte, ni le focus ni les lecteurs d'écran n'atteignent
+          plus la conversation ; la tabulation boucle dans le panneau (Barre.jsx) */}
+      <main inert={menuOuvert || undefined} className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-filet px-3 py-2 sm:px-7 sm:py-3.5">
           <button
             ref={boutonMenu}
@@ -389,6 +411,11 @@ export default function Conversation({ moteur }) {
                 <p className="rounded-[16px] rounded-tl-md border border-filet bg-white px-3.5 py-3 text-[15px] leading-normal">
                   Bonjour ! Posez une question sur votre travail : je vous montre les passages des fiches du ministère
                   qui y répondent, avec le lien vers chaque source.
+                </p>
+                <p className="text-[13px] leading-normal text-gris">
+                  Je cherche dans les {PERIMETRE.fiches} fiches pratiques du ministère du Travail ({PERIMETRE.passages}{" "}
+                  passages, instantané du {PERIMETRE.instantane}). Le Code du travail lui-même et les conventions
+                  collectives ne sont pas interrogés.
                 </p>
                 {!pret && moteur.phase !== "erreur" && (
                   <p className="text-[13px] text-gris">
