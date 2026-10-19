@@ -1612,3 +1612,65 @@ Les préparations existantes ne sont pas écrasées et les autres runs restent c
 #94 reste partielle en attente des essais et relectures ; #103 en brouillon avec Mahé/Remy demandés.
 Aucun verdict humain, admission au lot figé, gel, fusion, clôture ou temps réel déclaré ;
 estimation initiale de 7 h inchangée.
+
+
+## 26. #94 — Premier essai hors corpus : question couverte par sa source
+
+### Résultat transmis
+
+Jibril transmet **142 tests Windows réussis** (`0.985s`, `OK`), puis le résumé et le candidat
+complet de `hors_corpus_001` : **1441 HF / 1441 Ollama**, 156 tokens générés, fin `stop`,
+un candidat et aucun rejet automatique. Identifiant `SYN_hors_corpus_001_0001`,
+source `m2-article374529-0004`, validation automatique passée et humaine `pending`.
+Manifeste et traces complets non transmis : ne pas déduire le SHA/état Git, la version exacte du
+prompt ou les autres détails de cette inférence du seul résumé et du budget précédent.
+
+Question conservée : « Quelles conditions doivent être remplies pour que le salarié puisse utiliser
+son compte épargne-temps (CET) pendant son congé sans solde ? »
+Motif proposé : « L'information sur les conditions spécifiques n'est pas fournie dans ce passage. »
+
+### Lecture assistée contre la source figée
+
+Le passage M2 intégral donne déjà les conditions pertinentes : CET mis en place dans l'entreprise,
+utilisation des droits acquis et possibilité de financement prévue par l'accord ayant instauré le CET.
+La question ne précise pas d'autre information manquante. Le motif d'absence est ainsi contredit
+par le passage de départ lui-même : `evidence: []` signifie seulement qu'aucune preuve positive
+n'a été proposée dans ce candidat, pas que le corpus n'en contient pas.
+
+Avis assisté : **ne pas admettre ce candidat en l'état au lot figé comme hors corpus**.
+Le candidat reste intact et humain en attente ; aucune décision humaine, réécriture, réparation,
+requalification ou admission automatique. Cette contre-preuve locale suffit à contester le classement
+proposé ; elle n'est pas une vérification exhaustive d'absence dans le corpus complet.
+Les futurs cas non contredits ainsi exigeront toujours la procédure de relecture de la section 24.
+
+### Suite annoncée avant de nouveaux résultats
+
+Conserver `agent0-hors-corpus-v1` : il demandait déjà d'éviter une question traitable par le passage,
+même conditionnellement. Ce premier essai montre que la consigne n'a pas suffi sur cette source ;
+il ne justifie ni un taux général de qualité ni un filtre lexical présenté comme vérification sémantique.
+Aucun ajout d'exemple juridique ou juge LLM.
+
+Pour compléter la mise au point avec des thèmes distincts, les deux groupes suivants du tirage initial
+sont préannoncés, sans modifier le prompt :
+
+| Ordre | Groupe | Source attendue | Run prévu |
+|---|---:|---|---|
+| 1 | 2 | `m2-article377050-0003` — CSE | `hors_corpus_002` |
+| 2 | 3 | `m2-article374500-0003` — médaille du travail | `hors_corpus_003` |
+
+Identifiants retrouvés par reconstruction du tirage `count=5`, graine `20261018`, sur le corpus
+figé inchangé ; cela ne constitue pas une lecture du manifeste Windows complet.
+Conserver tous les résultats, candidats et rejets, et lire chaque sortie avant la suivante.
+Ces sources déjà utilisées pendant la mise au point ne constituent pas un pilote indépendant #95.
+
+Prochain essai, groupe 2 :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id hors_corpus_002 --sources .\data\synthetic\sources\selection_001.json --group 2 --type hors_corpus --difficulty medium
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_002\candidates.jsonl
+```
+
+Budget recompté avant chaque appel, sans troncature ; les 1441 tokens concernent le premier passage.
+Documentation et journal seulement : aucun code, prompt, validateur, corpus, modèle ou budget modifié,
+aucun test unitaire ou appel réel relancé ici. #94 partielle, #103 en brouillon avec Mahé/Remy demandés ;
+aucun verdict humain, admission, gel, fusion, clôture ou temps réel déclaré. Estimation 7 h inchangée.
