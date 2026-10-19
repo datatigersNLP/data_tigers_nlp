@@ -131,9 +131,6 @@ def main(argv=None) -> int:
         parser.error("--generate exige --run-id et n'utilise pas --output")
     if not args.generate and args.run_id is not None:
         parser.error("--run-id s'utilise seulement avec --generate")
-    if args.generate and args.type == "adversarial":
-        parser.error("Génération adversarial non activée : préparer l'aperçu et le budget "
-                     "avant l'ajout des contrôles de sortie propres aux pièges")
     try:
         if args.output and args.output.exists():
             raise ErreurPreparation("Le fichier de sortie existe déjà ; choisir un autre nom")

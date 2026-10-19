@@ -33,6 +33,14 @@ def charger_questions_vues(dossier: Path, exclure: Path | None = None) -> tuple[
 
 
 def _sources_preparation(preparation: dict) -> list[dict]:
+    if preparation["type"] == "adversarial":
+        source = preparation.get("source")
+        if (preparation.get("format") != "agent0-preparation-v1" or "sources" in preparation
+                or not isinstance(source, dict)
+                or any(not isinstance(source.get(c), str) or not source[c].strip()
+                       for c in ("passage_id", "texte"))):
+            raise ValueError("Une préparation adversarial v1 avec une source unique non vide est requise")
+        return [source]
     if preparation["type"] != "multi_passage":
         return [preparation["source"]]
     sources = preparation.get("sources")
@@ -55,6 +63,8 @@ def valider_proposition(texte: str, preparation: dict, run_id: str,
     if (proposition.type != preparation["type"]
             or proposition.difficulty_target != preparation["difficulty_target"]):
         raise ValueError("Catégorie ou difficulté différente de la demande")
+    if proposition.type == "adversarial" and not proposition.answerable_proposed:
+        raise ValueError("Cet incrément adversarial exige une correction proposée comme sourçable")
     sources = _sources_preparation(preparation)
     par_id = {source["passage_id"]: source for source in sources}
     for preuve in proposition.evidence:

@@ -1175,3 +1175,82 @@ La suite sera le contrôle du budget Windows, puis les règles de validation de 
 explicite de la génération adversarial. La relecture indépendante de #95 reste requise avant admission
 des cas au Challenge Set. #94 reste partielle et #103 en brouillon ; aucun candidat, verdict humain,
 gel, fusion, clôture ou temps réel déclaré pour ce nouvel incrément.
+
+
+## 20. #94 — Budget Windows et activation des cas pièges sourçables
+
+### Retours vérifiés
+
+Jibril transmet **118 tests Windows réussis** (`Ran 118 tests in 1.433s`, `OK`), puis l'aperçu
+et le contrôle du budget adversarial au commit `f9ee12acce5815830ae87519e818a6b5019bb611`,
+copie propre, Python 3.12.15. Source `m2-article374529-0004`, prompt `agent0-adversarial-v1`.
+L'empreinte de prompt de la section 19 est retrouvée. Les empreintes CRLF des quatre scripts
+generate/prompts/schema/client concordent également avec le retour Windows.
+
+Le contrôle Qwen annonce **1450 tokens HF + 512 de sortie + 64 de marge = 2026/8192**,
+`generation_appelee: false`, sans comparaison HF/Ollama encore possible. Le texte raw reconstruit
+ici retrouve exactement `d9df91b5040c028d34a8d5e6add187d6baee69273d104ec052f4bad788dc97f5`.
+Ce contrôle d'empreinte ne constitue pas un recomptage avec le vrai tokeniseur dans cet environnement.
+
+Ollama est maintenant rapporté en **0.40.6**, contre 0.40.5 lors des retours précédents ; ne pas
+attribuer ce changement à une action ou une date non déclarée. Le modèle, son digest de référence,
+la révision du tokeniseur, le gabarit `d5495a1e...`, les dépendances et le budget restent identiques.
+Cette version de serveur sera conservée dans les traces du prochain run. Aucun effet sur la qualité
+ou les performances n'est déduit de ce seul changement de version.
+
+### Contrôles et limites de la génération
+
+La CLI autorise désormais `--generate --type adversarial` avec un nouveau `run_id`. Le validateur
+exige une préparation v1 avec une seule source identifiée et non vide, sans tableau `sources` ambigu.
+Pour cet incrément, `answerable_proposed` doit être vrai. Le schéma existant impose alors une prémisse
+et une correction proposées non vides, des preuves et aucun motif hors corpus. Le schéma général
+continue de représenter d'autres situations ; elles ne sont pas générables dans cette étape.
+
+Les contrôles communs restent appliqués : JSON strict, catégorie/difficulté, preuve appartenant au
+passage fourni, extrait exact dans ce passage et déduplication normalisée. Le programme ne confirme
+pas que la prémisse figure sémantiquement dans la question, qu'elle est fausse, que la correction
+la réfute, ni que la preuve suffit. Ces points restent à relire humainement. La correction n'a pas
+à être un extrait littéral ; ce sont les citations `evidence` qui doivent être exactes.
+
+La prémisse et la correction sont conservées telles que reçues dans le candidat exploratoire,
+sans réécriture ni points attendus confirmés. `automatic: passed` laisse `human: pending`,
+`answerable_confirmed: null`, sans relecteur ou note. Ces champs d'annotation ne devront pas être
+transmis au RAG évalué lors du futur benchmark. Aucun branchement au benchmark n'est ajouté ici.
+
+Un seul appel, budget recompté avant génération, sortie brute conservée avant contrôle, puis candidat
+ou rejet tracé. Une réponse tronquée reste une erreur technique prioritaire ; pas de réparation ou
+relance automatique. Prompt, schéma, client, orchestrateur, modèle, budget, corpus et RAG inchangés.
+
+### Vérifications et premier essai Windows
+
+**126 tests réussis ici** sous Python 3.12.14 / Pydantic 2.14.0. Le test de blocage temporaire devient
+un succès CLI simulé ; 8 tests sont ajoutés : textes et attente humaine conservés, champs invalides et
+proposition non sourçable refusés, préparation ambiguë/invalide, preuves invalides, verdict injecté ou
+paramètres différents, doublon, rejet avec brut conservé et sortie tronquée traitée comme erreur technique.
+Toutes les fixtures sont techniques, sans nouvelle question juridique ou appel au vrai modèle.
+Compilation contrôlée ; prompt et texte raw comparés avant/après : identiques à la préparation budgétée.
+
+Sur `feat/94-agent0-categories`, vérifier le dépôt propre avant l'avance rapide, puis les tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 126 tests passent, avec Ollama démarré, lancer un seul essai :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id adversarial_001 --sources .\data\synthetic\sources\selection_001.json --group 1 --type adversarial --difficulty medium
+```
+
+Si le résumé annonce `candidat_prepare`, transmettre le candidat complet :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\adversarial_001\candidates.jsonl
+```
+
+En cas de rejet ou d'erreur, transmettre d'abord le résumé ; conserver les traces avant de décider
+d'un nouvel essai. Aucune question adversarial réelle n'a encore été rapportée. #94 reste partielle,
+hors_corpus et relecture indépendante encore à réaliser ; PR #103 en brouillon avec Mahé/Remy demandés.
+Pas de verdict humain, gel, fusion, clôture ou temps réel déclaré ; estimation initiale de 7 h inchangée.

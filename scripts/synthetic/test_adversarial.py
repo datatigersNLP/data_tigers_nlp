@@ -1,4 +1,4 @@
-"""Aperçu des pièges sur des sources techniques ; aucune question juridique générée."""
+"""Préparation, validation et génération simulée de pièges sur des sources techniques."""
 
 import contextlib
 import copy
@@ -11,8 +11,9 @@ import unittest
 from unittest.mock import patch
 
 if __package__:
-    from . import client_qwen, corpus, generate, prompts, run, schema
+    from . import client_qwen, corpus, generate, prompts, run, schema, validation
     from .test_corpus import exporter
+    from .test_run import reponse_technique, requete_technique
 else:
     import client_qwen
     import corpus
@@ -20,7 +21,9 @@ else:
     import prompts
     import run
     import schema
+    import validation
     from test_corpus import exporter
+    from test_run import reponse_technique, requete_technique
 
 
 class PreparationAdversarialTests(unittest.TestCase):
@@ -41,6 +44,23 @@ class PreparationAdversarialTests(unittest.TestCase):
     def arguments(self, mode="--prepare-only"):
         return [mode, "--sources", str(self.chemin), "--type", "adversarial",
                 "--difficulty", "medium", "--index-dir", str(self.dossier)]
+
+    def preparation(self):
+        return generate.preparer(self.selection, "b" * 64, 1, "adversarial", "medium")
+
+    def proposition(self):
+        return {"question": "Pourquoi le témoin est-il allumé ?", "type": "adversarial",
+                "difficulty_target": "medium", "answerable_proposed": True,
+                "adversarial_premise": "Le témoin est allumé.",
+                "correction_proposed": "Le témoin est éteint.",
+                "generation_reason": "Contraster deux états d'un témoin technique.",
+                "evidence": [{"passage_id": self.passage["passage_id"], "excerpt": "éteint."}],
+                "out_of_corpus_reason": None}
+
+    def valider(self, proposition, preparation=None, vues=None):
+        return validation.valider_proposition(json.dumps(proposition, ensure_ascii=False),
+            self.preparation() if preparation is None else preparation, "fixture_adversarial",
+            set() if vues is None else vues)
 
     def test_prompt_conserve_source_complete_et_schema_sans_mutation(self):
         passage = {**self.passage, "texte": "  Témoin : éteint.\n\u0001 Diagnostic complet.\n"}
@@ -122,23 +142,34 @@ class PreparationAdversarialTests(unittest.TestCase):
         self.assertTrue(sauvegarde["budget_tokens_verifie"])
         self.assertFalse(json.loads(stdout.getvalue())["generation_appelee"])
 
-    def test_cli_generation_bloquee_avant_tout_effet(self):
-        racine = self.dossier / "runs_interdits"
+    def test_cli_generation_un_appel_et_candidat_humain_en_attente(self):
+        racine = self.dossier / "runs"
+        reponse = reponse_technique(self.proposition())
         with (patch.object(generate, "DOSSIER_RUNS", racine),
-              patch.object(corpus, "charger_corpus") as charger,
-              patch.object(corpus, "provenance_code") as provenance,
-              patch.object(client_qwen, "preparer_requete") as preparer,
-              patch.object(run, "executer") as executer,
-              contextlib.redirect_stderr(io.StringIO()) as stderr):
-            with self.assertRaises(SystemExit) as erreur:
-                generate.main(self.arguments("--generate") + ["--run-id", "fixture_adversarial"])
-        self.assertEqual(erreur.exception.code, 2)
-        self.assertIn("Génération adversarial non activée", stderr.getvalue())
-        charger.assert_not_called()
-        provenance.assert_not_called()
-        preparer.assert_not_called()
-        executer.assert_not_called()
-        self.assertFalse(racine.exists())
+              patch.object(corpus, "provenance_code", return_value=copy.deepcopy(self.code)),
+              patch.object(client_qwen, "preparer_requete", return_value=requete_technique()) as preparer,
+              patch.object(client_qwen, "_http", return_value=reponse) as http,
+              contextlib.redirect_stdout(io.StringIO()) as stdout):
+            self.assertEqual(generate.main(self.arguments("--generate")
+                                          + ["--run-id", "fixture_adversarial"]), 0)
+        http.assert_called_once()
+        resume = json.loads(stdout.getvalue())
+        self.assertEqual(resume["statut"], "candidat_prepare")
+        dossier = racine / "fixture_adversarial"
+        manifeste = json.loads((dossier / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(preparer.call_args.args, (manifeste["preparation"]["prompt"], False))
+        self.assertEqual(manifeste["preparation"]["source"], self.passage)
+        candidat = json.loads((dossier / "candidates.jsonl").read_text(encoding="utf-8"))
+        self.assertEqual(candidat["adversarial_premise"], self.proposition()["adversarial_premise"])
+        self.assertEqual(candidat["correction_proposed"], self.proposition()["correction_proposed"])
+        self.assertEqual(candidat["generation_source_ids"], [self.passage["passage_id"]])
+        self.assertEqual(candidat["validation"]["human"], "pending")
+        self.assertIsNone(candidat["validation"]["answerable_confirmed"])
+        self.assertEqual(candidat["validation"]["expected_points"], [])
+        self.assertEqual((dossier / "rejected.jsonl").read_bytes(), b"")
+        traces = [json.loads(l) for l in (dossier / "traces.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(next(t["resultat"] for t in traces if "resultat" in t)["reponse_brute"],
+                         reponse["response"])
 
     def test_cli_sortie_existante_preservee_avant_lecture_du_corpus(self):
         sortie = self.dossier / "conserver.json"
@@ -165,6 +196,96 @@ class PreparationAdversarialTests(unittest.TestCase):
         preparer.assert_not_called()
         self.assertFalse(sortie.exists())
         self.assertEqual(self.chemin.read_bytes(), octets)
+
+    def test_validation_preserve_textes_et_ne_confirme_aucune_semantique(self):
+        proposition = self.proposition()
+        proposition["question"] = "  Pourquoi le témoin est-il allumé ?\n"
+        proposition["adversarial_premise"] = " Le témoin est allumé. "
+        proposition["correction_proposed"] = "  Le témoin est éteint.\n"
+        preparation = self.preparation()
+        avant = copy.deepcopy((proposition, preparation))
+        candidat = self.valider(proposition, preparation)
+        for champ in ("question", "adversarial_premise", "correction_proposed", "generation_reason"):
+            self.assertEqual(getattr(candidat, champ), proposition[champ])
+        self.assertEqual(candidat.validation.automatic, "passed")
+        self.assertEqual(candidat.validation.human, "pending")
+        self.assertIsNone(candidat.validation.answerable_confirmed)
+        self.assertIsNone(candidat.validation.reviewer)
+        self.assertIsNone(candidat.validation.review_note)
+        self.assertEqual(candidat.validation.expected_points, [])
+        self.assertEqual((proposition, preparation), avant)
+
+    def test_validation_refuse_premisse_correction_vides_et_cas_non_sourcable(self):
+        for champ in ("adversarial_premise", "correction_proposed"):
+            for valeur in (None, " ", True):
+                with self.subTest(champ=champ, valeur=valeur), self.assertRaises(ValueError):
+                    self.valider({**self.proposition(), champ: valeur})
+        proposition = {**self.proposition(), "answerable_proposed": False, "evidence": [],
+                       "correction_proposed": None, "out_of_corpus_reason": "Absent de cette fixture."}
+        with self.assertRaisesRegex(ValueError, "correction proposée comme sourçable"):
+            self.valider(proposition)
+
+    def test_validation_refuse_preparation_ambigue_ou_source_invalide(self):
+        cas = [{"format": "agent0-preparation-v2"}, {"source": None},
+               {"sources": [self.passage]}, {"source": {**self.passage, "texte": " "}},
+               {"source": {**self.passage, "passage_id": " "}}]
+        for changement in cas:
+            with self.subTest(changement=changement), self.assertRaisesRegex(ValueError, "préparation adversarial"):
+                self.valider(self.proposition(), {**self.preparation(), **changement})
+        preparation = self.preparation()
+        preparation.pop("source")
+        with self.assertRaisesRegex(ValueError, "préparation adversarial"):
+            self.valider(self.proposition(), preparation)
+
+    def test_validation_refuse_source_inventee_extrait_modifie_ou_preuve_vide(self):
+        cas = [[], [{"passage_id": "fixture-absente", "excerpt": "éteint."}],
+               [{"passage_id": self.passage["passage_id"], "excerpt": "eteint."}],
+               [{"passage_id": self.passage["passage_id"], "excerpt": "éteint.\n\n"}]]
+        for evidence in cas:
+            with self.subTest(evidence=evidence), self.assertRaises(ValueError):
+                self.valider({**self.proposition(), "evidence": evidence})
+
+    def test_validation_refuse_verdict_injecte_categorie_ou_difficulte_differente(self):
+        for changement in [{"validation": {"human": "accepted"}}, {"difficulty_target": "hard"},
+                           {"type": "hors_corpus", "answerable_proposed": False, "evidence": [],
+                            "adversarial_premise": None, "correction_proposed": None,
+                            "out_of_corpus_reason": "Absent de cette fixture."}]:
+            with self.subTest(changement=changement), self.assertRaises(ValueError):
+                self.valider({**self.proposition(), **changement})
+
+    def test_validation_refuse_doublon_normalise(self):
+        vues = {validation.normaliser_question(self.proposition()["question"].upper())}
+        with self.assertRaisesRegex(ValueError, "doublon"):
+            self.valider(self.proposition(), vues=vues)
+
+    def test_run_rejet_conserve_brut_sans_reparation_ni_relance(self):
+        proposition = self.proposition()
+        proposition["evidence"][0]["excerpt"] = "Texte absent"
+        reponse = reponse_technique(proposition)
+        racine = self.dossier / "runs"
+        with (patch.object(client_qwen, "preparer_requete", return_value=requete_technique()),
+              patch.object(client_qwen, "_http", return_value=reponse) as http):
+            resume = run.executer(self.preparation(), "rejet_adversarial", racine)
+        http.assert_called_once()
+        self.assertEqual(resume["statut"], "rejet_automatique")
+        dossier = racine / "rejet_adversarial"
+        self.assertEqual((dossier / "candidates.jsonl").read_bytes(), b"")
+        rejet = json.loads((dossier / "rejected.jsonl").read_text(encoding="utf-8"))
+        self.assertEqual(rejet["phase"], "validation_automatique")
+        traces = [json.loads(l) for l in (dossier / "traces.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(next(t["resultat"] for t in traces if "resultat" in t)["reponse_brute"],
+                         reponse["response"])
+
+    def test_run_sortie_tronquee_reste_erreur_technique(self):
+        reponse = {**reponse_technique(self.proposition()), "done_reason": "length"}
+        racine = self.dossier / "runs"
+        with (patch.object(client_qwen, "preparer_requete", return_value=requete_technique()),
+              patch.object(client_qwen, "_http", return_value=reponse) as http):
+            resume = run.executer(self.preparation(), "tronque_adversarial", racine)
+        http.assert_called_once()
+        self.assertEqual(resume["statut"], "erreur_technique")
+        self.assertIn("generation_incomplete", resume["motif"])
+        self.assertEqual((racine / "tronque_adversarial" / "candidates.jsonl").read_bytes(), b"")
 
 
 if __name__ == "__main__":
