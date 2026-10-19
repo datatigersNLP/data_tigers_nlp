@@ -1674,3 +1674,97 @@ Budget recompté avant chaque appel, sans troncature ; les 1441 tokens concernen
 Documentation et journal seulement : aucun code, prompt, validateur, corpus, modèle ou budget modifié,
 aucun test unitaire ou appel réel relancé ici. #94 partielle, #103 en brouillon avec Mahé/Remy demandés ;
 aucun verdict humain, admission, gel, fusion, clôture ou temps réel déclaré. Estimation 7 h inchangée.
+
+
+## 27. #94 — Trois motifs hors corpus contredits par leurs sources et prompt v2
+
+### Série annoncée, résultats conservés
+
+Après le premier essai et la préannonce des deux autres thèmes, Jibril transmet les résumés et
+candidats complets de `hors_corpus_002` (CSE) et `hors_corpus_003` (médaille).
+Le pull affiché avant le CSE avance de `72ea697` à `c54561c`, documentation seulement.
+Les 142 tests Windows réussis (`0.985s`) avaient été transmis avant `001` ; aucun nouveau
+résultat de tests n'est rapporté pour les deux runs suivants.
+
+| Run | Groupe / source | HF / Ollama | Sortie | Fin | Résultat automatique |
+|---|---|---:|---:|---|---|
+| `hors_corpus_001` | 1 / `m2-article374529-0004` | 1441 / 1441 | 156 tokens | stop | 1 candidat, aucun rejet |
+| `hors_corpus_002` | 2 / `m2-article377050-0003` | 1883 / 1883 | 175 tokens | stop | 1 candidat, aucun rejet |
+| `hors_corpus_003` | 3 / `m2-article374500-0003` | 1721 / 1721 | 167 tokens | stop | 1 candidat, aucun rejet |
+
+Les trois propositions ont `answerable_proposed: false`, des preuves positives vides et un motif ;
+leur statut humain reste `pending`. Essais annoncés avec v1, mais manifestes et traces complets non
+transmis : la version exacte, le SHA/état Git et les autres détails de chaque inférence ne sont pas
+déduits des résumés, du pull ou du budget précédent. Tous les résultats restent conservés.
+
+### Lecture assistée des deux nouveaux cas
+
+**CSE.** La question demande les conditions de déclenchement d'une alerte en santé/sécurité ; le motif
+déclare ces informations absentes du passage. Celui-ci énumère pourtant l'atteinte aux droits, notamment
+à la santé physique/mentale, le danger grave et imminent, puis le risque grave pour la santé publique
+ou l'environnement. La question générale ne distingue pas un renseignement manquant. Le motif est
+contredit par cette source, sans prétendre que le passage détaille toutes les formalités possibles.
+
+**Médaille.** La question demande les conditions pour les salariés résidant à l'étranger ; le motif
+déclare ces informations absentes. Le passage distingue les situations de travail à l'étranger selon
+l'employeur ou la structure, puis une attribution exceptionnelle pour d'autres établissements :
+résidence à l'étranger, conditions d'ancienneté de services prévues par la réglementation et contribution
+au bon renom de la France. Il mentionne aussi des exclusions. Les seuils d'ancienneté ne sont pas
+détaillés, mais ce manque ne permet pas de déclarer absentes toutes les conditions demandées par
+cette formulation générale. Conserver la distinction entre lieu de résidence et lieu de travail.
+
+Comme pour le CET, **avis assisté de ne pas admettre ces deux cas en l'état comme hors corpus**.
+Les candidats restent intacts et humains en attente ; aucune décision humaine ou requalification
+automatique. Dans cette série de mise au point, les trois motifs d'absence sont contredits par leurs
+sources. Ce constat ne fournit ni un taux général de qualité ni une validation exhaustive du corpus.
+Une liste `evidence: []` n'établit pas une absence documentaire.
+
+### Ajustement général, sans nouvelle règle de validation
+
+Prompt `agent0-hors-corpus-v2` : demander une information différente et précisément délimitée,
+sans transformer les règles, conditions, cas, exceptions ou procédures déjà décrits en questions
+déclarées hors corpus. Une demande générale sur les conditions du sujet déjà traité ne définit pas
+une information différente. `generation_reason` doit distinguer le contenu du passage et
+l'information visée ; `out_of_corpus_reason` doit nommer cette information et rappeler que son absence
+dans tout le corpus reste à vérifier. Ces justifications sont elles-mêmes des propositions à relire.
+
+Aucun exemple juridique, question de remplacement, filtre lexical ou second juge Qwen ajouté.
+Le programme ne teste pas sémantiquement ces consignes : schéma/validateur inchangés, source complète,
+absence seulement proposée, relecture du corpus complet toujours requise. Les anciens candidats
+et le prompt v1 de leurs traces ne sont pas réécrits.
+
+**142 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0 (`0.334s`), sans nouveau test de texte
+de consigne ajouté. Compilation contrôlée ; objets prompts simple/reformulation/multi/adversarial
+identiques avant/après sur les mêmes fixtures techniques. Ces tests ne mesurent pas l'efficacité
+sémantique de v2. Client, orchestrateur, schéma, validateur, corpus, modèle, budget, dépendances et RAG
+inchangés. Aucun vrai tokeniseur, Ollama ou nouvelle question générée ici.
+
+Contrôle préparatoire reconstruit sur la source CET intégrale, 318 caractères :
+prompt v2 `medium` = `1978ece8defbf604a082009d7e3a2ce796191ee3b105dbd1ff3a3f18ca4eec64`.
+Manifeste Windows complet non lu ; aucun budget réel v2 encore mesuré.
+
+### Comparaison prévue avant résultats
+
+Conserver v2 pour trois essais dans le même ordre : `hors_corpus_004` groupe 1 CET,
+`hors_corpus_005` groupe 2 CSE, `hors_corpus_006` groupe 3 médaille. Lire chaque sortie avant
+la suivante, garder tous les candidats/rejets et ne pas ajuster la consigne entre ces trois essais.
+Comparaison sur des sources utilisées pour la mise au point, pas un pilote indépendant #95.
+
+Sur le Legion, dépôt propre puis mise à jour et tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 142 tests passent, premier essai v2 sur la même source que `001` :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id hors_corpus_004 --sources .\data\synthetic\sources\selection_001.json --group 1 --type hors_corpus --difficulty medium
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_004\candidates.jsonl
+```
+
+Budget recompté avant l'appel ; les 1441 tokens concernent v1 sur ce passage.
+#94 partielle, #103 en brouillon avec Mahé/Remy demandés ; aucun verdict humain, admission,
+gel, fusion, clôture ou temps réel déclaré. Estimation initiale de 7 h inchangée.
