@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1`, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -50,9 +50,9 @@ Le calendrier officiel reste à confirmer par écrit dans #8. L'échéance opér
 
 **Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. `volet-a-v1`, tag annoté de fin du volet A posé le 18/10/2026 sur `8955962`, fusion dans `main` de la PR #84 approuvée par Jibril ; il contient la première inférence locale (PR #41).
 
-## Inventaire des tickets au 13/10/2026
+## Inventaire des tickets au 18/10/2026
 
-Les 46 lignes ci-dessous reprennent les issues du dépôt, sans les pull requests. Titres, assignés, milestones, états et dates proviennent de l'API GitHub. Les dates sont affichées à l'heure de Paris. L'état Ouvert/Fermé est celui de l'issue, pas le statut du Project Board ; il ne permet pas de conclure Todo, In progress ou Done.
+Les 54 lignes ci-dessous reprennent les issues du dépôt, sans les pull requests. Titres, assignés, milestones, états et dates proviennent de l'API GitHub. Les dates sont affichées à l'heure de Paris. L'état Ouvert/Fermé est celui de l'issue, pas le statut du Project Board ; il ne permet pas de conclure Todo, In progress ou Done.
 
 La colonne « Assignés GitHub » inclut les responsables et les soutiens sans les confondre avec les rôles définis dans le corps du ticket. NR signifie ici qu'aucun assigné n'est enregistré, pas que la réunion n'avait aucun participant.
 
@@ -80,7 +80,7 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #20 | Formaliser les règles de fonctionnement et les critères de validation | transverse | Tous | Mi-parcours | Fermé | 20/09/2026 | 30/09/2026 |
 | #21 | Proposer les modèles de tickets, pull requests et Weeklys | transverse | Mahé, Jibril | Mi-parcours | Fermé | 20/09/2026 | 30/09/2026 |
 | #22 | Discuter et valider les modèles de travail en Weekly 3 | transverse | Tous | Mi-parcours | Fermé | 20/09/2026 | 05/10/2026 |
-| #23 | Construire et prioriser le backlog détaillé jusqu'au mi-parcours | transverse | Tous | Mi-parcours | Ouvert | 20/09/2026 | - |
+| #23 | Construire et prioriser le backlog détaillé jusqu'au mi-parcours | transverse | Tous | Mi-parcours | Fermé | 20/09/2026 | 18/10/2026 |
 | #24 | Mettre en place le registre des risques, hypothèses et décisions | transverse | Tous | Mi-parcours | Fermé | 20/09/2026 | 30/09/2026 |
 | #25 | Définir la méthode de suivi des outils novateurs | transverse | Vaneck, Maïmouna | Mi-parcours | Fermé | 20/09/2026 | 10/10/2026 |
 | #26 | Réunion d'avancement - 23 septembre 2026 | transverse | NR | J2 | Fermé | 23/09/2026 | 27/09/2026 |
@@ -104,6 +104,14 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril | J3 | Ouvert | 30/09/2026 | - |
 | #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Fermé | 30/09/2026 | 18/10/2026 |
 | #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Fermé | 04/10/2026 | 14/10/2026 |
+| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #95 | [Agent0 Light] A5 — Relire et figer un premier Challenge Set pilote | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #96 | [Agent0 Light] B1 — Exécuter le RAG sur un Challenge Set figé | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #97 | [Agent0 Light] B2 — Mesurer les résultats et diagnostiquer les erreurs du RAG | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #98 | [Agent0 Light] C1 — Générer un nouveau lot ciblé sur les faiblesses détectées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
 
 ## Charges et dates de travail
 
@@ -157,6 +165,14 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #52 | NR | NR | NR | - | NR |
 | #53 | NR | NR | 16 (P) | - | NR |
 | #56 | NR | NR | NR | - | NR |
+| #91 | 18/10 | NR | NR | - | NR |
+| #92 | 18/10 | NR | NR | - | NR |
+| #93 | 18/10 | NR | NR | - | NR |
+| #94 | NR | NR | NR | - | NR |
+| #95 | NR | NR | NR | - | NR |
+| #96 | NR | NR | NR | - | NR |
+| #97 | NR | NR | NR | - | NR |
+| #98 | NR | NR | NR | - | NR |
 
 ### Provenance des valeurs connues
 
@@ -178,7 +194,7 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 | Ticket | Date ou condition écrite | Situation vérifiée et point à suivre |
 |---|---|---|
 | #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. |
-| #23 | 03/10, cible provisoire dans le corps | Ouvert ; la mise à jour du suivi ne clôture pas la validation collective du backlog. |
+| #23 | 03/10, cible provisoire dans le corps | Fermé le 18/10 comme non réalisé, par décision du lead technique : horizon du mi-parcours dépassé ; 37 tickets sur 46 sans estimation, aucune validation collective du backlog, aucune capture du board versionnée. |
 | #43 | Date officielle du mi-parcours | Au 18/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori le 17/10 ; `main` mise à jour par la PR #74 (Jibril). **Critère de #43 non satisfait par ce tag historique** : la première inférence locale, réussie le 27/09 (#31), n'a été fusionnée dans `dev` que le 03/10 (PR #41), après `ac84ed3`. Écart déclaré dans le message du tag ; arbitrage du 18/10 (Mahé) : le tag n'est pas déplacé, #43 est validé avec cette réserve et fermé le 18/10. Le jalon de fin du volet A est le tag `volet-a-v1`, posé sur `main` après la PR #84 ; il contient la première inférence locale. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
 | #46 | 14/10, proposition dans le ticket | Fermé le 17/10 à 15 h 52 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73). |
