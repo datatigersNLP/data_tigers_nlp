@@ -1316,3 +1316,70 @@ Transmettre le résumé et le candidat, ou d'abord le motif du rejet. Conserver 
 pour comparaison. Ces essais constituent une mise au point, pas un benchmark de qualité.
 Hors_corpus et relecture indépendante restent à réaliser ; #94 partielle, #103 en brouillon,
 Mahé/Remy demandés. Aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 22. #94 — Question neutre et piège à prémisse fausse
+
+Jibril transmet **126 tests Windows réussis** (`Ran 126 tests in 0.887s`, `OK`) et le candidat
+complet de `adversarial_002` : **1509 HF / 1509 Ollama**, 255 tokens générés, fin `stop`, un candidat
+et aucun rejet. Budget réservé v2 : 2085/8192. Manifeste complet non transmis ; aucune provenance
+Git détaillée de l'inférence n'est déduite du seul résumé.
+
+La question reçue est : « Pendant le congé sans solde, la rémunération du salarié est-elle maintenue ? »
+La preuve est une copie exacte de la première phrase de `m2-article374529-0004` ; la correction
+est une reformulation cohérente avec celle-ci selon la lecture assistée. La forme interrogative est
+obtenue, mais la question ne présente pas le maintien de la rémunération comme acquis : elle demande
+si c'est le cas. L'affirmation du champ `adversarial_premise` n'est donc pas présupposée par la question.
+La justification générée qui dit que la question « affirme » cette prémisse n'est pas une validation.
+
+Avis assisté : ce cas ressemble à une question fermée simple ; son adéquation à un piège avec prémisse
+fausse n'est pas établie. Le candidat et sa catégorie restent inchangés, `human: pending`, sans verdict
+humain, requalification automatique ou admission au lot figé. Les contrôles de copie/structure ne
+permettent pas de détecter ce défaut de catégorie.
+
+### Consigne générale v3 et diversification annoncée
+
+`agent0-adversarial-v3` ajoute trois consignes : la question présente la prémisse comme acquise pour
+que répondre correctement impose de la contester ; une interrogation neutre ne suffit pas ; le champ
+`adversarial_premise` ne remplace pas cette présupposition dans la question. Aucun exemple juridique,
+question de remplacement ou point attendu n'est ajouté. Le validateur reste inchangé.
+
+**126 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0, sans nouveau test ajouté ni appel modèle.
+Compilation et comparaison des prompts simple/reformulation/multi avant/après contrôlées : identiques.
+Ces vérifications ne mesurent pas la qualité des questions ni l'efficacité de la consigne v3.
+
+Pour ne pas continuer à ajuster la consigne sur le congé sans solde, les deux prochains essais utiliseront
+les groupes 2 puis 3 du manifeste existant `selection_001.json`. Ils proviennent du tirage initial à
+cinq fiches, graine 20261018 ; aucun nouveau tirage selon une réponse favorable. Garder v3 et conserver
+les deux résultats, y compris les rejets, avant tout autre ajustement des consignes.
+
+| Ordre | Groupe | Run prévu | Passage attendu | Fiche |
+|---|---:|---|---|---|
+| 1 | 2 | `adversarial_003` | `m2-article377050-0003` | Attributions SSCT du CSE |
+| 2 | 3 | `adversarial_004` | `m2-article374500-0003` | Médaille d'honneur du travail |
+
+Les deux sources sont reconstruites et conservées intégralement, respectivement 1895 et 1383 caractères.
+Cela ne lit pas le manifeste Windows complet et ne démontre pas la faisabilité de chaque piège.
+Les caractères de contrôle déjà repérés dans le passage CSE restent inchangés ; le corpus figé et
+le contrôle d'extrait exact ne sont pas assouplis. Empreintes des prompts v3 `medium` reconstruits :
+
+- groupe 2 : `bd19aa3825433add5520d143697340c6bd233cdb20bf2117abcacd2aefd6337d` ;
+- groupe 3 : `e20021c3abfeb04ba4c196333fb0bc6b87450efba2575e254ee67e02ebddcdb8`.
+
+Après récupération sur la même branche et réussite des 126 tests Windows, premier essai avec Ollama démarré :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id adversarial_003 --sources .\data\synthetic\sources\selection_001.json --group 2 --type adversarial --difficulty medium
+```
+
+Si le résultat annonce `candidat_prepare` :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\adversarial_003\candidates.jsonl
+```
+
+Transmettre résumé/candidat ou le motif du rejet avant de lancer le groupe 3. Le script recompte
+le budget avant chaque appel ; les 1509 tokens concernent l'ancien prompt et l'ancienne source.
+Limites, modèle, schéma, client, orchestrateur, corpus et RAG inchangés. Il s'agit d'une mise au point,
+pas d'un score de benchmark. #94 partielle, hors_corpus et relecture indépendante encore à réaliser ;
+#103 en brouillon, Mahé/Remy demandés, aucun gel, fusion, clôture ou temps réel déclaré.
