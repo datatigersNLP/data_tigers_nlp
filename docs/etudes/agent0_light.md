@@ -1532,3 +1532,83 @@ Transmettre les tests et le résumé avant le budget réel. La génération et s
 incrément ultérieur ; l'admission exige ensuite la relecture du corpus complet. #94 reste partielle,
 #103 en brouillon, Mahé/Remy demandés ; aucun candidat hors corpus, verdict humain, gel, fusion,
 clôture ou temps réel déclaré. Estimation initiale de 7 h inchangée.
+
+
+## 25. #94 — Budget Windows vérifié et génération hors corpus activée
+
+### Preuves transmises et contrôle du budget
+
+Jibril transmet **134 tests Windows réussis** (`1.105s`, `OK`), puis l'aperçu et la préparation
+Qwen au commit `65774deb68df98c50e7652ce24f5c803713ca6cc`, copie propre, Python 3.12.15.
+Source `m2-article374529-0004`, prompt `agent0-hors-corpus-v1`, difficulté `medium`.
+
+Le contrôle rapporte **1441 HF + 512 sortie + 64 marge = 2017/8192**, sans génération :
+`generation_appelee: false`, `comptage_ollama_compare: false`. L'égalité HF/Ollama reste à
+vérifier sur le premier run. Ollama 0.40.6, digest Qwen, gabarit, révision du tokeniseur et versions
+des dépendances identiques aux références transmises précédemment.
+
+Empreintes retrouvées ici sur la source M2 intégrale de 318 caractères, sans utiliser le vrai
+tokeniseur ni appeler Ollama :
+
+- prompt : `c7188861ca3a65932b61a712592a814fa89163b43d669a64e86873e8b54177e6` ;
+- texte raw : `542f8728dab2b409ecd4290efbc5d311ac2ecec00457f02b6efddacf942f75f3`.
+
+Les empreintes Windows des quatre scripts déclarés sont retrouvées avec leurs fins de ligne CRLF.
+Cette reconstruction ne remplace pas la lecture du manifeste Windows complet et ne refait pas le
+comptage de 1441 tokens. Le message PyTorch est cohérent avec l'usage du seul tokeniseur dans Python ;
+l'inférence locale reste exécutée par Ollama.
+
+### Contrôles et activation
+
+Le validateur exige désormais aussi pour `hors_corpus` une préparation v1, une seule clé `source`,
+un identifiant et un texte non vides ; une préparation ambiguë avec `sources` est refusée.
+Ce contrôle partage la règle déjà appliquée à adversarial, dont le comportement est conservé.
+
+Les règles croisées du schéma existant sont réutilisées : `answerable_proposed: false`,
+`evidence: []`, motif non vide et champs adversarial nuls. Le motif, la question et la justification
+reçus restent intacts. Le programme ne vérifie pas que le motif est juste ni qu'une réponse est absente
+du passage de départ ou du corpus entier. La source reste dans `generation_source_ids` comme
+provenance, sans devenir une preuve positive ou une preuve d'absence.
+
+Le blocage temporaire de `--generate --type hors_corpus` est levé. Les contrôles communs demeurent :
+JSON strict, catégorie/difficulté demandées, déduplication normalisée et un seul appel maximum.
+Une sortie valide structurellement crée un candidat `automatic: passed`, `human: pending`,
+`answerable_confirmed: null`, sans relecteur, note humaine ou points attendus.
+La relecture complète décrite en section 24 reste nécessaire avant toute admission.
+
+Brut, manifeste, candidat ou rejet et erreurs techniques sont tracés par l'orchestrateur existant.
+Aucune réparation ou relance automatique. Les cinq catégories ont maintenant leurs trois modes CLI ;
+cela ne constitue pas une validation sémantique ou l'achèvement du pilote.
+
+### Vérifications exécutées ici et premier essai Windows
+
+**142 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0 : 8 nouveaux tests de validation/traces ;
+l'ancien test de blocage est remplacé par un succès CLI simulé avec un seul appel.
+Textes/provenance et attente humaine, proposition répondable ou preuves positives interdites,
+motif/champs adversarial incohérents, préparation ambiguë, verdict injecté, catégorie/difficulté,
+doublon, rejet brut et sortie tronquée couverts sur des fixtures techniques.
+Compilation et aide CLI contrôlées. Prompt, schéma, client, orchestrateur, corpus, budget, modèle,
+dépendances et RAG inchangés ; aucun vrai tokeniseur, appel réel ou candidat hors corpus obtenu ici.
+
+Sur le Legion, vérifier le dépôt propre puis récupérer et tester :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 142 tests passent, un seul premier run :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id hors_corpus_001 --sources .\data\synthetic\sources\selection_001.json --group 1 --type hors_corpus --difficulty medium
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_001\candidates.jsonl
+```
+
+Le budget est recompté avant l'appel ; un candidat ou un rejet sera conservé. Transmettre le résumé
+et le candidat complet, ou la réponse brute en cas de rejet, avant une nouvelle génération.
+Les préparations existantes ne sont pas écrasées et les autres runs restent conservés.
+
+#94 reste partielle en attente des essais et relectures ; #103 en brouillon avec Mahé/Remy demandés.
+Aucun verdict humain, admission au lot figé, gel, fusion, clôture ou temps réel déclaré ;
+estimation initiale de 7 h inchangée.

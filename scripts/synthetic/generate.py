@@ -137,9 +137,6 @@ def main(argv=None) -> int:
         parser.error("--generate exige --run-id et n'utilise pas --output")
     if not args.generate and args.run_id is not None:
         parser.error("--run-id s'utilise seulement avec --generate")
-    if args.generate and args.type == "hors_corpus":
-        parser.error("Génération hors_corpus non activée : préparer l'aperçu et le budget "
-                     "avant les contrôles de sortie et la procédure de relecture du corpus complet")
     try:
         if args.output and args.output.exists():
             raise ErreurPreparation("Le fichier de sortie existe déjà ; choisir un autre nom")

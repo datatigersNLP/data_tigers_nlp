@@ -33,13 +33,14 @@ def charger_questions_vues(dossier: Path, exclure: Path | None = None) -> tuple[
 
 
 def _sources_preparation(preparation: dict) -> list[dict]:
-    if preparation["type"] == "adversarial":
+    if preparation["type"] in {"adversarial", "hors_corpus"}:
         source = preparation.get("source")
         if (preparation.get("format") != "agent0-preparation-v1" or "sources" in preparation
                 or not isinstance(source, dict)
                 or any(not isinstance(source.get(c), str) or not source[c].strip()
                        for c in ("passage_id", "texte"))):
-            raise ValueError("Une préparation adversarial v1 avec une source unique non vide est requise")
+            raise ValueError(f"Une préparation {preparation['type']} v1 "
+                             "avec une source unique non vide est requise")
         return [source]
     if preparation["type"] != "multi_passage":
         return [preparation["source"]]

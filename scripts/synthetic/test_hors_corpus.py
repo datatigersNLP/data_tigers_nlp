@@ -1,4 +1,4 @@
-"""Préparation hors corpus sur des fixtures techniques ; aucune absence confirmée."""
+"""Préparation et génération hors corpus simulée ; aucune absence confirmée."""
 
 import contextlib
 import copy
@@ -11,8 +11,9 @@ import unittest
 from unittest.mock import patch
 
 if __package__:
-    from . import client_qwen, corpus, generate, prompts, run, schema
+    from . import client_qwen, corpus, generate, prompts, run, schema, validation
     from .test_corpus import exporter
+    from .test_run import reponse_technique, requete_technique
 else:
     import client_qwen
     import corpus
@@ -20,7 +21,9 @@ else:
     import prompts
     import run
     import schema
+    import validation
     from test_corpus import exporter
+    from test_run import reponse_technique, requete_technique
 
 
 class PreparationHorsCorpusTests(unittest.TestCase):
@@ -41,6 +44,21 @@ class PreparationHorsCorpusTests(unittest.TestCase):
     def arguments(self, mode="--prepare-only"):
         return [mode, "--sources", str(self.chemin), "--type", "hors_corpus",
                 "--difficulty", "medium", "--index-dir", str(self.dossier)]
+
+    def preparation(self):
+        return generate.preparer(self.selection, "b" * 64, 1, "hors_corpus", "medium")
+
+    def proposition(self):
+        return {"question": "Quelle est la masse de l'appareil ?", "type": "hors_corpus",
+                "difficulty_target": "medium", "answerable_proposed": False, "evidence": [],
+                "generation_reason": "Proposer un besoin voisin du diagnostic technique.",
+                "out_of_corpus_reason": "La masse manque dans ce passage ; corpus complet à vérifier.",
+                "adversarial_premise": None, "correction_proposed": None}
+
+    def valider(self, proposition, preparation=None, vues=None):
+        return validation.valider_proposition(json.dumps(proposition, ensure_ascii=False),
+            self.preparation() if preparation is None else preparation, "fixture_hors_corpus",
+            set() if vues is None else vues)
 
     def test_prompt_conserve_source_complete_schema_et_absence_de_verdict(self):
         passage = {**self.passage, "texte": "  Témoin : éteint.\n\u0001 Diagnostic complet.\n"}
@@ -122,23 +140,34 @@ class PreparationHorsCorpusTests(unittest.TestCase):
         self.assertTrue(sauvegarde["budget_tokens_verifie"])
         self.assertFalse(json.loads(stdout.getvalue())["generation_appelee"])
 
-    def test_cli_generation_bloquee_avant_tout_effet(self):
-        racine = self.dossier / "runs_interdits"
+    def test_cli_generation_un_appel_et_absence_non_confirmee(self):
+        racine = self.dossier / "runs"
+        reponse = reponse_technique(self.proposition())
         with (patch.object(generate, "DOSSIER_RUNS", racine),
-              patch.object(corpus, "charger_corpus") as charger,
-              patch.object(corpus, "provenance_code") as provenance,
-              patch.object(client_qwen, "preparer_requete") as preparer,
-              patch.object(run, "executer") as executer,
-              contextlib.redirect_stderr(io.StringIO()) as stderr):
-            with self.assertRaises(SystemExit) as erreur:
-                generate.main(self.arguments("--generate") + ["--run-id", "fixture_hors_corpus"])
-        self.assertEqual(erreur.exception.code, 2)
-        self.assertIn("Génération hors_corpus non activée", stderr.getvalue())
-        charger.assert_not_called()
-        provenance.assert_not_called()
-        preparer.assert_not_called()
-        executer.assert_not_called()
-        self.assertFalse(racine.exists())
+              patch.object(corpus, "provenance_code", return_value=copy.deepcopy(self.code)),
+              patch.object(client_qwen, "preparer_requete", return_value=requete_technique()) as preparer,
+              patch.object(client_qwen, "_http", return_value=reponse) as http,
+              contextlib.redirect_stdout(io.StringIO()) as stdout):
+            self.assertEqual(generate.main(self.arguments("--generate")
+                                          + ["--run-id", "fixture_hors_corpus"]), 0)
+        http.assert_called_once()
+        self.assertEqual(json.loads(stdout.getvalue())["statut"], "candidat_prepare")
+        dossier = racine / "fixture_hors_corpus"
+        manifeste = json.loads((dossier / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(preparer.call_args.args, (manifeste["preparation"]["prompt"], False))
+        self.assertEqual(manifeste["preparation"]["source"], self.passage)
+        candidat = json.loads((dossier / "candidates.jsonl").read_text(encoding="utf-8"))
+        self.assertEqual(candidat["generation_source_ids"], [self.passage["passage_id"]])
+        self.assertEqual(candidat["out_of_corpus_reason"], self.proposition()["out_of_corpus_reason"])
+        self.assertFalse(candidat["answerable_proposed"])
+        self.assertEqual(candidat["evidence"], [])
+        self.assertEqual(candidat["validation"]["human"], "pending")
+        self.assertIsNone(candidat["validation"]["answerable_confirmed"])
+        self.assertEqual(candidat["validation"]["expected_points"], [])
+        self.assertEqual((dossier / "rejected.jsonl").read_bytes(), b"")
+        traces = [json.loads(l) for l in (dossier / "traces.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(next(t["resultat"] for t in traces if "resultat" in t)["reponse_brute"],
+                         reponse["response"])
 
     def test_cli_sortie_existante_preservee_avant_lecture_du_corpus(self):
         sortie = self.dossier / "conserver.json"
@@ -164,6 +193,97 @@ class PreparationHorsCorpusTests(unittest.TestCase):
         preparer.assert_not_called()
         self.assertFalse(sortie.exists())
         self.assertEqual(self.chemin.read_bytes(), octets)
+
+    def test_validation_preserve_textes_source_et_absence_de_verdict(self):
+        proposition = self.proposition()
+        proposition["question"] = "  Quelle est la masse de l'appareil ?\n"
+        proposition["out_of_corpus_reason"] = "  Information manquante ici ; corpus complet à vérifier.\n"
+        preparation = self.preparation()
+        avant = copy.deepcopy((proposition, preparation))
+        candidat = self.valider(proposition, preparation)
+        for champ in ("question", "out_of_corpus_reason", "generation_reason"):
+            self.assertEqual(getattr(candidat, champ), proposition[champ])
+        self.assertFalse(candidat.answerable_proposed)
+        self.assertEqual(candidat.evidence, [])
+        self.assertEqual(candidat.generation_source_ids, [self.passage["passage_id"]])
+        self.assertEqual(candidat.validation.automatic, "passed")
+        self.assertEqual(candidat.validation.human, "pending")
+        for champ in ("answerable_confirmed", "reviewer", "review_note"):
+            self.assertIsNone(getattr(candidat.validation, champ))
+        self.assertEqual(candidat.validation.expected_points, [])
+        self.assertEqual((proposition, preparation), avant)
+
+    def test_validation_refuse_repondable_ou_preuves_positives(self):
+        preuve = {"passage_id": self.passage["passage_id"], "excerpt": "éteint."}
+        cas = [{"answerable_proposed": True, "evidence": [preuve], "out_of_corpus_reason": None},
+               {"answerable_proposed": "false"}, {"answerable_proposed": 0},
+               {"evidence": [preuve]},
+               {"evidence": [{"passage_id": "source-inventee", "excerpt": "absent"}]}]
+        for changement in cas:
+            with self.subTest(changement=changement), self.assertRaises(ValueError):
+                self.valider({**self.proposition(), **changement})
+
+    def test_validation_exige_motif_sans_champs_adversarial(self):
+        cas = [{"out_of_corpus_reason": valeur} for valeur in (None, "", " \n", True)]
+        cas += [{"adversarial_premise": "Le témoin est allumé."},
+                {"correction_proposed": "Le témoin est éteint."}]
+        for changement in cas:
+            with self.subTest(changement=changement), self.assertRaises(ValueError):
+                self.valider({**self.proposition(), **changement})
+
+    def test_validation_refuse_preparation_ambigue_ou_source_invalide(self):
+        cas = [{"format": "agent0-preparation-v2"}, {"source": None},
+               {"sources": [self.passage]}, {"source": {**self.passage, "texte": " "}},
+               {"source": {**self.passage, "passage_id": " "}},
+               {"source": {**self.passage, "texte": True}}]
+        for changement in cas:
+            with self.subTest(changement=changement), self.assertRaisesRegex(ValueError, "préparation hors_corpus"):
+                self.valider(self.proposition(), {**self.preparation(), **changement})
+        preparation = self.preparation()
+        preparation.pop("source")
+        with self.assertRaisesRegex(ValueError, "préparation hors_corpus"):
+            self.valider(self.proposition(), preparation)
+
+    def test_validation_refuse_verdict_injecte_categorie_ou_difficulte_differente(self):
+        simple = {"type": "simple", "answerable_proposed": True, "out_of_corpus_reason": None,
+                  "evidence": [{"passage_id": self.passage["passage_id"], "excerpt": "éteint."}]}
+        for changement in [{"validation": {"human": "accepted"}}, {"answerable_confirmed": False},
+                           {"difficulty_target": "hard"}, simple]:
+            with self.subTest(changement=changement), self.assertRaises(ValueError):
+                self.valider({**self.proposition(), **changement})
+
+    def test_validation_refuse_doublon_normalise(self):
+        vues = {validation.normaliser_question(self.proposition()["question"].upper())}
+        with self.assertRaisesRegex(ValueError, "doublon"):
+            self.valider(self.proposition(), vues=vues)
+
+    def test_run_rejet_conserve_brut_sans_reparation_ni_relance(self):
+        proposition = {**self.proposition(), "out_of_corpus_reason": None}
+        reponse = reponse_technique(proposition)
+        racine = self.dossier / "runs"
+        with (patch.object(client_qwen, "preparer_requete", return_value=requete_technique()),
+              patch.object(client_qwen, "_http", return_value=reponse) as http):
+            resume = run.executer(self.preparation(), "rejet_hors_corpus", racine)
+        http.assert_called_once()
+        self.assertEqual(resume["statut"], "rejet_automatique")
+        dossier = racine / "rejet_hors_corpus"
+        self.assertEqual((dossier / "candidates.jsonl").read_bytes(), b"")
+        rejet = json.loads((dossier / "rejected.jsonl").read_text(encoding="utf-8"))
+        self.assertEqual(rejet["phase"], "validation_automatique")
+        traces = [json.loads(l) for l in (dossier / "traces.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(next(t["resultat"] for t in traces if "resultat" in t)["reponse_brute"],
+                         reponse["response"])
+
+    def test_run_sortie_tronquee_reste_erreur_technique(self):
+        reponse = {**reponse_technique(self.proposition()), "done_reason": "length"}
+        racine = self.dossier / "runs"
+        with (patch.object(client_qwen, "preparer_requete", return_value=requete_technique()),
+              patch.object(client_qwen, "_http", return_value=reponse) as http):
+            resume = run.executer(self.preparation(), "tronque_hors_corpus", racine)
+        http.assert_called_once()
+        self.assertEqual(resume["statut"], "erreur_technique")
+        self.assertIn("generation_incomplete", resume["motif"])
+        self.assertEqual((racine / "tronque_hors_corpus" / "candidates.jsonl").read_bytes(), b"")
 
 
 if __name__ == "__main__":
