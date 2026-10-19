@@ -86,6 +86,12 @@ def preparer(selection: dict, empreinte: str, groupe: int, categorie: str,
         prompt = prompts.preparer_prompt_multiple(passages, difficulte)
         sources = {"sources": passages}
         version = "agent0-preparation-v2"
+    elif categorie == "adversarial":
+        if len(passages) != 1:
+            raise ErreurPreparation("Adversarial exige un groupe d'un seul passage")
+        prompt = prompts.preparer_prompt_adversarial(passages[0], difficulte)
+        sources = {"source": passages[0]}
+        version = "agent0-preparation-v1"
     else:
         if len(passages) != 1:
             raise ErreurPreparation("Simple et reformulation exigent un groupe d'un seul passage")
@@ -125,6 +131,9 @@ def main(argv=None) -> int:
         parser.error("--generate exige --run-id et n'utilise pas --output")
     if not args.generate and args.run_id is not None:
         parser.error("--run-id s'utilise seulement avec --generate")
+    if args.generate and args.type == "adversarial":
+        parser.error("Génération adversarial non activée : préparer l'aperçu et le budget "
+                     "avant l'ajout des contrôles de sortie propres aux pièges")
     try:
         if args.output and args.output.exists():
             raise ErreurPreparation("Le fichier de sortie existe déjà ; choisir un autre nom")

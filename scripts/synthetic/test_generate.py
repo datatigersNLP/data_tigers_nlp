@@ -177,7 +177,7 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual(sortie.read_bytes(), b"a conserver")
 
     def test_cli_exige_mode_explicite_et_categories_disponibles(self):
-        for arguments in [self.arguments()[1:], self.arguments() + ["--type", "adversarial"],
+        for arguments in [self.arguments()[1:], self.arguments() + ["--type", "hors_corpus"],
                           self.arguments() + ["--difficulty", "mesuree"]]:
             with self.subTest(arguments=arguments), contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit) as erreur:

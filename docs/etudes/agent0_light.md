@@ -1100,3 +1100,78 @@ Cette mise à jour ne modifie que la documentation et le journal IA du 19 octobr
 inférence ici, de changement de prompt, de budget, de modèle, de validateur ou de corpus, ni de tests
 relancés. Les 110 tests restent ceux des exécutions précédemment documentées. #103 reste en brouillon,
 Mahé/Remy demandés, #94 partielle ; aucun gel, fusion, clôture ou temps réel déclaré.
+
+
+## 19. #94 — Aperçu des cas pièges, sans génération
+
+### Périmètre de cet incrément
+
+Le schéma `synthetic-v1` prévoit déjà les champs `adversarial_premise` et `correction_proposed`.
+Le nouvel aperçu les réutilise, sans changer le schéma ni le validateur. Le prompt
+`agent0-adversarial-v1` demande une question contenant une prémisse potentiellement fausse,
+sa correction proposée et une preuve exacte provenant d'un seul passage fourni intégralement.
+Il n'injecte aucun exemple de question réglementaire ou point attendu.
+
+Ce premier incrément vise les pièges dont la correction est proposée comme sourçable :
+`answerable_proposed: true`, avec `out_of_corpus_reason: null`. Ce choix concerne la consigne
+de cet aperçu, pas une restriction du schéma général. Les pièges sans correction étayée et les
+candidats hors corpus restent hors de cette étape. Une absence d'information ne prouve pas
+qu'une prémisse est fausse ; la relecture doit vérifier la question, la prémisse, la correction,
+les conditions et exceptions, ainsi que la suffisance des extraits.
+
+La préparation utilise le format existant `agent0-preparation-v1`, avec une seule clé `source`.
+Les modes `--prepare-only` et `--prepare-qwen` sont disponibles. La commande
+`--generate --type adversarial` est explicitement bloquée avant la lecture du corpus,
+la création d'un run ou un appel réseau : les contrôles de sortie propres aux pièges restent
+à implémenter. Cette protection concerne la CLI ; aucun nouveau garde-fou n'est ajouté à
+l'orchestrateur Python interne dans cet incrément.
+
+### Contrôles exécutés ici
+
+**118 tests réussis** sous Python 3.12.14 et Pydantic 2.14.0 : les 110 précédents et 8 nouveaux.
+Les nouveaux tests couvrent le passage intégral sans réécriture, les sources/paramètres invalides,
+la reproductibilité de la préparation, l'aperçu sans réseau ni modèle, le budget simulé sans
+génération, le blocage précoce de `--generate`, la protection d'une sortie existante et le refus
+d'une paire pour cette catégorie à source unique. Les fixtures sont techniques, sans question
+juridique ni appel au vrai modèle. Un ancien test de catégorie indisponible cible désormais
+`hors_corpus`, qui reste indisponible dans la CLI.
+
+Compilation et aide CLI contrôlées. Les trois objets prompts existants, simple/reformulation/
+multi-passage, sont comparés avant/après sur les mêmes fixtures et sont identiques. Schéma,
+client Qwen, orchestrateur, validateur, budget, dépendances et corpus ne changent pas.
+
+La première source de `selection_001.json` est reconstruite depuis M2 avec `count=5`,
+`seed=20261018` : `m2-article374529-0004`, 318 caractères conservés intégralement.
+L'empreinte des passages reste `aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
+Prompt adversarial `medium` reconstruit :
+`1b25e5b176af89409244ed6f01fbae133fc920418de38930e70171b3ba573a27`.
+Ce contrôle ne lit pas le manifeste Windows complet et ne lui attribue aucune nouvelle provenance.
+Aucun appel Ollama ni comptage du vrai tokeniseur ici ; aucun budget réel ou candidat adversarial obtenu.
+
+### Vérification progressive sur Windows
+
+Sur `feat/94-agent0-categories`, vérifier d'abord que le dépôt est propre avant l'avance rapide,
+puis lancer les tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 118 tests passent, préparer l'aperçu avec le manifeste à source unique existant :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\selection_001.json --group 1 --type adversarial --difficulty medium --output .\data\synthetic\preparations\adversarial_001.json
+```
+
+Résultat attendu : `statut: prompt_prepare`, `passage_id: m2-article374529-0004`,
+`version_prompt: agent0-adversarial-v1`, `ollama_appele: false`, `budget_tokens_verifie: false`.
+La difficulté `medium` est demandée, non mesurée. Une sortie existante est refusée sans écrasement.
+Transmettre le résultat des tests et le résumé de préparation avant le contrôle du budget réel.
+Ne pas utiliser `paires_002.json` pour ce premier aperçu à source unique.
+
+La suite sera le contrôle du budget Windows, puis les règles de validation de sortie et l'activation
+explicite de la génération adversarial. La relecture indépendante de #95 reste requise avant admission
+des cas au Challenge Set. #94 reste partielle et #103 en brouillon ; aucun candidat, verdict humain,
+gel, fusion, clôture ou temps réel déclaré pour ce nouvel incrément.
