@@ -1768,3 +1768,81 @@ Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_004\candidates.json
 Budget recompté avant l'appel ; les 1441 tokens concernent v1 sur ce passage.
 #94 partielle, #103 en brouillon avec Mahé/Remy demandés ; aucun verdict humain, admission,
 gel, fusion, clôture ou temps réel déclaré. Estimation initiale de 7 h inchangée.
+
+
+## 28. #94 — Bilan comparatif hors corpus : limite persistante de v2
+
+### Retours de la série prévue
+
+Jibril transmet **142 tests Windows réussis** (`1.057s`, `OK`) avant `hors_corpus_004`,
+puis les résumés et candidats complets de `004`, `005` et `006`, dans l'ordre prévu.
+Chaque run se termine par `stop`, avec un candidat, aucun rejet automatique et humain `pending`.
+
+| Run | Groupe / source | HF / Ollama | Sortie | Lecture assistée |
+|---|---|---:|---:|---|
+| `hors_corpus_004` | 1 / `m2-article374529-0004` | 1528 / 1528 | 184 tokens | Conditions CET déjà présentes ; question proche de `001` |
+| `hors_corpus_005` | 2 / `m2-article377050-0003` | 1970 / 1970 | 222 tokens | « Conséquences légales » ambigu ; examen conjoint déjà évoqué |
+| `hors_corpus_006` | 3 / `m2-article374500-0003` | 1808 / 1808 | 185 tokens | Attribution exceptionnelle explicitement décrite |
+
+Essais annoncés avec v2 ; manifestes et traces complets non transmis. Ne pas déduire la provenance
+Git, l'état local, la version exacte du prompt ou du serveur de chaque inférence des seuls résumés
+et des références antérieures. Aucun nouveau résultat de tests rapporté après celui précédant `004`.
+
+### Ce que change v2 sur les trois mêmes sources
+
+| Thème | Première série annoncée v1 | Seconde série annoncée v2 | Conclusion sur ces sorties |
+|---|---|---|---|
+| CET | `001` demande les conditions d'utilisation | `004` reprend cette demande générale | Pas de correction du classement sur cet exemple |
+| CSE | `002` demande les conditions de l'alerte | `005` demande ses « conséquences légales » | Angle différent, absence toujours non établie |
+| Médaille | `003` demande les conditions à l'étranger | `006` cible l'attribution exceptionnelle | Demande encore couverte par la source |
+
+**CET.** La justification de `004` reconnaît la possibilité prévue par l'accord, puis prétend que
+les conditions exactes ne sont pas précisées. La question ne délimite pourtant aucun renseignement
+différent de ceux fournis : CET mis en place, droits acquis et possibilité prévue par l'accord.
+La proximité avec `001` illustre aussi la limite d'une déduplication lexicale sur des paraphrases.
+
+**CSE.** `005` affirme qu'aucune conséquence légale n'est donnée. Le passage mentionne pourtant,
+pour le risque grave de santé publique/environnement visé, un examen conjoint de la situation.
+La question pourrait viser d'autres conséquences, notamment des sanctions, mais elle ne le dit pas.
+Ne pas la réécrire ni lui attribuer cette intention pour sauver le classement. Cas ambigu,
+motif trop catégorique, absence dans le corpus complet non vérifiée.
+
+**Médaille.** `006` demande précisément les conditions d'attribution exceptionnelle pour les salariés
+résidant à l'étranger. Le paragraphe commençant par « À titre exceptionnel » fournit ce cas :
+résidence à l'étranger et travail dans d'autres établissements que ceux énumérés, conditions
+d'ancienneté de services prévues par la réglementation et contribution au bon renom de la France.
+Les seuils d'ancienneté ne sont pas chiffrés ici ; cela ne rend pas absentes les conditions énoncées.
+La justification et le motif de `006` sont donc contredits par la source.
+
+Avis assisté : **ne pas admettre `004`/`006` en l'état comme hors corpus ; conserver `005` non confirmé
+et à clarifier lors de la relecture**. Aucun de ces retours ne confirme un cas hors corpus.
+Les six candidats restent intacts et humains en attente ; aucune décision humaine, réécriture,
+réparation ou requalification automatique. Les conclusions portent sur le contenu du corpus figé.
+
+### Conclusion technique et suite proposée
+
+Les appels, comptages et contrôles de structure fonctionnent sur ces sorties. La génération ne
+vérifie pas la fidélité des motifs d'absence ni le classement sémantique. V2 change un angle de question
+mais n'apporte pas de cas hors corpus confirmé dans cette comparaison. Ces trois sources utilisées
+pour la mise au point ne permettent pas de calculer un taux général, ni de conclure sur d'autres modèles.
+
+Conserver v2 et les six runs. **Recommandation : terminer cette mise au point de prompt, sans lancer
+de nouvelle série de retouches à partir de ces mêmes exemples.** Aucun verrou supplémentaire ou
+désactivation CLI n'est appliqué. Schéma, validateur, prompt, budget, corpus, modèle et RAG inchangés
+dans ce bilan ; aucun test unitaire ou appel réel relancé ici.
+
+La suite utile est la préparation de la relecture indépendante prévue en #95 :
+conserver ces candidats à part, tracer les contre-preuves et les incertitudes, et signaler explicitement
+qu'aucun hors corpus n'est confirmé dans les retours examinés. Les objectifs de génération ne sont
+pas des quotas d'acceptation ; les candidats non confirmés ne servent pas à calculer la qualité du lot.
+La relecture du code avant fusion et la vérification du corpus complet avant admission restent requises.
+Les sorties déjà utilisées pour ajuster le prompt ne constituent pas le pilote indépendant.
+
+Si la construction hors corpus est reprise, revoir d'abord la méthode pour viser des besoins
+documentaires précis et distincts, avec périmètre et protocole de vérification explicites, avant un
+nouvel incrément. Cette orientation est une proposition, pas un changement activé du générateur
+ou du protocole officiel. Aucun nouveau lot, candidat de remplacement ou verdict humain créé ici.
+
+#94 reste partielle, #103 en brouillon avec Mahé/Remy demandés. #95 relue pour ce bilan, non modifiée.
+Aucun candidat admis au lot figé, gel, fusion, clôture ou temps réel déclaré ; estimation initiale
+de 7 h inchangée.
