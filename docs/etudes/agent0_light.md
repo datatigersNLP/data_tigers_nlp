@@ -1383,3 +1383,65 @@ le budget avant chaque appel ; les 1509 tokens concernent l'ancien prompt et l'a
 Limites, modèle, schéma, client, orchestrateur, corpus et RAG inchangés. Il s'agit d'une mise au point,
 pas d'un score de benchmark. #94 partielle, hors_corpus et relecture indépendante encore à réaliser ;
 #103 en brouillon, Mahé/Remy demandés, aucun gel, fusion, clôture ou temps réel déclaré.
+
+
+## 23. #94 — Bilan des deux autres sources adversarial v3
+
+Les groupes 2 et 3 de la sélection initiale sont exécutés dans l'ordre annoncé, avec v3 conservé.
+Jibril transmet **126 tests Windows réussis** avant le groupe 2 (`0.888s`, `OK`), puis son candidat
+complet. Pour le groupe 3, il transmet le résumé de rejet et ensuite la proposition JSON brute.
+Les manifestes et traces complets ne sont pas transmis ; aucun état Git détaillé des inférences
+n'est déduit de ces résumés. Aucun nouveau test n'est annoncé entre les deux générations.
+
+| Run | Groupe | HF / Ollama | Sortie | Fin | Résultat automatique |
+|---|---:|---:|---:|---|---|
+| `adversarial_003` | 2, CSE | 2028 / 2028 | 372 tokens | stop | 1 candidat, 0 rejet |
+| `adversarial_004` | 3, médaille | 1866 / 1866 | 499 tokens | stop | 0 candidat, 1 rejet |
+
+Budgets réservés calculés sur ces entrées : 2604 et 2442 sur 8192, avec 512 de sortie et 64 de marge.
+Les 499 tokens du second run restent sous la limite ; aucune troncature n'est signalée.
+Les deux comptes HF/Ollama concordent.
+
+### CSE : copie exacte et catégorisation à relire
+
+Le candidat mélange l'enquête mentionnée pour certaines alertes avec l'examen conjoint évoqué pour
+la santé publique/l'environnement. Sa preuve est exacte dans `m2-article377050-0003`, mais commence
+par « Dans ce cas » : le contexte précédent doit être lu pour établir à quelle situation elle se rapporte.
+La correction proposée reprend cette distinction selon la lecture assistée ; la justification du modèle
+va plus loin en affirmant une absence d'obligation d'enquête, là où le passage décrit la formulation
+du Code dans ce cas. Ne pas transformer cette justification en règle générale.
+
+La question reste formulée comme une demande de confirmation d'une obligation. Son adéquation à
+une présupposition trompeuse, plutôt qu'à une question fermée, reste à examiner. Candidat inchangé,
+`human: pending`, sans verdict, points attendus confirmés ou admission au lot figé.
+
+### Médaille : rejet de copie et correction incohérente
+
+La preuve est attribuée au bon passage `m2-article374500-0003`, mais **trois sauts de ligne de la
+liste sont remplacés par des espaces**, sans autre différence dans ce segment. Le contrôle local
+retrouve exactement la sortie après ce seul aplatissement ; le texte original n'est pas normalisé
+dans le validateur ni réparé dans le run. Le fichier de candidats vide et le rejet sont conservés.
+
+Indépendamment du rejet de copie, la correction parle d'un employeur étranger puis exige qu'il soit
+français. Elle présente aussi les cas listés comme exclusifs avec « seulement si », en omettant le
+paragraphe suivant qui prévoit une attribution exceptionnelle hors des établissements énumérés,
+sous conditions d'ancienneté et de contribution au bon renom de la France. La question et le champ
+prémisse restent des interrogations de confirmation, avec une portée « sans aucune exception » peu
+claire. Ces observations sont une lecture assistée, pas un verdict humain supplémentaire.
+
+### Conclusion de mise au point et suite
+
+Cette série v3 produit un candidat à relire et un rejet tracé. Elle montre que la copie exacte et la
+présence de champs ne garantissent pas une vraie prémisse fausse, une correction cohérente ou la
+conservation des exceptions. Aucun taux général de qualité ou de difficulté n'en est déduit.
+
+Conserver v3, les deux résultats et les runs précédents ; pas de nouvel ajustement de consigne
+ou de relance dans ce bilan. La relecture indépendante de #95 reste nécessaire avant admission.
+La suite technique prévue en #94 est l'aperçu `hors_corpus` : absence seulement proposée par le
+générateur, preuves positives vides, verdict non confirmé et vérification sur le corpus figé complet.
+Ni la seule source fournie ni un échec de récupération ne devront confirmer cette absence.
+
+Mise à jour documentaire uniquement : étude et journal IA. Pas de code, prompt, source, budget,
+modèle, validateur ou RAG modifié ; aucun test unitaire ou appel réel relancé ici. Les 126 tests
+restent ceux précédemment exécutés et ceux rapportés sur Windows. #103 reste en brouillon,
+Mahé/Remy demandés, #94 partielle ; aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
