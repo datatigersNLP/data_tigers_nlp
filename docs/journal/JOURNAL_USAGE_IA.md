@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 18 octobre 2026, sessions 1 à 37 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 19 octobre 2026, sessions 1 à 38 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -877,7 +877,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Site en ligne, version `74524a7`, cache vidé, les mêmes accès bloqués : 5 passages en 8 s, seule l'adresse du site contactée, aucune erreur ni aucun avertissement.
 - Site en ligne, version `c3cf075`, après la #83, Cache API vidée, toute requête hors du site bloquée : version et périmètre affichés ; 20 frappes Tab et Maj+Tab sans sortie du menu, puis Échap ; 5 passages aux scores de référence ; aucune requête externe tentée, aucune erreur.
 - PR #88 : SHA-256 des 23 fichiers du site construit, avant et après, identiques ; dans un clone vierge sans `data/`, 10 tests réussis et 5 ignorés ; écart de version simulé, 1 échec attendu.
-- Site en ligne `c3cf075` sous Firefox 155 et WebKit 26.6 (moteurs de Playwright), profil neuf, requêtes hors du site bloquées : recherche aboutie aux scores de référence sur les deux ; sous WebKit, 10 frappes sur 20 sortent du menu. Version corrigée, servie en local : 0 sortie sur 20 frappes avec Chromium, Firefox et WebKit.
+- Site en ligne `c3cf075` sous Firefox 155 et WebKit 26.6 (moteurs de Playwright), profil neuf, requêtes hors du site bloquées : recherche aboutie aux scores de référence sur les deux ; sous WebKit, sur macOS, 10 frappes sur 20 sortent du menu. Version corrigée, servie en local : 0 sortie sur 20 frappes avec Chromium, Firefox et WebKit.
 - PR #99 et #100 : 27 puis 44 tests réussis sous macOS avec le verrou de Jibril ; corpus réel contrôlé (4 240 passages, 261 fiches, empreintes de l'index du site) ; tirage par défaut identique à celui de Jibril sous Windows.
 - Classeur de suivi : 54 lignes de l'inventaire comparées à l'API GitHub, aucun écart d'état ni de date.
 
@@ -899,7 +899,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - La première version de la correction rendait le focus avant le retrait de l'attribut `inert`, donc le navigateur le refusait ; corrigé avant le commit.
 - `inert` retire la conversation de la tabulation, mais pas le document lui-même : après le dernier bouton du menu, Tab plaçait le focus sur BODY, et Échap, écouté sur le panneau seulement, ne fermait plus le menu. Mon essai jugeait BODY acceptable ; Jibril l'a reproduit aux deux frontières. Seule une boucle explicite de la tabulation retient le focus.
 - Le dossier de travail temporaire de l'assistant a été vidé entre deux journées : ses scripts d'audit de la veille n'existent plus.
-- La boucle de tabulation de la #83 laissait le navigateur avancer hors des bords de la liste : sous WebKit, dont la tabulation par défaut saute les boutons, le focus quittait le menu. Seule une gestion complète de Tab vaut pour tous les navigateurs.
+- La boucle de tabulation de la #83 laissait le navigateur avancer hors des bords de la liste : sous WebKit sur macOS, où la navigation au clavier du système, désactivée par défaut, fait sauter les boutons à Tab, le focus quittait le menu. Seule une gestion complète de Tab vaut pour tous les navigateurs.
 - Sous WebKit, le blocage des requêtes de l'essai rejetait une URL `blob:`, et la recherche échouait du fait du montage, non du site ; `blob:` et `data:` sont désormais laissés passer.
 
 **Sessions 33 et 34, consignées a posteriori.** Contrairement à la règle de la section 5, ces sessions de Remy RAYANE des 13 et 14 octobre 2026 n'ont pas été consignées le jour même. Elles sont reconstituées le 18 octobre à partir de l'historique des requêtes, des scripts créés et exécutés, des commits vérifiés et des pull requests datées (#63, #75). Le temps d'appropriation n'a pas été relevé sur le moment.
@@ -1066,6 +1066,37 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Les approbations de la #78 ont été annulées par le changement de base vers `dev` : relecture refaite sur la fusion réelle.
 - Une phrase de la fiche Playwright affirmait un comportement non vérifié : Mahé l'a relevé, un essai l'a confirmé avant de l'écrire.
 
+### Session 38, 19 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Fin du volet A : intégration des pull requests approuvées par Jibril, contrôle du déploiement et du site en ligne sur trois moteurs, statuts des tickets.
+
+**Produit.**
+- PR #90 fusionnée dans `main` (`548f809`) avant toute autre fusion, comme Jibril le demandait : `main` porte la consignation du tag `volet-a-v1`, qui reste sur `8955962`.
+- PR #88 (`a911922`), puis PR #102 (`7e2ce07`), fusionnées dans `dev`, chacune sur la tête approuvée.
+- Défaut de la #83 précisé dans ce journal et dans la description de la PR #102 : il tient au réglage de navigation au clavier de macOS.
+- Inventaire des tickets ouverts : tous les tickets du volet A sont fermés, sauf #49, reporté au jalon J4 ; le dépôt n'a aucun label de statut.
+
+**Mesures exécutées.**
+- Premier déploiement avec l'étape de tests de la #88 : 15 tests, dont 10 réussis et 5 ignorés faute de `data/`, aucun échec ; construction et publication réussies. Même résultat au déploiement de la #102.
+- Site en ligne, version `7e2ce07`, sous Chromium 148, Firefox 155 et WebKit 26.6, profil neuf à 390 px, requêtes hors du site bloquées : 0 sortie du menu sur 20 frappes, les deux bords, retour depuis le document, Échap ; 5 passages aux scores 0,895 · 0,894 · 0,890 · 0,889 · 0,889 ; aucune requête externe, aucune erreur.
+
+**Résultats retenus.**
+- Le correctif de tabulation fonctionne en ligne sur les trois moteurs.
+
+**Ce qui a été écarté, et pourquoi.**
+- Fusionner les PR #99 et #100 de Jibril, que j'ai approuvées : sa documentation attend aussi la relecture de Remy.
+- Mettre à jour la colonne d'état du board : le jeton de l'assistant n'a pas le droit `project`, et l'étendre revient à Mahé.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #90, #88 et #102 approuvées par Jibril BENSALEM sur leurs têtes, le 18/10 au soir, avec ses propres essais (trois moteurs pour la #102).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Jibril n'a pas reproduit le défaut de la #83 sous WebKit 26.5 (Linux) : il tient au réglage de navigation au clavier de macOS, désactivé par défaut, sous lequel Tab saute les boutons.
+- Une branche créée sans récupérer l'état distant partait d'un `dev` périmé ; recréée depuis `7e2ce07` avant tout commit.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1140,8 +1171,9 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 18/10 | Attente du moteur fondée sur un texte d'invite identique pendant et après le chargement | relecture du code de l'interface B | conclusions tirées des seules recherches abouties |
 | 18/10 | Focus rendu avant le retrait de l'attribut `inert`, donc refusé par le navigateur | essai au clavier, focus nul après Échap | focus rendu après le rendu (`requestAnimationFrame`), avant le commit (PR #83) |
 | 18/10 | Description de la PR #83 affirmant que le focus ne sort jamais du menu sur téléphone, l'essai comptant le document (BODY) comme acceptable | contre-essai de Jibril aux frontières de Tab et Maj+Tab, puis Échap sans effet | tabulation bouclée dans le panneau, Échap écouté au niveau du document (`e6cd210`), description corrigée |
-| 18/10 | Boucle de tabulation de la PR #83 ne gérant que les bords de la liste : sous WebKit, dont la tabulation par défaut saute les boutons, le focus quittait le menu 10 fois sur 20 | essai du site en ligne sous WebKit 26.6, sur une limite déclarée de la #83 | tabulation entièrement gérée dans le menu (PR #102) |
+| 18/10 | Boucle de tabulation de la PR #83 ne gérant que les bords de la liste : sous WebKit sur macOS, où la navigation au clavier du système, désactivée par défaut, fait sauter les boutons à Tab, le focus quittait le menu 10 fois sur 20 | essai du site en ligne sous WebKit 26.6 (macOS), sur une limite déclarée de la #83 | tabulation entièrement gérée dans le menu (PR #102), vérifiée en ligne sur Chromium, Firefox et WebKit |
 | 18/10 | Essai sous WebKit concluant à l'échec de la recherche, le blocage des requêtes rejetant une URL `blob:` | requête bloquée à l'hôte vide, relevée dans le journal de l'essai | `blob:` et `data:` laissés passer ; recherche aboutie |
+| 19/10 | Défaut de tabulation de la PR #83 attribué à WebKit en général, alors qu'il tient au réglage de navigation au clavier de macOS, désactivé par défaut | revue de la PR #102 par Jibril : non reproduit sous WebKit 26.5 (Linux) ; réglage `AppleKeyboardUIMode` absent, donc à sa valeur par défaut, sur le Mac de l'essai | journal et description de la PR #102 précisés |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
