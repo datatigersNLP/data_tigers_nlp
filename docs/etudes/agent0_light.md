@@ -1026,3 +1026,77 @@ ici et du nouveau retour Windows ; aucune nouvelle exécution de tests ou infér
 Le tirage est reconstruit ici sur le corpus contrôlé, sans création du fichier Windows ni provenance Git
 d'exécution de ce futur fichier attribuée. PR #103 en brouillon, Mahé/Remy demandés, #94 partielle,
 estimation globale 7 h inchangée ; aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 18. #94 — Retour des trois paires du 19 octobre 2026
+
+### Sélection et résultats transmis
+
+Sur le Legion de Jibril, la branche passe de `824eaa1` à `1f7eeca` par avance rapide ; seuls deux
+documents changent. Le résumé de `paires_002.json` annonce le commit complet
+`1f7eeca8eea1014e959b7318079ae177d2980037`, une copie propre et Python 3.12.15.
+Il retrouve exactement les trois groupes annoncés en section 17, 4240 passages et 261 fiches,
+sans appel Ollama ni lecture de matrice. Les empreintes annoncées sont :
+
+- entête : `586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23` ;
+- passages : `aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
+
+Les trois groupes sont ensuite testés dans l'ordre, avec le prompt v3 conservé. Jibril transmet
+les résumés des runs, les candidats complets de `004` et `006`, puis la sortie brute de `005`.
+Les manifestes et traces complets des générations ne sont pas transmis ; l'état Git propre de
+la sélection ne prouve pas à lui seul celui de chaque inférence. Aucun nouveau test unitaire
+n'est annoncé dans ce retour, la mise à jour récupérée étant documentaire.
+
+| Run | Groupe | Entrée HF / Ollama | Sortie | Fin | Résultat automatique |
+|---|---|---:|---:|---|---|
+| `multi_passage_004` | 1, congé sans solde | 1833 / 1833 | 404 tokens | stop | 1 candidat, 0 rejet |
+| `multi_passage_005` | 2, CSE | 2764 / 2764 | 373 tokens | stop | 0 candidat, 1 rejet |
+| `multi_passage_006` | 3, médaille du travail | 2100 / 2100 | 385 tokens | stop | 1 candidat, 0 rejet |
+
+Avec les réserves inchangées de 512 tokens de sortie et 64 de marge, les budgets calculés à partir
+des entrées transmises sont respectivement 2409, 3340 et 2676 sur 8192. Ce calcul n'est pas un
+nouveau comptage avec le tokeniseur. Ces trois essais de mise au point ne mesurent pas un taux
+de qualité général ni les performances du RAG.
+
+### Lecture assistée, sans verdict humain
+
+- **004.** Les deux extraits sont exacts dans `m2-article374529-0003` et `m2-article374529-0004`.
+  La demande associe procédure et rémunération, sans la comparaison trop ouverte des essais précédents.
+  Points à relire : accord grammatical dans « comment est-elle financée », portée générale de
+  « conditions pour bénéficier », distinction entre procédure et conditions légales, caractère conditionnel
+  du CET. Les deux passages servent l'ensemble de la demande, mais celle-ci juxtapose deux sous-demandes
+  simples ; la difficulté `medium` n'est pas mesurée. Le candidat reste inchangé et humain en attente.
+- **005.** La première preuve est exacte dans `m2-article377050-0003`. La seconde est attribuée à
+  `m2-article377050-0017`, mais son contenu provient de `m2-article377050-0003`. Dans ce texte réel,
+  deux caractères de contrôle `U+0001` et un espace supplémentaire sont omis par la sortie Qwen.
+  Le contrôle local confirme l'égalité seulement après retrait des deux caractères et réduction du double
+  espace ; aucune de ces transformations n'est appliquée au validateur ni au corpus. Une simple correction
+  d'identifiant laisserait les deux preuves dans le même passage. La première citation expose l'objectif
+  des enquêtes, pas les droits demandés ; la seconde décrit un droit d'alerte, sans étayer les obligations
+  demandées en santé publique/environnement. Le rejet automatique est conservé, sans réparation ni relance.
+- **006.** Les deux extraits sont exacts dans `m2-article374500-0003` et `m2-article374500-0000`.
+  Le second recopie intégralement le passage et conserve sa liste multiligne : la consigne d'extrait court
+  sur une ligne n'est pas suivie, mais une liste exacte est compatible avec le validateur strict existant.
+  La question demande les « conditions » sans limiter son périmètre, alors que la première preuve
+  ne cite que le cas des salariés travaillant en France. Les durées d'ancienneté ne sont pas détaillées
+  dans cette paire ; la demande et le dépôt d'un dossier ne décrivent pas toute la procédure d'attribution.
+  La justification du générateur surestime donc la suffisance des preuves. Le candidat reste inchangé
+  et humain en attente ; ce cas n'est pas admis au lot figé par cette lecture assistée.
+
+### Bilan et suite
+
+Cette série produit deux candidats à relire et un rejet tracé. La fidélité et l'attribution des extraits
+sont contrôlées ; la suffisance, la portée de la question et la nécessité réelle des deux passages
+restent des responsabilités de relecture indépendante en #95. Aucun candidat de cette série n'a
+reçu de verdict humain ; les questions, sources et runs restent intacts.
+
+Conserver le prompt v3 et terminer cette série sans essai supplémentaire choisi selon le résultat.
+Le prochain incrément technique de #94 concerne l'aperçu `adversarial`, puis ses contrôles de sortie :
+prémisse potentiellement fausse, correction proposée et preuve exacte, toujours à relire. La relecture
+des candidats reste nécessaire avant admission au Challenge Set ; elle ne bloque pas la préparation
+technique des autres catégories. `hors_corpus` reste également à réaliser.
+
+Cette mise à jour ne modifie que la documentation et le journal IA du 19 octobre. Pas de nouvelle
+inférence ici, de changement de prompt, de budget, de modèle, de validateur ou de corpus, ni de tests
+relancés. Les 110 tests restent ceux des exécutions précédemment documentées. #103 reste en brouillon,
+Mahé/Remy demandés, #94 partielle ; aucun gel, fusion, clôture ou temps réel déclaré.
