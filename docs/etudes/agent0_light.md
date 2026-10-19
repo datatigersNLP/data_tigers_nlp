@@ -1254,3 +1254,65 @@ En cas de rejet ou d'erreur, transmettre d'abord le résumé ; conserver les tra
 d'un nouvel essai. Aucune question adversarial réelle n'a encore été rapportée. #94 reste partielle,
 hors_corpus et relecture indépendante encore à réaliser ; PR #103 en brouillon avec Mahé/Remy demandés.
 Pas de verdict humain, gel, fusion, clôture ou temps réel déclaré ; estimation initiale de 7 h inchangée.
+
+
+## 21. #94 — Premier candidat adversarial et forme de la question
+
+Jibril transmet **126 tests Windows réussis** (`Ran 126 tests in 0.678s`, `OK`), puis le résumé
+et le candidat complet de `adversarial_001` : **1450 HF / 1450 Ollama**, 419 tokens générés,
+fin `stop`, un candidat et aucun rejet. La comparaison des comptes est réussie. Le manifeste
+complet n'est pas transmis ; le SHA et l'état Git de cette inférence ne sont pas déduits du résumé.
+
+Le champ `question` contient cette affirmation, conservée mot pour mot :
+« Pendant le congé sans solde, le salaire du salarié est maintenu grâce à un compte épargne-temps (CET). »
+Il est identique à `adversarial_premise` et ne formule pas de demande explicite. Le contrôle existant
+accepte structurellement un texte non vide ; il ne vérifie pas la forme interrogative.
+
+La preuve et la correction correspondent exactement au texte complet de `m2-article374529-0004`.
+La correction conserve donc le non-maintien de la rémunération et la possibilité conditionnelle
+d'utiliser les droits acquis sur un CET, si le dispositif existe et si son accord le prévoit.
+La lecture assistée relève un mélange entre maintien du salaire et financement conditionnel ;
+elle n'attribue pas de verdict définitif de fausseté à la prémisse. Le candidat demeure inchangé,
+`human: pending`, sans relecteur, note ou point attendu confirmé. Aucune admission au lot figé.
+
+### Ajustement limité du prompt
+
+`agent0-adversarial-v2` précise trois consignes générales : phrase interrogative explicite terminée
+par un point d'interrogation, prémisse intégrée dans cette demande plutôt qu'affirmation seule,
+correction réservée à `correction_proposed` et non dévoilée dans la question. Aucun exemple
+juridique n'est ajouté et le candidat initial n'est pas réécrit. Le validateur reste inchangé :
+une ponctuation ne constitue pas une validation sémantique automatique.
+
+**126 tests réussis ici** sous Python 3.12.14 / Pydantic 2.14.0, sans nouveau test ni appel réel.
+Compilation contrôlée ; les prompts simple, reformulation et multi-passage sont identiques avant/après
+sur les mêmes fixtures. La source de 318 caractères est conservée ; le prompt v2 `medium`
+reconstruit a pour empreinte `ddecefb77e5573621c0bc072628829a358715bf552cfca02b18f4f7e48133728`.
+Ces vérifications ne démontrent pas que Qwen suivra mieux la nouvelle consigne.
+
+### Nouvel essai distinct
+
+Sur la même branche, vérifier le dépôt propre avant récupération et relancer les 126 tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Puis, avec Ollama démarré, utiliser un nouveau run :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id adversarial_002 --sources .\data\synthetic\sources\selection_001.json --group 1 --type adversarial --difficulty medium
+```
+
+Le budget est recompté avant l'appel ; les 1450 tokens concernent v1, pas ce nouveau prompt.
+Les limites 8192/512/64 sont conservées. Si le résultat annonce `candidat_prepare` :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\adversarial_002\candidates.jsonl
+```
+
+Transmettre le résumé et le candidat, ou d'abord le motif du rejet. Conserver `adversarial_001`
+pour comparaison. Ces essais constituent une mise au point, pas un benchmark de qualité.
+Hors_corpus et relecture indépendante restent à réaliser ; #94 partielle, #103 en brouillon,
+Mahé/Remy demandés. Aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
