@@ -1445,3 +1445,90 @@ Mise à jour documentaire uniquement : étude et journal IA. Pas de code, prompt
 modèle, validateur ou RAG modifié ; aucun test unitaire ou appel réel relancé ici. Les 126 tests
 restent ceux précédemment exécutés et ceux rapportés sur Windows. #103 reste en brouillon,
 Mahé/Remy demandés, #94 partielle ; aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 24. #94 — Aperçu hors corpus, sans absence confirmée
+
+### Contrat et portée
+
+Le nouveau prompt `agent0-hors-corpus-v1` utilise un passage complet comme point de départ pour
+proposer une question voisine insuffisamment traitée dans ce passage. Le modèle ne reçoit pas
+le corpus entier : une réponse peut se trouver dans une autre fiche. Il doit proposer un motif
+provisoire dans `out_of_corpus_reason`, sans prétendre avoir déjà recherché dans les autres textes.
+Une réponse conditionnelle suffisamment sourcée ne constitue pas un cas hors corpus.
+
+Le contrat existant est réutilisé : `answerable_proposed: false`, `evidence: []`, motif non vide,
+`adversarial_premise: null` et `correction_proposed: null`. La source de départ demeure dans la
+provenance ; elle n'est ni une preuve positive de réponse ni une preuve d'absence. Le classement
+reste une proposition, sans `answerable_confirmed` ou verdict humain attribué par le générateur.
+
+L'aperçu garde `agent0-preparation-v1` et une seule clé `source`. La CLI charge les métadonnées du
+corpus pour contrôler l'intégrité de la sélection ; cela n'est pas une vérification sémantique de
+l'absence dans tous les passages. Les cinq catégories sont désormais proposées par la CLI dans
+les modes `--prepare-only` et `--prepare-qwen`. **La génération hors_corpus reste bloquée** avant
+lecture du corpus, création de run ou appel réseau ; ses contrôles de sortie attendent l'étape suivante.
+Cette protection concerne la CLI, pas un nouveau verrou de l'orchestrateur interne.
+
+### Relecture prévue, alignée avec #94 et #95
+
+Avant d'admettre un futur candidat hors corpus au lot figé, la relecture humaine devra :
+
+1. Identifier le corpus complet utilisé, son empreinte et son périmètre ; conserver la question générée
+   et sa provenance. Le passage de départ ne limite pas la vérification aux seules sources de génération.
+2. Chercher dans l'ensemble des textes figés avec les termes utiles et leurs variantes, puis lire les
+   fiches et passages pertinents pour le besoin précis, les conditions et les exceptions. Une recherche
+   ou une récupération sert d'aide ; l'absence de résultat ne constitue pas un verdict d'absence.
+3. Si une réponse suffisante, même conditionnelle, est trouvée, ne pas confirmer le type hors corpus.
+   Conserver les références qui contredisent le classement proposé ; ne pas réécrire la question pour
+   la faire sortir du corpus ou satisfaire un quota de catégorie.
+4. Tracer qui a relu, quand, sur quelle empreinte, les termes/méthodes utilisés, les passages examinés,
+   le motif de décision et les limites. Tant que le verdict est en attente, garder ces notes dans le
+   support de relecture distinct : le contrat interdit une `review_note` dans un candidat `human: pending`.
+   Les champs de verdict existants ne seront remplis qu'après une décision humaine effective.
+
+Si la vérification reste incertaine ou dépasse l'enveloppe du pilote, conserver le cas non confirmé
+et documenter cette limite, comme prévu en #95. Aucun juge Qwen, contrôle lexical seul ou consultation
+du Web ne remplace la vérification de notre corpus figé. Cette procédure reste à relire avec le pilote ;
+elle ne modifie pas le Gold Set, ses quotas ou le protocole officiel d'évaluation.
+
+### Vérifications exécutées ici
+
+**134 tests réussis**, Python 3.12.14 / Pydantic 2.14.0 : les 126 précédents et 8 nouveaux tests
+de l'aperçu hors corpus, sur fixtures techniques. Passage complet, entrées invalides, reproductibilité
+sans verdict, aperçu sans réseau, budget simulé sans génération, blocage CLI précoce, protection d'une
+sortie existante et refus d'une paire sont contrôlés. Le test d'ancienne catégorie indisponible utilise
+désormais une catégorie inconnue. Compilation et aide CLI vérifiées.
+
+Les quatre prompts existants, simple/reformulation/multi/adversarial, sont identiques avant/après sur
+les mêmes fixtures. Schéma, client, orchestrateur, validateur, corpus, budget, dépendances et RAG inchangés.
+Ces tests ne démontrent aucune absence de réponse ni l'efficacité du prompt.
+
+La source initiale est reconstruite avec le tirage déjà utilisé, `count=5`, graine `20261018` :
+`m2-article374529-0004`, 318 caractères conservés intégralement. Corpus M2 inchangé, empreinte
+`aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
+Prompt hors_corpus `medium` : `c7188861ca3a65932b61a712592a814fa89163b43d669a64e86873e8b54177e6`.
+Ce contrôle ne lit pas le manifeste Windows complet et ne lui attribue pas de nouvelle provenance.
+Aucun Ollama, vrai tokeniseur, budget réel ou question hors corpus obtenu ici.
+
+### Première vérification Windows
+
+Sur `feat/94-agent0-categories`, vérifier le dépôt propre avant l'avance rapide, puis les tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 134 tests passent, préparer l'aperçu avec le manifeste à source unique existant :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\selection_001.json --group 1 --type hors_corpus --difficulty medium --output .\data\synthetic\preparations\hors_corpus_001.json
+```
+
+Attendu : `prompt_prepare`, source `m2-article374529-0004`, version `agent0-hors-corpus-v1`,
+`ollama_appele: false`, `budget_tokens_verifie: false`. Une sortie existante est refusée sans écrasement.
+Transmettre les tests et le résumé avant le budget réel. La génération et ses contrôles seront un
+incrément ultérieur ; l'admission exige ensuite la relecture du corpus complet. #94 reste partielle,
+#103 en brouillon, Mahé/Remy demandés ; aucun candidat hors corpus, verdict humain, gel, fusion,
+clôture ou temps réel déclaré. Estimation initiale de 7 h inchangée.

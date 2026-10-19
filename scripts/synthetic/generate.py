@@ -92,6 +92,12 @@ def preparer(selection: dict, empreinte: str, groupe: int, categorie: str,
         prompt = prompts.preparer_prompt_adversarial(passages[0], difficulte)
         sources = {"source": passages[0]}
         version = "agent0-preparation-v1"
+    elif categorie == "hors_corpus":
+        if len(passages) != 1:
+            raise ErreurPreparation("Hors corpus exige un groupe d'un seul passage de départ")
+        prompt = prompts.preparer_prompt_hors_corpus(passages[0], difficulte)
+        sources = {"source": passages[0]}
+        version = "agent0-preparation-v1"
     else:
         if len(passages) != 1:
             raise ErreurPreparation("Simple et reformulation exigent un groupe d'un seul passage")
@@ -131,6 +137,9 @@ def main(argv=None) -> int:
         parser.error("--generate exige --run-id et n'utilise pas --output")
     if not args.generate and args.run_id is not None:
         parser.error("--run-id s'utilise seulement avec --generate")
+    if args.generate and args.type == "hors_corpus":
+        parser.error("Génération hors_corpus non activée : préparer l'aperçu et le budget "
+                     "avant les contrôles de sortie et la procédure de relecture du corpus complet")
     try:
         if args.output and args.output.exists():
             raise ErreurPreparation("Le fichier de sortie existe déjà ; choisir un autre nom")
