@@ -1866,3 +1866,30 @@ Aucun générateur, schéma, validateur, modèle, budget, corpus ou RAG modifié
 appel réel ou gel exécuté ici. #94/#95 partielles, #103 en brouillon ; relecture du code et relecture
 sémantique indépendantes nécessaires. Estimations initiales 7 h (#94) et 4 h (#95) inchangées,
 aucun temps réel déclaré. La nouvelle PR documentaire dépend de #103 et cible dev.
+
+
+## 30. #95 — Originaux reçus et vérification technique de l'archive
+
+L'archive `agent0_relecture_20261020.zip` est reçue le 20 octobre 2026. Son SHA-256
+`e6cb410c6c8cbcdd9fb4f5392cab9fc41a32f74fe48dd3c49b0121326eb76f74` correspond à celui affiché sur le Legion.
+Les 93 fichiers attendus sont présents : cinq par run et trois sélections. Les 18 runs contiennent
+15 candidats, tous humains en attente, et 3 rejets automatiques. Les 15 questions sont désormais
+disponibles ; celle de multi_passage_003 et les extraits précédemment manquants sont complétés
+depuis les originaux. Les 14 formulations déjà recopiées sont conformes.
+
+Le [rapport de vérification](agent0_relecture/verification_archive.md) détaille la comparaison des
+sélections/sources avec le corpus figé, la reconstruction des 18 prompts et validations historiques,
+129 déclarations d'empreintes de code retrouvées avec CRLF dans 13 commits/21 blobs,
+153 empreintes d'antécédents de déduplication concordantes et les égalités HF/Ollama rapportées.
+Aucun appel modèle ou vrai tokeniseur rejoué ; ce contrôle porte sur la cohérence des données
+et déclarations reçues, sans attestation indépendante de leur exécution sur la machine.
+
+Les originaux, leurs questions et les verdicts pending sont conservés. La grille renseigne les
+résultats techniques séparément et garde tous les champs humains vierges. La relecture du sens,
+des catégories, des preuves et du corpus complet pour hors corpus reste nécessaire. Ces essais
+de mise au point ne constituent toujours pas le pilote indépendant de #95.
+
+PR #106 documentaire, dépendante de #103 ; aucun générateur, schéma, validateur, modèle, budget,
+corpus, RAG ou Gold Set modifié. Aucune évaluation du RAG, génération, fusion, clôture ou admission.
+Pas de tests unitaires relancés ; contrôles sur les originaux exécutés. Estimations initiales inchangées,
+aucun temps réel déclaré.

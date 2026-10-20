@@ -17,13 +17,13 @@ Vérifier la proximité avec simple_001, la nuance CET et si la reformulation ap
 
 ## multi_passage_002
 
-Comparaison trop générale avec des congés seulement mentionnés ; obligations liées à l'exercice d'une autre activité déplacées vers la demande. Extraits originaux à recueillir ; nécessité et suffisance à examiner.
+Comparaison trop générale avec des congés seulement mentionnés ; obligations liées à l'exercice d'une autre activité déplacées vers la demande. Extraits originaux désormais reçus et affichés dans la fiche ; nécessité et suffisance à examiner humainement.
 
 [Fiche neutre](questions_et_sources.md#multi_passage_002) — [Étude, section 16](../agent0_light.md).
 
 ## multi_passage_003
 
-Question annoncée proche de 002, même comparaison et ambiguïté de contexte. Ne pas substituer ce résumé à la question originale ; contrôler le quasi-doublon après réception du fichier.
+Formulation exacte retrouvée dans l'archive et affichée dans la fiche : même comparaison générale et ambiguïté de contexte. Contrôler le quasi-doublon sémantique avec 002 à partir des deux originaux.
 
 [Fiche neutre](questions_et_sources.md#multi_passage_003) — [Étude, section 17](../agent0_light.md).
 
@@ -95,7 +95,7 @@ Le paragraphe « À titre exceptionnel » décrit précisément le cas demandé 
 
 ## Rejets automatiques à conserver séparément
 
-Ces trois runs ne fournissent aucun candidat à accepter dans la grille. Recouper les diagnostics avec les fichiers d'origine ; aucune réparation ou réadmission n'est réalisée.
+Ces trois runs ne fournissent aucun candidat à accepter dans la grille. Les fichiers d'origine sont reçus et les trois motifs de rejet ont été reproduits avec les validateurs versionnés. Les remarques de sens restent assistées ; aucune réparation ou réadmission n'est réalisée.
 
 ### multi_passage_001
 

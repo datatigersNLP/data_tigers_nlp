@@ -1,9 +1,9 @@
-# Questions et sources — préparation de relecture du 20 octobre 2026
+# Questions et sources — originaux reçus le 20 octobre 2026
 
-Ce support reproduit les questions rapportées et les champs proposés disponibles. Ce ne sont pas les fichiers JSONL originaux.
-Les 15 entrées sont des candidats de mise au point. Les décisions restent vierges dans [la grille](grille_relecture.json).
-Lire les questions et sources avant les [observations assistées](observations_assistees.md). Consulter les fichiers originaux et leurs justifications complètes avant de décider.
-Une formulation exacte manque pour `multi_passage_003` ; ne pas la reconstruire depuis le résumé.
+Les 15 formulations et champs proposés ci-dessous sont copiés depuis les `candidates.jsonl` de l'archive reçue. Leur concordance avec les sorties brutes a été contrôlée ; les questions ne sont pas corrigées.
+Les 15 candidats conservent leur statut original `human: pending`. Les décisions de [la grille](grille_relecture.json) restent vierges.
+Lire les questions et sources avant les [observations assistées](observations_assistees.md). Les justifications affichées sont celles du générateur, pas des verdicts.
+[Vérification des originaux](verification_archive.md) — [empreintes et détails techniques](verification_archive.json). Les traces intégrales restent hors Git.
 Le JSON [sources_m2.json](sources_m2.json) conserve les valeurs des huit passages, dont les sauts de ligne et les caractères U+0001.
 
 ## Index des candidats
@@ -28,18 +28,18 @@ Le JSON [sources_m2.json](sources_m2.json) conserve les valeurs des huit passage
 
 ## simple_001
 
-Identifiant rapporté : `SYN_simple_001_0001`. Catégorie proposée : `simple` ; difficulté cible : `easy`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_simple_001_0001`. Catégorie proposée : `simple` ; difficulté cible : `easy`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Pendant le congé sans solde, le salaire du salarié est-il maintenu ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article374529-0004` :
 
@@ -47,26 +47,31 @@ Preuve proposée dans `m2-article374529-0004` :
 Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue.
 ```
 
-### Provenance de cette copie
+Justification proposée (`generation_reason`) :
 
-Étude §12, question et extrait rapportés ; blocs de provenance partiels documentés.
-[Contexte documentaire, section 12](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+La question est directement repérable dans le passage et ne nécessite aucune supposition ou interprétation.
+
+### Provenance contrôlée
+
+Original reçu : `simple_001/candidates.jsonl` ; SHA-256 : `c3d07fb70b38dd69b15b863e9a7d5a6b6444847f3809296ae80ab60b3648690e`.
+Commit déclaré : [`823621b`](https://github.com/datatigersNLP/data_tigers_nlp/commit/823621b18535f245ad05bb99a762dbff39bc2ae0). Prompt reconstruit : `agent0-simple-reformulation-v1`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## reformulation_001
 
-Identifiant rapporté : `SYN_reformulation_001_0001`. Catégorie proposée : `reformulation` ; difficulté cible : `easy`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_reformulation_001_0001`. Catégorie proposée : `reformulation` ; difficulté cible : `easy`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Qu'arrive-t-il à la rémunération d'un employé pendant qu'il est en congé sans solde ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article374529-0004` :
 
@@ -74,70 +79,107 @@ Preuve proposée dans `m2-article374529-0004` :
 Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue.
 ```
 
-### Provenance de cette copie
+Justification proposée (`generation_reason`) :
 
-Étude §12, question et extrait rapportés.
-[Contexte documentaire, section 12](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Reformuler la demande en conservant le sens original du passage.
+
+### Provenance contrôlée
+
+Original reçu : `reformulation_001/candidates.jsonl` ; SHA-256 : `978127a1fa4a0d1af0c277cf5e9bfe0cd6c9d4b2da23fa1c4462513719bc407f`.
+Commit déclaré : [`e6d6a64`](https://github.com/datatigersNLP/data_tigers_nlp/commit/e6d6a640769d394155940fdd13226199c5192001). Prompt reconstruit : `agent0-simple-reformulation-v1`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## multi_passage_002
 
-Identifiant rapporté : `SYN_multi_passage_002_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_multi_passage_002_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles sont les conditions et obligations du salarié lorsqu'il sollicite un congé sans solde, et comment cela se compare-t-il avec les congés réglementés par le Code du travail ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0002`](#m2-article374529-0002), [`m2-article374529-0000`](#m2-article374529-0000)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-Extraits proposés non recopiés dans ce support : consulter `candidates.jsonl` original.
-### Provenance de cette copie
+Preuve proposée dans `m2-article374529-0002` :
 
-Étude §16, question rapportée ; extraits exacts non recopiés dans ce dossier.
-[Contexte documentaire, section 16](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+```text
+Si le congé sans solde permet, en principe, au salarié de travailler pour un autre employeur, celui-ci doit préalablement vérifier son contrat de travail. Si une clause de non-concurrence ou d'exclusivité y figure, il risque une sanction voire un licenciement en ne s'y conformant pas. Même en l'absence de clause, le salarié reste tenu par une obligation de loyauté envers son employeur.
+```
+
+Preuve proposée dans `m2-article374529-0000` :
+
+```text
+Le congé sans solde n'est pas réglementé par le Code du travail : aucune condition ni procédure ne sont imposées pour en bénéficier. Son organisation et sa durée sont définies de gré à gré entre le salarié et l'employeur. Celui-ci est libre de l'accepter ou de le refuser.
+```
+
+Justification proposée (`generation_reason`) :
+
+La question nécessite de combiner les informations sur les conditions et obligations du salarié lorsqu'il sollicite un congé sans solde (dans le premier passage) avec la nature non-réglementée de ce congé (dans le second passage). Cela permet de comparer le congé sans solde avec les congés réglementés par le Code du travail, en mettant en évidence les différences et les obligations spécifiques.
+
+### Provenance contrôlée
+
+Original reçu : `multi_passage_002/candidates.jsonl` ; SHA-256 : `2dbe1ba7a04168a08c13aa1594a9844fa817c0e03296028e2d05d8cbaa7a44de`.
+Commit déclaré : [`475aa90`](https://github.com/datatigersNLP/data_tigers_nlp/commit/475aa902fcfd70d980019433557959f3507c803b). Prompt reconstruit : `agent0-multi-passage-v2`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## multi_passage_003
 
-Identifiant rapporté : `SYN_multi_passage_003_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_multi_passage_003_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
-**Formulation exacte à recueillir dans le fichier original.**
+Quelles sont les conditions et obligations du salarié lorsqu'il souhaite bénéficier d'un congé sans solde, et comment cela se compare à d'autres types de congés réglementés ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0002`](#m2-article374529-0002), [`m2-article374529-0000`](#m2-article374529-0000)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-Extraits proposés non recopiés dans ce support : consulter `candidates.jsonl` original.
-### Provenance de cette copie
+Preuve proposée dans `m2-article374529-0002` :
 
-Étude §17 : résumé seulement ; formulation exacte indisponible dans les éléments utilisés ici.
-[Contexte documentaire, section 17](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+```text
+Si le congé sans solde permet, en principe, au salarié de travailler pour un autre employeur, celui-ci doit préalablement vérifier son contrat de travail. Si une clause de non-concurrence ou d'exclusivité y figure, il risque une sanction voire un licenciement en ne s'y conformant pas. Même en l'absence de clause, le salarié reste tenu par une obligation de loyauté envers son employeur.
+```
+
+Preuve proposée dans `m2-article374529-0000` :
+
+```text
+Le congé sans solde n'est pas réglementé par le Code du travail : aucune condition ni procédure ne sont imposées pour en bénéficier. Son organisation et sa durée sont définies de gré à gré entre le salarié et l'employeur. Celui-ci est libre de l'accepter ou de le refuser.
+```
+
+Justification proposée (`generation_reason`) :
+
+La question nécessite d'analyser les conditions et obligations du salarié lorsqu'il souhaite bénéficier d'un congé sans solde, en se basant sur les informations fournies dans les deux passages. Elle demande également de comparer ces conditions à d'autres types de congés réglementés, ce qui nécessite de combiner les informations des deux sources.
+
+### Provenance contrôlée
+
+Original reçu : `multi_passage_003/candidates.jsonl` ; SHA-256 : `b9b3325f5ccb83241812ea64c7b288b744f321d68ac079edc129f66db4e28ae0`.
+Commit déclaré : [`824eaa1`](https://github.com/datatigersNLP/data_tigers_nlp/commit/824eaa12b9bbfca03e93aa7e3586615369139788). Prompt reconstruit : `agent0-multi-passage-v3`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## multi_passage_004
 
-Identifiant rapporté : `SYN_multi_passage_004_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_multi_passage_004_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles conditions doivent être respectées pour bénéficier d'un congé sans solde et comment est-elle financée ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0003`](#m2-article374529-0003), [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article374529-0003` :
 
@@ -151,26 +193,31 @@ Preuve proposée dans `m2-article374529-0004` :
 Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue. Si un compte épargne-temps (CET) a été mis en place dans l’entreprise, le salarié peut toutefois utiliser les droits acquis sur son CET pour « financer » ce congé, dès lors que cette possibilité est prévue par l’accord ayant instauré le CET.
 ```
 
-### Provenance de cette copie
+Justification proposée (`generation_reason`) :
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 18](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+La question nécessite d'associer les informations sur la procédure du congé sans solde (dans le premier passage) et la rémunération pendant ce congé (dans le second passage). Ces deux passages fournissent des informations complémentaires pour répondre à la question, en combinant les conditions d'accord écrit et la possibilité de financement via un CET.
+
+### Provenance contrôlée
+
+Original reçu : `multi_passage_004/candidates.jsonl` ; SHA-256 : `0a0283607e68ba6eb15e8e0d464a16e2ce9b623b01f692382f35c8bf3da3410a`.
+Commit déclaré : [`1f7eeca`](https://github.com/datatigersNLP/data_tigers_nlp/commit/1f7eeca8eea1014e959b7318079ae177d2980037). Prompt reconstruit : `agent0-multi-passage-v3`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## multi_passage_006
 
-Identifiant rapporté : `SYN_multi_passage_006_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_multi_passage_006_0001`. Catégorie proposée : `multi_passage` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles conditions doivent remplir les salariés pour obtenir la médaille d'honneur du travail, et comment est-elle attribuée ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374500-0003`](#m2-article374500-0003), [`m2-article374500-0000`](#m2-article374500-0000)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article374500-0003` :
 
@@ -187,32 +234,41 @@ Preuve proposée dans `m2-article374500-0000` :
   - assortie d'un diplôme et, dans certains cas, d'une gratification (convention collective ou usage de l'entreprise).
 ```
 
-### Provenance de cette copie
+Justification proposée (`generation_reason`) :
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 18](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+La question nécessite d'analyser les conditions d'obtention de la médaille d'honneur du travail, qui sont détaillées dans le premier passage, et de comprendre le processus d'attribution, qui est expliqué dans le second passage. Ces deux informations sont complémentaires et ne peuvent être traitées indépendamment pour répondre à la question.
+
+### Provenance contrôlée
+
+Original reçu : `multi_passage_006/candidates.jsonl` ; SHA-256 : `bc376df6ff0affb424c50321cc0c914937e9fe2476e6ad834ec2f966535200ab`.
+Commit déclaré : [`1f7eeca`](https://github.com/datatigersNLP/data_tigers_nlp/commit/1f7eeca8eea1014e959b7318079ae177d2980037). Prompt reconstruit : `agent0-multi-passage-v3`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## adversarial_001
 
-Identifiant rapporté : `SYN_adversarial_001_0001`. Catégorie proposée : `adversarial` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_adversarial_001_0001`. Catégorie proposée : `adversarial` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Pendant le congé sans solde, le salaire du salarié est maintenu grâce à un compte épargne-temps (CET).
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article374529-0004` :
 
 ```text
 Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue. Si un compte épargne-temps (CET) a été mis en place dans l’entreprise, le salarié peut toutefois utiliser les droits acquis sur son CET pour « financer » ce congé, dès lors que cette possibilité est prévue par l’accord ayant instauré le CET.
 ```
+
+Justification proposée (`generation_reason`) :
+
+La prémisse est fausse car elle suggère que le salaire est maintenu pendant le congé sans solde, ce qui est contraire aux informations fournies dans le passage. Le passage indique clairement que la rémunération n'est pas maintenue, mais que le CET peut être utilisé pour financer le congé, sous certaines conditions.
 
 Prémisse proposée :
 
@@ -222,32 +278,37 @@ Correction proposée :
 
 Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue. Si un compte épargne-temps (CET) a été mis en place dans l’entreprise, le salarié peut toutefois utiliser les droits acquis sur son CET pour « financer » ce congé, dès lors que cette possibilité est prévue par l’accord ayant instauré le CET.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 21](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `adversarial_001/candidates.jsonl` ; SHA-256 : `0fd31993a2289ee3cb250bff9838d774896708893f68150f4c09f74eb331181d`.
+Commit déclaré : [`0a22c0d`](https://github.com/datatigersNLP/data_tigers_nlp/commit/0a22c0d6229b699239cb77c03a299b1c754ef987). Prompt reconstruit : `agent0-adversarial-v1`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## adversarial_002
 
-Identifiant rapporté : `SYN_adversarial_002_0001`. Catégorie proposée : `adversarial` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_adversarial_002_0001`. Catégorie proposée : `adversarial` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Pendant le congé sans solde, la rémunération du salarié est-elle maintenue ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article374529-0004` :
 
 ```text
 Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue.
 ```
+
+Justification proposée (`generation_reason`) :
+
+La question contient une prémisse fausse en affirmant que la rémunération est maintenue pendant le congé sans solde, alors que le passage indique clairement qu'elle n'est pas maintenue. Cette prémisse peut être corrigée en citant le texte directement.
 
 Prémisse proposée :
 
@@ -257,32 +318,37 @@ Correction proposée :
 
 La rémunération du salarié n’est pas maintenue pendant le congé sans solde.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 22](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `adversarial_002/candidates.jsonl` ; SHA-256 : `7ab454b917b0a52f08b039ea2d2a29d4912f7c9dd4ed86a08320eac35f17c19e`.
+Commit déclaré : [`9f06371`](https://github.com/datatigersNLP/data_tigers_nlp/commit/9f063711a346643e895f0f8387dbffe648a79fb3). Prompt reconstruit : `agent0-adversarial-v2`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## adversarial_003
 
-Identifiant rapporté : `SYN_adversarial_003_0001`. Catégorie proposée : `adversarial` ; difficulté cible : `medium`.
-`answerable_proposed: true` ; `human: pending` rapporté.
+Identifiant : `SYN_adversarial_003_0001`. Catégorie proposée : `adversarial` ; difficulté cible : `medium`.
+`answerable_proposed: true` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Lorsqu'un représentant du CSE constate que les produits ou procédés de fabrication utilisés par l'établissement font peser un risque grave pour la santé publique ou l'environnement, l'employeur est obligé de réaliser une enquête avec le membre de la délégation du personnel qui a effectué le signalement ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article377050-0003`](#m2-article377050-0003)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
 Preuve proposée dans `m2-article377050-0003` :
 
 ```text
 Dans ce cas, le Code du travail ne fait pas référence à une enquête, mais un examen conjoint de la situation.
 ```
+
+Justification proposée (`generation_reason`) :
+
+La prémisse est fausse car le passage indique que le Code du travail ne fait pas référence à une enquête, mais à un examen conjoint de la situation. Cette prémisse permet de corriger la question en soulignant que l'employeur n'est pas obligé de réaliser une enquête, mais un examen conjoint.
 
 Prémisse proposée :
 
@@ -292,171 +358,208 @@ Correction proposée :
 
 Dans ce cas, le Code du travail ne fait pas référence à une enquête, mais à un examen conjoint de la situation.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 23](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `adversarial_003/candidates.jsonl` ; SHA-256 : `dd6c27b6470b9a096880da26ee8039c5118731943e2ba052211fc60bb4d9f119`.
+Commit déclaré : [`9133ffc`](https://github.com/datatigersNLP/data_tigers_nlp/commit/9133ffc6d26b6d3ae33bf8abd76ac776f9529641). Prompt reconstruit : `agent0-adversarial-v3`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## hors_corpus_001
 
-Identifiant rapporté : `SYN_hors_corpus_001_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
-`answerable_proposed: false` ; `human: pending` rapporté.
+Identifiant : `SYN_hors_corpus_001_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
+`answerable_proposed: false` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles conditions doivent être remplies pour que le salarié puisse utiliser son compte épargne-temps (CET) pendant son congé sans solde ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-`evidence: []` proposé. Cela ne constitue pas une preuve d'absence dans le corpus.
+`evidence: []`. Cela ne constitue pas une preuve d'absence documentaire.
+
+Justification proposée (`generation_reason`) :
+
+Vérifier les conditions spécifiques pour l'utilisation du compte épargne-temps (CET) pendant un congé sans solde.
+
 Motif d'absence proposé :
 
 L'information sur les conditions spécifiques n'est pas fournie dans ce passage.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 26](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `hors_corpus_001/candidates.jsonl` ; SHA-256 : `146d8864638afe9df513afbc78e46d35d886f6de43c348e08d875ee350f66be8`.
+Commit déclaré : [`72ea697`](https://github.com/datatigersNLP/data_tigers_nlp/commit/72ea6979464be99554930f508b9ad4d90680bb30). Prompt reconstruit : `agent0-hors-corpus-v1`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## hors_corpus_002
 
-Identifiant rapporté : `SYN_hors_corpus_002_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
-`answerable_proposed: false` ; `human: pending` rapporté.
+Identifiant : `SYN_hors_corpus_002_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
+`answerable_proposed: false` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles sont les conditions pour déclencher une alerte par un représentant du CSE en matière de santé et de sécurité ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article377050-0003`](#m2-article377050-0003)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-`evidence: []` proposé. Cela ne constitue pas une preuve d'absence dans le corpus.
+`evidence: []`. Cela ne constitue pas une preuve d'absence documentaire.
+
+Justification proposée (`generation_reason`) :
+
+Vérifier les conditions de déclenchement d'une alerte par un représentant du CSE en matière de santé et de sécurité dans le Code du travail.
+
 Motif d'absence proposé :
 
 L'information sur les conditions de déclenchement d'une alerte par un représentant du CSE en matière de santé et de sécurité n'est pas fournie dans ce passage.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 27](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `hors_corpus_002/candidates.jsonl` ; SHA-256 : `b11019d66d3b295cbcc055a6dfa9f4aa1ccfd589aa98b25f894ec2282d5740dd`.
+Commit déclaré : [`c54561c`](https://github.com/datatigersNLP/data_tigers_nlp/commit/c54561c9b6832dfb30282229bfebdbfad13894e7). Prompt reconstruit : `agent0-hors-corpus-v1`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## hors_corpus_003
 
-Identifiant rapporté : `SYN_hors_corpus_003_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
-`answerable_proposed: false` ; `human: pending` rapporté.
+Identifiant : `SYN_hors_corpus_003_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
+`answerable_proposed: false` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles conditions doivent remplir les salariés résidant à l'étranger pour obtenir la médaille d'honneur du travail ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374500-0003`](#m2-article374500-0003)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-`evidence: []` proposé. Cela ne constitue pas une preuve d'absence dans le corpus.
+`evidence: []`. Cela ne constitue pas une preuve d'absence documentaire.
+
+Justification proposée (`generation_reason`) :
+
+Vérifier les conditions spécifiques pour les salariés résidant à l'étranger obtenir la médaille d'honneur du travail.
+
 Motif d'absence proposé :
 
 L'information sur les conditions spécifiques pour les salariés résidant à l'étranger n'est pas fournie dans ce passage.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 27](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `hors_corpus_003/candidates.jsonl` ; SHA-256 : `8d3c44cda58199e61d5bc03c6dfe26ac182752bc111a45b147bad85d38a01dd8`.
+Commit déclaré : [`c54561c`](https://github.com/datatigersNLP/data_tigers_nlp/commit/c54561c9b6832dfb30282229bfebdbfad13894e7). Prompt reconstruit : `agent0-hors-corpus-v1`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## hors_corpus_004
 
-Identifiant rapporté : `SYN_hors_corpus_004_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
-`answerable_proposed: false` ; `human: pending` rapporté.
+Identifiant : `SYN_hors_corpus_004_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
+`answerable_proposed: false` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles sont les conditions pour que le salarié puisse utiliser son compte épargne-temps (CET) pendant un congé sans solde ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374529-0004`](#m2-article374529-0004)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-`evidence: []` proposé. Cela ne constitue pas une preuve d'absence dans le corpus.
+`evidence: []`. Cela ne constitue pas une preuve d'absence documentaire.
+
+Justification proposée (`generation_reason`) :
+
+Le passage documente que le salarié peut utiliser son CET pour financer le congé sans solde si cette possibilité est prévue par l'accord. Cependant, il ne précise pas les conditions exactes pour que cette utilisation soit possible.
+
 Motif d'absence proposé :
 
 Les conditions spécifiques pour l'utilisation du CET pendant un congé sans solde sont absentes dans le passage documenté.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 28](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `hors_corpus_004/candidates.jsonl` ; SHA-256 : `2da1e6138b828c34f4ce650378856aa344a01efe0f0aff215665e2497cfb357a`.
+Commit déclaré : [`670c43f`](https://github.com/datatigersNLP/data_tigers_nlp/commit/670c43fd1533358b39a9ea70a3a5a5e3a85e2739). Prompt reconstruit : `agent0-hors-corpus-v2`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## hors_corpus_005
 
-Identifiant rapporté : `SYN_hors_corpus_005_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
-`answerable_proposed: false` ; `human: pending` rapporté.
+Identifiant : `SYN_hors_corpus_005_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
+`answerable_proposed: false` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles sont les conséquences légales pour l'employeur si une alerte est déclenchée en raison d'un risque grave pour la santé publique ou l'environnement ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article377050-0003`](#m2-article377050-0003)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-`evidence: []` proposé. Cela ne constitue pas une preuve d'absence dans le corpus.
+`evidence: []`. Cela ne constitue pas une preuve d'absence documentaire.
+
+Justification proposée (`generation_reason`) :
+
+Le passage documente les conditions sous lesquelles une alerte peut être déclenchée par un représentant du CSE, mais ne fournit aucune information sur les conséquences légales pour l'employeur en cas de déclenchement d'une telle alerte.
+
 Motif d'absence proposé :
 
 L'information sur les conséquences légales pour l'employeur en cas de déclenchement d'une alerte n'est pas présente dans le passage fourni et doit être recherchée dans le corpus complet.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 28](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `hors_corpus_005/candidates.jsonl` ; SHA-256 : `d313a0988c19ada222c842e168e856ee9cbf4466c2c288ec5b5a3cad8a263d44`.
+Commit déclaré : [`670c43f`](https://github.com/datatigersNLP/data_tigers_nlp/commit/670c43fd1533358b39a9ea70a3a5a5e3a85e2739). Prompt reconstruit : `agent0-hors-corpus-v2`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## hors_corpus_006
 
-Identifiant rapporté : `SYN_hors_corpus_006_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
-`answerable_proposed: false` ; `human: pending` rapporté.
+Identifiant : `SYN_hors_corpus_006_0001`. Catégorie proposée : `hors_corpus` ; difficulté cible : `medium`.
+`answerable_proposed: false` ; `automatic: passed` ; `human: pending` dans l'original.
 
-### Question rapportée
+### Question originale
 
 Quelles conditions doivent remplir les salariés résidant à l'étranger pour obtenir la médaille d'honneur du travail de manière exceptionnelle ?
 
-### Sources de génération rapportées
+### Sources de génération
 
 [`m2-article374500-0003`](#m2-article374500-0003)
 
-### Éléments proposés disponibles
+### Éléments proposés par le générateur
 
-`evidence: []` proposé. Cela ne constitue pas une preuve d'absence dans le corpus.
+`evidence: []`. Cela ne constitue pas une preuve d'absence documentaire.
+
+Justification proposée (`generation_reason`) :
+
+Le passage documente les conditions générales pour obtenir la médaille d'honneur du travail, mais ne précise pas les conditions exceptionnelles pour les salariés résidant à l'étranger.
+
 Motif d'absence proposé :
 
 L'information sur les conditions exceptionnelles pour les salariés résidant à l'étranger n'est pas présente dans le passage documenté.
 
-### Provenance de cette copie
+### Provenance contrôlée
 
-Candidat complet copié par Jibril dans la conversation ; fichier original non reçu.
-[Contexte documentaire, section 28](../agent0_light.md). Les fichiers et empreintes des originaux restent à recueillir.
+Original reçu : `hors_corpus_006/candidates.jsonl` ; SHA-256 : `6b31db8fba5e70cebd847674e77c86fa51292232e87feb120511b665ecdeab51`.
+Commit déclaré : [`670c43f`](https://github.com/datatigersNLP/data_tigers_nlp/commit/670c43fd1533358b39a9ea70a3a5a5e3a85e2739). Prompt reconstruit : `agent0-hors-corpus-v2`. Sources et sélection conformes au corpus figé.
+Les autres empreintes et les limites du contrôle figurent dans [le rapport](verification_archive.md). Aucun verdict humain n'est attribué.
 
 
 ## Sources complètes de référence
 
-Ces huit passages sont extraits des fichiers M2 versionnés au commit `36bb4e05094dbc68d1975f1d8ea01eac50de166b`. Ils servent à lire les essais sans limiter à eux la vérification d'un cas hors corpus.
+Les huit passages de référence proviennent des fichiers M2 au commit `36bb4e05094dbc68d1975f1d8ea01eac50de166b`. Les sources des 18 préparations reçues leur correspondent exactement. Cela ne limite pas à ces huit textes la vérification d'un cas hors corpus.
 Empreinte complète des passages : `aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
 L'affichage remplace uniquement les caractères U+0001 par la notation `\u0001` ; le JSON associé conserve les valeurs sans cette convention d'affichage.
 
