@@ -1846,3 +1846,23 @@ ou du protocole officiel. Aucun nouveau lot, candidat de remplacement ou verdict
 #94 reste partielle, #103 en brouillon avec Mahé/Remy demandés. #95 relue pour ce bilan, non modifiée.
 Aucun candidat admis au lot figé, gel, fusion, clôture ou temps réel déclaré ; estimation initiale
 de 7 h inchangée.
+
+
+## 29. #95 — Préparer la relecture des essais, sans admission
+
+Le 20 octobre 2026, un [support de préparation à la relecture](agent0_relecture/README.md) est créé
+sur une branche documentaire dédiée, depuis le head `36bb4e05094dbc68d1975f1d8ea01eac50de166b` de #103.
+Il inventorie 18 runs rapportés : 15 candidats en attente et 3 rejets automatiques.
+14 formulations sont disponibles ; celle de multi_passage_003 reste à recueillir.
+Les questions/sources, observations assistées et grille humaine vierge sont séparées.
+Huit passages M2 sont recopiés depuis les fichiers versionnés avec leurs empreintes, sans modification.
+
+Les originaux complets des runs et sélections manquent encore ; une procédure d'archive Windows
+hors Git est fournie. Ce support permet une prélecture, sans authentifier des fichiers non reçus
+ou attribuer des verdicts humains. Les essais de mise au point restent distincts du futur pilote
+de 25 candidats et ne servent pas à calculer un taux général de qualité.
+
+Aucun générateur, schéma, validateur, modèle, budget, corpus ou RAG modifié ; aucun test unitaire,
+appel réel ou gel exécuté ici. #94/#95 partielles, #103 en brouillon ; relecture du code et relecture
+sémantique indépendantes nécessaires. Estimations initiales 7 h (#94) et 4 h (#95) inchangées,
+aucun temps réel déclaré. La nouvelle PR documentaire dépend de #103 et cible dev.
