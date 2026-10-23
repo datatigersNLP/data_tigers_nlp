@@ -1,0 +1,132 @@
+{
+  "format": "agent0-review-sources-v1",
+  "corpus": {
+    "base_commit": "36bb4e05094dbc68d1975f1d8ea01eac50de166b",
+    "sha256_entete": "586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23",
+    "sha256_passages": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d",
+    "nb_passages": 4240,
+    "nb_fiches": 261
+  },
+  "portee": "8 passages de référence pour lire les essais ; ce fichier ne constitue pas le corpus complet.",
+  "sources": [
+    {
+      "source": {
+        "passage_id": "m2-article374500-0000",
+        "titre_fiche": "La médaille d'honneur du travail",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail#:~:text=La%20m%C3%A9daille%20d%27honneur%20du%20travail%20r%C3%A9compense%20l%27anciennet%C3%A9%20de",
+        "date_maj": "2026-04-20",
+        "texte": "- La médaille d'honneur du travail récompense l'ancienneté de services des salariés.\n- Elle est :\n  - attribuée à la demande du salarié qui doit déposer un dossier ;\n  - assortie d'un diplôme et, dans certains cas, d'une gratification (convention collective ou usage de l'entreprise).",
+        "articles": []
+      },
+      "sha256_texte": "9914be597dddf7ba50698d8f68554ab7f53821c35dfe40b74c9142088f8c4133"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374500-0003",
+        "titre_fiche": "La médaille d'honneur du travail",
+        "section_titre": "Quels salariés ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail#:~:text=Peuvent%20obtenir%20la%20m%C3%A9daille%20d%27honneur%20du%20travail%20les",
+        "date_maj": "2026-04-20",
+        "texte": "Peuvent obtenir la médaille d'honneur du travail les salariés, qu'ils soient ou non de nationalité française, travaillant sur le territoire de la République pour des employeurs français ou étrangers.\nLa médaille d'honneur du travail peut également être décernée aux salariés, qu'ils soient ou non de nationalité française travaillant à l'étranger :\n- Chez un employeur français ;\n- Dans une succursale ou agence d'une entreprise ou d'un établissement dont le siège social est sur le territoire de la République ;\n- Dans les filiales des sociétés françaises, même si ces filiales ne sont pas constituées selon le droit français.\nÀ titre exceptionnel, et sous réserve qu'ils remplissent également les conditions d'ancienneté de services prévues par la réglementation, les salariés, qu'ils soient ou non de nationalité française, résidant à l'étranger et travaillant dans d'autres établissements que ceux visés ci-dessus, peuvent obtenir la médaille d'honneur du travail si leurs activités professionnelles ont particulièrement contribué au bon renom de la France.\nSont, en principe, exclus :\n- Les fonctionnaires soumis au statut de la fonction publique ;\n- Les magistrats de l'ordre judiciaire ;\n- Les salariés qui par leur profession peuvent prétendre à d'autres récompenses (médaille d'honneur agricole, médaille d'honneur des chemins de fer... ) ;\n- Les parlementaires en exercice.",
+        "articles": []
+      },
+      "sha256_texte": "6fcb3867f38b7275b8419669a0cbe534f2807d4c2c11df3b6a65f03f6d300c06"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374529-0000",
+        "titre_fiche": "Le congé sans solde",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+        "url_citation": "https://travail-emploi.gouv.fr/le-conge-sans-solde#:~:text=Le%20cong%C3%A9%20sans%20solde%20n%27est%20pas%20r%C3%A9glement%C3%A9%20par",
+        "date_maj": "2021-12-21",
+        "texte": "Le congé sans solde n'est pas réglementé par le Code du travail : aucune condition ni procédure ne sont imposées pour en bénéficier. Son organisation et sa durée sont définies de gré à gré entre le salarié et l'employeur. Celui-ci est libre de l'accepter ou de le refuser. Un salarié peut demander un congé sans solde pour divers motifs. Si sa demande est acceptée, il ne sera pas rémunéré, sauf à utiliser son compte épargne-temps. De même, la durée de son absence ne sera pas prise en compte pour le calcul des droits qu'il tient de son ancienneté, pour les congés payés...",
+        "articles": []
+      },
+      "sha256_texte": "a4d87df47bbbccb48a8be65aa9a9462fabbeda0b7e2961d676d9ef3ba3471594"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374529-0002",
+        "titre_fiche": "Le congé sans solde",
+        "section_titre": "Quelles sont les caractéristiques ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+        "url_citation": "https://travail-emploi.gouv.fr/le-conge-sans-solde#:~:text=Par%20d%C3%A9finition%2C%20le%20cong%C3%A9%20sans%20solde%20est%20un",
+        "date_maj": "2021-12-21",
+        "texte": "Par définition, le congé sans solde est un congé pour convenance personnelle : le salarié est totalement libre de l'utiliser à des fins personnelles (faire du sport, un voyage, s'occuper de ses enfants, ... ) ou professionnelles (créer une entreprise, exercer une autre activité professionnelle,... ).\nSi le congé sans solde permet, en principe, au salarié de travailler pour un autre employeur, celui-ci doit préalablement vérifier son contrat de travail. Si une clause de non-concurrence ou d'exclusivité y figure, il risque une sanction voire un licenciement en ne s'y conformant pas. Même en l'absence de clause, le salarié reste tenu par une obligation de loyauté envers son employeur.\nToutefois, compte tenu de l'absence de réglementation concernant ce congé (et donc de garanties tant pour l'employeur que pour le salarié), il peut être plus intéressant d'opter pour un congé organisé par le Code du travail et dont l'objectif correspond au projet du salarié, tel :\n- le congé sabbatique ;\n- le congé ou temps partiel pour création d'entreprise ;\n- les congés de formation ;\n- le congé parental d'éducation ;\n- le congé de solidarité familiale ;\n- le congé de proche aidant,...",
+        "articles": []
+      },
+      "sha256_texte": "807b65e0a4a52ef97a3043230e33700d3d45f7e461b5adc6d5a70bc3553ba20a"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374529-0003",
+        "titre_fiche": "Le congé sans solde",
+        "section_titre": "Quelle est la procédure ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+        "url_citation": "https://travail-emploi.gouv.fr/le-conge-sans-solde#:~:text=Le%20cong%C3%A9%20sans%20solde%20n%27%C3%A9tant%20pas%20pr%C3%A9vu%20par",
+        "date_maj": "2021-12-21",
+        "texte": "Le congé sans solde n'étant pas prévu par le Code du travail, aucune précision particulière concernant la procédure n'est donnée. Afin de prévenir tout litige, le principe du congé, sa durée, les conditions de retour dans l'entreprise... doivent faire l'objet d'un accord écrit entre l'employeur et le salarié. Il convient également de se reporter à la convention collective applicable à l'entreprise qui peut prévoir des dispositions à ce sujet.",
+        "articles": []
+      },
+      "sha256_texte": "2a23877d1e98e215181438a3cdbbab6c6d141be6f41f3ad156eb211cc58d23c5"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374529-0004",
+        "titre_fiche": "Le congé sans solde",
+        "section_titre": "La rémunération est-elle maintenue pendant le congé ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+        "url_citation": "https://travail-emploi.gouv.fr/le-conge-sans-solde#:~:text=Pendant%20le%20cong%C3%A9%20sans%20solde%2C%20la%20r%C3%A9mun%C3%A9ration%20du",
+        "date_maj": "2021-12-21",
+        "texte": "Pendant le congé sans solde, la rémunération du salarié n’est pas maintenue. Si un compte épargne-temps (CET) a été mis en place dans l’entreprise, le salarié peut toutefois utiliser les droits acquis sur son CET pour « financer » ce congé, dès lors que cette possibilité est prévue par l’accord ayant instauré le CET.",
+        "articles": []
+      },
+      "sha256_texte": "86f438f6f085b9d18ce7e56aa3a0433aa28271555682b4750d0b17d720f470b6"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article377050-0003",
+        "titre_fiche": "Les attributions du CSE en matière de santé, de sécurité et de conditions de travail",
+        "section_titre": "Le CSE et la santé sécurité au travail (Web série droit du travail)",
+        "chemin": [
+          "Lire la retranscription textuelle"
+        ],
+        "url": "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail#:~:text=Lire%20la%20retranscription%20textuelle",
+        "date_maj": "2025-10-15",
+        "texte": "Y participent au moins l'employeur ou un représentant désigné par lui et un représentant du personnel siégeant au CSE.\nLors de ces enquêtes, l'objectif est d'identifier les causes des accidents et de faire des préconisations en vue de prévenir la survenue de nouveaux incidents.\nIls ont ensuite un droit d'information et de consultation des documents.\nPar exemple, lorsque l'employeur réceptionne des documents relatifs aux vérifications et contrôles mis à charge au titre de la santé et de la sécurité, il en informe les membres du CSE.\nIl peut s'agir d'attestations, de consignes, de résultats ou de rapports.\nL'employeur leur présente également la liste des actions de prévention et de protection prévues des risques professionnels.\nLes membres de la délégation du personnel disposent ensuite d'un droit d'alerte. \u0001 En matière de santé et de sécurité, cette alerte peut être déclenchée\u0001 à plusieurs titres.\nPremièrement, l'origine de l'alerte peut être le constat d'une atteinte aux droits des personnes, notamment à leur santé physique et mentale : par exemple, la découverte de faits de harcèlement moral ou sexuel.\nDeuxièmement, l'origine de l'alerte peut être un danger grave et imminent : à titre d'exemple, une défaillance dans un système de protection qui menacerait immédiatement la vie d'un ou plusieurs travailleurs.\nDans les deux cas, le déclenchement de ces alertes oblige l'employeur à réaliser une enquête avec le membre de la délégation du personnel qui a effectué le signalement.\nEnfin, une alerte peut être déclenchée par un représentant du CSE qui constate, notamment par l'intermédiaire d'un travailleur, que les produits ou procédés de fabrication utilisés ou mis en œuvre par l'établissement font peser un risque grave pour la santé publique ou l'environnement.\nDans ce cas, le Code du travail ne fait pas référence à une enquête, mais un examen conjoint de la situation.",
+        "articles": []
+      },
+      "sha256_texte": "fd42ee64e0872061f4227f461de7341decab00ee63ddbfad48869faf165defc5"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article377050-0017",
+        "titre_fiche": "Les attributions du CSE en matière de santé, de sécurité et de conditions de travail",
+        "section_titre": "De quels moyens dispose le CSE dans le cadre de ses attributions dans les domaines de la santé, de la sécurité et des conditions de travail ?",
+        "chemin": [
+          "Réunions avec l'employeur"
+        ],
+        "url": "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail#:~:text=Le%20m%C3%A9decin%20du%20travail%20et%20le%20responsable%20du",
+        "date_maj": "2025-10-15",
+        "texte": "Le médecin du travail et le responsable du service de sécurité et des conditions de travail assistent à ces réunions, avec voix consultative. L'agent de contrôle de l'inspection du travail ainsi que les agents des services de prévention des organismes de sécurité sociale sont invités à certaines de ces réunions SSCT ainsi qu’à l’ensemble des réunions de la CSSCT. Ils sont conviés à toutes les réunions portant sur la SSCT sur initiative de l’employeur ou à la demande de la majorité de la délégation du personnel du CSE.\nLorsque l'employeur est défaillant, et à la demande d'au moins la moitié des membres du CSE, celui-ci peut être convoqué par l'agent de contrôle de l'inspection du travail et siéger sous sa présidence.\nL'employeur informe annuellement l'agent de contrôle de l'inspection du travail, le médecin du travail et l'agent des services de prévention des organismes de sécurité sociale du calendrier retenu pour les réunions consacrées aux sujets relevant de la santé, de la sécurité ou des conditions de travail, et leur confirme par écrit au moins 15 jours à l'avance la tenue de ces réunions.\nAu même titre que les réunions du CSE, est également rémunéré comme temps de travail effectif et n'est pas déduit des heures de délégation le temps passé par les membres de la délégation du personnel du CSE :\n- À la recherche de mesures préventives dans toute situation d'urgence et de gravité, notamment lors de la mise en œuvre de la procédure de danger grave et imminent mentionnée ci-dessus ;\n- Aux enquêtes menées après un accident du travail grave ou des incidents répétés ayant révélé un risque grave ou une maladie professionnelle ou à caractère professionnel grave ;\n- Aux réunions de la CSSCT (article R. 2315-7 du Code du travail) ;\n- Aux formations en santé, sécurité et conditions de travail (article L. 2315-18 du Code du travail).",
+        "articles": [
+          "LEGIARTI000036417725",
+          "LEGIARTI000037389705"
+        ]
+      },
+      "sha256_texte": "4f2a83170b54f288d18a83438d7994d2625fbde36e9d04a61b0c15a7f0347eff"
+    }
+  ]
+}
