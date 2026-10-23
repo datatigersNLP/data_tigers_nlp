@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 19 octobre 2026, sessions 1 à 38 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 23 octobre 2026, sessions 1 à 39 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1097,6 +1097,43 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Jibril n'a pas reproduit le défaut de la #83 sous WebKit 26.5 (Linux) : il tient au réglage de navigation au clavier de macOS, désactivé par défaut, sous lequel Tab saute les boutons.
 - Une branche créée sans récupérer l'état distant partait d'un `dev` périmé ; recréée depuis `7e2ce07` avant tout commit.
 
+### Session 39, 23 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit du dépôt depuis le 19 octobre ; analyse du travail de Jibril sur Agent0 Light, à sa demande ; revues ; lancement des tâches du volet B qui ne dépendaient de personne.
+
+**Produit.**
+- Audit : aucune fusion du 19 au 23 octobre ; activité de chaque membre relevée ; aucune trace du Weekly 6 (#12).
+- Revues des PR de Jibril : #101, demande de modification (le contrôle d'extrait accepte un fragment de deux lettres, correctif testé joint) ; #103 et #106, commentaires (forme des questions, doublons, méthode hors corpus, conception du pilote) ; #85 approuvée.
+- Commentaire à Remy sur la PR #105 : deux inexactitudes dans sa section 4.2.
+- PR #104 fusionnée, approuvée par Maïmouna.
+- Ticket #107 ouvert : adaptation du modèle du volet B, avec plan, critères et risques.
+- PR #108 : protocole de mesure du volet B avant et après adaptation, proposé (#52).
+- PR #109 : faisabilité de l'adaptation par LoRA mesurée sur Mac (#107).
+
+**Mesures exécutées.**
+- Agent0 : 142 tests réussis sur la pile, 93 sur la #101 ; 13 extraits sur 13 retrouvés mot pour mot dans l'index du site ; contre-essai du validateur, où l'extrait « ng » est accepté.
+- Agent0 : recouvrement lexical entre question et source de 0,67 pour les candidats contre 0,40 pour 5 questions humaines de calibration (médianes) ; 15 questions posées au site en ligne, source parmi les 5 premiers pour 8 candidats sur 8 identifiables, aucune abstention pour les 6 hors corpus.
+- #85 : 45 tests réussis sous macOS, dans un environnement réduit à NumPy.
+- Faisabilité (#107) : LoRA de rang 8 sur Qwen2.5-7B-Instruct en 4 bits (MLX) ; pic de mémoire GPU de 7,14 Gio et 10,5 s par itération sur 16 couches, 7,56 Gio et 14,3 s sur 28 couches, avec des contextes de 1 115 à 2 542 tokens.
+
+**Résultats retenus.**
+- Le travail d'Agent0 est exact et honnêtement documenté. Ses limites sont de méthode : biais lexical, diversité, hors corpus. Il ne remplace pas l'adaptation exigée à J3.
+- L'adaptation est faisable sur le Mac ; la mesure sur le Legion reste à faire.
+
+**Ce qui a été écarté, et pourquoi.**
+- Lancer seul la mesure de #49 : c'est une mesure unique sur le lot de test, dont le notebook doit d'abord être relu par Remy, co-responsable ; les conditions préalables ont déjà été vérifiées le 14 octobre.
+- Pousser des correctifs sur les branches de Jibril : contraire à la règle de l'équipe ; ils sont proposés dans les revues.
+
+**Ce que l'équipe a validé, et par qui.**
+- PR #104 approuvée par Maïmouna SIGNATE ; section 3 du rapport relue par Remy RAYANE et par Maïmouna SIGNATE pour ce qui les concerne (PR #105).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- La fusion de la #104 a d'abord été refusée : le SHA complet de la tête avait été saisi de mémoire, et il était faux. La protection `--match-head-commit` a joué son rôle ; la fusion a été refaite avec le SHA lu par l'API.
+- Plusieurs pièges de mesure pendant l'essai de faisabilité, détaillés en section 4.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1174,6 +1211,12 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 18/10 | Boucle de tabulation de la PR #83 ne gérant que les bords de la liste : sous WebKit sur macOS, où la navigation au clavier du système, désactivée par défaut, fait sauter les boutons à Tab, le focus quittait le menu 10 fois sur 20 | essai du site en ligne sous WebKit 26.6 (macOS), sur une limite déclarée de la #83 | tabulation entièrement gérée dans le menu (PR #102), vérifiée en ligne sur Chromium, Firefox et WebKit |
 | 18/10 | Essai sous WebKit concluant à l'échec de la recherche, le blocage des requêtes rejetant une URL `blob:` | requête bloquée à l'hôte vide, relevée dans le journal de l'essai | `blob:` et `data:` laissés passer ; recherche aboutie |
 | 19/10 | Défaut de tabulation de la PR #83 attribué à WebKit en général, alors qu'il tient au réglage de navigation au clavier de macOS, désactivé par défaut | revue de la PR #102 par Jibril : non reproduit sous WebKit 26.5 (Linux) ; réglage `AppleKeyboardUIMode` absent, donc à sa valeur par défaut, sur le Mac de l'essai | journal et description de la PR #102 précisés |
+| 23/10 | Fusion de la #104 demandée avec un SHA de tête complet saisi de mémoire, et faux | refus de GitHub, grâce à `--match-head-commit` | SHA lu par l'API, puis fusion |
+| 23/10 | Essai de faisabilité lancé sans aucun effet : sous zsh, `set -- $cfg` ne découpe pas la variable, et `--num-layers` restait vide | erreur d'arguments de `mlx-lm`, durée de moins d'une seconde | boucle explicite sur le nombre de couches |
+| 23/10 | Longueur des exemples mesurée à 2 tokens : `apply_chat_template` renvoie un dictionnaire de deux clés | valeur invraisemblable pour cinq passages | décompte de la liste `input_ids` : de 1 115 à 2 542 tokens |
+| 23/10 | Mémoire résidente du processus (1,6 Gio) susceptible d'être lue comme la mémoire de l'entraînement | incohérence avec 4 Gio de poids chargés sur le GPU | pic de mémoire GPU relevé par `mx.get_peak_memory()` : 7,14 Gio |
+| 23/10 | Protocole de la #108, premier jet : référence R+ sans contexte pour sa citation, et règle de conclusion mêlant correction de Holm et borne d'intervalle | relecture contre le code de la #85 et du module de métriques | R+ adossé à la récupération, intervalle à 97,5 % (Bonferroni), avant publication |
+| 23/10 | Étude de faisabilité donnant un adaptateur de 46 Mio pour 46 161 566 octets | recalcul en Mio | 44,0 Mio, avant le commit |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
