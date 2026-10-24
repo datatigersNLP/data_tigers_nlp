@@ -54,7 +54,8 @@ class PreparationAdversarialTests(unittest.TestCase):
                 "adversarial_premise": "Le témoin est allumé.",
                 "correction_proposed": "Le témoin est éteint.",
                 "generation_reason": "Contraster deux états d'un témoin technique.",
-                "evidence": [{"passage_id": self.passage["passage_id"], "excerpt": "éteint."}],
+                "evidence": [{"passage_id": self.passage["passage_id"],
+                              "excerpt": self.passage["texte"].strip()}],
                 "out_of_corpus_reason": None}
 
     def valider(self, proposition, preparation=None, vues=None):
@@ -238,9 +239,11 @@ class PreparationAdversarialTests(unittest.TestCase):
             self.valider(self.proposition(), preparation)
 
     def test_validation_refuse_source_inventee_extrait_modifie_ou_preuve_vide(self):
-        cas = [[], [{"passage_id": "fixture-absente", "excerpt": "éteint."}],
-               [{"passage_id": self.passage["passage_id"], "excerpt": "eteint."}],
-               [{"passage_id": self.passage["passage_id"], "excerpt": "éteint.\n\n"}]]
+        extrait = self.passage["texte"].strip()
+        cas = [[], [{"passage_id": "fixture-absente", "excerpt": extrait}],
+               [{"passage_id": self.passage["passage_id"], "excerpt": extrait.replace("é", "e")}],
+               [{"passage_id": self.passage["passage_id"], "excerpt": extrait + "\n\n"}],
+               [{"passage_id": self.passage["passage_id"], "excerpt": "éteint."}]]
         for evidence in cas:
             with self.subTest(evidence=evidence), self.assertRaises(ValueError):
                 self.valider({**self.proposition(), "evidence": evidence})

@@ -222,7 +222,7 @@ class PreparationMultipleTests(unittest.TestCase):
     def test_validation_exige_extrait_exact_dans_sa_propre_source(self):
         preuves = self.proposition()["evidence"]
         cas = [preuves[1]["excerpt"], preuves[0]["excerpt"].replace("é", "e"),
-               preuves[0]["excerpt"] + "\n\n", "extrait inventé"]
+               preuves[0]["excerpt"] + "\n\n", "extrait inventé", "éteint."]
         for excerpt in cas:
             proposition = self.proposition()
             proposition["evidence"][0]["excerpt"] = excerpt
