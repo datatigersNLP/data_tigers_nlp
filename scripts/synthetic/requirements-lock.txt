@@ -1,0 +1,7 @@
+# Dépendances de Pydantic effectivement présentes lors des tests de #91.
+# Relevé avec importlib.metadata, sans modifier les autres environnements.
+annotated-types==0.8.0
+pydantic==2.14.0
+pydantic-core==2.50.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4

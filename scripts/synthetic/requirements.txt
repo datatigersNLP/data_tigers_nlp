@@ -1,0 +1,3 @@
+# Python 3.12 ; indépendant des dépendances du RAG.
+-c requirements-lock.txt
+pydantic==2.14.0
