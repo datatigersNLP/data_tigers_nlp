@@ -1,5 +1,18 @@
 # Agent0 Light : génération synthétique locale (#91 à #93)
 
+**Contrôle des extraits — correction du 24 octobre 2026 (#93/#94).** Le validateur exige
+désormais au moins **20 caractères**, sans espaces de bord, et une occurrence **mot pour mot
+alignée sur des limites de mots Unicode** dans la source identifiée. Aucun caractère, accent ou
+retour à la ligne n'est normalisé : LF et CRLF doivent correspondre exactement. La longueur minimale
+est un contrôle de forme ; la pertinence et la suffisance des preuves restent humaines.
+Le contrôle du « ? » et les changements de méthode hors corpus ne font pas partie de ce correctif.
+
+Validation locale de cette version : **147 tests réussis**, Python 3.12.14 / Pydantic 2.14.0,
+verrou inchangé. Les trois fragments de la revue sont rejetés ; les 13 extraits existants du support
+de #106 restent conformes. Aucun appel réel ni résultat Windows nouveau n'est revendiqué.
+Détail : [journal d'usage de l'IA, session 39](../journal/JOURNAL_USAGE_IA.md).
+Les sections datées ci-dessous décrivent les états historiques avant cette correction.
+
 ## 1. Périmètre et état
 
 Responsable : Jibril BENSALEM. Relecteurs désignés : Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`).

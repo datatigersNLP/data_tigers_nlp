@@ -35,7 +35,8 @@ def preparation_technique():
 def proposition_technique():
     return {"question": "Où se trouve le témoin ?", "type": "simple", "difficulty_target": "easy",
             "answerable_proposed": True, "generation_reason": "Fixture technique",
-            "evidence": [{"passage_id": "fixture-a-0", "excerpt": "éteint."}]}
+            "evidence": [{"passage_id": "fixture-a-0",
+                          "excerpt": passages_techniques()[0]["texte"].strip()}]}
 
 
 def requete_technique():
@@ -52,9 +53,10 @@ def reponse_technique(proposition=None):
 
 
 class ValidationTests(unittest.TestCase):
-    def valider(self, proposition, vues=None):
+    def valider(self, proposition, vues=None, preparation=None):
         return validation.valider_proposition(json.dumps(proposition, ensure_ascii=False),
-            preparation_technique(), "fixture", set() if vues is None else vues)
+            preparation_technique() if preparation is None else preparation,
+            "fixture", set() if vues is None else vues)
 
     def test_candidat_source_identite_et_humain_en_attente(self):
         proposition = proposition_technique()
@@ -76,12 +78,80 @@ class ValidationTests(unittest.TestCase):
                 self.valider(proposition)
 
     def test_source_absente_et_extrait_modifie_refuses(self):
-        for champ, valeur in [("passage_id", "fixture-absente"), ("excerpt", "eteint."),
-                              ("excerpt", "éteint.\n\n"), ("excerpt", "Autre texte")]:
+        extrait = proposition_technique()["evidence"][0]["excerpt"]
+        for champ, valeur in [("passage_id", "fixture-absente"),
+                              ("excerpt", extrait.replace("é", "e")),
+                              ("excerpt", extrait + "\n\n"),
+                              ("excerpt", "Autre texte suffisamment long.")]:
             proposition = proposition_technique()
             proposition["evidence"][0][champ] = valeur
             with self.subTest(champ=champ, valeur=valeur), self.assertRaises(ValueError):
                 self.valider(proposition)
+
+    def test_fragments_courts_refuses_meme_presents(self):
+        preparation = preparation_technique()
+        preparation["source"]["texte"] = (
+            "Le voyant technique est long et mentionné dans le diagnostic. Voyant technique ba.")
+        for extrait in ["ng", "le", "nn", "Voyant technique ba"]:
+            proposition = proposition_technique()
+            proposition["evidence"][0]["excerpt"] = extrait
+            self.assertIn(extrait, preparation["source"]["texte"])
+            with self.subTest(extrait=extrait), self.assertRaisesRegex(ValueError, "20 caractères"):
+                self.valider(proposition, preparation=preparation)
+
+    def test_extrait_vingt_caracteres_et_ponctuation_conserves(self):
+        minimum = "Voyant technique bas"
+        self.assertEqual(len(minimum), 20)
+        for extrait in [minimum, "Voyant technique [OK]."]:
+            preparation = preparation_technique()
+            preparation["source"]["texte"] = f"Diagnostic : « {extrait} » ; fin."
+            proposition = proposition_technique()
+            proposition["evidence"][0]["excerpt"] = extrait
+            avant = copy.deepcopy(preparation)
+            with self.subTest(extrait=extrait):
+                candidat = self.valider(proposition, preparation=preparation)
+                self.assertEqual(candidat.evidence[0].excerpt, extrait)
+                self.assertEqual(candidat.validation.human, "pending")
+                self.assertEqual(preparation, avant)
+
+    def test_limites_mots_unicode_et_espaces_bord_controles(self):
+        extrait = "Voyant technique bas"
+        cas = [(extrait, "pré" + extrait), (extrait, extrait + "é"),
+               (extrait, extrait + "_suite"), (" " + extrait, " " + extrait),
+               (extrait + " ", extrait + " "), ("\u00a0" + extrait, "\u00a0" + extrait)]
+        for preuve, texte in cas:
+            preparation = preparation_technique()
+            preparation["source"]["texte"] = texte
+            proposition = proposition_technique()
+            proposition["evidence"][0]["excerpt"] = preuve
+            self.assertIn(preuve, texte)
+            with self.subTest(preuve=preuve, texte=texte), self.assertRaises(ValueError):
+                self.valider(proposition, preparation=preparation)
+
+    def test_occurrence_alignee_apres_fragment_dans_un_mot_acceptee(self):
+        extrait = "Voyant technique bas"
+        preparation = preparation_technique()
+        preparation["source"]["texte"] = "pré" + extrait + ". Puis : " + extrait + "."
+        proposition = proposition_technique()
+        proposition["evidence"][0]["excerpt"] = extrait
+        self.assertEqual(self.valider(proposition, preparation=preparation).evidence[0].excerpt,
+                         extrait)
+
+    def test_multiligne_lf_crlf_exacts_sans_normalisation(self):
+        for separateur, autre in [("\n", "\r\n"), ("\r\n", "\n")]:
+            extrait = separateur.join(["Voyant rouge éteint.", "Voyant vert allumé."])
+            preparation = preparation_technique()
+            preparation["source"]["texte"] = extrait
+            proposition = proposition_technique()
+            proposition["evidence"][0]["excerpt"] = extrait
+            with self.subTest(separateur=repr(separateur)):
+                self.assertEqual(self.valider(proposition, preparation=preparation).evidence[0].excerpt,
+                                 extrait)
+                for modifie in [extrait.replace(separateur, autre), extrait.replace(separateur, " ")]:
+                    proposition["evidence"][0]["excerpt"] = modifie
+                    with self.subTest(modifie=repr(modifie)), self.assertRaises(ValueError):
+                        self.valider(proposition, preparation=preparation)
+                self.assertEqual(preparation["source"]["texte"], extrait)
 
     def test_json_entoure_ambigu_et_metadonnees_qwen_refuses(self):
         valide = json.dumps(proposition_technique(), ensure_ascii=False)
@@ -214,7 +284,9 @@ class RunTests(unittest.TestCase):
                 {"response": json.dumps({**proposition_technique(), "evidence": [
                     {"passage_id": "absent", "excerpt": "éteint."}]})},
                 {"response": json.dumps({**proposition_technique(), "evidence": [
-                    {"passage_id": "fixture-a-0", "excerpt": "inventé"}]})}]):
+                    {"passage_id": "fixture-a-0", "excerpt": "inventé"}]})},
+                {"response": json.dumps({**proposition_technique(), "evidence": [
+                    {"passage_id": "fixture-a-0", "excerpt": "éteint."}]})}]):
             run_id = f"rejet_{i}"
             reponse = {**reponse_technique(), **changement}
             resultat, http = self.executer(run_id, reponse)
