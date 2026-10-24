@@ -2,12 +2,23 @@
 
 import hashlib
 from pathlib import Path
+import re
 import unicodedata
 
 if __package__:
     from .schema import CasSynthetique, creer_candidat, lire_proposition
 else:
     from schema import CasSynthetique, creer_candidat, lire_proposition
+
+
+LONGUEUR_MIN_EXTRAIT = 20
+
+
+def extrait_valide(extrait: str, texte: str) -> bool:
+    """Vérifie la forme et l'ancrage exact, sans juger la suffisance de la preuve."""
+    if len(extrait.strip()) < LONGUEUR_MIN_EXTRAIT or extrait != extrait.strip():
+        return False
+    return re.search(r"(?<!\w)" + re.escape(extrait) + r"(?!\w)", texte) is not None
 
 
 def normaliser_question(question: str) -> str:
@@ -42,8 +53,10 @@ def valider_proposition(texte: str, preparation: dict, run_id: str,
     for preuve in proposition.evidence:
         if preuve.passage_id != source["passage_id"]:
             raise ValueError("Preuve provenant d'une source non fournie")
-        if preuve.excerpt not in source["texte"]:
-            raise ValueError("Extrait non retrouvé mot pour mot dans le passage fourni")
+        if not extrait_valide(preuve.excerpt, source["texte"]):
+            raise ValueError(f"Extrait invalide : au moins {LONGUEUR_MIN_EXTRAIT} caractères, "
+                             "sans espaces de bord, retrouvé mot pour mot sur des limites "
+                             "de mots dans le passage fourni")
     normalisee = normaliser_question(proposition.question)
     if not normalisee or normalisee in questions_vues:
         raise ValueError("Question vide après normalisation ou doublon normalisé")
