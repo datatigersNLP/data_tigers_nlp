@@ -1156,7 +1156,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 ### Session 41, 25 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
 
-**Objet.** État des lieux du dépôt ; vérification des correctifs de Jibril et de Remy ; place de Vaneck dans le volet B ; numérotation du journal.
+**Objet.** État des lieux du dépôt ; vérification des correctifs de Jibril et de Remy ; place de Vaneck dans le volet B ; numérotation du journal ; calendrier jusqu'à J4 et mise à jour des tickets.
 
 **Produit.**
 - État des lieux : aucune fusion depuis le 23 octobre ; les PR #101, #103 et #106 en conflit avec `dev` sur le journal.
@@ -1168,12 +1168,20 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
   - relecteur des PR #85 et #108 ;
   - juge de l'exactitude dans le protocole de la PR #108, avec Maïmouna ;
   - relecture de l'échantillon des données d'adaptation (#107), avec Maïmouna.
-- Classeur de suivi : Vaneck ajouté à #51, tickets #107 et #111 ajoutés.
+- Calendrier jusqu'à J4, à valider au Weekly 7 : 53 étapes datées, avec responsables, soutiens et dépendances.
+- Rééquilibrage : Remy rejoint la génération des données d'adaptation et devient coresponsable de l'entraînement (#107), pour alléger Jibril avant J3.
+- Tickets #112 à #114 créés : supports de J3, rapport V1, préparation de la soutenance.
+- Échéances datées dans les corps de #49, #51, #52, #107 et #111 ; #52 et #107 passés au jalon J4 ; Maïmouna et Vaneck assignés à #52.
+- Jalons de #8 et de #91 à #97 ; échéances d'Agent0 proposées en commentaire sur #91 à #98, sans toucher aux corps rédigés par Jibril ; ordre du jour proposé pour les Weekly 6 à 13.
+- Classeur de suivi : Vaneck ajouté à #51, tickets #107, #111 et #112 à #114 ajoutés, jalons et échéances alignés sur GitHub.
 
 **Mesures exécutées.**
 - #101 à `e8b50fd` : 98 tests réussis sous macOS. Les fragments `ng`, `le` et `nn`, un extrait commencé au milieu d'un mot et un extrait avec espace de bord sont refusés ; les 13 vrais extraits du support de la #106 restent acceptés.
 - Section 4.2 du rapport (#105) : les cinq PR que Remy cite désormais portent ses revues, d'après l'API GitHub ; la formule s'affiche sans dollar dans le PDF.
 - Fusions simulées avec `dev` : #101, #103 et #106 en conflit sur le journal ; #99, #100 et #85 sans conflit.
+- Calendrier contrôlé par script : aucune dépendance vers une étape plus tardive, aucune échéance le 11/11, férié. Étapes en responsable avant J3 : de 5 (Remy) à 14 (Jibril) après rééquilibrage, contre 3 et 16 avant.
+- Tickets relus par l'API après écriture : corps, jalons, assignés et les 18 commentaires sont identiques aux brouillons.
+- Classeur de suivi comparé à l'API sur toutes ses colonnes (titre, assignés, jalon, état, dates) : 59 lignes, aucun écart.
 
 **Résultats retenus.**
 - Le correctif de Jibril règle la demande de modification sans faux rejet.
@@ -1182,9 +1190,13 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Ce qui a été écarté, et pourquoi.**
 - Résoudre le conflit sur la branche de Jibril : contraire à la règle de l'équipe ; la marche à suivre lui est donnée en revue.
 - Approuver la #101 avant la résolution : le commit de résolution annulerait l'approbation.
+- Modifier le corps des tickets Agent0 : ils sont rédigés par Jibril, les échéances lui sont proposées en commentaire.
+- Fermer le jalon de mi-parcours, sans ticket ouvert depuis le passage de #8 en J3 : décision laissée à Mahé.
+- Changer le statut des tickets dans le board : le jeton n'a pas la portée `project`.
 
 **Ce que l'équipe a validé, et par qui.**
 - Numérotation du journal et place de Vaneck dans le volet B décidées par Mahé BEGNIS.
+- Mise à jour des tickets demandée par Mahé BEGNIS ; calendrier soumis à l'équipe au Weekly 7.
 
 **Temps d'appropriation constaté.**
 - Non relevé.
@@ -1275,6 +1287,11 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 23/10 | Mémoire résidente du processus (1,6 Gio) susceptible d'être lue comme la mémoire de l'entraînement | incohérence avec 4 Gio de poids chargés sur le GPU | pic de mémoire GPU relevé par `mx.get_peak_memory()` : 7,14 Gio |
 | 23/10 | Protocole de la #108, premier jet : référence R+ sans contexte pour sa citation, et règle de conclusion mêlant correction de Holm et borne d'intervalle | relecture contre le code de la #85 et du module de métriques | R+ adossé à la récupération, intervalle à 97,5 % (Bonferroni), avant publication |
 | 23/10 | Étude de faisabilité donnant un adaptateur de 46 Mio pour 46 161 566 octets | recalcul en Mio | 44,0 Mio, avant le commit |
+| 25/10 | État des lieux transmis à Mahé : aucune PR fusionnée depuis le 19/10, alors que la #104 l'a été le 23/10 | historique des fusions relu par l'API pour le calendrier | corrigé auprès de Mahé ; la session 41, juste, n'est pas touchée |
+| 25/10 | Calendrier, premier jet : gel du protocole de la #108 au Weekly 7, avant le seuil S et le script testé que sa section 9 exige | relecture de la section 9 du protocole | gel placé au Weekly 8, après ces deux étapes, avant toute publication |
+| 25/10 | Générateur du calendrier : « EQ », l'équipe entière, découpé en deux personnes inconnues | contrôle automatique des noms | clé traitée comme un tout |
+| 25/10 | Suivi annoncé « sans écart » avec GitHub dans le commit 321b56e, alors que le contrôle ne portait que sur les états et les dates : le jalon de #49 y restait J3, contre J4 sur GitHub | comparaison étendue à toutes les colonnes | #49 en J4 ; la description de la #110 disait déjà la portée exacte du contrôle |
+| 25/10 | Jalons de #91 à #97 changés sur GitHub sans être reportés dans l'inventaire | même comparaison complète, avant le commit | inventaire corrigé, aucun écart |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

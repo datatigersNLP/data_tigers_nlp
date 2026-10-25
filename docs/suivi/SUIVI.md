@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -42,7 +42,7 @@ La répartition par domaine est conservée. Les responsabilités d'un ticket peu
 | Jalon | État GitHub | Échéance enregistrée | Portée de la date |
 |---|---|---|---|
 | J2 Cadrage et étude des volets | Fermé | 21/09/2026 | Livrable remis ; jalon fermé, commentaire de #8. |
-| Mi-parcours Volet A en ligne | Ouvert | Aucune | Date officielle en attente (#8) ; ancienne échéance du 01/10 retirée. |
+| Mi-parcours Volet A en ligne | Ouvert | Aucune | Date officielle en attente (#8) ; ancienne échéance du 01/10 retirée. Aucun ticket ouvert depuis le 25/10, #8 étant passé en J3 ; fermeture laissée à la décision du lead technique. |
 | J3 Volet A fonctionnel | Ouvert | 16/11/2026 | Date à confirmer par écrit (#8), malgré la date enregistrée dans GitHub. |
 | J4 Soutenance | Ouvert | 07/12/2026 | Date à confirmer par écrit (#8), malgré la date enregistrée dans GitHub. |
 
@@ -52,7 +52,7 @@ Le calendrier officiel reste à confirmer par écrit dans #8. L'échéance opér
 
 ## Inventaire des tickets au 25/10/2026
 
-Les 56 lignes ci-dessous reprennent les issues du dépôt, sans les pull requests. Titres, assignés, milestones, états et dates proviennent de l'API GitHub. Les dates sont affichées à l'heure de Paris. L'état Ouvert/Fermé est celui de l'issue, pas le statut du Project Board ; il ne permet pas de conclure Todo, In progress ou Done.
+Les 59 lignes ci-dessous reprennent les issues du dépôt, sans les pull requests. Titres, assignés, milestones, états et dates proviennent de l'API GitHub. Les dates sont affichées à l'heure de Paris. L'état Ouvert/Fermé est celui de l'issue, pas le statut du Project Board ; il ne permet pas de conclure Todo, In progress ou Done.
 
 La colonne « Assignés GitHub » inclut les responsables et les soutiens sans les confondre avec les rôles définis dans le corps du ticket. NR signifie ici qu'aucun assigné n'est enregistré, pas que la réunion n'avait aucun participant.
 
@@ -65,7 +65,7 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #5 | Livrable J2 | transverse | Tous | J2 | Fermé | 19/09/2026 | 20/09/2026 |
 | #6 | Weekly 2 | transverse | Tous | J2 | Fermé | 19/09/2026 | 20/09/2026 |
 | #7 | Choix de la chaîne front-end du volet A | D3 | Mahé, Vaneck, Maïmouna | J2 | Fermé | 20/09/2026 | 20/09/2026 |
-| #8 | Faire confirmer le calendrier officiel des jalons | transverse | Jibril | Mi-parcours | Ouvert | 20/09/2026 | - |
+| #8 | Faire confirmer le calendrier officiel des jalons | transverse | Jibril | J3 | Ouvert | 20/09/2026 | - |
 | #9 | Weekly 3 - 30 septembre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 05/10/2026 |
 | #10 | Weekly 4 - 7 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 07/10/2026 |
 | #11 | Weekly 5 - 14 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 14/10/2026 |
@@ -98,22 +98,25 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #46 | Évaluer la recherche du volet A sur le jeu de questions (notebook 03) | D2, D5 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #47 | Construire les références lexicales TF-IDF et BM25 | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 13/10/2026 |
 | #48 | Brancher la recherche sémantique dans le site du volet A | D3 | Mahé, Vaneck, Remy, Maïmouna | J3 | Fermé | 30/09/2026 | 12/10/2026 |
-| #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J3 | Ouvert | 30/09/2026 | - |
+| #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J4 | Ouvert | 30/09/2026 | - |
 | #50 | Réduire le poids du modèle servi par réduction du vocabulaire | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #51 | Construire la chaîne RAG du volet B sur l'index commun | D4 | Remy, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
-| #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril | J3 | Ouvert | 30/09/2026 | - |
+| #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril, Maïmouna, Vaneck | J4 | Ouvert | 30/09/2026 | - |
 | #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Fermé | 30/09/2026 | 18/10/2026 |
 | #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Fermé | 04/10/2026 | 14/10/2026 |
-| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #95 | [Agent0 Light] A5 — Relire et figer un premier Challenge Set pilote | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #96 | [Agent0 Light] B1 — Exécuter le RAG sur un Challenge Set figé | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #97 | [Agent0 Light] B2 — Mesurer les résultats et diagnostiquer les erreurs du RAG | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
+| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
+| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
+| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
+| #95 | [Agent0 Light] A5 — Relire et figer un premier Challenge Set pilote | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
+| #96 | [Agent0 Light] B1 — Exécuter le RAG sur un Challenge Set figé | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
+| #97 | [Agent0 Light] B2 — Mesurer les résultats et diagnostiquer les erreurs du RAG | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
 | #98 | [Agent0 Light] C1 — Générer un nouveau lot ciblé sur les faiblesses détectées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
-| #107 | Adapter le modèle du volet B (Qwen2.5-7B) et le mesurer avant et après | D5 | Mahé, Remy, Jibril | J3 | Ouvert | 23/10/2026 | - |
+| #107 | Adapter le modèle du volet B (Qwen2.5-7B) et le mesurer avant et après | D5 | Mahé, Remy, Jibril | J4 | Ouvert | 23/10/2026 | - |
 | #111 | Démonstration locale du volet B : interface de l'assistant et vidéo | D3, D4 | Vaneck, Maïmouna | J4 | Ouvert | 25/10/2026 | - |
+| #112 | Préparer les supports de présentation du jalon J3 | transverse | Tous | J3 | Ouvert | 25/10/2026 | - |
+| #113 | Rapport final : V1 livrée strictement avant J4 | transverse | Tous | J4 | Ouvert | 25/10/2026 | - |
+| #114 | Préparer la soutenance J4 : pitch, présentation, vidéo de secours du volet A, répétition et envoi | transverse | Tous | J4 | Ouvert | 25/10/2026 | - |
 
 ## Charges et dates de travail
 
@@ -177,6 +180,9 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #98 | NR | NR | NR | - | NR |
 | #107 | 23/10 | NR | NR | - | NR |
 | #111 | NR | NR | NR | - | NR |
+| #112 | NR | NR | NR | - | NR |
+| #113 | NR | NR | NR | - | NR |
+| #114 | NR | NR | NR | - | NR |
 
 ### Provenance des valeurs connues
 
@@ -197,17 +203,23 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 
 | Ticket | Date ou condition écrite | Situation vérifiée et point à suivre |
 |---|---|---|
-| #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. |
+| #8 | Confirmation écrite attendue | Ouvert ; J3 et J4 gardent une date GitHub à confirmer. Au 25/10 : relance de l'enseignant prévue le 26/10 par Mahé (dates de J3 et J4, risque R4) ; ticket passé au jalon J3. |
 | #23 | 03/10, cible provisoire dans le corps | Fermé le 18/10 comme non réalisé, par décision du lead technique : horizon du mi-parcours dépassé ; 37 tickets sur 46 sans estimation, aucune validation collective du backlog, aucune capture du board versionnée. |
 | #43 | Date officielle du mi-parcours | Au 18/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori le 17/10 ; `main` mise à jour par la PR #74 (Jibril). **Critère de #43 non satisfait par ce tag historique** : la première inférence locale, réussie le 27/09 (#31), n'a été fusionnée dans `dev` que le 03/10 (PR #41), après `ac84ed3`. Écart déclaré dans le message du tag ; arbitrage du 18/10 (Mahé) : le tag n'est pas déplacé, #43 est validé avec cette réserve et fermé le 18/10. Le jalon de fin du volet A est le tag `volet-a-v1`, posé sur `main` après la PR #84 ; il contient la première inférence locale. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
 | #46 | 14/10, proposition dans le ticket | Fermé le 17/10 à 15 h 52 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73). |
-| #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. |
+| #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. Corps actualisé le 25/10 : notebook 05 et mesure descriptive par Mahé, relus par Remy, pour le 20/11, sans effet sur le modèle servi. |
 | #50 | 24/10, proposition dans le ticket | Au 17/10 : élagage sans perte livré le 14/10 (PR #78), modèle de 65,7 Mio servi par le site ; la réduction avec perte sort du volet A. |
-| #51 | 10/10, proposition historique dans le corps | Ouvert ; chaîne RAG complète non déduite du test d'inférence de #31. Échéance à actualiser par les responsables. |
-| #52 | 17/10, proposition dans le ticket | Ouvert ; dépend du jeu figé et de la chaîne RAG. |
+| #51 | 10/10, proposition historique ; corps actualisé le 25/10 : PR #85 fusionnée le 27/10, reproduction et exemples commentés au Weekly 8 (04/11) | Ouvert ; chaîne RAG complète non déduite du test d'inférence de #31. La fusion de la PR #85 conditionne la mesure (#52), les données d'adaptation (#107) et le branchement de la démonstration (#111). |
+| #52 | 17/10, proposition historique ; corps actualisé le 25/10 : gel du protocole au Weekly 8 (04/11), mesure avant le 06/11, jugement et défauts le 27/11 | Ouvert ; dépend du jeu figé, de la chaîne RAG (PR #85) et du gel du protocole (PR #108). Jalon passé en J4 le 25/10 : le jugement à l'aveugle suit la mesure après. |
 | #53 | 17/10, demandé à Jibril avec Vaneck | Au 18/10 : interface B livrée par Vaneck (PR #80), puis focus du menu sur téléphone et périmètre du corpus affiché (PR #83, revue de Jibril) ; ticket fermé à la fusion de la PR #83. Estimation provisoire de 16 h non révisée. |
 | #56 | Avant la première mesure de #46 | Fermé le 14/10 ; les trois relectures sont importées (PR #79, fusionnée le 17/10) : 182 jugements, 155 requêtes. |
+| #91 à #98 | Échéances proposées en commentaire le 25/10 : #91 et #92 le 27/10, #93 le 30/10, #94 les 06/11 et 20/11, #95 les 06/11, 13/11 et 27/11, #96 et #97 le 30/11 ; #98 facultatif | Jalons : J3 pour #91 à #93, J4 pour #94 à #97, aucun pour #98. Agent0 passe après l'adaptation (#107) et la mesure (#52). Relecture humaine des candidats proposée à Remy. |
+| #107 | Corps actualisé le 25/10 : Legion 27/10, gel 04/11, mesure avant 06/11, données 06/11, échantillon 09/11, premier entraînement 12/11, adaptateur 20/11, mesure après 25/11, rapport et feuille de route 30/11 | « Adaptation engagée » à J3 : faisabilité mesurée, données préparées, premier entraînement lancé. Remy rejoint les étapes 4 et 5. Jalon passé en J4 le 25/10, la clôture suivant l'étape 6. |
+| #111 | Corps actualisé le 25/10 : contrat 28/10, maquette 06/11, branchement 13/11, scénario 20/11, vidéo 30/11 | Le branchement dépend de la fusion de la PR #85 et du choix de la machine de démonstration (Weekly 7). |
+| #112 | Plan au Weekly 8 (04/11), supports le 13/11 | Exigés à J3 « même incomplets ». |
+| #113 | Axes de progression le 13/11, V1 le 02/12 | Le sujet exige une V1 strictement avant J4, dont l'écriture a commencé au plus tard à J3. |
+| #114 | Vidéo de secours du volet A le 30/11 ; supports, site et suivi le 04/12 ; répétition le 05/12 ; envoi le 06/12 | Un déploiement le jour de J4 vaut non livré. |
 
 Les échéances anciennes encore écrites dans les tickets ne sont pas corrigées implicitement par ce classeur. Le jeu de 60 questions figurant dans l'ancien planning n'est plus une tâche à créer : #44 existe et est fermé. Les détails du jeu et de son gel font foi dans ses documents de référence.
 
