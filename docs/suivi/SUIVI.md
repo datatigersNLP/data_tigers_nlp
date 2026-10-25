@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -50,9 +50,9 @@ Le calendrier officiel reste à confirmer par écrit dans #8. L'échéance opér
 
 **Tags et branche d'observation** (#43). `jalon-j2` (27/09/2026) ; `jeu-questions-v1` (06/10/2026, jeu figé) ; `mi-parcours`, tag annoté posé a posteriori le 17/10/2026 sur `ac84ed3`, version du site en ligne du 30/09 au 11/10 (PR #32 et #42 livrées ; PR #41, première inférence locale, fusionnée le 03/10) ; branche d'observation `observation/mi-parcours` créée depuis ce tag, à ne plus modifier. `volet-a-v1`, tag annoté de fin du volet A posé le 18/10/2026 sur `8955962`, fusion dans `main` de la PR #84 approuvée par Jibril ; il contient la première inférence locale (PR #41).
 
-## Inventaire des tickets au 18/10/2026
+## Inventaire des tickets au 25/10/2026
 
-Les 54 lignes ci-dessous reprennent les issues du dépôt, sans les pull requests. Titres, assignés, milestones, états et dates proviennent de l'API GitHub. Les dates sont affichées à l'heure de Paris. L'état Ouvert/Fermé est celui de l'issue, pas le statut du Project Board ; il ne permet pas de conclure Todo, In progress ou Done.
+Les 56 lignes ci-dessous reprennent les issues du dépôt, sans les pull requests. Titres, assignés, milestones, états et dates proviennent de l'API GitHub. Les dates sont affichées à l'heure de Paris. L'état Ouvert/Fermé est celui de l'issue, pas le statut du Project Board ; il ne permet pas de conclure Todo, In progress ou Done.
 
 La colonne « Assignés GitHub » inclut les responsables et les soutiens sans les confondre avec les rôles définis dans le corps du ticket. NR signifie ici qu'aucun assigné n'est enregistré, pas que la réunion n'avait aucun participant.
 
@@ -100,7 +100,7 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #48 | Brancher la recherche sémantique dans le site du volet A | D3 | Mahé, Vaneck, Remy, Maïmouna | J3 | Fermé | 30/09/2026 | 12/10/2026 |
 | #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J3 | Ouvert | 30/09/2026 | - |
 | #50 | Réduire le poids du modèle servi par réduction du vocabulaire | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
-| #51 | Construire la chaîne RAG du volet B sur l'index commun | D4 | Remy, Jibril, Maïmouna | J3 | Ouvert | 30/09/2026 | - |
+| #51 | Construire la chaîne RAG du volet B sur l'index commun | D4 | Remy, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
 | #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril | J3 | Ouvert | 30/09/2026 | - |
 | #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Fermé | 30/09/2026 | 18/10/2026 |
 | #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Fermé | 04/10/2026 | 14/10/2026 |
@@ -112,6 +112,8 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #96 | [Agent0 Light] B1 — Exécuter le RAG sur un Challenge Set figé | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
 | #97 | [Agent0 Light] B2 — Mesurer les résultats et diagnostiquer les erreurs du RAG | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
 | #98 | [Agent0 Light] C1 — Générer un nouveau lot ciblé sur les faiblesses détectées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
+| #107 | Adapter le modèle du volet B (Qwen2.5-7B) et le mesurer avant et après | D5 | Mahé, Remy, Jibril | J3 | Ouvert | 23/10/2026 | - |
+| #111 | Démonstration locale du volet B : interface de l'assistant et vidéo | D3, D4 | Vaneck, Maïmouna | J4 | Ouvert | 25/10/2026 | - |
 
 ## Charges et dates de travail
 
@@ -173,6 +175,8 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #96 | NR | NR | NR | - | NR |
 | #97 | NR | NR | NR | - | NR |
 | #98 | NR | NR | NR | - | NR |
+| #107 | 23/10 | NR | NR | - | NR |
+| #111 | NR | NR | NR | - | NR |
 
 ### Provenance des valeurs connues
 

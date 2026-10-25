@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 23 octobre 2026, sessions 1 à 39 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 25 octobre 2026, sessions 1 à 41 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1133,6 +1133,64 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - La fusion de la #104 a d'abord été refusée : le SHA complet de la tête avait été saisi de mémoire, et il était faux. La protection `--match-head-commit` a joué son rôle ; la fusion a été refaite avec le SHA lu par l'API.
 - Plusieurs pièges de mesure pendant l'essai de faisabilité, détaillés en section 4.
+
+**Session 40, de Jibril BENSALEM.** Rédigée par Jibril le 24 octobre dans la PR #101 sous le numéro 39, déjà pris par la session du 23 octobre ; reportée ici le 25 octobre, telle quelle, avec le seul changement de numéro décidé avec Mahé.
+
+### Session 40, 24 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Corriger le contrôle des extraits Agent0 demandé par Mahé dans la revue de #101 du 23 octobre, puis reporter la correction dans #103 et sa dépendante #106.
+
+**Produit.** `extrait_valide` exige au moins 20 caractères, aucun espace de bord et une occurrence exacte alignée sur des limites de mots Unicode. Le texte n'est ni normalisé ni corrigé. Les cinq nouvelles régressions couvrent les fragments courts, la limite de 20 caractères, les limites de mots et espaces, les occurrences multiples et les fins de ligne LF/CRLF. Les fixtures techniques sont allongées ; les rejets de génération, multi-passage et adversarial couvrent aussi un extrait trop court.
+
+**Mesures exécutées.** Python 3.12.14, environnement isolé installé depuis `scripts/synthetic/requirements-lock.txt`, Pydantic 2.14.0 ; `uv pip check` réussi. Suite de #101 : 98 tests réussis ; version étendue de #103 : 147 tests réussis. Les trois fragments `ng`, `le` et `nn` sont rejetés sur le passage M2 signalé. Les 13 extraits copiés dans le support de #106 à `99ed172` satisfont tous le contrôle renforcé, contre les sources JSON de ce même support. Aucun appel réel à Ollama ou au tokeniseur dans ces contrôles.
+
+**Résultats retenus.** Minimum de 20 caractères proposé par Mahé, contrôles de forme communs aux catégories avec preuves. Les écarts LF/CRLF et les listes aplaties restent rejetés ; les textes multiligne exacts restent acceptés. Les fichiers historiques des runs et les champs humains ne sont pas modifiés.
+
+**Ce qui a été écarté, et pourquoi.** Pas de réparation ou normalisation silencieuse, pas de preuve de suffisance sémantique déduite de la longueur. Le contrôle du « ? », les indicateurs de diversité et la méthode hors corpus relèvent des autres remarques de revue ; ils ne sont pas ajoutés à cette correction.
+
+**Ce que l'équipe a validé, et par qui.** Mahé a fourni le défaut et la proposition de contrôle le 23 octobre. Le correctif est demandé par Jibril le 24 octobre ; sa relecture indépendante reste attendue. Aucun verdict humain sur les candidats, fusion dans dev ou main, ni clôture de ticket.
+
+**Temps d'appropriation constaté.** Non renseigné ; aucune charge réelle reconstituée.
+
+**Difficultés rencontrées.** Les anciennes fixtures utilisaient des preuves trop courtes ; leurs textes artificiels ont été allongés sans modifier les sources M2. La copie de travail des tours précédents avait été retirée par la maintenance : snapshots récupérés depuis les commits GitHub, sans récupération ni modification de l'archive originale.
+
+### Session 41, 25 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt ; vérification des correctifs de Jibril et de Remy ; place de Vaneck dans le volet B ; numérotation du journal.
+
+**Produit.**
+- État des lieux : aucune fusion depuis le 23 octobre ; les PR #101, #103 et #106 en conflit avec `dev` sur le journal.
+- Revue de la #101 : correctif des extraits validé, marche à suivre pour retirer le journal de la pile Agent0.
+- Session du 24 octobre de Jibril reportée en session 40.
+- Vaneck sur le volet B, avec l'accord de Mahé :
+  - ticket #111, démonstration locale et vidéo, avec Maïmouna ;
+  - #51 : vérification et usage de la chaîne, avec Maïmouna ;
+  - relecteur des PR #85 et #108 ;
+  - juge de l'exactitude dans le protocole de la PR #108, avec Maïmouna ;
+  - relecture de l'échantillon des données d'adaptation (#107), avec Maïmouna.
+- Classeur de suivi : Vaneck ajouté à #51, tickets #107 et #111 ajoutés.
+
+**Mesures exécutées.**
+- #101 à `e8b50fd` : 98 tests réussis sous macOS. Les fragments `ng`, `le` et `nn`, un extrait commencé au milieu d'un mot et un extrait avec espace de bord sont refusés ; les 13 vrais extraits du support de la #106 restent acceptés.
+- Section 4.2 du rapport (#105) : les cinq PR que Remy cite désormais portent ses revues, d'après l'API GitHub ; la formule s'affiche sans dollar dans le PDF.
+- Fusions simulées avec `dev` : #101, #103 et #106 en conflit sur le journal ; #99, #100 et #85 sans conflit.
+
+**Résultats retenus.**
+- Le correctif de Jibril règle la demande de modification sans faux rejet.
+- Le blocage restant est le journal, modifié dans la pile Agent0 à partir d'une version ancienne.
+
+**Ce qui a été écarté, et pourquoi.**
+- Résoudre le conflit sur la branche de Jibril : contraire à la règle de l'équipe ; la marche à suivre lui est donnée en revue.
+- Approuver la #101 avant la résolution : le commit de résolution annulerait l'approbation.
+
+**Ce que l'équipe a validé, et par qui.**
+- Numérotation du journal et place de Vaneck dans le volet B décidées par Mahé BEGNIS.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- La récupération de l'état distant a d'abord échoué sur un verrou de Git : une récupération concurrente de l'éditeur. Aucun processus Git n'était actif au contrôle et le verrou avait disparu ; aucun fichier n'a été supprimé, et la récupération a été relancée.
 
 ---
 
