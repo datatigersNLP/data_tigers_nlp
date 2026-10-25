@@ -83,7 +83,7 @@ Trois précisions :
 - Tokens d'entrée et de sortie, et durées rapportées par Ollama.
 
 **Exactitude des réponses.** Elle n'est pas mesurée automatiquement. Elle est jugée à titre descriptif, sur 20 réponses citées tirées au hasard (graine 20261018) parmi celles de B2, avant et après :
-- par deux membres, qui ignorent de quel état vient chaque réponse ;
+- par deux membres, Maïmouna SIGNATE et Vaneck DAGAR, désignés le 25 octobre : ils ont annoté le jeu humain (#44), n'écrivent ni la chaîne ni l'adaptation, et ignorent de quel état vient chaque réponse ;
 - avec, pour chacune, l'exactitude, le respect des conditions et exceptions, et la justification par les passages cités.
 
 **Ce que montrent les références dégénérées.** R+ obtient par construction M3 = 100 % et M1 = 0 %, et son M4 vaut la part des questions dont le premier passage récupéré est pertinent. Un taux élevé de citations valides ne prouve donc rien seul ; c'est M4 qui distingue un système d'une réponse fixe.
@@ -117,10 +117,11 @@ Trois précisions :
 
 - Relecture de ce protocole par Jibril, qui exécutera la mesure, puis présentation au Weekly.
 - Confirmation de la machine de mesure.
-- Désignation des deux juges de l'exactitude.
+- Juges de l'exactitude désignés le 25 octobre : Maïmouna SIGNATE et Vaneck DAGAR. À partir de leurs relectures, ils rédigent aussi les défauts caractérisés sur des exemples, livrable de #52.
 - Calcul du seuil S et inscription de sa valeur et de son empreinte.
 - Script de mesure écrit et relu, puis exécuté sur le seul lot de calibration.
 
 ## 10. Historique
 
 - **23 octobre 2026** : proposition initiale (Mahé), d'après #52, le rapport J2 (section 4.5) et la chaîne de la PR #85.
+- **25 octobre 2026** : juges de l'exactitude désignés, avec l'accord de Mahé ; aucune autre règle modifiée.
