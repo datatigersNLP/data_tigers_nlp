@@ -9,8 +9,11 @@ et aucune troncature. Le score d'une variante est le plus grand produit scalaire
 du site (`front/public/index/`), celui que lit la #85. Le seuil vaut le 5e centile de ces scores, par interpolation
 linéaire. En B2, le système s'abstient si le score de la question est strictement inférieur au seuil.
 
-Les données du CDTN n'ont pas de licence : elles restent dans `data/` et ne sont jamais versionnées. Seuls le code et
-des agrégats le sont.
+Les données du CDTN sont sous licence Apache-2.0 (`docs/etudes/evaluation/04_cdtn.md`, section 2). Comme tout fichier
+de `data/`, elles ne sont pas versionnées : seuls le code et des agrégats le sont.
+
+La mesure du volet B utilise la valeur complète du champ `seuil` du fichier de résultat, contrôlé par son empreinte,
+sans arrondi : la valeur à quatre décimales du protocole n'en est que l'affichage.
 
 Usage, depuis la racine du dépôt, avec l'environnement de `scripts/rag/requirements.txt` :
     HF_HUB_OFFLINE=1 python scripts/evaluation/seuil_b2.py calculer      # écrit data/evaluation/volet_b/seuil_b2.json
@@ -91,8 +94,11 @@ def encoder(modele, texte):
         raise ValueError(f"Variante de plus de {BUDGET_E5} tokens E5")
     sortie = np.asarray(modele.encode([entree], batch_size=32, normalize_embeddings=True,
                                       convert_to_numpy=True, show_progress_bar=False), dtype=np.float32)
-    if sortie.shape != (1, 384) or abs(float(np.linalg.norm(sortie[0])) - 1) >= TOLERANCE_NORME:
-        raise ValueError("Vecteur de forme ou de norme inattendue")
+    if sortie.shape != (1, 384):
+        raise ValueError("Vecteur de forme inattendue")
+    # Un NaN passerait le contrôle de norme : abs(NaN - 1) >= tolérance est faux (revue de la PR #108).
+    if not np.isfinite(sortie).all() or abs(float(np.linalg.norm(sortie[0])) - 1) >= TOLERANCE_NORME:
+        raise ValueError("Vecteur non fini ou non normalisé")
     return sortie[0]
 
 
@@ -102,6 +108,8 @@ def calculer():
     modele = charger_encodeur()
     scores = np.array([float((matrice @ encoder(modele, q["texte"])).max()) for q in questions])
     seuil = float(np.percentile(scores, CENTILE))   # interpolation linéaire, méthode par défaut de NumPy
+    if not np.isfinite(scores).all() or not np.isfinite(seuil):
+        raise ValueError("Score ou seuil non fini")
     resultat = {
         "seuil": seuil, "centile": CENTILE, "interpolation": "linéaire (numpy.percentile par défaut)",
         "regle_b2": "abstention si le score de la question est strictement inférieur au seuil",
@@ -122,7 +130,7 @@ def calculer():
         "scores_par_variante": [{"id": q["id"], "score": s} for q, s in zip(questions, scores.tolist())],
     }
     RESULTAT.parent.mkdir(parents=True, exist_ok=True)
-    RESULTAT.write_text(json.dumps(resultat, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    RESULTAT.write_text(json.dumps(resultat, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
     print(f"seuil S = {seuil:.4f} (5e centile de {len(scores)} scores maximaux, {resultat['sous_le_seuil']} "
           f"sous le seuil) ; seuil du site en q8 : {seuil_site:.4f}")
     print(f"écrit dans {RESULTAT.relative_to(RACINE)}, SHA-256 {sha256_fichier(RESULTAT)}")
@@ -142,7 +150,7 @@ def incertitude():
     res = {"seuil": r["seuil"], "ic95_requetes": [float(np.percentile(tirages, 2.5)), float(np.percentile(tirages, 97.5))],
            "requetes": len(noms), "variantes": len(scores), "tirages": TIRAGES, "graine": GRAINE,
            "sha256_resultat": sha256_fichier(RESULTAT)}
-    INCERTITUDE.write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    INCERTITUDE.write_text(json.dumps(res, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps(res, ensure_ascii=False))
 
 
@@ -154,6 +162,33 @@ def sanity_check():
     assert abs(float(np.percentile(np.array([0.0, 10.0, 20.0, 30.0]), CENTILE)) - 1.5) < 1e-12
     # strictement inférieur : un score égal au seuil n'est pas rejeté
     assert not (np.float32(0.85) < float(np.float32(0.85)))
+
+    # régression de la revue de la PR #108 : un vecteur NaN est refusé, un vecteur normalisé est accepté
+    class FauxModele:
+        def __init__(self, vecteur):
+            self.vecteur = vecteur
+
+        def tokenizer(self, texte, truncation=False):
+            return {"input_ids": [0] * 8}
+
+        def encode(self, textes, **_):
+            return self.vecteur
+
+    try:
+        encoder(FauxModele(np.full((1, 384), np.nan, dtype=np.float32)), "Puis-je démissionner ?")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("un vecteur NaN doit être refusé")
+    unitaire = np.zeros((1, 384), dtype=np.float32)
+    unitaire[0, 0] = 1.0
+    assert encoder(FauxModele(unitaire), "Puis-je démissionner ?")[0] == 1.0
+    try:
+        json.dumps({"seuil": float("nan")}, allow_nan=False)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("un NaN ne doit jamais être écrit dans un fichier de résultat")
     return True
 
 

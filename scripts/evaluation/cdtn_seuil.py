@@ -6,8 +6,9 @@ l'encodeur servi (q8, dans le navigateur), des variantes du CDTN rédigées en q
 variantes des requêtes dont au moins une référence vise une fiche de notre corpus, reconnue par son identifiant
 exact : les autres requêtes renvoient à des sources absentes de notre corpus et feraient baisser le seuil.
 
-Les données du CDTN n'ont pas de licence : elles ne sont jamais versionnées. Le script les lit dans `data/`,
-au commit figé, après contrôle de leur empreinte ; seuls le code et des identifiants de variantes le sont.
+Les données du CDTN sont sous licence Apache-2.0 (`docs/etudes/evaluation/04_cdtn.md`, section 2, corrigée le 14
+octobre). Comme tout fichier de `data/`, elles ne sont jamais versionnées. Le script les lit dans `data/`, au commit
+figé, après contrôle de leur empreinte ; seuls le code et des identifiants de variantes le sont.
 
 Usage, depuis la racine du dépôt :
     python scripts/evaluation/cdtn_seuil.py preparer   # écrit data/evaluation/cdtn/questions_cdtn.json
