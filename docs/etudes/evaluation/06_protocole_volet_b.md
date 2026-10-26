@@ -4,7 +4,7 @@
 **Projet** NLP 2 · Master 2 Data & IA · FGES, Université Catholique de Lille  
 **Tickets** #52 (mesure avant adaptation), #107 (adaptation et mesure après)  
 **Responsables** Mahé BEGNIS (mesure), Jibril BENSALEM (exécution sur le Legion)  
-**Statut** proposé le 23 octobre 2026, à relire par Jibril, à figer avant la mesure avant. Aucune mesure du volet B n'a été faite sur le lot de test.
+**Statut** proposé le 23 octobre 2026, complété le 26 octobre (seuil S, témoin de la chaîne d'export), à relire par Jibril, à figer avant la mesure avant. Aucune mesure du volet B n'a été faite sur le lot de test.
 
 ---
 
@@ -49,7 +49,12 @@ Tous les états utilisent le même modèle (`qwen2.5-7b-instruct:q4_k_m-local`, 
 | R+ | référence qui répond toujours | même récupération que B1 et B2, puis, sans appel au modèle, une réponse fixe qui cite `[P1]`, le premier passage récupéré |
 | R- | référence qui s'abstient toujours | la phrase d'abstention pour toute question |
 
-**Après l'adaptation**, B1 et B2 sont mesurés de nouveau avec l'adaptateur de #107, et B0 à titre descriptif. Les références dégénérées ne changent pas.
+**Après l'adaptation**, B1 et B2 sont mesurés de nouveau avec le modèle adapté de #107, et B0 à titre descriptif. Les références dégénérées ne changent pas.
+
+**Témoin de la chaîne d'export.** Ollama 0.40.5, la version du Legion, refuse les adaptateurs LoRA : `server/create.go` définit `errAdaptersUnsupported` et rejette toute création qui en contient (vérifié le 26 octobre 2026 au tag `v0.40.5`). Le modèle adapté sera donc fusionné, converti en GGUF et quantifié en Q4_K_M avec llama.cpp. Il diffère du modèle de #31 par l'adaptation, mais aussi par cette chaîne. Pour séparer les deux effets, comme pour l'encodeur ajusté de #49 :
+- le témoin T est le modèle de base passé par la même chaîne, avec les mêmes outils et versions, sans adaptateur ;
+- si les tenseurs de T sont identiques bit à bit à ceux du modèle de #31, T et le modèle de #31 se confondent ;
+- sinon, B1 et B2 sont aussi mesurés avec T, l'analyse principale (section 6) compare le modèle adapté à T, et l'écart entre T et le modèle de #31 est rapporté à titre descriptif.
 
 ## 4. Classement de chaque sortie
 
@@ -95,15 +100,24 @@ Trois précisions :
   - questions hors corpus : elles n'ont pas de fiche, donc intervalle de Wilson simple.
 - **Précision attendue** : la demi-largeur de l'intervalle atteint 20 points pour une proportion de 50 % sur 24 questions, et 11,5 points sur 73. Un écart de moins de 20 points environ entre deux états ne sera pas démontrable sur les questions hors corpus. Les résultats sont donc d'abord descriptifs.
 - **Comparaisons appariées** : mêmes questions, donc tables de contingence et valeur p exacte de McNemar. Pour les questions du corpus, l'écart est donné avec l'intervalle du score de Tango corrigé de l'effet de plan (`noninferiority_tango`, appliqué ici comme intervalle de l'écart).
-- **Analyse principale, écrite d'avance** : après contre avant adaptation, en B2, sur M1 et sur M4. M2 sert de garde-fou et est toujours rapporté.
+- **Analyse principale, écrite d'avance** : après contre avant adaptation, en B2, sur M1 et sur M4. « Avant » désigne le témoin T s'il diffère du modèle de #31 (section 3). M2 sert de garde-fou et est toujours rapporté.
 - **Règle de conclusion** : pour ces deux comparaisons principales, l'écart est donné avec un intervalle bilatéral à 97,5 % (correction de Bonferroni pour deux comparaisons). Le score de Tango est corrigé de l'effet de plan pour M4, et calculé sans regroupement pour M1. Une amélioration n'est déclarée démontrée que si la borne basse de cet intervalle dépasse 0. Sinon, le rapport dit seulement que l'écart n'est pas démontré.
 
 ## 7. Seuil S de l'état B2
 
-- **Population** : celle du notebook 03 (section 8.2). Ce sont les variantes du CDTN rédigées en question (#56) pour des requêtes dont au moins une référence vise une fiche de notre corpus.
+- **Population** : celle du protocole du notebook 03 (section 8.2). Ce sont les variantes du CDTN rédigées en question (#56) pour des requêtes dont au moins une référence vise une fiche de notre corpus.
 - **Encodage** : en fp32 par E5, comme dans la #85, et non en q8 comme sur le site. Le seuil de 0,8560 du site ne s'applique donc pas ici.
 - **Valeur** : le 5e centile, par interpolation linéaire, des scores maximaux.
 - **Moment du calcul** : une fois, avant la mesure avant. La valeur et l'empreinte du fichier de calcul sont inscrites ici avant le gel.
+- **Valeur calculée le 26 octobre 2026** : **S = 0,8565**, par `scripts/evaluation/seuil_b2.py`, sur 479 variantes issues de 103 requêtes. Les scores maximaux vont de 0,832 à 0,948 ; 24 variantes sont sous le seuil. Intervalle à 95 % du seuil, par rééchantillonnage des requêtes (10 000 tirages) : 0,8464 à 0,8653. Pour comparaison, le seuil du site, calculé en q8 dans le navigateur, vaut 0,8560.
+- **Contrôle** : les 479 scores, recalculés par les fonctions de la chaîne de la #85 elle-même (commit `df91b85`), sont identiques au bit près, et le seuil aussi.
+- **Machine** : S a été calculé sur un Mac (arm64), alors que la mesure encodera les questions sur la machine de mesure. Deux machines peuvent différer dans les dernières décimales : le script de mesure signale toute question dont le score est à moins de 1e-5 de S, pour qu'un écart de machine ne puisse pas changer une abstention sans être vu.
+- **Empreinte SHA-256** du fichier de calcul `data/evaluation/volet_b/seuil_b2.json` :
+
+```text
+7ba7230e5e8cda87fa1eb8dda2adc01d73c6702d542c27a4e3dc620464939936
+```
+
 - **Après l'adaptation** : il n'est pas recalculé, puisque la récupération ne change pas quand Qwen est adapté.
 
 ## 8. Exécution
@@ -118,10 +132,11 @@ Trois précisions :
 - Relecture de ce protocole par Jibril, qui exécutera la mesure, puis présentation au Weekly.
 - Confirmation de la machine de mesure.
 - Juges de l'exactitude désignés le 25 octobre : Maïmouna SIGNATE et Vaneck DAGAR. À partir de leurs relectures, ils rédigent aussi les défauts caractérisés sur des exemples, livrable de #52.
-- Calcul du seuil S et inscription de sa valeur et de son empreinte.
+- Seuil S calculé et inscrit le 26 octobre, avec son empreinte (section 7).
 - Script de mesure écrit et relu, puis exécuté sur le seul lot de calibration.
 
 ## 10. Historique
 
 - **23 octobre 2026** : proposition initiale (Mahé), d'après #52, le rapport J2 (section 4.5) et la chaîne de la PR #85.
 - **25 octobre 2026** : juges de l'exactitude désignés, avec l'accord de Mahé ; aucune autre règle modifiée.
+- **26 octobre 2026** : seuil S calculé et inscrit (section 7). Témoin T de la chaîne d'export ajouté (sections 3 et 6), après la vérification qu'Ollama 0.40.5 refuse les adaptateurs LoRA. Aucune mesure n'a été faite.
