@@ -1216,6 +1216,8 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - #49 : audit des entrées de la mesure de l'encodeur ajusté, plan du notebook 05.
 - #105 : relecture redemandée à Maïmouna.
 - Courriel de relance de l'enseignant (étape 1) rédigé pour Mahé, qui l'envoie.
+- Calendrier resserré, après l'avancement de la soutenance au lundi 30/11 annoncé par Mahé : 57 étapes, projet terminé le vendredi 20/11, révision et entraînement ensuite, point d'arrêt de l'adaptation le 12/11.
+- GitHub : jalon J4 au 30/11 ; échéances corrigées dans #49, #52, #107, #111, #113 et #114 ; #52 revenu en J3 ; 13 commentaires, dont les ordres du jour des Weekly 7 à 13 ; #49 et la fin d'Agent0 soumis au Weekly 7.
 
 **Mesures exécutées.**
 - Seuil S : 479 variantes du CDTN, issues de 103 requêtes, dont 24 sous le seuil ; intervalle à 95 % par rééchantillonnage des requêtes, de 0,8464 à 0,8653.
@@ -1223,6 +1225,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Séparation : 10 tests réussis ; 61 fiches exclues ; deux mutations de la règle font échouer les tests.
 - #49 : trois empreintes du protocole 05 retrouvées sur les fichiers reçus le 14/10.
 - Ollama, au tag `v0.40.5` : `errAdaptersUnsupported` dans `server/create.go` ; la page du Modelfile ne mentionne plus `ADAPTER`.
+- Calendrier contrôlé par script : ordre chronologique, dépendances antérieures, aucune échéance le 11/11, aucune production après le 20/11.
 
 **Résultats retenus.**
 - S en fp32 dépasse de 0,0005 le seuil du site, calculé en q8 ; l'écart reste dans l'intervalle d'incertitude.
@@ -1338,6 +1341,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/10 | Contrôle du rapatriement par `find -flags dataless`, muet : 0 fichier trouvé alors que 10 309 restaient déchargés | comparaison avec `ls -lO` | drapeau `SF_DATALESS` lu par `os.stat` |
 | 26/10 | Tests de la séparation lancés avec le Python 3.9 du système et l'option `-I` : module introuvable | échec de l'import | relancés avec le Python 3.12 du projet |
 | 26/10 | Script de report de S dans le protocole écrivant « 10,000 tirages », au format anglais | relecture du script avant exécution | « 10 000 » |
+| 26/10 | Vérification des 13 commentaires filtrée à partir de 12 h UTC, alors qu'il était 11 h 09 : aucun commentaire trouvé, faux écart | incohérence avec les liens renvoyés à la publication | filtre corrigé ; les 13 sont présents et identiques |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
