@@ -221,7 +221,11 @@ Le sujet recommande une rédaction individuelle. Chaque membre complète son enc
 
 ### 4.3 Jibril BENSALEM
 
-> À rédiger par Jibril.
+**Compétences techniques acquises.** J’ai progressé dans la compréhension et la mise en œuvre d’une chaîne RAG : exécuter Qwen localement, récupérer les passages pertinents, construire le contexte et contrôler les citations. Le développement d’Agent0 Light m’a aussi permis de travailler sur la génération de questions synthétiques et la traçabilité des essais. Les relectures m’ont appris à confronter les affirmations aux résultats observés : un test réussi ou une citation existante ne garantit pas la qualité d’une réponse.
+
+**Points à approfondir.** Je dois encore approfondir l’adaptation des modèles, les contraintes de mémoire GPU et l’évaluation des réponses générées. Je souhaite aussi gagner en autonomie dans la compréhension du code produit avec l’assistance de l’IA.
+
+**Positionnement et organisation.** J’ai partagé mon travail entre le rôle de Scrum Master, les contributions techniques et les relectures. Un axe de progression concerne la régularité du suivi : consigner les décisions au fil de l’eau, renseigner les charges et mieux anticiper les dépendances entre tâches. Lorsqu’une réunion n’est pas nécessaire, un point écrit permet de conserver une visibilité commune sur l’avancement.
 
 ### 4.4 Vaneck DAGAR
 
