@@ -1,6 +1,9 @@
 # Faisabilité QLoRA sur le Legion (#107)
 
-Préparation du 26 octobre 2026. **La mesure du 7B sur le Legion reste à exécuter.**
+Préparation et premier résultat du 26 octobre 2026. **L'essai à 16 couches est
+terminé : 273,887 s par pas et 9,168 Gio alloués pour 7,960 Gio physiques.**
+La marge de mémoire n'est pas obtenue ; ne pas enchaîner les 28 couches dans
+ce montage. Voir le [bilan et la proposition de machine](../../docs/etudes/faisabilite_legion_20261026.md).
 Jibril a confirmé le calcul BF16, puis le calcul et la rétropropagation NF4,
 sur la RTX 5070 Laptop (8 Gio), avec Python 3.12.15 et les versions de
 `requirements-legion.txt`. Les avertissements de comptage FLOP Triton et de
@@ -47,7 +50,8 @@ ollama stop qwen2.5-7b-instruct:q4_k_m-local
 
 .\.venv-qlora\Scripts\python.exe ..\data_tigers_nlp-faisabilite-legion\scripts\adaptation_qwen\faisabilite_legion.py --couches 16 --sortie .\data\volet_b\faisabilite_legion\mesure_16.json
 
-# Seulement après lecture du premier résultat ; processus neuf.
+# Pour reproduction après examen du premier résultat ; non demandé après
+# l'essai du 26/10, qui dépasse déjà la mémoire physique sur 16 couches.
 .\.venv-qlora\Scripts\python.exe ..\data_tigers_nlp-faisabilite-legion\scripts\adaptation_qwen\faisabilite_legion.py --couches 28 --sortie .\data\volet_b\faisabilite_legion\mesure_28.json
 ```
 
