@@ -1249,6 +1249,29 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 ---
 
+### Session 43, 26 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Préparer la mesure de faisabilité QLoRA du 7B sur le Legion (#107), en comparaison de l'essai Mac de la #109.
+
+**Produit.** Script CUDA autonome, commandes PowerShell, versions relevées sur le Legion et tests. Les 28 exemples factices reprennent le tirage de la #109 et le contexte de la #85, vérifiés par empreinte. Aucun adaptateur n'est sauvegardé.
+
+**Mesures exécutées.**
+- Par Jibril, sur le Legion : diagnostic initial PyTorch 2.14.0 CPU ; création de `.venv-qlora`, PyTorch 2.11.0 CUDA 12.8 ; calcul matriciel BF16 puis calcul et rétropropagation NF4 réussis. Versions communiquées : Transformers 5.20.2, PEFT 0.21.2, Accelerate 1.15.0, bitsandbytes 0.50.2, pilote NVIDIA 596.36.
+- Par l'assistant, sur CPU Linux : sept tests réussis, dont l'équivalence de la perte et des gradients LoRA entre logits complets avec prompt masqué et logits limités à la réponse, sur un petit Qwen aléatoire avec checkpointing. Aucun poids 7B chargé pour ce test.
+- Comparaison des 28 messages au constructeur de contexte `df91b85` et au tirage de `a0bceb7` : tous identiques.
+
+**Résultats retenus.** Le calcul CUDA et NF4 fonctionne sur le Legion. La mémoire et le temps du Qwen 7B restent à mesurer : ces tests légers ne prouvent pas sa faisabilité.
+
+**Ce qui a été écarté, et pourquoi.** Tronquer les contextes à 2 048 tokens alors que l'essai Mac en comporte de plus longs ; utiliser le GGUF d'Ollama avec PEFT ; conserver un adaptateur appris sur des réponses factices ; présenter la perte factice comme une mesure de qualité.
+
+**Ce que l'équipe a validé, et par qui.** Jibril a exécuté et transmis les deux tests GPU légers. La préparation du benchmark est en brouillon ; relecture technique attendue par Mahé (D5), pas encore réalisée. Aucune machine d'entraînement n'est retenue à ce stade.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** L'environnement initial de PyTorch ne contenait pas CUDA. Les avertissements sur le comptage FLOP de Triton et la redirection des processus n'ont pas empêché les tests GPU exécutés par Jibril.
+
+---
+
 ## 4. Erreurs détectées par la vérification
 
 Cette section est tenue volontairement. Elle documente ce que la relecture systématique a permis de rattraper, et constitue le principal argument en faveur de notre méthode.
