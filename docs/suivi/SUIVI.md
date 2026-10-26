@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé ; 26 octobre 2026 : début du travail sur #52 daté, points opérationnels de #49, #52 et #107, par Mahé)
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -167,7 +167,7 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #49 | NR | NR | NR | - | NR |
 | #50 | NR | NR | NR | - | NR |
 | #51 | NR | NR | 16 | - | NR |
-| #52 | NR | NR | NR | - | NR |
+| #52 | 23/10 | NR | non estimée | - | NR |
 | #53 | NR | NR | 16 (P) | - | NR |
 | #56 | NR | NR | NR | - | NR |
 | #91 | 18/10 | NR | NR | - | NR |
@@ -195,6 +195,8 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 - #51 : 16 h cumulées pour Jibril et Maïmouna, validées par Jibril le 12/10 avant le développement, selon le corps du ticket. Répartition indicative de 8 h chacun, à ajuster.
 - #53 : 16 h cumulées provisoires pour Vaneck et Jibril, inscrites le 13/10 à la demande de Jibril. Proposition assistée par IA : 4 h d'analyse et de choix UI/UX, 8 h de réalisation, 4 h de contrôles et documentation. Aucune répartition individuelle imposée ; à réviser après le cadrage et à distinguer du reste à faire si le travail a commencé.
 
+- #52 : travail commencé le 23/10, à l'ouverture de la PR #108 qui en écrit le protocole ; aucune estimation n'avait été déclarée avant, dans le ticket ni dans ses commentaires (vérifié le 26/10).
+
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
 
 ## Points opérationnels à suivre
@@ -208,14 +210,14 @@ Cette section reprend les dates et dépendances écrites ; elle ne décide pas d
 | #43 | Date officielle du mi-parcours | Au 18/10 : tag `mi-parcours` et branche `observation/mi-parcours` posés a posteriori le 17/10 ; `main` mise à jour par la PR #74 (Jibril). **Critère de #43 non satisfait par ce tag historique** : la première inférence locale, réussie le 27/09 (#31), n'a été fusionnée dans `dev` que le 03/10 (PR #41), après `ac84ed3`. Écart déclaré dans le message du tag ; arbitrage du 18/10 (Mahé) : le tag n'est pas déplacé, #43 est validé avec cette réserve et fermé le 18/10. Le jalon de fin du volet A est le tag `volet-a-v1`, posé sur `main` après la PR #84 ; il contient la première inférence locale. |
 | #44 | Ticket fermé | Le jeu figé reste la référence ; ce suivi ne modifie ni les questions ni le protocole. |
 | #46 | 14/10, proposition dans le ticket | Fermé le 17/10 à 15 h 52 : mesure unique faite le 13/10, rapport fusionné le 14/10 (PR #73). |
-| #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. Corps actualisé le 25/10 : notebook 05 et mesure descriptive par Mahé, relus par Remy, pour le 20/11, sans effet sur le modèle servi. |
+| #49 | Corps : 31/10 proposé ; commentaires : gel 13/10, Weekly 14/10, mesure 15/10, cible 18/10 | Au 17/10 : PR #63 et protocole 05 fusionnés le 14/10 ; mesure non faite au 16/10, donc règle de repli : encodeur de base servi pour le 18/10. Mesure possible ensuite, pour le rapport. Corps actualisé le 25/10 : notebook 05 et mesure descriptive par Mahé, relus par Remy, pour le 20/11, sans effet sur le modèle servi. Audit du 26/10 : poids, q8 et index de l'ajusté conformes aux empreintes du protocole 05 ; q8 du témoin à régénérer ; notebook 05 et extension de la page d'encodage jamais réalisés. |
 | #50 | 24/10, proposition dans le ticket | Au 17/10 : élagage sans perte livré le 14/10 (PR #78), modèle de 65,7 Mio servi par le site ; la réduction avec perte sort du volet A. |
 | #51 | 10/10, proposition historique ; corps actualisé le 25/10 : PR #85 fusionnée le 27/10, reproduction et exemples commentés au Weekly 8 (04/11) | Ouvert ; chaîne RAG complète non déduite du test d'inférence de #31. La fusion de la PR #85 conditionne la mesure (#52), les données d'adaptation (#107) et le branchement de la démonstration (#111). |
-| #52 | 17/10, proposition historique ; corps actualisé le 25/10 : gel du protocole au Weekly 8 (04/11), mesure avant le 06/11, jugement et défauts le 27/11 | Ouvert ; dépend du jeu figé, de la chaîne RAG (PR #85) et du gel du protocole (PR #108). Jalon passé en J4 le 25/10 : le jugement à l'aveugle suit la mesure après. |
+| #52 | 17/10, proposition historique ; corps actualisé le 25/10 : gel du protocole au Weekly 8 (04/11), mesure avant le 06/11, jugement et défauts le 27/11 | Ouvert ; dépend du jeu figé, de la chaîne RAG (PR #85) et du gel du protocole (PR #108). Jalon passé en J4 le 25/10 : le jugement à l'aveugle suit la mesure après. Seuil S calculé le 26/10 (0,8565) et inscrit dans le protocole (PR #108). |
 | #53 | 17/10, demandé à Jibril avec Vaneck | Au 18/10 : interface B livrée par Vaneck (PR #80), puis focus du menu sur téléphone et périmètre du corpus affiché (PR #83, revue de Jibril) ; ticket fermé à la fusion de la PR #83. Estimation provisoire de 16 h non révisée. |
 | #56 | Avant la première mesure de #46 | Fermé le 14/10 ; les trois relectures sont importées (PR #79, fusionnée le 17/10) : 182 jugements, 155 requêtes. |
 | #91 à #98 | Échéances proposées en commentaire le 25/10 : #91 et #92 le 27/10, #93 le 30/10, #94 les 06/11 et 20/11, #95 les 06/11, 13/11 et 27/11, #96 et #97 le 30/11 ; #98 facultatif | Jalons : J3 pour #91 à #93, J4 pour #94 à #97, aucun pour #98. Agent0 passe après l'adaptation (#107) et la mesure (#52). Relecture humaine des candidats proposée à Remy. |
-| #107 | Corps actualisé le 25/10 : Legion 27/10, gel 04/11, mesure avant 06/11, données 06/11, échantillon 09/11, premier entraînement 12/11, adaptateur 20/11, mesure après 25/11, rapport et feuille de route 30/11 | « Adaptation engagée » à J3 : faisabilité mesurée, données préparées, premier entraînement lancé. Remy rejoint les étapes 4 et 5. Jalon passé en J4 le 25/10, la clôture suivant l'étape 6. |
+| #107 | Corps actualisé le 25/10 : Legion 27/10, gel 04/11, mesure avant 06/11, données 06/11, échantillon 09/11, premier entraînement 12/11, adaptateur 20/11, mesure après 25/11, rapport et feuille de route 30/11 | « Adaptation engagée » à J3 : faisabilité mesurée, données préparées, premier entraînement lancé. Remy rejoint les étapes 4 et 5. Jalon passé en J4 le 25/10, la clôture suivant l'étape 6. Le 26/10 : Ollama 0.40.5 refuse les adaptateurs LoRA (fusion puis GGUF, témoin ajouté au protocole) ; contrôle de séparation des données en PR #115. |
 | #111 | Corps actualisé le 25/10 : contrat 28/10, maquette 06/11, branchement 13/11, scénario 20/11, vidéo 30/11 | Le branchement dépend de la fusion de la PR #85 et du choix de la machine de démonstration (Weekly 7). |
 | #112 | Plan au Weekly 8 (04/11), supports le 13/11 | Exigés à J3 « même incomplets ». |
 | #113 | Axes de progression le 13/11, V1 le 02/12 | Le sujet exige une V1 strictement avant J4, dont l'écriture a commencé au plus tard à J3. |

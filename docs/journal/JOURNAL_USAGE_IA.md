@@ -1204,6 +1204,46 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - La récupération de l'état distant a d'abord échoué sur un verrou de Git : une récupération concurrente de l'éditeur. Aucun processus Git n'était actif au contrôle et le verrou avait disparu ; aucun fichier n'a été supprimé, et la récupération a été relancée.
 
+### Session 42, 26 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux du dépôt ; lancement des tâches de Mahé dans le calendrier jusqu'à J4 ; PR en attente de sa validation.
+
+**Produit.**
+- Seuil S de l'état B2 : `scripts/evaluation/seuil_b2.py`, S = 0,8565, inscrit avec son empreinte dans le protocole 06 (PR #108).
+- Protocole 06 : témoin T de la chaîne d'export, mesuré si ses tenseurs diffèrent de ceux du modèle de #31 ; signalement des questions dont le score est à moins de 1e-5 de S.
+- PR #115, en brouillon : contrôle de la séparation des données d'adaptation et du lot de test (#107, étape 4), relu par Remy.
+- #107 : méthode de service corrigée, grille de décision de la machine pour le Weekly 7.
+- #49 : audit des entrées de la mesure de l'encodeur ajusté, plan du notebook 05.
+- #105 : relecture redemandée à Maïmouna.
+- Courriel de relance de l'enseignant (étape 1) rédigé pour Mahé, qui l'envoie.
+
+**Mesures exécutées.**
+- Seuil S : 479 variantes du CDTN, issues de 103 requêtes, dont 24 sous le seuil ; intervalle à 95 % par rééchantillonnage des requêtes, de 0,8464 à 0,8653.
+- Contrôle de S : les 479 scores recalculés par les fonctions de la #85 (commit `df91b85`) sont identiques au bit près.
+- Séparation : 10 tests réussis ; 61 fiches exclues ; deux mutations de la règle font échouer les tests.
+- #49 : trois empreintes du protocole 05 retrouvées sur les fichiers reçus le 14/10.
+- Ollama, au tag `v0.40.5` : `errAdaptersUnsupported` dans `server/create.go` ; la page du Modelfile ne mentionne plus `ADAPTER`.
+
+**Résultats retenus.**
+- S en fp32 dépasse de 0,0005 le seuil du site, calculé en q8 ; l'écart reste dans l'intervalle d'incertitude.
+- La voie « directive `ADAPTER` » de #107 est impossible sur le Legion. Sans témoin, l'écart avant/après aurait mêlé l'adaptation et la requantification.
+
+**Ce qui a été écarté, et pourquoi.**
+- Script de mesure (étape 18) : il s'écrit sur `scripts/rag/` après la fusion de la #85, qui n'est pas fusionnée.
+- Nouvelle revue de la #101 : le journal n'est pas encore retiré de la pile Agent0.
+- Rédiger la section 4.1 du rapport à la place de Mahé : un plan lui est proposé.
+- Envoyer le courriel à l'enseignant : l'assistant n'a pas accès à la messagerie de Mahé.
+
+**Ce que l'équipe a validé, et par qui.**
+- Lancement des tâches demandé par Mahé BEGNIS.
+- Le témoin T reste à valider en relecture de la #108.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Le dépôt est sur un Bureau synchronisé par iCloud : 10 309 fichiers du `.venv` étaient déchargés. Les imports ont été ralentis, puis le premier calcul de S a échoué sur un délai de lecture. Les fichiers ont été rapatriés par lecture, sans rien modifier.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1292,6 +1332,12 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 25/10 | Générateur du calendrier : « EQ », l'équipe entière, découpé en deux personnes inconnues | contrôle automatique des noms | clé traitée comme un tout |
 | 25/10 | Suivi annoncé « sans écart » avec GitHub dans le commit 321b56e, alors que le contrôle ne portait que sur les états et les dates : le jalon de #49 y restait J3, contre J4 sur GitHub | comparaison étendue à toutes les colonnes | #49 en J4 ; la description de la #110 disait déjà la portée exacte du contrôle |
 | 25/10 | Jalons de #91 à #97 changés sur GitHub sans être reportés dans l'inventaire | même comparaison complète, avant le commit | inventaire corrigé, aucun écart |
+| 26/10 | Protocole 06 et #107 supposant que l'adaptateur serait servi tel quel par Ollama ; la version 0.40.5 le refuse, et la requantification aurait biaisé l'écart avant/après | lecture du code source d'Ollama au tag `v0.40.5` | témoin T ajouté au protocole, méthode de service de #107 corrigée |
+| 26/10 | Protocole 06 renvoyant à la « section 8.2 du notebook 03 », qui est celle du protocole du notebook 03 | relecture des sources citées | référence corrigée avant le commit |
+| 26/10 | Brouillon de commentaire sur #107 affirmant que le moteur MLX d'Ollama n'existe pas sur un PC NVIDIA, ce qui n'était pas vérifié | relecture avant publication | reformulé : disponibilité sur le Legion non vérifiée |
+| 26/10 | Contrôle du rapatriement par `find -flags dataless`, muet : 0 fichier trouvé alors que 10 309 restaient déchargés | comparaison avec `ls -lO` | drapeau `SF_DATALESS` lu par `os.stat` |
+| 26/10 | Tests de la séparation lancés avec le Python 3.9 du système et l'option `-I` : module introuvable | échec de l'import | relancés avec le Python 3.12 du projet |
+| 26/10 | Script de report de S dans le protocole écrivant « 10,000 tirages », au format anglais | relecture du script avant exécution | « 10 000 » |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
