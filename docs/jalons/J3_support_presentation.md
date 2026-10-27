@@ -90,6 +90,29 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * Latence au premier token : **< 2,0 s**.
   * Confidentialité absolue : 100 % des calculs réalisés en local, aucune dépendance réseau.
 
+---
+
+## Diapositive 6 — Volet B : Faisabilité de l'adaptation LoRA (Mac vs Legion, #107)
+
+### Cadrage de l'essai de faisabilité (Étape 1 de #107)
+* **Objectif** : Valider sur banc d'essai qu'un fine-tuning LoRA (rang 8) de `Qwen2.5-7B` en 4 bits tient en mémoire avec des longueurs de contexte réelles (1 115 à 2 542 tokens, médiane 1 746 tokens issus du RAG).
+* **Protocole de mesure étanche** : Essai sur données factices (phrase cible fixe) mesurant exclusivement le pic de mémoire GPU et la durée incrémentale par pas (différence entre 6 et 12 itérations).
+
+### Comparaison expérimentale des deux machines
+| Métrique (LoRA 16 couches) | MacBook M4 Pro (PR #109, Mahé) | PC Legion RTX 4060 (PR #118, Jibril) |
+|---|---|---|
+| **Environnement** | macOS 26 · MLX 0.32 · Metal | Windows 11 · PyTorch 2.11 · CUDA 12.8 |
+| **Mémoire physique** | **24 Gio unifiées** | **8 Gio VRAM** (7,96 Gio physiques) |
+| **Pic mémoire GPU mesuré** | **7,14 Gio** (compteur Metal) | **9,17 Gio alloués** (PyTorch) |
+| **Mémoire libre finale** | **16,86 Gio de marge** | **0 octet libre (saturation)** |
+| **Comportement mémoire** | Exécution intégrale en VRAM | Déport sur RAM partagée système |
+| **Temps moyen par pas** | **10,5 s** | **273,9 s (4 min 34 s)** |
+
+### Conclusion opérationnelle
+* **Arbitrage technique** : Le Legion est disqualifié pour l'entraînement (temps x26 plus long et instabilité due au swap). L'entraînement est confié au **MacBook M4 Pro** (~1 h 30 pour 1 époque de 500 exemples).
+* **Répartition des rôles** : Entraînement sur Mac ; conversion, service Ollama et évaluation hébergés sur le Legion.
+
+
 
 
 
