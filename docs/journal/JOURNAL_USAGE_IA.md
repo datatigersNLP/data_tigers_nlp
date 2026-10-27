@@ -1271,6 +1271,40 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Difficultés rencontrées.** L'environnement initial de PyTorch ne contenait pas CUDA. Les avertissements sur le comptage FLOP de Triton et la redirection des processus n'ont pas empêché les tests GPU exécutés par Jibril. Une exécution terminée et des paramètres tous sur CUDA n'établissent pas la résidence physique en VRAM sous WDDM ; les compteurs mémoire et les durées ont empêché de conclure à tort que le montage tenait dans 8 Gio.
 
+### Session 44, 27 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Relecture technique de la faisabilité de l'adaptation LoRA sur Mac (PR #109) en vue du Weekly 7 ; cadrage et élaboration du squelette des supports de présentation du jalon J3 (ticket #112) ; audit de la visibilité des contributions dans l'historique Git.
+
+**Produit.**
+- Relecture de la PR #109 (`a0bceb7`) : rapport technique détaillé et commentaire d'approbation rédigé, prêt pour validation lors du Weekly 7.
+- `docs/jalons/J3_support_presentation.md` (sur la branche `docs/112-supports-j3`) : support de cadrage de 9 diapositives couvrant l'état d'avancement des deux volets, les métriques d'IR et d'abstention du volet A, le socle RAG, l'arbitrage matériel Mac/Legion, le protocole d'étanchéité des données et le calendrier resserré jusqu'à la soutenance du 30/11.
+- Audit et traçabilité des contributions Git : identification de la restriction de calcul du graphe de contributeurs GitHub à la seule branche `main`, et réconciliation arithmétique exacte des commits sous les identités `Remynou` (14 commits) et `remy.rayane@lacatholille.fr` (10 commits, dont 8 merges de PR).
+
+**Mesures exécutées.**
+- PR #109 : confirmation de l'isolation du coût incrémental (10,5 s par pas sur 16 couches, 14,3 s sur 28 couches) par différence entre 6 et 12 pas ; validation de la mesure de mémoire crête Metal à 7,14 Gio (marge de 16,86 Gio sous les 24 Gio unifiées du Mac M4 Pro).
+- Confrontation métrologique avec le benchmark homologue sur le Legion (PR #118, commit `0d26e89`) : pic alloué PyTorch à 9,168 Gio pour 7,960 Gio physiques, mémoire libre nulle, 273,887 s par pas due au repli vers la RAM partagée Windows. Confirmation que le Mac est la seule machine adaptée pour l'entraînement.
+- Audit de la chaîne de service Ollama : vérification sur le tag `v0.40.5` du rejet de la directive `ADAPTER` (`errAdaptersUnsupported`) confirmant la nécessité de la chaîne fusion FP16 + conversion GGUF Q4_K_M et du modèle témoin T (protocole 06, PR #108).
+- Audit des lignes de code et commits Git : calcul des ajouts et suppressions sur `main` réconciliant exactement les 3 033 insertions et 1 037 suppressions affichées sur GitHub (1 551 ++ et 1 011 -- pour l'adresse noreply, 1 482 ++ et 26 -- pour l'adresse Catho).
+
+**Résultats retenus.**
+- La PR #109 est techniquement solide et validée pour approbation formelle au Weekly 7.
+- Le premier jet du support J3 (#112) est structuré sur des bases chiffrées issues du dépôt, prêt pour la revue collective de l'équipe et le travail d'approfondissement prévu avec Vaneck le 04/11.
+- Les commits de Remy sont intègres et correctement ventilés dans Git ; leur prise en compte dans les statistiques GitHub s'effectuera automatiquement à la fusion de `dev` dans `main`.
+
+**Ce qui a été écarté, et pourquoi.**
+- Fusionner prématurément le support J3 dans `dev` : réservé à la validation collégiale lors du Weekly 7 et du travail conjoint avec Vaneck (#112).
+- Réécrire l'historique des commits pour unifier les adresses email passées : écarté pour préserver l'immutabilité des hash Git déjà fusionnés et des tags du dépôt (`mi-parcours`, `volet-a-v1`).
+
+**Ce que l'équipe a validé, et par qui.**
+- Revue de la PR #109 effectuée par Remy RAYANE, approbation planifiée au Weekly 7.
+- Support préparatoire de J3 initié par Remy RAYANE, soumis à l'équipe au Weekly 7 avant finalisation du plan au Weekly 8 avec Vaneck DAGAR.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Compréhension de la disparité entre le nombre brut de commits dans les branches de travail et le graphe de statistiques GitHub (qui n'agrège que les commits non-vides fusionnés dans la branche par défaut `main`).
+
 ---
 
 ## 4. Erreurs détectées par la vérification
