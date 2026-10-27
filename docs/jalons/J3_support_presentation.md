@@ -73,5 +73,23 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * Si la similarité cosinus maximale est inférieure à ce seuil, le moteur s'abstient explicitement d'afficher des fiches trompeuses.
   * Affichage d'un message transparent d'avertissement invitant l'utilisateur à reformuler ou à consulter les sources officielles.
 
+---
+
+## Diapositive 5 — Volet B : Socle RAG & Inférence locale (#31, #51, PR #85)
+
+### Architecture de la chaîne locale
+* **Modèle génératif open-weights** : `Qwen2.5-7B-Instruct` servi localement sous Ollama au format quantifié 4 bits (GGUF Q4_K_M, 4,36 Gio en VRAM).
+* **Index commun et récupération** : Réutilisation stricte de l'index des 4 240 passages du corpus M2 (`passages_m2.json`), garantissant la cohérence documentaire entre Volet A et Volet B.
+* **Injection contextuelle** : Récupération des 5 passages les plus pertinents et construction dynamique du prompt de contexte via la fonction certifiée `construire_contexte` (`scripts/rag/rag.py`).
+
+### Cadrage de la génération (`rag-b1-v1`)
+* **Prompt système strict** : Interdiction formelle d'extrapoler ou d'inventer des dispositions juridiques non présentes dans le contexte.
+* **Obligation de sourçage** : Chaque assertion factuelle doit être adossée à une balise explicite de citation `[P1]` à `[P5]`, facilitant l'audit d'exactitude par un juriste.
+* **Performances mesurées** :
+  * Débit de génération : **47 à 67 tokens/s** en inférence GPU locale.
+  * Latence au premier token : **< 2,0 s**.
+  * Confidentialité absolue : 100 % des calculs réalisés en local, aucune dépendance réseau.
+
+
 
 
