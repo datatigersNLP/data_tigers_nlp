@@ -1400,8 +1400,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/10 | Tests de la séparation lancés avec le Python 3.9 du système et l'option `-I` : module introuvable | échec de l'import | relancés avec le Python 3.12 du projet |
 | 26/10 | Script de report de S dans le protocole écrivant « 10,000 tirages », au format anglais | relecture du script avant exécution | « 10 000 » |
 | 26/10 | Vérification des 13 commentaires filtrée à partir de 12 h UTC, alors qu'il était 11 h 09 : aucun commentaire trouvé, faux écart | incohérence avec les liens renvoyés à la publication | filtre corrigé ; les 13 sont présents et identiques |
+| 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
+| 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire `@lacatholille.fr` | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus |
 
-**Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
+**Bilan intermédiaire.** Dix-huit erreurs ou pièges détectés et traités en trois jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
 Aucune n'a été trouvée par simple relecture du texte. Toutes l'ont été par confrontation à une mesure, à un calcul indépendant ou à l'inspection visuelle du rendu. C'est la méthode qui les a fait apparaître, pas l'attention.
 
