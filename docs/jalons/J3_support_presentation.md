@@ -112,6 +112,29 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 * **Arbitrage technique** : Le Legion est disqualifié pour l'entraînement (temps x26 plus long et instabilité due au swap). L'entraînement est confié au **MacBook M4 Pro** (~1 h 30 pour 1 époque de 500 exemples).
 * **Répartition des rôles** : Entraînement sur Mac ; conversion, service Ollama et évaluation hébergés sur le Legion.
 
+---
+
+## Diapositive 7 — Volet B : Étanchéité des données & Chaîne de conversion GGUF (#107, PR #115)
+
+### Contrôle formel de séparation des données (Étape 4 de #107)
+* **Garantie anti-fuite (Data Leakage)** : Aucune donnée d'entraînement ne doit provenir des fiches du lot de test humain (`jeu-questions-v1`), et aucune question humaine ne doit être apprise.
+* **Vérification outillée par script** (`scripts/adaptation_qwen/separation.py`, PR #115) :
+  * Exclusion formelle des **61 fiches documentaires** touchées par le lot de test de référence.
+  * Rejet automatique si un passage d'entraînement (cible ou distracteur) provient d'une fiche exclue.
+  * Rejet de toute question reprenant mot pour mot une question humaine (calibration comprise).
+* **Contrat d'échange validé** : Fichier JSONL au format unifié `{"id": str, "question": str, "passages": [passage_id, ...]}`.
+
+### Chaîne d'export et Témoin T au Protocole 06
+* **Contrainte Ollama 0.40.5** : L'audit du tag officiel révèle le rejet de la directive `ADAPTER` (`errAdaptersUnsupported`).
+* **Méthode de déploiement retenue** :
+  1. Fusion des poids de l'adaptateur LoRA dans le modèle de base en demi-précision FP16.
+  2. Conversion du modèle fusionné au format GGUF.
+  3. Requantification en 4 bits (Q4_K_M).
+* **Nécessité méthodologique du Témoin T** :
+  * La requantification GGUF introduit de légers bruits d'arrondi indépendants de l'apprentissage.
+  * Pour isoler rigoureusement l'impact du fine-tuning, un **modèle témoin T** (modèle de base subissant exactement le même cycle fusion/requantification GGUF) est évalué en parallèle.
+
+
 
 
 
