@@ -1,0 +1,7 @@
+# Python 3.12 ; versions compatibles avec le notebook 02, sans changer son verrou.
+# Les dépendances indirectes sont contraintes par son fichier figé.
+-c ../indexation/requirements-lock.txt
+
+numpy==2.5.3
+sentence-transformers==6.1.0
+transformers==5.17.0
