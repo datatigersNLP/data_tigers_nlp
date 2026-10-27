@@ -1262,8 +1262,8 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Produit.**
 - PR #119 : script de mesure du protocole 06 (`scripts/rag/mesure.py`) et ses tests. `generation.py` prend le modèle et le digest en paramètres optionnels, ceux de #31 par défaut.
-- #100 réapprouvée sur `f8deda3`, puis fusionnée par Jibril.
-- Relecture technique de la #118, la faisabilité sur le Legion : méthode et chiffres vérifiés, proposition du Mac soutenue.
+- #100 réapprouvée sur `f8deda3`, puis fusionnée par Jibril. #101 approuvée sur `f182489`, après sa mise à jour avec `dev` : 98 tests réussis sur le résultat de la fusion.
+- Relecture technique de la #118, la faisabilité sur le Legion : méthode et chiffres vérifiés, proposition du Mac soutenue. Approuvée sur `0d26e89` une fois passée en « prête » par Jibril.
 - Commentaires sur #8 (relance de l'enseignant abandonnée) et sur #13 (décision sur la machine pour le Weekly 7).
 - Feuille de route mise à jour avec l'avancement au 27 octobre.
 - Journal de Vaneck reçu de Mahé : déjà intégré le 18 octobre (PR #87), aucun ajout.
@@ -1280,7 +1280,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Ce qui a été écarté, et pourquoi.**
 - Fusionner la #108, approuvée : elle gèlerait le protocole avant le script relu et la machine confirmée.
-- Approuver la #118 en brouillon : le commit qui régénérera le PDF du journal annulerait l'approbation.
+- Approuver la #118 tant qu'elle était en brouillon. Elle a été approuvée une fois passée en « prête » ; l'ordre de fusion avec la #117, qui modifie aussi le PDF du journal, est convenu dans la revue.
 - Recalculer S sur le Legion : la mesure doit utiliser le fichier calculé le 26 octobre, contrôlé par son empreinte.
 - Relancer l'enseignant : décision de Mahé, l'enseignant communiquera.
 
