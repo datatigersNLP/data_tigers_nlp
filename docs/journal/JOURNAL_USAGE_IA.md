@@ -1256,6 +1256,28 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Le dépôt est sur un Bureau synchronisé par iCloud : 10 309 fichiers du `.venv` étaient déchargés. Les imports ont été ralentis, puis le premier calcul de S a échoué sur un délai de lecture. Les fichiers ont été rapatriés par lecture, sans rien modifier.
 
+### Session 43, 26 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Préparer puis relever la mesure de faisabilité QLoRA du 7B sur le Legion (#107), en comparaison de l'essai Mac de la #109.
+
+**Produit.** Script CUDA autonome, commandes PowerShell, versions relevées sur le Legion et tests. Les 28 exemples factices reprennent le tirage de la #109 et le contexte de la #85, vérifiés par empreinte. Bilan et copie de la sortie console conservés dans les fichiers d'étude du 26 octobre. Aucun adaptateur n'est sauvegardé.
+
+**Mesures exécutées.**
+- Par Jibril, sur le Legion : diagnostic initial PyTorch 2.14.0 CPU ; création de `.venv-qlora`, PyTorch 2.11.0 CUDA 12.8 ; calcul matriciel BF16 puis calcul et rétropropagation NF4 réussis. Versions communiquées : Transformers 5.20.2, PEFT 0.21.2, Accelerate 1.15.0, bitsandbytes 0.50.2, pilote NVIDIA 596.36.
+- Par l'assistant, sur CPU Linux : sept tests réussis, dont l'équivalence de la perte et des gradients LoRA entre logits complets avec prompt masqué et logits limités à la réponse, sur un petit Qwen aléatoire avec checkpointing. Aucun poids 7B chargé pour ce test.
+- Comparaison des 28 messages au constructeur de contexte `df91b85` et au tirage de `a0bceb7` : tous identiques.
+- Par Jibril, sur le Legion, essai à 16 couches : deux échauffements puis douze pas terminés. Temps moyen 273,887 s, médiane 260,224 s ; pic alloué 9,168 Gio, réservé 10,352 Gio, pour 7,960 Gio physiques ; mémoire libre en fin d'essai : zéro. La ligne finale et les durées de progression ont été transmises ; le fichier JSON complet n'a pas été reçu. L'empreinte du script correspond à `b8a74f4` avec fins de ligne CRLF.
+
+**Résultats retenus.** Le calcul CUDA et NF4 fonctionne, et l'essai du 7B termine, mais le montage à 16 couches ne satisfait pas la marge de mémoire proposée dans #107. La mémoire allouée dépasse la capacité physique. Le recours à la RAM système par Windows est une hypothèse forte, pas une mesure directe. Proposition : retenir le Mac pour l'entraînement, à valider en équipe ; aucune conclusion sur la qualité des réponses.
+
+**Ce qui a été écarté, et pourquoi.** Tronquer les contextes à 2 048 tokens alors que l'essai Mac en comporte de plus longs ; utiliser le GGUF d'Ollama avec PEFT ; conserver un adaptateur appris sur des réponses factices ; présenter la perte factice comme une mesure de qualité. Enchaîner les 28 couches est déconseillé après le dépassement observé sur 16 couches.
+
+**Ce que l'équipe a validé, et par qui.** Jibril a exécuté et transmis les deux tests GPU légers puis l'essai du 7B à 16 couches. La PR est en brouillon ; relecture technique attendue par Mahé (D5), pas encore réalisée. Le choix du Mac reste une proposition, pas une décision d'équipe.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** L'environnement initial de PyTorch ne contenait pas CUDA. Les avertissements sur le comptage FLOP de Triton et la redirection des processus n'ont pas empêché les tests GPU exécutés par Jibril. Une exécution terminée et des paramètres tous sur CUDA n'établissent pas la résidence physique en VRAM sous WDDM ; les compteurs mémoire et les durées ont empêché de conclure à tort que le montage tenait dans 8 Gio.
+
 ### Session 44, 27 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
 
 **Objet.** Bilan du dépôt ; revues de la #100 et de la #118 ; script de mesure du volet B ; préparation du Weekly 7. La session 43, de Jibril (26 octobre), est dans la PR #118.
