@@ -150,6 +150,31 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 * **Jugement humain aveugle** : Attribution de l'évaluation qualitative à deux juges indépendants (Vaneck et Maïmouna) ignorant quel modèle a généré chaque réponse pour prévenir tout biais d'évaluation.
 * **Statut à J3** : Protocole rédigé et revu, seuil $S$ calculé, mesure avant adaptation programmée pour le 03/11.
 
+---
+
+## Diapositive 9 — Méthodologie, 5 Outils Novateurs & Feuille de route jusqu'à J4
+
+### Rigueur méthodologique & Suivi de l'usage de l'IA
+* **Traçabilité totale** : 42 sessions d'assistance IA consignées à date au fil de l'eau ([JOURNAL_USAGE_IA.md](file:///c:/Users/remyr/data_tigers_nlp/docs/journal/JOURNAL_USAGE_IA.md)).
+* **Culture du contrôle** : 68 erreurs, hallucinations ou pièges matériels documentés et rectifiés par confrontation aux sources primaires et aux mesures réelles.
+* **Cinq outils novateurs (Bonus +3 points)** :
+  1. *Transformers.js* : Moteur WASM sans serveur.
+  2. *ONNX Runtime (Web / Python)* : Format pivot et parité d'exécution.
+  3. *Playwright* : Automatisation des parcours multi-navigateurs et accessibilité.
+  4. *GitHub CLI* : Traçabilité et automatisation des audits de dépôt.
+  5. *Assistants IA (Antigravity, Claude Code, Codex)* : Retour d'expérience critique et vérification outillée.
+
+### Calendrier resserré jusqu'à la Soutenance (30/11)
+* **28/10 (Weekly 7)** : Arbitrage de la machine d'entraînement (Mac M4 Pro) et décision sur le maintien de #49.
+* **03/11** : Génération des données d'adaptation conformes (#107, étape 4) et mesure avant adaptation (#52).
+* **04/11 (Weekly 8)** : Cadrage formalisé des supports de J3 avec Vaneck (#112).
+* **06/11** : Entraînement LoRA sur Mac (#107, étape 5).
+* **10/11** : Construction du témoin T et déploiement du modèle adapté sous Ollama.
+* **13/11 (Jalon J3)** : Mesure comparative après adaptation, assemblage final des supports et fiches d'outils.
+* **20/11** : Livraison de la V1 du rapport (#113), gel du code et du site.
+* **30/11 (Jalon J4)** : Soutenance finale du projet.
+
+
 
 
 
