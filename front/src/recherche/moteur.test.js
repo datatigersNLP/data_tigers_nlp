@@ -229,13 +229,16 @@ test("servirOrtDepuisLeSite : des chemins inattendus ne sont pas modifiés", () 
 });
 
 // la version installée doit être celle qu'épingle Transformers.js : sinon le site servirait un autre moteur que celui
-// pour lequel la bibliothèque a été écrite
+// pour lequel la bibliothèque a été écrite. Le site l'importe directement (useMoteur.js) et la déclare donc dans
+// package.json, à la même version : une mise à jour de Transformers.js sans elle installerait deux versions
 const MODULES = fileURLToPath(new URL("../../node_modules/", import.meta.url));
 const sansModules = existsSync(MODULES + "onnxruntime-web/package.json") ? false : "dépendances npm non installées";
 test("site : la version d'ONNX Runtime Web servie est celle qu'épingle Transformers.js", { skip: sansModules }, () => {
   const ort = JSON.parse(readFileSync(MODULES + "onnxruntime-web/package.json", "utf8"));
   const tjs = JSON.parse(readFileSync(MODULES + "@huggingface/transformers/package.json", "utf8"));
   assert.equal(ort.version, tjs.dependencies["onnxruntime-web"]);
+  const site = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8"));
+  assert.equal(site.dependencies["onnxruntime-web"], tjs.dependencies["onnxruntime-web"]);
   assert.ok(CDN.includes("@" + ort.version + "/"));
   for (const nom of Object.keys(FICHIERS_SITE)) assert.ok(existsSync(MODULES + "onnxruntime-web/dist/" + nom), nom);
 });
