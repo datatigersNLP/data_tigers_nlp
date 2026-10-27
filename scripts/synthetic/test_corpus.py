@@ -22,7 +22,7 @@ def passages_techniques():
              "section_titre": "Diagnostic", "chemin": ["Témoin"],
              "url": f"https://example.invalid/{fiche}",
              "url_citation": f"https://example.invalid/{fiche}#temoin",
-             "date_maj": "2026-10-18", "texte": f"  Témoin {fiche}{i} : éteint.\n",
+             "date_maj": "2026-10-18", "texte": f"  Témoin technique {fiche}{i} : éteint.\n",
              "articles": []}
             for fiche, nombre in [("a", 3), ("b", 2), ("c", 1)] for i in range(nombre)]
 
