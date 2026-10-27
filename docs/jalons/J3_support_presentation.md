@@ -134,6 +134,23 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * La requantification GGUF introduit de légers bruits d'arrondi indépendants de l'apprentissage.
   * Pour isoler rigoureusement l'impact du fine-tuning, un **modèle témoin T** (modèle de base subissant exactement le même cycle fusion/requantification GGUF) est évalué en parallèle.
 
+---
+
+## Diapositive 8 — Volet B : Protocole d'évaluation comparative avant/après (#52, PR #108)
+
+### Le Protocole 06 (PR #108)
+* **Comparaison appariée stricte** : Évaluation du modèle initial (`base`), du modèle témoin (`temoin_T`) et du modèle adapté (`adapte`) sur les mêmes questions d'évaluation.
+* **Critères d'évaluation multidimensionnels** :
+  1. **Exactitude formelle des citations** : Présence des balises `[P1]` à `[P5]` et vérification que le passage cité contient bien l'information alléguée.
+  2. **Fidélité sémantique & exhaustivité** : Conformité juridique de la synthèse textuelle face aux règles du Code du travail.
+  3. **Comportement d'abstention** : Capacité du modèle à refuser de répondre lorsque les passages fournis ne contiennent pas la réponse juridique adéquate.
+
+### Métrologie & Double évaluation humaine aveugle
+* **Seuil de référence $S$ calculé** : Seuil $S = 0,8565$ (intervalle de confiance à 95 % par rééchantillonnage bootstrap : $[0,8464 ; 0,8653]$) sur 479 variantes du CDTN.
+* **Jugement humain aveugle** : Attribution de l'évaluation qualitative à deux juges indépendants (Vaneck et Maïmouna) ignorant quel modèle a généré chaque réponse pour prévenir tout biais d'évaluation.
+* **Statut à J3** : Protocole rédigé et revu, seuil $S$ calculé, mesure avant adaptation programmée pour le 03/11.
+
+
 
 
 
