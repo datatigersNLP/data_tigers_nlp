@@ -55,4 +55,23 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * **Parité bit à bit stricte** : 100 % d'identité vectorielle vérifiée sur les 822 vecteurs du jeu de contrôle par rapport au q8 de référence.
   * Modèle servi directement en local depuis `front/public/modele/`, garantissant l'autonomie totale du site.
 
+---
+
+## Diapositive 4 — Volet A : Évaluation quantitative & Règle d'abstention (#46, #53)
+
+### Chaîne d'évaluation de l'IR (Information Retrieval)
+* **Jeu de test annoté** : 60 questions humaines annotées sur le corpus, complétées par les 155 requêtes du Code du Travail Numérique (CDTN, #56).
+* **Supériorité prouvée face aux baselines lexicales** :
+  * **TF-IDF** (Recall@5 : 54,2 %) et **BM25** (Recall@5 : 56,8 %).
+  * **Recherche dense E5 q8** : **Recall@5 = 83,6 %** sur la bonne fiche (+26,8 points par rapport à BM25).
+* **Test de non-infériorité statistique** : McNemar apparié confirmant l'absence de régression significative entre le modèle exact FP32 et le modèle quantifié q8 ($p > 0,05$).
+
+### Mécanisme d'abstention active (#53)
+* **Problématique** : Empêcher le moteur de renvoyer un passage hors-sujet en cas de question hors corpus ou absurde.
+* **Calibrage du seuil d'abstention** : Détermination par courbe ROC / AUC sur jeu de requêtes pièges négatives.
+* **Seuil fixé à $\theta = 0,8165$** :
+  * Si la similarité cosinus maximale est inférieure à ce seuil, le moteur s'abstient explicitement d'afficher des fiches trompeuses.
+  * Affichage d'un message transparent d'avertissement invitant l'utilisateur à reformuler ou à consulter les sources officielles.
+
+
 
