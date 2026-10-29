@@ -226,6 +226,17 @@ class PreparationAdversarialTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "correction proposée comme sourçable"):
             self.valider(proposition)
 
+    def test_validation_exige_point_interrogation_final_pour_piege(self):
+        questions = ["Le témoin est allumé.", "Pourquoi le témoin est-il allumé",
+                     "Pourquoi ? Le témoin est allumé.",
+                     "Pourquoi le témoin est-il allumé ? Explication."]
+        for question in questions:
+            proposition = {**self.proposition(), "question": question}
+            avant = copy.deepcopy(proposition)
+            with self.subTest(question=question), self.assertRaisesRegex(ValueError, "terminée par"):
+                self.valider(proposition)
+            self.assertEqual(proposition, avant)
+
     def test_validation_refuse_preparation_ambigue_ou_source_invalide(self):
         cas = [{"format": "agent0-preparation-v2"}, {"source": None},
                {"sources": [self.passage]}, {"source": {**self.passage, "texte": " "}},
@@ -289,6 +300,25 @@ class PreparationAdversarialTests(unittest.TestCase):
         self.assertEqual(resume["statut"], "erreur_technique")
         self.assertIn("generation_incomplete", resume["motif"])
         self.assertEqual((racine / "tronque_adversarial" / "candidates.jsonl").read_bytes(), b"")
+
+    def test_run_affirmation_rejetee_avec_sortie_brute_intacte(self):
+        proposition = {**self.proposition(), "question": "Le témoin est allumé."}
+        reponse = reponse_technique(proposition)
+        racine = self.dossier / "runs"
+        with (patch.object(client_qwen, "preparer_requete", return_value=requete_technique()),
+              patch.object(client_qwen, "_http", return_value=reponse) as http):
+            resume = run.executer(self.preparation(), "affirmation_adversarial", racine)
+        http.assert_called_once()
+        self.assertEqual(resume["statut"], "rejet_automatique")
+        self.assertEqual((resume["nb_candidats"], resume["nb_rejets"]), (0, 1))
+        self.assertIn("terminée par", resume["motif"])
+        dossier = racine / "affirmation_adversarial"
+        self.assertEqual((dossier / "candidates.jsonl").read_bytes(), b"")
+        rejet = json.loads((dossier / "rejected.jsonl").read_text(encoding="utf-8"))
+        self.assertEqual(rejet["phase"], "validation_automatique")
+        traces = [json.loads(l) for l in (dossier / "traces.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(next(t["resultat"] for t in traces if "resultat" in t)["reponse_brute"],
+                         reponse["response"])
 
 
 if __name__ == "__main__":

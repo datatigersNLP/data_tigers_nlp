@@ -46,18 +46,14 @@ export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauC
       if (ev.key !== "Tab" || !panneau.current) return;
       const liste = activables(panneau.current);
       if (liste.length === 0) return;
-      const [debut, fin] = [liste[0], liste[liste.length - 1]];
-      const actif = document.activeElement;
-      if (!panneau.current.contains(actif)) {
-        ev.preventDefault();
-        (ev.shiftKey ? fin : debut).focus();
-      } else if (ev.shiftKey && actif === debut) {
-        ev.preventDefault();
-        fin.focus();
-      } else if (!ev.shiftKey && actif === fin) {
-        ev.preventDefault();
-        debut.focus();
-      }
+      // la tabulation est entièrement gérée ici, et non laissée au navigateur hors des bords : avec ses réglages
+      // par défaut, Safari ne passe pas par les boutons, et le focus quittait le panneau pour le document
+      ev.preventDefault();
+      const i = liste.indexOf(document.activeElement);
+      const n = liste.length;
+      // focus hors de la liste (document, panneau lui-même) : premier élément avec Tab, dernier avec Maj+Tab
+      const suivant = i === -1 ? (ev.shiftKey ? n - 1 : 0) : (i + (ev.shiftKey ? n - 1 : 1)) % n;
+      liste[suivant].focus();
     }
     document.addEventListener("keydown", clavier);
     return () => document.removeEventListener("keydown", clavier);
