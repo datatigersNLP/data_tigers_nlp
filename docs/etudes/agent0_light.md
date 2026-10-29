@@ -1,4 +1,48 @@
-# Agent0 Light : génération synthétique locale (#91 à #93)
+# Agent0 Light : génération synthétique locale
+
+## Synthèse au 29 octobre 2026
+
+Les cinq catégories sont disponibles : simple, reformulation, multi-passage, piège et hors corpus.
+Les incréments #91 à #93 sont intégrés dans dev ; #94 et le support #95 restent dans #103/#106.
+
+Le validateur contrôle le JSON, les sources, les extraits exacts d'au moins 20 caractères sur des
+limites de mots et les doublons normalisés. Une question piège (`adversarial`) doit désormais
+se terminer par `?`, hors espaces finaux. Le texte reçu reste intact. Ce contrôle de forme
+ne confirme pas la fausseté de la prémisse ou la suffisance des preuves : ces décisions restent humaines.
+
+**Dernière vérification locale : 149 tests réussis**, Python 3.12.14 / Pydantic 2.14.0,
+verrou inchangé. Deux régressions couvrent les formes mal terminées et le rejet tracé sans relance.
+Les questions valides avec espaces et saut de ligne final restent conservées telles quelles.
+Aucun nouvel appel réel au modèle ou résultat Windows n'est revendiqué.
+
+| Essais de mise au point conservés | Candidats obtenus historiquement | Rejets automatiques |
+|---|---:|---:|
+| Simple | 1 | 0 |
+| Reformulation | 1 | 0 |
+| Multi-passage | 4 | 2 |
+| Pièges | 3 | 1 |
+| Hors corpus | 6 | 0 |
+| **Total : 18 runs** | **15** | **3** |
+
+Les 15 candidats restent en attente humaine ; aucun hors corpus n'est confirmé. Les prompts ont
+été ajustés sur trois fiches : ces essais ne constituent pas un benchmark indépendant.
+Les runs historiques, dont l'affirmation `adversarial_001`, restent intacts.
+
+**Décisions ouvertes avant un pilote.** Signaux de proximité et de comparaison à risque ; méthode
+hors corpus et contre-preuves ; maintien ou report de la suite Agent0 (#13). Si le pilote est
+maintenu, figer prompts et commit avant génération sur de nouvelles fiches, puis faire relire et
+figer le lot avant toute réponse du RAG (#95). Aucun quota d'acceptation forcé.
+
+**Traçabilité.** [Note du 29 octobre](../journal/2026-10-29_agent0_light_94.md).
+La correction des extraits du 24 octobre figure dans le
+[journal commun, session 40](../journal/JOURNAL_USAGE_IA.md). La note du jour reste datée,
+sans réserver de numéro de session dans cette branche.
+
+---
+
+## Historique des incréments
+
+Les sections suivantes conservent leurs états et résultats datés.
 
 **Contrôle des extraits — correction du 24 octobre 2026 (#93/#94).** Le validateur exige
 désormais au moins **20 caractères**, sans espaces de bord, et une occurrence **mot pour mot
@@ -10,7 +54,7 @@ Le contrôle du « ? » et les changements de méthode hors corpus ne font pas p
 Validation locale de cette version : **147 tests réussis**, Python 3.12.14 / Pydantic 2.14.0,
 verrou inchangé. Les trois fragments de la revue sont rejetés ; les 13 extraits existants du support
 de #106 restent conformes. Aucun appel réel ni résultat Windows nouveau n'est revendiqué.
-Détail : [journal d'usage de l'IA, session 39](../journal/JOURNAL_USAGE_IA.md).
+Détail : [journal d'usage de l'IA, session 40](../journal/JOURNAL_USAGE_IA.md).
 Les sections datées ci-dessous décrivent les états historiques avant cette correction.
 
 ## 1. Périmètre et état

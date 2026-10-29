@@ -77,6 +77,8 @@ def valider_proposition(texte: str, preparation: dict, run_id: str,
         raise ValueError("Catégorie ou difficulté différente de la demande")
     if proposition.type == "adversarial" and not proposition.answerable_proposed:
         raise ValueError("Cet incrément adversarial exige une correction proposée comme sourçable")
+    if proposition.type == "adversarial" and not proposition.question.rstrip().endswith("?"):
+        raise ValueError("Une question adversarial doit être terminée par '?'")
     sources = _sources_preparation(preparation)
     par_id = {source["passage_id"]: source for source in sources}
     for preuve in proposition.evidence:
