@@ -199,6 +199,24 @@ class VerrouTests(unittest.TestCase):
                 with self.assertRaisesRegex(mesure.ErreurMesure, "protocole"):
                     mesure.verifier_verrou(index.entete, verrou)
 
+    def test_verrou_independant_des_fins_de_ligne(self):
+        index = faux_index()
+        with tempfile.TemporaryDirectory() as d:
+            lf, crlf, autre = Path(d) / "lf.md", Path(d) / "crlf.md", Path(d) / "autre.md"
+            lf.write_bytes(b"ligne 1\nligne 2\n")
+            crlf.write_bytes(b"ligne 1\r\nligne 2\r\n")             # extraction sous Windows avec core.autocrlf
+            autre.write_bytes(b"ligne 1\nligne 3\n")
+            self.assertEqual(mesure.sha256_texte(lf), mesure.sha256_texte(crlf))
+            self.assertEqual(mesure.sha256_texte(lf), mesure.sha256_octets(b"ligne 1\nligne 2\n"))
+            self.assertNotEqual(mesure.sha256_texte(lf), mesure.sha256_texte(autre))
+            verrou = Path(d) / "verrou.json"
+            with patch.object(mesure, "PROTOCOLE", lf):
+                mesure.verrouiller(index.entete, verrou)               # verrou écrit sur le Mac
+            with patch.object(mesure, "PROTOCOLE", crlf):
+                mesure.verifier_verrou(index.entete, verrou)           # vérifié sur le Legion : même empreinte
+            with patch.object(mesure, "PROTOCOLE", autre), self.assertRaisesRegex(mesure.ErreurMesure, "protocole"):
+                mesure.verifier_verrou(index.entete, verrou)
+
     def test_mode_mesure_refuse_sans_verrou_et_sans_lire_le_lot_de_test(self):
         index = faux_index()
         with tempfile.TemporaryDirectory() as d, \

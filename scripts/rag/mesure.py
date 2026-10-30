@@ -94,6 +94,13 @@ def sha256_fichier(chemin: Path) -> str:
     return sha256_octets(Path(chemin).read_bytes())
 
 
+def sha256_texte(chemin: Path) -> str:
+    """Empreinte d'un fichier texte versionné, fins de ligne normalisées (CRLF en LF) : Git pour Windows convertit
+    souvent les fins de ligne à l'extraction (core.autocrlf), et le verrou doit valoir sur le Mac comme sur le Legion.
+    Le résultat est l'empreinte du contenu tel que Git le stocke."""
+    return sha256_octets(Path(chemin).read_bytes().replace(b"\r\n", b"\n"))
+
+
 def consigne_b1() -> str:
     """Consigne de la #85 privée de ses deux dernières lignes, celles qui demandent l'abstention (section 3)."""
     lignes = CONSIGNE_RAG.split("\n")
@@ -152,10 +159,10 @@ def empreintes_actuelles(index_entete: dict) -> dict:
     evaluation = RACINE / "scripts" / "evaluation"
     if not PROTOCOLE.exists():
         raise ErreurMesure("Protocole 06 absent de cette copie : il n'est pas encore fusionné")
-    return {"protocole": sha256_fichier(PROTOCOLE), "mesure": sha256_fichier(dossier / "mesure.py"),
-            "rag": sha256_fichier(dossier / "rag.py"), "generation": sha256_fichier(dossier / "generation.py"),
-            "metrics": sha256_fichier(evaluation / "metrics.py"),
-            "pertinence": sha256_fichier(evaluation / "pertinence.py"),
+    return {"protocole": sha256_texte(PROTOCOLE), "mesure": sha256_texte(dossier / "mesure.py"),
+            "rag": sha256_texte(dossier / "rag.py"), "generation": sha256_texte(dossier / "generation.py"),
+            "metrics": sha256_texte(evaluation / "metrics.py"),
+            "pertinence": sha256_texte(evaluation / "pertinence.py"),
             "jeu": SHA256_JEU, "seuil": SHA256_SEUIL,
             "index": index_entete["index"]["sha256"], "passages": index_entete["metadonnees"]["sha256"]}
 
