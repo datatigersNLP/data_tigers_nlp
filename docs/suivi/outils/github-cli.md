@@ -15,7 +15,7 @@ Chaque membre tient sa propre ligne à jour.
 | Membre | Version | Système | Remarque |
 |---|---|---|---|
 | Vaneck | 2.101.0 | Windows | |
-| Mahé | à compléter | à compléter | |
+| Mahé | 2.92.0 | macOS 27.0.1, arm64 | version relevée le 26/10 ; PR, revues, tickets et lectures de l'API sous l'identité `mahebegnis`, vérifiée par `gh api user` |
 | Rémy | à compléter | à compléter | |
 | Jibril | à compléter | à compléter | |
 | Maïmouna | à compléter | à compléter | |

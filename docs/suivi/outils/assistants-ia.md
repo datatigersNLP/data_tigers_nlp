@@ -15,7 +15,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 | Membre | Assistant | Modèle ou version | Formule (gratuite, payante…) | Usages principaux |
 |---|---|---|---|---|
 | Vaneck | à compléter | à compléter | à compléter | à compléter |
-| Mahé | à compléter | à compléter | à compléter | à compléter |
+| Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
 | Rémy | à compléter | à compléter | à compléter | à compléter |
 | Jibril | à compléter | à compléter | à compléter | à compléter |
 | Maïmouna | à compléter | à compléter | à compléter | à compléter |
