@@ -74,6 +74,7 @@ docs/
   jalons/      rapports de jalon, en Markdown et en PDF
   journal/     journal d'usage de l'IA
   latex/       chaîne de conversion Markdown vers PDF
+  rapport/     rapport du projet, en Markdown et en PDF (V0 du 19 octobre 2026, V1 avant le jalon J4)
   reunions/    supports de réunion
   suivi/       classeur de suivi des tâches et des charges, suivi des outils novateurs
 ```

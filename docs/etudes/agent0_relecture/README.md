@@ -3,6 +3,20 @@
 Complété le 20 octobre 2026 à partir des originaux reçus. **18 runs, 15 candidats en attente et 3 rejets automatiques. Les 15 questions sont maintenant disponibles.**
 L'archive correspond à l'empreinte affichée sur le Legion. Les contrôles de cohérence sont détaillés dans [le rapport](verification_archive.md).
 
+## Périmètre livré au 30 octobre 2026
+
+La décision de Mahé du 30/10 dans [#13](https://github.com/datatigersNLP/data_tigers_nlp/issues/13)
+limite la livraison Agent0 au socle #99 à #101, aux catégories de #103 et à ce support de #106,
+à faire relire et fusionner pour le 6 novembre. Elle reste révisable au Weekly 8.
+Le pilote indépendant de 25 candidats, son gel et l'évaluation exploratoire #96/#97 ne sont
+pas livrés ; #98 reste une suite possible. Une exécution exploratoire de #96 ne pourrait être
+reprise du 13 au 17/11 que si la mesure après est faite le 12/11 et que Jibril a de la marge.
+
+La revue de cette PR porte sur la fidélité du support et sur ses contrôles, pas sur une admission
+automatique des candidats. La grille, les 15 formulations, leurs sources et les décisions humaines
+vierges sont conservées. Toute future acceptation exige une relecture effective, indépendante
+de l'auteur ; aucun hors corpus n'est confirmé par la livraison du support.
+
 ## Parcours de relecture
 
 1. Lire [les questions et sources](questions_et_sources.md), avec les formulations originales et les éléments proposés par le générateur.
@@ -59,6 +73,9 @@ Les objectifs de #95 ne sont pas des quotas d'acceptation. Les cas non confirmé
 
 Le dossier est complet pour commencer la relecture humaine de ces essais. Les décisions restent à prendre ; aucun lot de 25 nouveaux candidats ou manifeste d'évaluation n'est figé.
 Les relecteurs peuvent recouper les fichiers d'origine dans l'archive transmise hors Git. Les questions de ce support restent distinctes du futur pilote indépendant.
-#94 et #95 restent partielles ; #103 et #106 restent en brouillon. Aucun candidat, rejet ou verdict d'origine modifié, aucune génération ou évaluation du RAG, fusion ou clôture.
+Les #103 et #106 sont préparées pour leur relecture indépendante dans ce périmètre réduit.
+Leur fusion n'est pas une validation humaine des 15 candidats ni un gel d'évaluation.
+Aucun candidat, rejet ou verdict d'origine modifié, aucune génération ou évaluation du RAG,
+fusion dans dev/main ou clôture déclarée par cette préparation.
 Ce dossier reste dans `docs/`, sans modification du Gold Set humain ou de `evaluation/synthetic/`. Estimation initiale #95 : 4 h prévisionnelles inchangée ; aucun temps réel déclaré.
 
