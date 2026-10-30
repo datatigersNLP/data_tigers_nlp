@@ -9,6 +9,7 @@ Sous-commandes, depuis la racine du dépôt, avec l'environnement de scripts/rag
     python scripts/rag/mesure.py executer --mode calibration --phase avant
     python scripts/rag/mesure.py analyser --mode calibration --phase avant
     python scripts/rag/mesure.py comparer --mode calibration --a apres --b avant
+    python scripts/rag/mesure.py comparer --mode mesure --a apres --b temoin --reference temoin   # analyse principale
     python scripts/rag/mesure.py echantillon --a avant --b apres     # mode mesure : réponses à juger à l'aveugle
     python scripts/rag/mesure.py verrouiller                         # au gel : écrit le verrou à versionner
 
@@ -16,6 +17,10 @@ Phases : avant (modèle de #31), apres (modèle adapté de #107), temoin (témoi
 apres et temoin exigent --modele et --digest. Chaque exécution écrit dans data/evaluation/volet_b/<mode>/<phase>/,
 qui n'est pas versionné, et refuse d'écraser une sortie : une seule exécution par état et par phase. La seule reprise
 admise est celle d'un état invalide, dont plus de 5 % des questions ont fini en erreur technique (section 4).
+L'analyse ne remplace jamais une analyse antérieure : --nouvelle-analyse en écrit une autre à côté. Toute génération
+doit venir de la version d'Ollama épinglée par le protocole (section 8). L'analyse principale (section 6) n'est
+désignée que pour B2, en mode mesure, « apres » contre la référence --reference (avant, ou temoin si T diffère du
+modèle de #31) ; toute autre comparaison est descriptive, à 95 %, sans conclusion d'amélioration.
 """
 
 from __future__ import annotations
@@ -65,7 +70,13 @@ PART_ERREURS_MAX = 0.05       # section 4 : au-delà, l'état est invalide et re
 NIVEAU = 0.95                 # section 6 : intervalles à 95 %
 NIVEAU_PRINCIPAL = 0.975      # section 6 : analyse principale, Bonferroni pour deux comparaisons
 GRAINE_JUGES, N_JUGES = 20261018, 20
-CONSIGNE_B0 = ("Tu réponds en français à la question de l'utilisateur.\n"
+VERSION_OLLAMA = "0.40.11"    # section 8 : version épinglée du Legion pour toutes les mesures
+# Section 3 : B0 reprend mot pour mot la phrase de brièveté de la consigne de la #85, que B1 conserve, pour que B0 et
+# B1 ne diffèrent que par les passages (calibration du 29 octobre : B0 coupé à 512 tokens sans elle).
+BRIEVETE = [l for l in CONSIGNE_RAG.split("\n") if l.startswith("Réponds brièvement")]
+if len(BRIEVETE) != 1:
+    raise RuntimeError("La consigne de la #85 n'a plus exactement une phrase de brièveté")
+CONSIGNE_B0 = ("Tu réponds en français à la question de l'utilisateur.\n" + BRIEVETE[0] + "\n"
                "Si tu ne connais pas la réponse avec certitude, réponds uniquement :\n" + ABSTENTION)
 ENTETE_B0 = "Question utilisateur (texte exact) :\n"
 REPONSE_R_PLUS = "La réponse se trouve dans le premier passage récupéré [P1]."
@@ -199,7 +210,8 @@ def preparer_questions(questions: list[dict], index, encoder, seuil: float) -> l
     return preparees
 
 
-def executer_etat(etat: str, preparees: list[dict], generer, modele: str, digest: str) -> list[dict]:
+def executer_etat(etat: str, preparees: list[dict], generer, modele: str, digest: str,
+                  version_ollama: str = VERSION_OLLAMA) -> list[dict]:
     lignes = []
     for q in preparees:
         contexte, gen, appel = q["contexte"], None, True
@@ -222,6 +234,9 @@ def executer_etat(etat: str, preparees: list[dict], generer, modele: str, digest
                 motifs = gen["erreurs_techniques"] + validation.get("motifs", [])
             except ErreurGeneration as exc:
                 statut, validation, motifs = "erreur_technique", {"citations": []}, [f"exception : {exc}"]
+            if gen and gen["ollama"].get("version") != version_ollama:
+                raise ErreurMesure(f"Ollama {gen['ollama'].get('version')} au lieu de la version épinglée "
+                                   f"{version_ollama} (section 8) : mesure interrompue, rien n'est écrit pour {etat}")
         refs = {s["reference"]: s["passage_id"] for s in contexte["sources"]}
         citations = validation.get("citations", []) if statut != "erreur_technique" else []
         lignes.append({
@@ -348,23 +363,38 @@ def _mediane(champ: str, lignes: list[dict]):
 
 # Comparaisons appariées (section 6)
 
-def comparer(lignes_a: list[dict], lignes_b: list[dict], pertinents: dict) -> dict:
+def est_principale(mode: str, etat: str, a: str, b: str, reference: str | None) -> bool:
+    """Section 6 : l'analyse principale est B2, en mode mesure, « apres » contre la référence désignée (avant, ou
+    temoin si T diffère du modèle de #31). Toute autre comparaison est descriptive."""
+    return mode == "mesure" and etat == "B2" and a == "apres" and reference in ("avant", "temoin") and b == reference
+
+
+def versions_ollama(lignes: list[dict]) -> list[str]:
+    return sorted({l["ollama"]["version"] for l in lignes if l.get("ollama") and l["ollama"].get("version")})
+
+
+def comparer(lignes_a: list[dict], lignes_b: list[dict], pertinents: dict, principale: bool = False) -> dict:
     """Écarts A moins B sur la population commune : questions sans erreur technique dans les deux états, par
-    identifiant, jamais par position. M1 et M4 forment l'analyse principale, à 97,5 % ; les autres sont décrites."""
+    identifiant, jamais par position. Dans l'analyse principale, M1 et M4 sont à 97,5 % avec la règle de conclusion ;
+    tout le reste, et toute comparaison qui n'est pas l'analyse principale, est descriptif à 95 %."""
     if lignes_a[0]["etat"] != lignes_b[0]["etat"]:
         raise ErreurMesure("Comparaison de deux états différents")
     a = {l["id"]: l for l in lignes_a}
     b = {l["id"]: l for l in lignes_b}
     if set(a) != set(b):
         raise ErreurMesure("Les deux phases ne portent pas sur les mêmes questions")
-    resultat = {"etat": lignes_a[0]["etat"]}
+    va, vb = versions_ollama(lignes_a), versions_ollama(lignes_b)
+    if len(va) > 1 or len(vb) > 1 or (va and vb and va != vb):
+        raise ErreurMesure(f"Versions d'Ollama différentes ({va}, {vb}) : la comparaison est invalide (section 8)")
+    resultat = {"etat": lignes_a[0]["etat"], "analyse": "principale (section 6)" if principale else "descriptive",
+                "versions_ollama": sorted(set(va) | set(vb))}
     for m, population in POPULATIONS.items():
         if resultat["etat"] == "B0" and m in ("M3", "M4"):
             continue
         ids = sorted(i for i in a if a[i]["type"] == population)
         exclus = sorted(i for i in ids if "erreur_technique" in (a[i]["classe"], b[i]["classe"]))
         commune = [i for i in ids if i not in exclus]
-        principal = m in ("M1", "M4")
+        principal = principale and m in ("M1", "M4")
         niveau = NIVEAU_PRINCIPAL if principal else NIVEAU
         entree = {"population": population, "effectif_commun": len(commune), "exclus": exclus,
                   "analyse_principale": principal, "niveau": niveau}
@@ -384,6 +414,34 @@ def comparer(lignes_a: list[dict], lignes_b: list[dict], pertinents: dict) -> di
             if principal:
                 entree["amelioration_demontree"] = bool(tango["ci_score"][0] > 0)
         resultat[m] = entree
+    return resultat
+
+
+def analyser(mode: str, phase: str, pertinents: dict, nouvelle: bool = False) -> dict:
+    """Métriques des états présents, avec l'empreinte de chaque fichier analysé. Une analyse écrite n'est jamais
+    remplacée : sans --nouvelle-analyse, l'existence de metriques.json arrête tout ; avec, metriques-<n>.json."""
+    dossier = chemin_etat(mode, phase, "B0").parent
+    cible = dossier / "metriques.json"
+    if cible.exists():
+        if not nouvelle:
+            raise ErreurMesure(f"{cible.name} existe déjà : --nouvelle-analyse pour en écrire une autre à côté")
+        n = 2
+        while (dossier / f"metriques-{n}.json").exists():
+            n += 1
+        cible = dossier / f"metriques-{n}.json"
+    sources, etats = {}, {}
+    for etat in ETATS:
+        chemin = chemin_etat(mode, phase, etat)
+        if chemin.exists():
+            sources[etat] = {"fichier": chemin.name, "sha256": sha256_fichier(chemin)}
+            etats[etat] = metriques(lire_etat(chemin), pertinents)
+    if not etats:
+        raise ErreurMesure(f"Aucun état exécuté pour la phase {phase} en mode {mode}")
+    resultat = {"mode": mode, "phase": phase, "ecrit_le": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "fichier": cible.name, "sources": sources, "etats": etats}
+    texte = json.dumps(resultat, ensure_ascii=False, indent=1, allow_nan=False) + "\n"
+    with open(cible, "x", encoding="utf-8") as f:       # « x » : jamais d'écrasement, même en cas de course
+        f.write(texte)
     return resultat
 
 
@@ -438,17 +496,27 @@ def main(argv=None, outils=None) -> int:
     an = sous.add_parser("analyser")
     an.add_argument("--mode", choices=("calibration", "mesure"), required=True)
     an.add_argument("--phase", choices=PHASES, required=True)
+    an.add_argument("--nouvelle-analyse", action="store_true",
+                    help="écrire metriques-<n>.json à côté des analyses antérieures, qui restent intactes")
     co = sous.add_parser("comparer")
     co.add_argument("--mode", choices=("calibration", "mesure"), required=True)
     co.add_argument("--a", choices=PHASES, required=True)
     co.add_argument("--b", choices=PHASES, required=True)
     co.add_argument("--etat", choices=ETATS, default="B2")
+    co.add_argument("--reference", choices=("avant", "temoin"),
+                    help="référence de l'analyse principale (section 6) : avant, ou temoin si T diffère de #31")
     ec = sous.add_parser("echantillon")
     ec.add_argument("--a", choices=PHASES, default="avant")
     ec.add_argument("--b", choices=PHASES, default="apres")
     sous.add_parser("verrouiller")
     args = parser.parse_args(argv)
     try:
+        if args.commande == "comparer":
+            if args.a == args.b:
+                raise ErreurMesure("Comparaison d'une phase avec elle-même")
+            if args.mode == "mesure" and args.etat == "B2" and args.a == "apres" and args.reference is None:
+                raise ErreurMesure("Désigner la référence de l'analyse principale : --reference avant ou temoin "
+                                   "(section 3 : temoin si T diffère du modèle de #31)")
         if args.commande == "verrouiller":
             print(json.dumps(verrouiller(charger_index().entete), ensure_ascii=False, indent=1))
             return 0
@@ -475,7 +543,8 @@ def main(argv=None, outils=None) -> int:
                 ecrire_etat(chemin_etat(args.mode, args.phase, etat), lignes, args.reprendre_etat_invalide)
                 print(f"{etat} : {len(lignes)} questions, part d'erreurs techniques {part_erreurs(lignes):.1%}")
             meta = {"mode": args.mode, "phase": args.phase, "lot": lot, "etats": etats, "modele": args.modele,
-                    "digest": args.digest, "seuil": seuil, "ecrit_le": datetime.now(timezone.utc).isoformat(),
+                    "digest": args.digest, "version_ollama": VERSION_OLLAMA, "seuil": seuil,
+                    "ecrit_le": datetime.now(timezone.utc).isoformat(),
                     "python": platform.python_version(), "numpy": np.__version__}
             chemin_meta = chemin_etat(args.mode, args.phase, etats[0]).with_name(
                 f"execution-{datetime.now(timezone.utc):%Y%m%dT%H%M%S}.json")
@@ -489,19 +558,13 @@ def main(argv=None, outils=None) -> int:
             questions = lire_jeu(_lot(args.mode, index.entete))
         pertinents = passages_pertinents(questions, index.passages)
         if args.commande == "analyser":
-            resultats = {}
-            for etat in ETATS:
-                chemin = chemin_etat(args.mode, args.phase, etat)
-                if chemin.exists():
-                    resultats[etat] = metriques(lire_etat(chemin), pertinents)
-            texte = json.dumps(resultats, ensure_ascii=False, indent=1, allow_nan=False)
-            if resultats:
-                chemin_etat(args.mode, args.phase, "B0").with_name("metriques.json").write_text(texte + "\n", encoding="utf-8")
-            print(texte)
+            print(json.dumps(analyser(args.mode, args.phase, pertinents, args.nouvelle_analyse), ensure_ascii=False,
+                             indent=1, allow_nan=False))
             return 0
         if args.commande == "comparer":
             resultat = comparer(lire_etat(chemin_etat(args.mode, args.a, args.etat)),
-                                lire_etat(chemin_etat(args.mode, args.b, args.etat)), pertinents)
+                                lire_etat(chemin_etat(args.mode, args.b, args.etat)), pertinents,
+                                est_principale(args.mode, args.etat, args.a, args.b, args.reference))
             print(json.dumps(resultat, ensure_ascii=False, indent=1, allow_nan=False))
             return 0
         fiches_juges, cle = echantillon(lire_etat(chemin_etat("mesure", args.a, "B2")),

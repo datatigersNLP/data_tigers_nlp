@@ -1,5 +1,8 @@
 """Tests de la mesure du volet B (protocole 06), sans modèle, sans Ollama et sans lecture du lot de test."""
 
+import contextlib
+import hashlib
+import io
 import json
 import math
 from pathlib import Path
@@ -38,9 +41,18 @@ def question(id_, type_="dans_corpus", texte=None, fiche="f0"):
             "fiche": fiche if type_ == "dans_corpus" else None, "extrait": None}
 
 
+def empreinte_dossier(dossier: Path) -> dict:
+    """Chemins et empreintes de tous les fichiers d'un dossier, vide s'il n'existe pas."""
+    if not dossier.exists():
+        return {}
+    return {str(p.relative_to(dossier)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(dossier.rglob("*")) if p.is_file()}
+
+
 class FauxGenerateur:
-    def __init__(self, reponse="Réponse [P1].", exception=False):
+    def __init__(self, reponse="Réponse [P1].", exception=False, version=None):
         self.appels, self.reponse, self.exception = [], reponse, exception
+        self.version = version or mesure.VERSION_OLLAMA
 
     def __call__(self, contexte, abstention, modele, digest):
         self.appels.append({"contexte": contexte, "modele": modele, "digest": digest})
@@ -50,7 +62,7 @@ class FauxGenerateur:
         return {"statut": validation["statut"], "erreurs_techniques": [], "reponse_brute": self.reponse,
                 "validation_citations": validation, "mesures_ollama": {"prompt_eval_count": 100, "eval_count": 10,
                                                                       "total_duration": 5},
-                "entree": {"nb_tokens": 100, "sha256_texte": "t"}, "ollama": {"digest": digest}}
+                "entree": {"nb_tokens": 100, "sha256_texte": "t"}, "ollama": {"digest": digest, "version": self.version}}
 
 
 class ConsignesTests(unittest.TestCase):
@@ -58,6 +70,12 @@ class ConsignesTests(unittest.TestCase):
         lignes = CONSIGNE_RAG.split("\n")
         self.assertEqual(mesure.consigne_b1(), "\n".join(lignes[:-2]))
         self.assertNotIn(ABSTENTION, mesure.consigne_b1())
+
+    def test_b0_reprend_mot_pour_mot_la_phrase_de_brievete_de_b1(self):
+        phrase = "Réponds brièvement et conserve les conditions et exceptions nécessaires."
+        self.assertIn(phrase, mesure.consigne_b1().split("\n"))
+        self.assertIn(phrase, mesure.CONSIGNE_B0.split("\n"))
+        self.assertTrue(mesure.CONSIGNE_B0.endswith("\n" + ABSTENTION))
         self.assertIn(ABSTENTION, mesure.CONSIGNE_B0)
 
     def test_reponse_fixe_de_r_plus_est_une_reponse_citee(self):
@@ -129,6 +147,17 @@ class ExecutionTests(unittest.TestCase):
         lignes = mesure.executer_etat("B1", self.preparees, FauxGenerateur(exception=True), "m", "d")
         self.assertTrue(all(l["classe"] == "erreur_technique" and l["citations"] == [] for l in lignes))
 
+    def test_version_d_ollama_autre_que_l_epinglee_interrompt_la_mesure(self):
+        self.assertEqual(mesure.VERSION_OLLAMA, "0.40.11")
+        for etat in ("B0", "B1", "B2"):
+            with self.assertRaisesRegex(mesure.ErreurMesure, "version épinglée"):
+                mesure.executer_etat(etat, self.preparees, FauxGenerateur(version="0.40.13"), "m", "d")
+        lignes = mesure.executer_etat("B1", self.preparees, FauxGenerateur(), "m", "d")
+        self.assertEqual(mesure.versions_ollama(lignes), ["0.40.11"])
+        # références dégénérées et abstentions sous le seuil : aucun appel, donc rien à contrôler
+        self.assertEqual(mesure.versions_ollama(mesure.executer_etat("R+", self.preparees,
+                                                                     FauxGenerateur(version="x"), "m", "d")), [])
+
     def test_modele_et_digest_transmis(self):
         gen = FauxGenerateur()
         mesure.executer_etat("B1", self.preparees, gen, "adapte", "abc")
@@ -190,21 +219,54 @@ class VerrouTests(unittest.TestCase):
 class BoutEnBoutTests(unittest.TestCase):
     @unittest.skipUnless(mesure.FICHIER_SEUIL.exists(), "seuil_b2.json absent de data/")
     def test_calibration_complete_dans_un_dossier_temporaire(self):
+        # Les sorties réelles de data/, s'il y en a (la calibration du Legion, par exemple), restent intactes.
+        reelles = empreinte_dossier(mesure.SORTIES)
         index = faux_index()
         encoder = lambda texte: np.array([0.9, math.sqrt(1 - 0.81), 0, 0], dtype=np.float32)
         outils = lambda: (index, encoder, FauxGenerateur())
-        with tempfile.TemporaryDirectory() as d, patch.object(mesure, "SORTIES", Path(d)):
+        sortie = io.StringIO()
+        with tempfile.TemporaryDirectory() as d, patch.object(mesure, "SORTIES", Path(d)), \
+                contextlib.redirect_stdout(sortie), contextlib.redirect_stderr(io.StringIO()):
+            avant = Path(d) / "calibration" / "avant"
             self.assertEqual(mesure.main(["executer", "--mode", "calibration", "--phase", "avant"], outils=outils), 0)
-            fichiers = sorted(p.name for p in (Path(d) / "calibration" / "avant").iterdir())
+            fichiers = sorted(p.name for p in avant.iterdir())
             self.assertEqual([f for f in fichiers if f.endswith(".jsonl")],
                              ["B0.jsonl", "B1.jsonl", "B2.jsonl", "Rmoins.jsonl", "Rplus.jsonl"])
-            self.assertEqual(len(mesure.lire_etat(Path(d) / "calibration" / "avant" / "B2.jsonl")), 8)
+            self.assertEqual(len(mesure.lire_etat(avant / "B2.jsonl")), 8)
+            execution = empreinte_dossier(avant)
             self.assertEqual(mesure.main(["executer", "--mode", "calibration", "--phase", "avant"], outils=outils), 1)
+            self.assertEqual(empreinte_dossier(avant), execution)            # dossier déjà présent : rien ne change
+            # Analyse : jamais d'écrasement ; une nouvelle analyse s'écrit à côté
             self.assertEqual(mesure.main(["analyser", "--mode", "calibration", "--phase", "avant"], outils=outils), 0)
-            self.assertTrue((Path(d) / "calibration" / "avant" / "metriques.json").exists())
+            premiere = (avant / "metriques.json").read_bytes()
+            analyse = json.loads(premiere)
+            self.assertEqual(set(analyse["sources"]), set(mesure.ETATS))
+            self.assertEqual(analyse["sources"]["B2"]["sha256"], mesure.sha256_fichier(avant / "B2.jsonl"))
+            self.assertEqual(mesure.main(["analyser", "--mode", "calibration", "--phase", "avant"], outils=outils), 1)
+            self.assertEqual((avant / "metriques.json").read_bytes(), premiere)
+            self.assertEqual(mesure.main(["analyser", "--mode", "calibration", "--phase", "avant",
+                                          "--nouvelle-analyse"], outils=outils), 0)
+            self.assertEqual((avant / "metriques.json").read_bytes(), premiere)
+            self.assertTrue((avant / "metriques-2.json").exists())
+            # Comparaisons : une phase avec elle-même est refusée ; la calibration n'est jamais l'analyse principale
             self.assertEqual(mesure.main(["comparer", "--mode", "calibration", "--a", "avant", "--b", "avant"],
-                                         outils=outils), 0)
-        self.assertFalse((mesure.RACINE / "data" / "evaluation" / "volet_b" / "calibration").exists())
+                                         outils=outils), 1)
+            self.assertEqual(mesure.main(["executer", "--mode", "calibration", "--phase", "apres",
+                                          "--modele", "adapte", "--digest", "d" * 64], outils=outils), 0)
+            sortie.truncate(0), sortie.seek(0)
+            self.assertEqual(mesure.main(["comparer", "--mode", "calibration", "--a", "apres", "--b", "avant",
+                                          "--reference", "avant"], outils=outils), 0)
+            comparaison = json.loads(sortie.getvalue())
+            self.assertEqual(comparaison["analyse"], "descriptive")
+            self.assertFalse(any(comparaison[m]["analyse_principale"] for m in ("M1", "M2", "M3", "M4", "M5")))
+            self.assertFalse(any("amelioration_demontree" in comparaison[m] for m in ("M1", "M4")))
+        self.assertEqual(empreinte_dossier(mesure.SORTIES), reelles)
+
+    def test_analyse_principale_exige_sa_reference_en_mode_mesure(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            code = mesure.main(["comparer", "--mode", "mesure", "--a", "apres", "--b", "avant"],
+                               outils=lambda: (_ for _ in ()).throw(AssertionError("index chargé")))
+        self.assertEqual(code, 1)
 
 
 class JeuEtSeuilTests(unittest.TestCase):
@@ -274,14 +336,45 @@ class ComparaisonTests(unittest.TestCase):
         b = self.lignes([("C2", "dans_corpus", "f1", "abstention"), ("H3", "hors_corpus", None, "abstention"),
                          ("H2", "hors_corpus", None, "reponse_citee"), ("C1", "dans_corpus", "f0", "reponse_citee"),
                          ("H1", "hors_corpus", None, "abstention")])
-        r = mesure.comparer(a, b, {"C1": {"p0"}, "C2": {"p0"}})
+        r = mesure.comparer(a, b, {"C1": {"p0"}, "C2": {"p0"}}, principale=True)
+        self.assertEqual(r["analyse"], "principale (section 6)")
         self.assertEqual((r["M1"]["effectif_commun"], r["M1"]["exclus"]), (2, ["H3"]))
         self.assertEqual((r["M1"]["proportion_a"], r["M1"]["proportion_b"]), (1.0, 0.5))
         self.assertEqual((r["M1"]["niveau"], r["M4"]["niveau"], r["M2"]["niveau"]), (0.975, 0.975, 0.95))
         self.assertIn("amelioration_demontree", r["M4"])
         self.assertNotIn("amelioration_demontree", r["M2"])
         b_inverse = list(reversed(b))
-        self.assertEqual(mesure.comparer(a, b_inverse, {"C1": {"p0"}, "C2": {"p0"}})["M1"], r["M1"])
+        self.assertEqual(mesure.comparer(a, b_inverse, {"C1": {"p0"}, "C2": {"p0"}}, principale=True)["M1"], r["M1"])
+        # Hors de l'analyse principale : tout est descriptif, à 95 %, sans conclusion
+        d = mesure.comparer(a, b, {"C1": {"p0"}, "C2": {"p0"}})
+        self.assertEqual(d["analyse"], "descriptive")
+        self.assertTrue(all(d[m]["niveau"] == 0.95 and not d[m]["analyse_principale"]
+                            and "amelioration_demontree" not in d[m] for m in ("M1", "M2", "M3", "M4", "M5")))
+        self.assertEqual({k: v for k, v in d["M1"].items() if k not in ("niveau", "analyse_principale", "intervalle")},
+                         {k: v for k, v in r["M1"].items()
+                          if k not in ("niveau", "analyse_principale", "intervalle", "amelioration_demontree")})
+
+    def test_designation_de_l_analyse_principale(self):
+        p = mesure.est_principale
+        self.assertTrue(p("mesure", "B2", "apres", "avant", "avant"))
+        self.assertTrue(p("mesure", "B2", "apres", "temoin", "temoin"))
+        self.assertFalse(p("calibration", "B2", "apres", "avant", "avant"))     # la calibration n'est jamais principale
+        self.assertFalse(p("mesure", "B1", "apres", "avant", "avant"))          # B1 est décrit
+        self.assertFalse(p("mesure", "B2", "avant", "apres", "avant"))          # sens inverse
+        self.assertFalse(p("mesure", "B2", "avant", "avant", "avant"))
+        self.assertFalse(p("mesure", "B2", "apres", "avant", "temoin"))         # T distinct : avant n'est que décrit
+        self.assertFalse(p("mesure", "B2", "apres", "avant", None))
+
+    def test_versions_d_ollama_differentes_refusees(self):
+        q = [("H1", "hors_corpus", None, "abstention"), ("H2", "hors_corpus", None, "reponse_citee")]
+        a, b = self.lignes(q), self.lignes(q)
+        for l in a + b:
+            l["ollama"] = {"version": "0.40.11"}
+        b[1]["ollama"] = {"version": "0.40.13"}                    # une seule ligne d'une autre version suffit
+        with self.assertRaisesRegex(mesure.ErreurMesure, "Versions d'Ollama différentes"):
+            mesure.comparer(a, b, {})
+        b[1]["ollama"] = {"version": "0.40.11"}
+        self.assertEqual(mesure.comparer(a, b, {})["versions_ollama"], ["0.40.11"])
 
     def test_questions_differentes_refusees(self):
         a = self.lignes([("H1", "hors_corpus", None, "abstention")])
