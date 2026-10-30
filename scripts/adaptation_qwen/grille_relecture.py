@@ -10,10 +10,16 @@ La grille s'ouvre dans un tableur (UTF-8 avec BOM, séparateur « ; »). Les rel
 - abstention_justifiee : oui ou non (abstentions ; aucun des cinq passages ne permet de répondre) ;
 - commentaire : libre.
 
-Règle écrite avant la relecture : un exemple est « faux » si reponse_juste vaut non, si fidele_aux_passages vaut non,
-ou si abstention_justifiee vaut non. Le lot est utilisable si 10 % au plus des exemples relus sont faux ; sinon, le
-filtre en cause est corrigé et le lot régénéré. Le taux est rapporté avec son intervalle de Wilson à 95 %, qui reste
-large sur une quarantaine d'exemples : la règle est un garde-fou, pas une mesure de qualité du jeu entier.
+L'échantillon est stratifié (donnees_adaptation.tirage_relecture), tiré dans train.jsonl et valid.jsonl du lot.
+
+Règles écrites avant la relecture :
+- un exemple est « faux » si reponse_juste vaut non, si fidele_aux_passages vaut non, ou si abstention_justifiee vaut
+  non. Le lot est utilisable si 10 % au plus des exemples relus sont faux ; sinon, le filtre en cause est corrigé et le
+  lot régénéré. Le taux est rapporté avec son intervalle de Wilson à 95 %, large sur 30 exemples : c'est un garde-fou,
+  pas une mesure de la qualité du jeu entier ;
+- variante « passage retiré » : Qwen s'abstient à tort sur 23 % des contextes qui contiennent le bon passage (lot du
+  30/10), et cette variante garde les exemples où il s'abstient. Si plus de 2 de ses abstentions relues sont
+  injustifiées, elle est retirée du lot, réassemblé avec les seules abstentions hors corpus.
 """
 
 import csv
@@ -29,6 +35,7 @@ COLONNES_VERDICT = ("question_naturelle", "reponse_juste", "fidele_aux_passages"
 VALEURS = {"question_naturelle": {"oui", "non"}, "reponse_juste": {"oui", "partiel", "non", ""},
            "fidele_aux_passages": {"oui", "non", ""}, "abstention_justifiee": {"oui", "non", ""}}
 PART_FAUX_MAX = 0.10
+RETIRE_INJUSTIFIEES_MAX = 2
 
 
 def passages_a_relire(exemple: dict) -> str:
@@ -78,10 +85,16 @@ def bilan(lignes: list[dict]) -> dict:
                                                  l["fidele_aux_passages"].strip().lower(),
                                                  l["abstention_justifiee"].strip().lower())]
     bas, haut = wilson(len(faux), len(lignes))
+    retire = [l for l in lignes if l["variante"] == "passage_retire"]
+    injustifiees = sum(l["abstention_justifiee"].strip().lower() == "non" for l in retire)
     return {"relus": len(lignes), "faux": len(faux), "ids_faux": faux, "part_faux": len(faux) / len(lignes),
             "ic95_wilson": [round(bas, 3), round(haut, 3)],
             "questions_non_naturelles": sum(l["question_naturelle"].strip().lower() == "non" for l in lignes),
-            "utilisable": len(faux) / len(lignes) <= PART_FAUX_MAX}
+            "par_variante": {v: {"relus": sum(l["variante"] == v for l in lignes),
+                                 "faux": sum(l["variante"] == v and l["id"] in faux for l in lignes)}
+                             for v in ("citee", "passage_retire", "hors_corpus")},
+            "utilisable": len(faux) / len(lignes) <= PART_FAUX_MAX,
+            "garder_passage_retire": injustifiees <= RETIRE_INJUSTIFIEES_MAX}
 
 
 def main(argv=None) -> int:
@@ -91,10 +104,16 @@ def main(argv=None) -> int:
         return 2
     lot = DOSSIER / argv[1]
     if argv[0] == "grille":
-        exemples = [json.loads(l) for l in (lot / "a_relire.jsonl").read_text(encoding="utf-8").splitlines() if l]
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from donnees_adaptation import tirage_relecture
+        exemples = [json.loads(l) for n in ("train.jsonl", "valid.jsonl")
+                    for l in (lot / n).read_text(encoding="utf-8").splitlines() if l]
+        ids = set(tirage_relecture(exemples))
+        choisis = [e for e in exemples if e["id"] in ids]
         with open(lot / "grille_relecture.csv", "x", encoding="utf-8-sig", newline="") as f:
-            f.write(grille(exemples))
-        print(f"{len(exemples)} exemples dans {lot / 'grille_relecture.csv'}")
+            f.write(grille(choisis))
+        print(f"{len(choisis)} exemples dans {lot / 'grille_relecture.csv'} : "
+              + ", ".join(f"{v} {sum(e['variante'] == v for e in choisis)}" for v in ("citee", "passage_retire", "hors_corpus")))
         return 0
     with open(lot / "grille_relecture.csv", encoding="utf-8-sig", newline="") as f:
         lignes = list(csv.DictReader(f, delimiter=";"))

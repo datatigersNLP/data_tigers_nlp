@@ -52,6 +52,14 @@ class BilanTests(unittest.TestCase):
         bas, haut = b["ic95_wilson"]
         self.assertTrue(bas < 5 / 41 < haut)
 
+    def test_regle_propre_au_passage_retire(self):
+        bonnes = [self.ligne(f"C{i}", "citee", "oui", "oui") for i in range(27)]
+        retire = lambda n_non: [self.ligne(f"R{i}", "passage_retire", abst="non" if i < n_non else "oui") for i in range(8)]
+        self.assertTrue(gr.bilan(bonnes + retire(2))["garder_passage_retire"])
+        b = gr.bilan(bonnes + retire(3))
+        self.assertFalse(b["garder_passage_retire"])
+        self.assertEqual(b["par_variante"]["passage_retire"], {"relus": 8, "faux": 3})
+
     def test_grille_incomplete_refusee(self):
         with self.assertRaisesRegex(ValueError, "verdict manquant"):
             gr.bilan([self.ligne("C1", "citee")])

@@ -24,7 +24,7 @@ Choix déclarés, à revoir avec Remy (PR #115) :
   - « hors corpus » : questions sur des thèmes proches du travail sans fiche dans le corpus, choisis d'après les titres
     des 261 fiches et le genre des questions hors corpus du lot de calibration, jamais d'après le lot de test.
 - Validation : 10 % des fiches autorisées, tirées au hasard ; un exemple va en validation si sa fiche source y est.
-- Relecture humaine (étape 28) : 10 % des exemples, et au moins 30, tirés au hasard.
+- Relecture humaine (étape 28) : 10 % des exemples, et au moins 30, en échantillon stratifié (tirage_relecture).
 """
 
 from __future__ import annotations
@@ -220,8 +220,21 @@ def equilibrer(exemples: list[dict], part: float = PART_ABSTENTIONS, graine: int
 
 
 def tirage_relecture(exemples: list[dict], graine: int = GRAINE) -> list[str]:
+    """Échantillon stratifié : moitié d'exemples cités, moitié d'abstentions, réparties entre « passage retiré » et
+    « hors corpus » au prorata, au moins 5 de chaque. Le lot du 30/10 a montré que Qwen s'abstient à tort sur 23 % des
+    contextes qui contiennent le bon passage : les abstentions « passage retiré » doivent être assez nombreuses à la
+    relecture pour vérifier qu'elles sont justifiées."""
     n = min(len(exemples), max(MIN_RELECTURE, round(PART_RELECTURE * len(exemples))))
-    return sorted(random.Random(graine + 2).sample([e["id"] for e in exemples], n))
+    rng = random.Random(graine + 2)
+    groupes = {v: sorted(e["id"] for e in exemples if e["variante"] == v)
+               for v in ("citee", "passage_retire", "hors_corpus")}
+    abst = len(groupes["passage_retire"]) + len(groupes["hors_corpus"])
+    n_abst = min(abst, n // 2)
+    n_retire = min(len(groupes["passage_retire"]),
+                   max(min(5, n_abst), round(n_abst * len(groupes["passage_retire"]) / abst) if abst else 0))
+    quotas = {"passage_retire": n_retire, "hors_corpus": min(len(groupes["hors_corpus"]), n_abst - n_retire)}
+    quotas["citee"] = min(len(groupes["citee"]), n - quotas["passage_retire"] - quotas["hors_corpus"])
+    return sorted(i for v, q in quotas.items() for i in rng.sample(groupes[v], q))
 
 
 # Modèle MLX (étapes 2 et 4)

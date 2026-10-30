@@ -115,11 +115,19 @@ class ConservationTests(unittest.TestCase):
             self.assertEqual(e, da.equilibrer(ex(nc, na)))                     # reproductible
         self.assertEqual(len(da.equilibrer(ex(5, 0))), 5)                      # une classe vide : rien n'est retiré
 
-    def test_tirage_de_relecture(self):
-        ex = [{"id": f"A{i:04d}"} for i in range(500)]
-        self.assertEqual(len(da.tirage_relecture(ex)), 50)
-        self.assertEqual(len(da.tirage_relecture(ex[:100])), 30)
-        self.assertEqual(da.tirage_relecture(ex), da.tirage_relecture(ex))
+    def test_tirage_de_relecture_stratifie(self):
+        ex = ([{"id": f"C{i:03d}", "variante": "citee"} for i in range(224)]
+              + [{"id": f"R{i:03d}", "variante": "passage_retire"} for i in range(40)]
+              + [{"id": f"H{i:03d}", "variante": "hors_corpus"} for i in range(34)])     # lot du 30/10
+        t = da.tirage_relecture(ex)
+        compte = lambda p: sum(i.startswith(p) for i in t)
+        self.assertEqual((len(t), compte("C"), compte("R"), compte("H")), (30, 15, 8, 7))
+        self.assertEqual(t, da.tirage_relecture(ex))                                     # reproductible
+        grand = ex * 1
+        grand += [{"id": f"C{i:03d}x", "variante": "citee"} for i in range(500)]
+        self.assertEqual(len(da.tirage_relecture(grand)), round(0.10 * len(grand)))     # 10 % au-delà de 300
+        peu = ex[:224] + ex[224:226] + ex[264:300]                                      # 2 « passage retiré » seulement
+        self.assertEqual(sum(i.startswith("R") for i in da.tirage_relecture(peu)), 2)
 
 
 class AssemblageTests(unittest.TestCase):
