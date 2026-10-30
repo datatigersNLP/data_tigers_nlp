@@ -3,5 +3,6 @@
 -c ../indexation/requirements-lock.txt
 
 numpy==2.5.3
+scipy==1.18.1   # module de métriques de la mesure (scripts/evaluation/metrics.py)
 sentence-transformers==6.1.0
 transformers==5.17.0
