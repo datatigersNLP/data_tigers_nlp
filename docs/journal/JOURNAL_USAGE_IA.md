@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 27 octobre 2026, sessions 1 à 44 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 30 octobre 2026, sessions 1 à 44 et 46 (la session 45, de Remy, est dans la PR #120) ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1332,6 +1332,64 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Les sockets `kernel-ipc` d'un ancien noyau Jupyter, dans `scripts/evaluation`, empêchaient la copie du dossier pour les essais de mutation : seuls les deux modules utiles ont été copiés.
 - Le venv MLX, sur le Bureau synchronisé par iCloud, avait des fichiers déchargés : l'import de MLX dépassait 2 minutes. La lecture, séquentielle puis sur 16 fils, en a rapatrié une partie, puis le téléchargement s'est arrêté, y compris après `brctl download`.
 
+### Session 46, 30 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux depuis le 27 octobre ; corrections de la #119 après la calibration de Jibril ; arbitrages du protocole (#108) ; décisions laissées ouvertes par le Weekly 7 ; fusions des #105, #116 et #117 ; relance de Remy ; préparation du Mac pour l'entraînement. La session 45, de Remy (27 octobre), est dans la PR #120.
+
+**Produit.**
+- #119 (`f501793`) : `analyser` ne remplace plus une analyse ; analyse principale désignée seulement pour B2, en mode mesure, après contre la référence `--reference` ; Ollama 0.40.11 épinglé et contrôlé ; consigne de B0 alignée sur la phrase de brièveté de B1 ; test de bout en bout indépendant de `data/`. Réponse dans leur fil aux trois remarques de Jibril.
+- #108 (`a612c20`) : sections 3, 4, 6, 8, 9 et 10 du protocole, PDF de 7 pages ; arbitrages publiés dans la PR ; relectures de Jibril et de Vaneck redemandées.
+- Décisions du 30 octobre, publiées dans #107 (machines), #13 (synthèse), #49 (encodeur ajusté) et #15 (Weekly 9).
+- Fusions de la #117 (`7811fcc`), de la #105 (`234e4b7`) et de la #116 (`3700b5c`), chacune sur sa tête approuvée.
+- Relance de Remy dans la #115, avec un repli : sans réponse le 1er novembre à 20 h, le format du 26 octobre est retenu.
+- `data/volet_b` sorti d'iCloud : copie contrôlée dans le dossier personnel de Mahé, venv MLX recréé, ancien dossier renommé et conservé, chemin d'origine gardé par un lien symbolique.
+- Feuille de route en versions 9 et 10 ; brouillon de la section 4.1 remis à Mahé, hors du dépôt.
+- Fin d'après-midi : empreintes du verrou indépendantes des fins de ligne, dans la #119 (`f170903`) et la section 8 du protocole (#108, `f231c17`).
+- Générateur des données d'adaptation dans la #115 (`2534cc5`), au format proposé le 26 octobre, avec deux pilotes réels sur le Mac.
+- PR #123 : ligne Playwright de Mahé, avec la critique de la version non épinglée. PR #124 : chiffres vérifiés pour les supports de J3.
+- Proposition des cinq outils du bonus pour le Weekly 8, dans #14.
+
+**Mesures exécutées.**
+- #119 : 28 tests de la mesure, 73 avec ceux de la #85 (Python 3.12.11, numpy 2.5.3, scipy 1.18.1, environnement hors d'iCloud) ; 9 mutations des nouvelles règles, toutes détectées.
+- Ollama : `server/create.go` identique aux tags `v0.40.5` et `v0.40.11` pour le refus des LoRA (lignes 42 et 1098) ; versions 0.40.12 et 0.40.13 publiées les 27 et 28 octobre.
+- Calibration du Legion (Jibril, 29 octobre) et essai à blanc du 27 octobre sur le Mac : R+, R- et l'abstention de B2 sous S (Q038 seule) donnent les mêmes résultats.
+- Fusions : résultats de `git merge-tree` sans conflit avec `dev` et entre les trois PR.
+- iCloud : 39 368 des 39 476 fichiers de `.venv/lib` déchargés ; dans `data/volet_b`, tout l'était, poids du modèle compris (4 Gio).
+- Copie hors d'iCloud : 53 fichiers, 4,40 Gio, en 61 s, chacun vérifié par SHA-256 ; les 11 fichiers du modèle conformes à la révision `c26a38f6` publiée, poids compris (`86110f36…`). Venv MLX recréé aux versions de la #109 ; import de MLX en 0,45 s.
+- Mesure de la #109 refaite sous macOS 27.0.1, mêmes données et même graine : 16 couches, 91,1 s pour 6 itérations et 143,8 s pour 12, soit 8,8 s par itération et 38 s de coûts fixes, contre 10,5 s et 25 s le 23 octobre ; pic de mémoire du GPU de 7,14 Gio, identique ; adaptateur de 44,0 Mio.
+- Suivi : 59 tickets comparés à l'API sur toutes les colonnes.
+- Verrou : `.gitattributes` ne protège que `front/public/index/**` ; sous Windows avec `core.autocrlf`, protocole et scripts auraient d'autres octets. Après normalisation, les empreintes égalent celles des objets Git ; 29 tests de la mesure, 74 avec la #85, mutation sans normalisation détectée.
+- Données d'adaptation : 24 tests du générateur et de la séparation. Pilote 1 (12 sources) : 10 questions gardées, cible récupérée pour 9, 7 réponses gardées, soit 58 % des sources ; les 2 rejets sont des abstentions de Qwen avec le bon passage dans le contexte. Pilote 2 (20 sources) : 10 exemples cités gardés sur 14 ; passage retiré : 0 sur 3, Qwen répondant à raison (deux fiches traitent des heures supplémentaires) ; hors corpus : Qwen s'abstient déjà sur 75 questions sur 80 ; 23 % d'abstentions après équilibrage. `mlx_lm.lora` charge ce format et s'entraîne 2 itérations sans erreur. Lot complet provisoire `v1-20261030` (500 sources, 602 réponses en 56 minutes) : 298 exemples après équilibrage, 273 pour l'entraînement et 25 pour la validation, 24,8 % d'abstentions, 0 violation de la séparation. Qwen s'abstient à tort sur 82 des 361 contextes qui contiennent le bon passage (23 %).
+
+**Résultats retenus.**
+- B0 et B1 différaient par la consigne de brièveté autant que par les passages : B0 reprend désormais la phrase de B1.
+- La génération étant déterministe, une coupure à 512 tokens se reproduit à la reprise : la règle de reprise ne protège que des erreurs passagères.
+- La version d'Ollama change presque chaque jour : sans épinglage, avant et après pouvaient être mesurés sous deux versions.
+- Sous macOS 27, l'entraînement tient toujours : même pic de 7,14 Gio, soit une marge d'environ 10,6 Gio sous le plafond de Metal. Avec une seule exécution par configuration, l'écart de temps par itération ne se distingue pas du bruit.
+
+**Ce qui a été écarté, et pourquoi.**
+- « Réponds brièvement. » seul, proposé par Jibril : il laissait une différence de formulation entre B0 et B1.
+- Porter la sortie au-delà de 512 tokens : paramètre commun de la #85, il aurait changé B1 et B2.
+- Reconstituer les sources de la feuille de route en rejouant le transcript : des retouches passaient par des scripts ; la page a été modifiée depuis sa version publiée.
+- Fermer la #49 : elle reste ouverte jusqu'au Weekly 8, pour la réponse de Remy.
+- Modifier les tickets d'Agent0 : proposé à Jibril, qui en est le titulaire.
+- Supprimer l'ancien `data/volet_b` : renommé, à supprimer par Mahé une fois la copie éprouvée.
+- Générer les données avec la chaîne d'Agent0 : elle passe par Ollama, absent du Mac, et le Legion est réservé à la mesure ; elle produit aussi un candidat par exécution, pour une relecture humaine.
+- Des questions hors corpus hors du domaine (fiscalité, divorce) : les questions hors corpus du jeu portent sur le travail, sans fiche (lot de calibration) ; huit thèmes de ce genre, choisis d'après les titres des 261 fiches.
+- Forcer l'abstention en « passage retiré » : un autre passage peut répondre ; l'exemple n'est gardé que si Qwen s'abstient.
+
+**Ce que l'équipe a validé, et par qui.**
+- Lancement des tâches et délégation des décisions ouvertes, par Mahé BEGNIS ; les décisions du 30 octobre sont prises en son nom et révisables au Weekly 8.
+- Approbations de la #105 (Maïmouna SIGNATE), de la #116 (Vaneck DAGAR) et de la #117 (Vaneck DAGAR et Maïmouna SIGNATE).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- iCloud avait déchargé le `.venv` du projet et tout `data/volet_b` : tests lancés depuis un environnement du scratchpad, puis `data/volet_b` déplacé hors du dossier synchronisé.
+- Une référence distante est restée verrouillée quelques secondes pendant une récupération, par un accès concurrent ; rien n'a été supprimé.
+- zsh ne découpe pas une variable non citée en mots, contrairement à bash : la première exécution du pilote n'a rien lancé, et le code d'erreur était masqué par un `tail`.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1443,6 +1501,19 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Ligne « Dernière mise à jour » de la #117 laissée au 25 octobre | comparaison avec la #120, qui la mettait à jour | corrigée |
 | 27/10 | Fusion automatique de `dev` dans la #117 plaçant la session 44 avant la 43 | lecture des titres après la fusion | ordre rétabli par script, mêmes lignes vérifiées |
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
+| 30/10 | Même piège zsh, une troisième fois : `$b:scripts` lu comme le modificateur `:s` | erreur « bad substitution » | commande réécrite |
+| 30/10 | Reconstitution des sources de la feuille de route par rejeu du transcript, incomplète : des retouches passaient par des scripts | assertion du script de reconstitution | page modifiée depuis sa version publiée ; seules les 16 lignes visées changent, données intactes |
+| 30/10 | Remplacement sur la page sans l'espace insécable que le rendu place avant « : » | assertion du script | typographie de la page reproduite |
+| 30/10 | Test des versions d'Ollama construit sur une seule question, que le test de McNemar refuse | erreur du test | deux questions |
+| 30/10 | Tests de la mesure comptés 26 au lieu de 28 : deux lignes de résultat portaient un message d'erreur attendu | écart avec le nombre de fonctions de test | tests relancés seuls : réussis |
+| 30/10 | `git rev-parse --short` appelé avec deux révisions, qui échoue (« Needed a single revision ») : pris pour un verrou passager de la branche | même message sur une autre branche, puis lecture de l'erreur | une révision par appel ; aucune action n'en avait dépendu |
+| 30/10 | Empreintes du verrou calculées sur les octets du disque : sous Windows, le gel aurait bloqué la mesure | relecture du mécanisme du gel avant de l'expliquer à Mahé | normalisation des fins de ligne, test et mutation |
+| 30/10 | Pilote lancé avec `set -- $e` : zsh ne découpe pas la variable, aucune étape n'a tourné, code masqué par `tail` | sortie « command not found: -I » | commandes explicites, arrêt au premier échec |
+| 30/10 | Même piège zsh une quatrième fois : `$R:front` lu comme un modificateur | chemin tronqué dans l'erreur | variable écrite `${R}` |
+| 30/10 | Questions hors corpus lues une par ligne, alors que Qwen les enchaîne sur une ligne : aucune gardée au pilote 1 | effectif nul au pilote | découpage après chaque « ? », test, sortie brute conservée |
+| 30/10 | Proposition des outils attribuant à la fiche ONNX Runtime un écart entre processeurs qu'elle n'écrit pas | relecture de la fiche avant de publier | phrase remplacée par ce que la fiche écrit |
+| 30/10 | Journal d'une étape du pilote écrit dans `/tmp` au lieu du scratchpad | relecture de la commande | journaux suivants dans le scratchpad ; aucune donnée sensible |
+| 30/10 | Échantillon de relecture tiré au hasard : environ 4 abstentions « passage retiré » sur 30, trop peu pour contrôler la variante la plus exposée aux abstentions à tort de Qwen | lecture des rejets du lot v1 | échantillon stratifié (15, 8, 7) et règle propre à la variante, écrite avant la relecture |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
