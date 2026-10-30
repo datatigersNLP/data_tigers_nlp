@@ -1344,6 +1344,10 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Relance de Remy dans la #115, avec un repli : sans réponse le 1er novembre à 20 h, le format du 26 octobre est retenu.
 - `data/volet_b` sorti d'iCloud : copie contrôlée dans le dossier personnel de Mahé, venv MLX recréé, ancien dossier renommé et conservé, chemin d'origine gardé par un lien symbolique.
 - Feuille de route en versions 9 et 10 ; brouillon de la section 4.1 remis à Mahé, hors du dépôt.
+- Fin d'après-midi : empreintes du verrou indépendantes des fins de ligne, dans la #119 (`f170903`) et la section 8 du protocole (#108, `f231c17`).
+- Générateur des données d'adaptation dans la #115 (`2534cc5`), au format proposé le 26 octobre, avec deux pilotes réels sur le Mac.
+- PR #123 : ligne Playwright de Mahé, avec la critique de la version non épinglée. PR #124 : chiffres vérifiés pour les supports de J3.
+- Proposition des cinq outils du bonus pour le Weekly 8, dans #14.
 
 **Mesures exécutées.**
 - #119 : 28 tests de la mesure, 73 avec ceux de la #85 (Python 3.12.11, numpy 2.5.3, scipy 1.18.1, environnement hors d'iCloud) ; 9 mutations des nouvelles règles, toutes détectées.
@@ -1354,6 +1358,8 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Copie hors d'iCloud : 53 fichiers, 4,40 Gio, en 61 s, chacun vérifié par SHA-256 ; les 11 fichiers du modèle conformes à la révision `c26a38f6` publiée, poids compris (`86110f36…`). Venv MLX recréé aux versions de la #109 ; import de MLX en 0,45 s.
 - Mesure de la #109 refaite sous macOS 27.0.1, mêmes données et même graine : 16 couches, 91,1 s pour 6 itérations et 143,8 s pour 12, soit 8,8 s par itération et 38 s de coûts fixes, contre 10,5 s et 25 s le 23 octobre ; pic de mémoire du GPU de 7,14 Gio, identique ; adaptateur de 44,0 Mio.
 - Suivi : 59 tickets comparés à l'API sur toutes les colonnes.
+- Verrou : `.gitattributes` ne protège que `front/public/index/**` ; sous Windows avec `core.autocrlf`, protocole et scripts auraient d'autres octets. Après normalisation, les empreintes égalent celles des objets Git ; 29 tests de la mesure, 74 avec la #85, mutation sans normalisation détectée.
+- Données d'adaptation : 24 tests du générateur et de la séparation. Pilote 1 (12 sources) : 10 questions gardées, cible récupérée pour 9, 7 réponses gardées, soit 58 % des sources ; les 2 rejets sont des abstentions de Qwen avec le bon passage dans le contexte. Pilote 2 (20 sources) : 10 exemples cités gardés sur 14 ; passage retiré : 0 sur 3, Qwen répondant à raison (deux fiches traitent des heures supplémentaires) ; hors corpus : Qwen s'abstient déjà sur 75 questions sur 80 ; 23 % d'abstentions après équilibrage. `mlx_lm.lora` charge ce format et s'entraîne 2 itérations sans erreur. Lot complet provisoire `v1-20261030` lancé (500 sources).
 
 **Résultats retenus.**
 - B0 et B1 différaient par la consigne de brièveté autant que par les passages : B0 reprend désormais la phrase de B1.
@@ -1368,6 +1374,9 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Fermer la #49 : elle reste ouverte jusqu'au Weekly 8, pour la réponse de Remy.
 - Modifier les tickets d'Agent0 : proposé à Jibril, qui en est le titulaire.
 - Supprimer l'ancien `data/volet_b` : renommé, à supprimer par Mahé une fois la copie éprouvée.
+- Générer les données avec la chaîne d'Agent0 : elle passe par Ollama, absent du Mac, et le Legion est réservé à la mesure ; elle produit aussi un candidat par exécution, pour une relecture humaine.
+- Des questions hors corpus hors du domaine (fiscalité, divorce) : les questions hors corpus du jeu portent sur le travail, sans fiche (lot de calibration) ; huit thèmes de ce genre, choisis d'après les titres des 261 fiches.
+- Forcer l'abstention en « passage retiré » : un autre passage peut répondre ; l'exemple n'est gardé que si Qwen s'abstient.
 
 **Ce que l'équipe a validé, et par qui.**
 - Lancement des tâches et délégation des décisions ouvertes, par Mahé BEGNIS ; les décisions du 30 octobre sont prises en son nom et révisables au Weekly 8.
@@ -1379,6 +1388,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - iCloud avait déchargé le `.venv` du projet et tout `data/volet_b` : tests lancés depuis un environnement du scratchpad, puis `data/volet_b` déplacé hors du dossier synchronisé.
 - Une référence distante est restée verrouillée quelques secondes pendant une récupération, par un accès concurrent ; rien n'a été supprimé.
+- zsh ne découpe pas une variable non citée en mots, contrairement à bash : la première exécution du pilote n'a rien lancé, et le code d'erreur était masqué par un `tail`.
 
 ---
 
@@ -1496,6 +1506,13 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 30/10 | Remplacement sur la page sans l'espace insécable que le rendu place avant « : » | assertion du script | typographie de la page reproduite |
 | 30/10 | Test des versions d'Ollama construit sur une seule question, que le test de McNemar refuse | erreur du test | deux questions |
 | 30/10 | Tests de la mesure comptés 26 au lieu de 28 : deux lignes de résultat portaient un message d'erreur attendu | écart avec le nombre de fonctions de test | tests relancés seuls : réussis |
+| 30/10 | `git rev-parse --short` appelé avec deux révisions, qui échoue (« Needed a single revision ») : pris pour un verrou passager de la branche | même message sur une autre branche, puis lecture de l'erreur | une révision par appel ; aucune action n'en avait dépendu |
+| 30/10 | Empreintes du verrou calculées sur les octets du disque : sous Windows, le gel aurait bloqué la mesure | relecture du mécanisme du gel avant de l'expliquer à Mahé | normalisation des fins de ligne, test et mutation |
+| 30/10 | Pilote lancé avec `set -- $e` : zsh ne découpe pas la variable, aucune étape n'a tourné, code masqué par `tail` | sortie « command not found: -I » | commandes explicites, arrêt au premier échec |
+| 30/10 | Même piège zsh une quatrième fois : `$R:front` lu comme un modificateur | chemin tronqué dans l'erreur | variable écrite `${R}` |
+| 30/10 | Questions hors corpus lues une par ligne, alors que Qwen les enchaîne sur une ligne : aucune gardée au pilote 1 | effectif nul au pilote | découpage après chaque « ? », test, sortie brute conservée |
+| 30/10 | Proposition des outils attribuant à la fiche ONNX Runtime un écart entre processeurs qu'elle n'écrit pas | relecture de la fiche avant de publier | phrase remplacée par ce que la fiche écrit |
+| 30/10 | Journal d'une étape du pilote écrit dans `/tmp` au lieu du scratchpad | relecture de la commande | journaux suivants dans le scratchpad ; aucune donnée sensible |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
