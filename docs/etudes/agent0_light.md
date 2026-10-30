@@ -1,4 +1,60 @@
-# Agent0 Light : génération synthétique locale (#91 à #93)
+# Agent0 Light : génération synthétique locale
+
+## Synthèse au 30 octobre 2026
+
+**Périmètre livré, décision de Mahé du 30 octobre dans [#13](https://github.com/datatigersNLP/data_tigers_nlp/issues/13).**
+Le livrable conserve le socle intégré (#99 à #101), les catégories de #103 et le support de
+relecture de #106, à faire relire et fusionner pour le 6 novembre. Les tickets #96, #97 et #98
+sortent du périmètre livré ; l'évaluation synthétique et la boucle ciblée deviennent des suites
+possibles à exposer dans le rapport. Cette décision reste révisable au Weekly 8 du 4 novembre.
+L'exception proposée pour #96 du 13 au 17 novembre exige que la mesure après soit terminée
+le 12 novembre et que Jibril ait de la marge ; aucun lancement n'est programmé par cette note.
+Le pilote indépendant de 25 candidats et le gel d'un Challenge Set ne sont pas livrés.
+Les sections historiques ci-dessous conservent le plan et les résultats de chaque date.
+
+Les cinq catégories sont disponibles : simple, reformulation, multi-passage, piège et hors corpus.
+Les incréments #91 à #93 sont intégrés dans dev ; #94 et le support #95 restent dans #103/#106.
+
+Le validateur contrôle le JSON, les sources, les extraits exacts d'au moins 20 caractères sur des
+limites de mots et les doublons normalisés. Une question piège (`adversarial`) doit désormais
+se terminer par `?`, hors espaces finaux. Le texte reçu reste intact. Ce contrôle de forme
+ne confirme pas la fausseté de la prémisse ou la suffisance des preuves : ces décisions restent humaines.
+
+**Dernière vérification locale : 149 tests réussis**, Python 3.12.14 / Pydantic 2.14.0,
+verrou inchangé. Deux régressions couvrent les formes mal terminées et le rejet tracé sans relance.
+Les questions valides avec espaces et saut de ligne final restent conservées telles quelles.
+Aucun nouvel appel réel au modèle ou résultat Windows n'est revendiqué.
+
+| Essais de mise au point conservés | Candidats obtenus historiquement | Rejets automatiques |
+|---|---:|---:|
+| Simple | 1 | 0 |
+| Reformulation | 1 | 0 |
+| Multi-passage | 4 | 2 |
+| Pièges | 3 | 1 |
+| Hors corpus | 6 | 0 |
+| **Total : 18 runs** | **15** | **3** |
+
+Les 15 candidats restent en attente humaine ; aucun hors corpus n'est confirmé. Les prompts ont
+été ajustés sur trois fiches : ces essais ne constituent pas un benchmark indépendant.
+Les runs historiques, dont l'affirmation `adversarial_001`, restent intacts.
+
+**Travaux reportés avant tout futur pilote.** Signaux de proximité et de comparaison à risque ;
+méthode hors corpus et contre-preuves ; relecture humaine indépendante des cas. Si le pilote
+est repris par décision explicite, figer prompts et commit avant génération sur de nouvelles
+fiches, puis faire relire et figer le lot avant toute réponse du RAG. Aucun quota d'acceptation forcé.
+Fusionner les outils et le support de relecture ne valide aucun candidat. Les décisions et les
+points attendus restent vierges tant qu'aucune relecture humaine effective n'est consignée.
+
+**Traçabilité.** [Note du 29 octobre](../journal/2026-10-29_agent0_light_94.md).
+La correction des extraits du 24 octobre figure dans le
+[journal commun, session 40](../journal/JOURNAL_USAGE_IA.md). La note du jour reste datée,
+sans réserver de numéro de session dans cette branche.
+
+---
+
+## Historique des incréments
+
+Les sections suivantes conservent leurs états et résultats datés.
 
 **Contrôle des extraits — correction du 24 octobre 2026 (#93/#94).** Le validateur exige
 désormais au moins **20 caractères**, sans espaces de bord, et une occurrence **mot pour mot
@@ -7,10 +63,10 @@ retour à la ligne n'est normalisé : LF et CRLF doivent correspondre exactement
 est un contrôle de forme ; la pertinence et la suffisance des preuves restent humaines.
 Le contrôle du « ? » et les changements de méthode hors corpus ne font pas partie de ce correctif.
 
-Validation locale de cette version : **98 tests réussis**, Python 3.12.14 / Pydantic 2.14.0,
+Validation locale de cette version : **147 tests réussis**, Python 3.12.14 / Pydantic 2.14.0,
 verrou inchangé. Les trois fragments de la revue sont rejetés ; les 13 extraits existants du support
 de #106 restent conformes. Aucun appel réel ni résultat Windows nouveau n'est revendiqué.
-Détail : [journal d'usage de l'IA, session 39](../journal/JOURNAL_USAGE_IA.md).
+Détail : [journal d'usage de l'IA, session 40](../journal/JOURNAL_USAGE_IA.md).
 Les sections datées ci-dessous décrivent les états historiques avant cette correction.
 
 ## 1. Périmètre et état
@@ -672,3 +728,1237 @@ réussite général. Le code ne change pas après ces retours. #93 reste ouverte
 Rémy reste demandé sur ces PR. Aucune review de #101 n'est encore déposée au moment du contrôle.
 L'ordre d'intégration reste #99, #100, puis #101 ; préserver les éventuelles corrections avant chaque intégration.
 Les remarques non bloquantes des reviews #99/#100 ne sont pas transformées en modifications du contrat dans cette mise à jour documentaire.
+
+
+## 13. #94 — Première préparation multi-passage
+
+Cet incrément initial prépare deux sources avant d'activer leur génération. Son état au commit `2cb10c1`
+est décrit ci-dessous ; l'activation suivante et les retours Windows figurent en section 14. Les contrôles
+de sortie multi-passage, les catégories adversarial/hors_corpus et leur exécution restent à réaliser.
+Le schéma de #91 connaît déjà ces catégories ; aucune modification de ce contrat ni du sélecteur #92.
+
+### Paire fournie et limite méthodologique
+
+Le retour Windows de Jibril annonce une sélection `paires_001.json`, mode `paires`, graine `20261018`,
+un groupe contenant, dans cet ordre, `m2-article374529-0002` et `m2-article374529-0000`.
+Les empreintes M2 sont conformes ; la provenance annoncée est `e6d6a640769d394155940fdd13226199c5192001`,
+copie propre, Python 3.12.15, sans appel Ollama ni lecture de matrice. Le fichier Windows complet n'a pas
+été transmis ; ses octets et son empreinte ne sont pas prétendus lus ici.
+
+La reconstruction locale du tirage retrouve ces mêmes identifiants. Les textes versionnés comportent
+respectivement **1 184** et **575 caractères**, fiche « Le congé sans solde ».
+Le premier détaille notamment l'exercice d'une autre activité, les clauses du contrat et la loyauté ;
+le second présente l'accord avec l'employeur, la rémunération et les effets de l'absence.
+Les passages se recouvrent aussi sur l'absence de réglementation. La paire est un point de départ potentiel,
+pas une preuve qu'une véritable question de combinaison existe ou a été obtenue.
+
+Le prompt demande une seule question cohérente, une information propre à chaque source, une preuve
+exacte par passage et une justification de leur apport dans `generation_reason`. Cette justification reste
+une proposition de Qwen. La relecture devra vérifier **nécessité et suffisance des deux sources** : citer
+deux passages ou juxtaposer deux questions indépendantes ne suffit pas.
+
+### Fichiers et formats
+
+- `prompts.py` : nouveau prompt `agent0-multi-passage-v1`, sans exemple réglementaire ni réponse attendue.
+- `generate.py` : groupe de deux passages pour `multi_passage`, un seul pour simple/reformulation.
+- `test_multi_passage.py` : tests techniques de préparation, de sauvegarde et de blocage avant génération.
+- `test_generate.py` : la vérification des deux anciens prompts continue de porter explicitement sur ces deux catégories.
+
+Les anciens aperçus `agent0-preparation-v1` conservent leur objet `source` et leurs prompts inchangés.
+L'aperçu multi-passage est explicitement `agent0-preparation-v2`, avec un tableau `sources` de deux objets
+documentaires complets dans l'ordre du groupe. Il n'a pas de champ `source` singulier. Les règles de
+provenance, empreintes, absence de troncature et refus d'écrasement restent communes.
+
+`--prepare-only` fonctionne sans réseau. `--prepare-qwen` peut vérifier le budget avec le client existant,
+sans génération et avec les mêmes réserves 8192/512/64 ; ce contrôle sur la paire réelle reste attendu.
+`--generate --type multi_passage` est refusé avant lecture du corpus, API ou création de run, tant que
+le validateur de sortie n'a pas été étendu. Aucun candidat multi-passage n'est déclaré par cet incrément.
+
+### Essai Windows suivant
+
+Exécuter une commande à la fois, et arrêter si elle échoue. Le statut Git doit être propre avant de changer
+de branche ; conserver les éventuels changements locaux et les examiner avant de poursuivre.
+
+```powershell
+git status --short --branch
+git fetch origin
+git switch --track origin/feat/94-agent0-categories
+git status --short --branch
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium --output .\data\synthetic\preparations\multi_passage_001.json
+```
+
+Résultat attendu : `prompt_prepare`, deux `source_ids`, `version_prompt: agent0-multi-passage-v1`,
+`ollama_appele: false`, `budget_tokens_verifie: false`. `medium` désigne une difficulté souhaitée,
+pas une mesure. Empreinte du prompt reconstruit :
+`f17fbef77a24d5b765ed4a8fd8f7a6ac3016ade28468b3c6f90410de97539c4e`.
+Elle concerne le prompt avec cette paire et cette difficulté ; elle ne constitue pas l'empreinte du fichier Windows.
+Attendre le retour de cet aperçu avant l'incrément de validation/génération.
+
+### Vérifications et état
+
+**101 tests réussis** sous Python 3.12.14 : les 93 précédents et 8 nouveaux, sur documents techniques
+artificiels et client simulé. Couverture supplémentaire : deux sources exactes et ordonnées, paramètres
+invalides, cardinalité, format versionné, reproductibilité, sauvegarde sans réseau, budget simulé sans génération,
+génération bloquée avant ses effets et protection d'un fichier existant. Compilation et aide CLI contrôlées.
+Reconstruction sur le corpus réel sans modèle ; empreinte du prompt simple toujours identique à celle du
+premier aperçu Windows. Aucun appel réel au tokeniseur Qwen ou à Ollama n'est réalisé ici.
+
+Travail isolé sur `feat/94-agent0-categories`, depuis #101 au commit `f725321` ; PR en brouillon vers `dev`,
+dépendante de #99/#100/#101, avec Mahé et Remy demandés en relecture. Les branches RAG et #93 restent
+inchangées. Pas de verdict humain, de gel du Challenge Set, de fusion ou de clôture. L'estimation #94 reste
+7 h de travail actif prévisionnel pour l'ensemble des trois catégories ; aucune durée réelle n'est attribuée.
+
+
+## 14. #94 — Contrôles de sortie et premier essai multi-passage
+
+État de l'activation au commit `53d4da2` ; le résultat réel et l'ajustement suivant sont en section 15.
+
+### Retours Windows de l'aperçu et du budget
+
+Jibril transmet le checkout propre de `feat/94-agent0-categories`, les **101 tests réussis**
+(`Ran 101 tests in 0.561s`, `OK`) et l'aperçu au commit
+`2cb10c1f9589b70c2843ec4f366fc19d6af2f1f0`, copie propre, Python 3.12.15.
+Les deux `source_ids` et l'empreinte du prompt correspondent à la reconstruction de la section 13.
+Le fichier complet de préparation n'est pas transmis ; le résumé est la preuve disponible.
+
+Le mode `--prepare-qwen` réussit au même commit, copie propre : Ollama 0.40.5, digest local conforme,
+Transformers 5.17.0, Tokenizers 0.23.2 et Jinja2 3.1.6. Il annonce **1 925 tokens HF**, une réserve de
+512 tokens de sortie et 64 de marge, soit **2 501 sur 8 192**. Aucune génération n'est appelée et le
+comptage Ollama/GGUF n'est pas encore comparé. L'avertissement PyTorch absent est attendu : Python
+utilise le tokeniseur, Ollama exécute le modèle.
+
+Empreinte du texte raw rapportée :
+`39885d2ecaa9fd6d036a6a0a313fe0e45591f23bdfd34beac2582338f8ebe61d`.
+Elle est retrouvée ici par reconstruction du texte au format Qwen attendu, avec le même prompt.
+Les empreintes CRLF de `prompts.py`, `schema.py` et `client_qwen.py` correspondent aussi au résumé.
+Le tokeniseur Qwen réel n'est pas chargé ici et les 1 925 tokens ne sont pas présentés comme recomptés localement.
+
+### Extension minimale
+
+`validation.py` accepte désormais la préparation multi v2 avec deux sources distinctes et non vides.
+Il vérifie la proposition JSON stricte, la catégorie/difficulté demandée, l'appartenance de chaque preuve
+aux sources fournies et la présence de son extrait exact **dans son propre passage**. Les deux sources
+doivent être couvertes ; un troisième identifiant, une preuve unique ou dupliquée ne suffisent pas.
+Le contrôle commun des doublons normalisés reste actif entre les runs synthétiques, toutes catégories confondues.
+
+Le candidat conserve les deux `generation_source_ids` dans l'ordre de sélection, même si les preuves sont
+présentées dans l'autre ordre. Il garde `automatic: passed`, `human: pending`, `answerable_confirmed: null`
+et aucun point attendu. Le JSON candidat reste `synthetic-v1`, qui prévoyait déjà plusieurs sources.
+L'enveloppe de run reste `agent0-run-v1` et contient la préparation explicitement versionnée v2.
+Les candidats et manifestes existants ne sont ni réécrits ni transformés.
+
+Le blocage temporaire de `--generate --type multi_passage` est levé. L'orchestrateur, le client, le prompt,
+le schéma et le corpus sont inchangés : un appel au plus, métadonnées et budget vérifiés à nouveau, sortie
+brute conservée avant contrôle, puis candidat ou rejet. Le budget de sortie reste 512. Une fin `length`
+reste une erreur technique tracée, même si le JSON reçu est valide ; aucune relance ou augmentation automatique.
+
+Ces contrôles vérifient la structure et la fidélité des extraits, pas la pertinence de la question ni le besoin
+réel de combiner les passages. La justification du générateur reste à relire. Aucun juge Qwen n'est ajouté.
+
+### Premier appel réel à exécuter
+
+Rester sur `feat/94-agent0-categories`. Exécuter une commande à la fois ; arrêter en cas d'échec ou de
+modification locale inattendue, et examiner le statut avant de poursuivre.
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id multi_passage_001 --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium
+```
+
+Le run est un nouveau dossier `data/synthetic/multi_passage_001/`, distinct des deux fichiers d'aperçu dans
+`preparations/`. Attendre son résumé et le candidat complet avant d'aborder une autre catégorie :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\multi_passage_001\candidates.jsonl
+```
+
+Si le résumé annonce un rejet ou une erreur, transmettre son motif et conserver tous les fichiers du run.
+Un dossier existant ne peut pas être réutilisé, même si l'appel a échoué. Aucun candidat réel multi-passage
+n'est encore rapporté au moment de cet incrément.
+
+### Vérification et état de review
+
+**109 tests réussis** ici sous Python 3.12.14 et Pydantic 2.14.0. Huit tests ajoutés, et le test de blocage
+temporaire remplacé par un test CLI de génération simulée : un appel, deux sources, manifeste et sortie brute
+conservés, attente humaine. Les nouveaux tests couvrent aussi préparation ambiguë/incomplète/dupliquée,
+preuves manquantes ou non fournies, extrait dans le mauvais passage, doublon, verdict injecté, rejets tracés
+sans relance et sortie interrompue. Les parcours simple/reformulation restent testés. Compilation et aide CLI
+contrôlées. Aucune nouvelle inférence réelle, modification de dépendance ou lecture du Gold Set ici.
+
+PR #103 toujours en brouillon ; Mahé et Remy restent demandés. L'essai Windows de cette génération et
+la relecture sémantique sont attendus. Les catégories adversarial/hors_corpus restent à réaliser dans #94.
+Pas de fusion, clôture, admission au lot figé ou temps réel déclaré ; estimation globale de 7 h inchangée.
+
+
+## 15. #94 — Premier rejet réel : liste aplatie et prompt v2
+
+### Résultat reçu et diagnostic
+
+Le terminal transmis par Jibril montre le fast-forward `2cb10c1..53d4da2`, puis **109 tests Windows
+réussis** (`Ran 109 tests in 0.641s`, `OK`). Le run `multi_passage_001` reçoit une réponse Qwen complète :
+`done: true`, `done_reason: stop`, **1925 tokens HF / 1925 Ollama**, **438 tokens générés**.
+Le comptage est comparé ; la limite de sortie de 512 n'est pas atteinte.
+
+Le résumé annonce `rejet_automatique`, **0 candidat, 1 rejet**, motif « Extrait non retrouvé mot pour mot
+dans le passage fourni ». Le fichier des candidats affiché est vide, conformément à ce rejet.
+Jibril transmet ensuite le JSON brut extrait des traces. Le manifeste complet et les autres traces du run
+ne sont pas transmis ; aucun état Git d'exécution détaillé n'est attribué au seul résumé.
+
+Question réellement proposée : « Quelles sont les conditions d'organisation d'un congé sans solde et
+pourquoi est-il préférable d'envisager un autre type de congé selon le Code du travail ? »
+
+La comparaison avec les textes M2 figés établit :
+
+| Preuve | Contrôle sur le corpus |
+|---|---|
+| `m2-article374529-0000` | Extrait exact et continu. |
+| `m2-article374529-0002` | Six sauts de ligne de la liste remplacés par six espaces ; aucun autre écart sur cet extrait. |
+
+Le second extrait devient identique au segment source si ses `\n` sont remplacés par des espaces.
+C'est une altération de mise en forme du texte cité, pas un mot inventé dans cet extrait. Le validateur
+strict a correctement appliqué le contrat de copie exacte. La proposition rejetée reste dans les traces,
+sans réparation silencieuse, réadmission ou verdict humain attribué.
+
+La lecture sémantique assistée relève aussi une nuance : la source dit « il peut être plus intéressant »
+et lie le choix au projet du salarié ; la question et sa justification disent « préférable ». Le risque est
+d'en faire une recommandation générale. La formulation juxtapose également deux demandes reliées par « et » ;
+la cohérence d'une véritable combinaison reste à examiner. Ces remarques sont des points de relecture,
+distincts du motif de rejet automatique, et ne constituent pas une évaluation du RAG.
+
+### Ajustement limité au prompt
+
+`prompts.py` passe uniquement le prompt multi à **`agent0-multi-passage-v2`** :
+
+- demander un segment court sur une seule ligne par source, sans liste ni assemblage ;
+- interdire explicitement le remplacement d'un saut de ligne par un espace ;
+- conserver les nuances de possibilité, d'obligation et de comparaison ;
+- faire dépendre une même décision ou explication des deux informations.
+
+Le validateur est inchangé : la consigne de génération privilégie les segments courts sur une ligne,
+mais un extrait multiligne réellement exact reste recevable structurellement. La fidélité ne se confond
+pas avec la longueur ou le nombre de lignes. Le schéma, le client, le budget, les sources et les prompts
+simple/reformulation sont inchangés. Aucun exemple de question réglementaire ni point attendu n'est ajouté
+aux consignes ou aux tests.
+
+Un test de régression technique accepte une liste copiée exactement, puis rejette sa version aplatie.
+**110 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0 ; compilation contrôlée.
+Le prompt simple conserve son empreinte initiale ; reconstruction du prompt multi v2 `medium` sur la même paire :
+`90a34805e7843a170dcbaaefd8767e211129dcd423eb8f4d86f619a0c4bef526`.
+Aucune nouvelle génération réelle n'est exécutée ici. Cet ajustement sera évalué au prochain run ;
+il ne garantit pas à lui seul une copie parfaite ni une meilleure question.
+
+### Nouvel essai après mise à jour
+
+Exécuter une commande à la fois sur `feat/94-agent0-categories`, avec un dépôt propre et arrêt en cas d'échec :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id multi_passage_002 --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium
+```
+
+Le nouveau run utilise un dossier distinct ; `multi_passage_001` et les aperçus v1 restent conservés.
+La commande refait le contrôle modèle/tokeniseur/budget sur le nouveau prompt avant l'unique appel.
+Le budget HF changera avec ces consignes ; les 1925 tokens appartiennent au prompt v1 du run rejeté.
+La réserve de sortie reste 512 ; pas de relance automatique. Après un résumé `candidat_prepare` :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\multi_passage_002\candidates.jsonl
+```
+
+En cas de rejet, lire la réponse brute de ce nouveau run dans ses traces. Attendre ce retour avant une
+nouvelle modification ou les catégories suivantes. #103 reste en brouillon, Mahé/Remy demandés ; #94 partielle.
+Aucun candidat multi-passage admis, gel, fusion, clôture, entraînement ou temps réel déclaré.
+L'estimation globale #94 reste 7 h actives prévisionnelles.
+
+
+## 16. #94 — Deuxième essai : citations exactes, question à mieux cadrer
+
+### Résultat transmis et lecture assistée
+
+Jibril transmet **110 tests Windows réussis** (`Ran 110 tests in 0.588s`, `OK`), puis le résumé de
+`multi_passage_002` et le candidat complet `SYN_multi_passage_002_0001`.
+Le run annonce un candidat, aucun rejet, fin `stop`, **2023 tokens HF / Ollama**, **452 tokens générés**.
+Avec 512 de sortie réservés et 64 de marge, le budget représente **2599/8192**. Ces valeurs concernent
+le deuxième essai ; elles ne sont pas reportées sur le prochain prompt. Le manifeste complet n'est pas transmis.
+
+Les deux extraits reçus sont retrouvés exactement dans leurs passages M2. Le candidat conserve, dans cet
+ordre, `m2-article374529-0002` et `m2-article374529-0000`, `automatic: passed`, `human: pending`,
+`answerable_confirmed: null`, sans relecteur, note ou point attendu. La cible de difficulté reste `medium`.
+
+Question reçue : « Quelles sont les conditions et obligations du salarié lorsqu'il sollicite un congé sans
+solde, et comment cela se compare-t-il avec les congés réglementés par le Code du travail ? »
+
+La lecture assistée relève deux ambiguïtés, distinctes des contrôles automatiques réussis :
+
+- **Comparaison non cadrée.** Les sources mentionnent des congés réglementés sans détailler leurs conditions.
+  La question ne fixe aucun critère précis de comparaison et risque de demander une information absente.
+- **Contexte déplacé.** La preuve sur les clauses du contrat et la loyauté concerne l'exercice d'une autre
+  activité pendant le congé ; la question place les obligations au moment où le salarié le sollicite.
+
+La justification du générateur ne résout pas ces ambiguïtés : c'est une proposition, pas une validation.
+L'avis assisté est de ne pas intégrer ce cas sous cette forme dans le lot figé. **Aucun verdict humain n'est
+attribué** : le JSON demeure en attente et n'est pas réécrit. Les deux sources doivent être nécessaires et
+suffisantes pour une demande précisément cadrée avant admission au benchmark.
+
+### Consignes v3 et vérifications
+
+`agent0-multi-passage-v3` ajoute trois consignes générales : chaque élément demandé doit être documenté,
+une comparaison exige des éléments décrits sur le même critère, et une règle doit garder sa situation et son
+moment d'application. Aucun exemple réglementaire ni point attendu n'est injecté dans le prompt.
+Schéma, sources, validateur, client, budget, formats et prompts simple/reformulation restent inchangés.
+
+**110 tests réussis ici** sous Python 3.12.14 / Pydantic 2.14.0 et compilation contrôlée. La suite vérifie les
+parcours et garde-fous existants, pas la qualité sémantique du nouveau prompt. Aucun test ne prétend mesurer
+le sens d'une question par la présence d'un mot dans les consignes. Aucun nouvel appel réel au modèle ici.
+Sources complètes et ordre conservés ; empreinte du prompt simple initiale retrouvée. Prompt multi v3
+`medium` reconstruit sur la paire :
+`7e96af896875af56ba0ad213dac99dbd646928d28df4c6f8b7cd1f5970a84d7a`.
+
+### Essai suivant
+
+Sur `feat/94-agent0-categories`, exécuter une commande à la fois, avec dépôt propre et arrêt en cas d'échec :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id multi_passage_003 --sources .\data\synthetic\sources\paires_001.json --group 1 --type multi_passage --difficulty medium
+```
+
+Le contrôle du budget est refait avant l'appel. Les deux précédents runs restent conservés. Après
+`candidat_prepare`, transmettre aussi le candidat complet :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\multi_passage_003\candidates.jsonl
+```
+
+Ces essais successifs sur une même paire servent à la mise au point des consignes ; ils ne mesurent pas la
+performance de la catégorie multi-passage. Le pilote #95 devra inclure d'autres sources et une relecture
+indépendante. Attendre ce retour avant la suite ; #103 reste en brouillon avec Mahé/Remy demandés,
+#94 partielle, estimation globale de 7 h inchangée. Aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 17. #94 — Troisième essai et diversification des sources
+
+Jibril transmet **110 tests Windows réussis** (`Ran 110 tests in 0.582s`, `OK`), le résumé de
+`multi_passage_003` et le candidat complet `SYN_multi_passage_003_0001` : fin `stop`, **2101 tokens
+HF / Ollama**, **429 tokens générés**, un candidat et aucun rejet. Budget réservé : **2677/8192**.
+Le manifeste complet n'est pas transmis ; la version du code d'inférence n'est pas déduite du seul résumé.
+
+Les deux extraits sont exacts et identiques à ceux du run `002`. La question reprend la même demande :
+conditions/obligations pour bénéficier d'un congé sans solde et comparaison avec des congés réglementés.
+Le cadrage de la comparaison et le contexte des obligations restent ambigus. L'ajout des trois consignes
+n'a donc pas corrigé ce problème sur cet exemple. Aucun taux général d'efficacité n'en est déduit.
+Avis assisté : ne pas intégrer ce cas dans le lot figé sous cette forme. Le candidat reste inchangé,
+`automatic: passed`, `human: pending`, réponse non confirmée et aucun point attendu.
+
+Les questions `002` et `003` diffèrent après la normalisation existante : elles ne constituent pas un
+doublon lexical exact, tout en étant très proches par le sens. C'est une limite observée du filtre actuel,
+pas une preuve de diversité du benchmark. La relecture #95 devra aussi examiner ces quasi-doublons ;
+aucun juge LLM ni déduplication par embeddings n'est ajouté dans cet incrément.
+
+### Choix suivant : conserver v3 et changer les passages
+
+Le code, le prompt v3, les tests et le budget restent inchangés. Une nouvelle sélection de **trois paires**
+est reconstruite avec `count=3`, `seed=20261018`, selon le sélecteur #92 existant. Elle sera conservée
+dans son intégralité, sans choisir les sources en fonction d'une réponse Qwen favorable :
+
+| Groupe | Fiche | Identifiants dans l'ordre |
+|---|---|---|
+| 1 | Le congé sans solde | `m2-article374529-0003`, `m2-article374529-0004` |
+| 2 | Attributions SSCT du CSE | `m2-article377050-0017`, `m2-article377050-0003` |
+| 3 | Médaille d'honneur du travail | `m2-article374500-0003`, `m2-article374500-0000` |
+
+Le premier groupe associe procédure/accord écrit et rémunération/CET ; il appartient à la même fiche
+que les essais précédents, avec une autre paire. Les autres groupes diversifient les fiches. Ce tirage
+ne garantit pas la complémentarité ou la suffisance d'une paire. Le nombre de groupes influence le tirage :
+une graine identique avec un autre `count` ne garantit pas le même premier groupe. Les identifiants et
+le manifeste sauvegardé constituent la référence exacte.
+
+Première commande Windows, sans modèle ni matrice, avec un nouveau nom de fichier :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\corpus.py --pairs --count 3 --seed 20261018 --output .\data\synthetic\sources\paires_002.json
+```
+
+Transmettre le résumé pour vérifier les groupes avant les nouveaux appels. Ensuite, tester les groupes
+dans l'ordre et conserver chaque résultat, y compris les rejets ; ne pas présenter cette série de mise au point
+comme un score de benchmark. Le pilote #95 et les attentes humaines restent distincts.
+
+Cette mise à jour est documentaire. Les **110 tests** sont ceux du code inchangé exécuté précédemment
+ici et du nouveau retour Windows ; aucune nouvelle exécution de tests ou inférence n'est revendiquée.
+Le tirage est reconstruit ici sur le corpus contrôlé, sans création du fichier Windows ni provenance Git
+d'exécution de ce futur fichier attribuée. PR #103 en brouillon, Mahé/Remy demandés, #94 partielle,
+estimation globale 7 h inchangée ; aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 18. #94 — Retour des trois paires du 19 octobre 2026
+
+### Sélection et résultats transmis
+
+Sur le Legion de Jibril, la branche passe de `824eaa1` à `1f7eeca` par avance rapide ; seuls deux
+documents changent. Le résumé de `paires_002.json` annonce le commit complet
+`1f7eeca8eea1014e959b7318079ae177d2980037`, une copie propre et Python 3.12.15.
+Il retrouve exactement les trois groupes annoncés en section 17, 4240 passages et 261 fiches,
+sans appel Ollama ni lecture de matrice. Les empreintes annoncées sont :
+
+- entête : `586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23` ;
+- passages : `aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
+
+Les trois groupes sont ensuite testés dans l'ordre, avec le prompt v3 conservé. Jibril transmet
+les résumés des runs, les candidats complets de `004` et `006`, puis la sortie brute de `005`.
+Les manifestes et traces complets des générations ne sont pas transmis ; l'état Git propre de
+la sélection ne prouve pas à lui seul celui de chaque inférence. Aucun nouveau test unitaire
+n'est annoncé dans ce retour, la mise à jour récupérée étant documentaire.
+
+| Run | Groupe | Entrée HF / Ollama | Sortie | Fin | Résultat automatique |
+|---|---|---:|---:|---|---|
+| `multi_passage_004` | 1, congé sans solde | 1833 / 1833 | 404 tokens | stop | 1 candidat, 0 rejet |
+| `multi_passage_005` | 2, CSE | 2764 / 2764 | 373 tokens | stop | 0 candidat, 1 rejet |
+| `multi_passage_006` | 3, médaille du travail | 2100 / 2100 | 385 tokens | stop | 1 candidat, 0 rejet |
+
+Avec les réserves inchangées de 512 tokens de sortie et 64 de marge, les budgets calculés à partir
+des entrées transmises sont respectivement 2409, 3340 et 2676 sur 8192. Ce calcul n'est pas un
+nouveau comptage avec le tokeniseur. Ces trois essais de mise au point ne mesurent pas un taux
+de qualité général ni les performances du RAG.
+
+### Lecture assistée, sans verdict humain
+
+- **004.** Les deux extraits sont exacts dans `m2-article374529-0003` et `m2-article374529-0004`.
+  La demande associe procédure et rémunération, sans la comparaison trop ouverte des essais précédents.
+  Points à relire : accord grammatical dans « comment est-elle financée », portée générale de
+  « conditions pour bénéficier », distinction entre procédure et conditions légales, caractère conditionnel
+  du CET. Les deux passages servent l'ensemble de la demande, mais celle-ci juxtapose deux sous-demandes
+  simples ; la difficulté `medium` n'est pas mesurée. Le candidat reste inchangé et humain en attente.
+- **005.** La première preuve est exacte dans `m2-article377050-0003`. La seconde est attribuée à
+  `m2-article377050-0017`, mais son contenu provient de `m2-article377050-0003`. Dans ce texte réel,
+  deux caractères de contrôle `U+0001` et un espace supplémentaire sont omis par la sortie Qwen.
+  Le contrôle local confirme l'égalité seulement après retrait des deux caractères et réduction du double
+  espace ; aucune de ces transformations n'est appliquée au validateur ni au corpus. Une simple correction
+  d'identifiant laisserait les deux preuves dans le même passage. La première citation expose l'objectif
+  des enquêtes, pas les droits demandés ; la seconde décrit un droit d'alerte, sans étayer les obligations
+  demandées en santé publique/environnement. Le rejet automatique est conservé, sans réparation ni relance.
+- **006.** Les deux extraits sont exacts dans `m2-article374500-0003` et `m2-article374500-0000`.
+  Le second recopie intégralement le passage et conserve sa liste multiligne : la consigne d'extrait court
+  sur une ligne n'est pas suivie, mais une liste exacte est compatible avec le validateur strict existant.
+  La question demande les « conditions » sans limiter son périmètre, alors que la première preuve
+  ne cite que le cas des salariés travaillant en France. Les durées d'ancienneté ne sont pas détaillées
+  dans cette paire ; la demande et le dépôt d'un dossier ne décrivent pas toute la procédure d'attribution.
+  La justification du générateur surestime donc la suffisance des preuves. Le candidat reste inchangé
+  et humain en attente ; ce cas n'est pas admis au lot figé par cette lecture assistée.
+
+### Bilan et suite
+
+Cette série produit deux candidats à relire et un rejet tracé. La fidélité et l'attribution des extraits
+sont contrôlées ; la suffisance, la portée de la question et la nécessité réelle des deux passages
+restent des responsabilités de relecture indépendante en #95. Aucun candidat de cette série n'a
+reçu de verdict humain ; les questions, sources et runs restent intacts.
+
+Conserver le prompt v3 et terminer cette série sans essai supplémentaire choisi selon le résultat.
+Le prochain incrément technique de #94 concerne l'aperçu `adversarial`, puis ses contrôles de sortie :
+prémisse potentiellement fausse, correction proposée et preuve exacte, toujours à relire. La relecture
+des candidats reste nécessaire avant admission au Challenge Set ; elle ne bloque pas la préparation
+technique des autres catégories. `hors_corpus` reste également à réaliser.
+
+Cette mise à jour ne modifie que la documentation et le journal IA du 19 octobre. Pas de nouvelle
+inférence ici, de changement de prompt, de budget, de modèle, de validateur ou de corpus, ni de tests
+relancés. Les 110 tests restent ceux des exécutions précédemment documentées. #103 reste en brouillon,
+Mahé/Remy demandés, #94 partielle ; aucun gel, fusion, clôture ou temps réel déclaré.
+
+
+## 19. #94 — Aperçu des cas pièges, sans génération
+
+### Périmètre de cet incrément
+
+Le schéma `synthetic-v1` prévoit déjà les champs `adversarial_premise` et `correction_proposed`.
+Le nouvel aperçu les réutilise, sans changer le schéma ni le validateur. Le prompt
+`agent0-adversarial-v1` demande une question contenant une prémisse potentiellement fausse,
+sa correction proposée et une preuve exacte provenant d'un seul passage fourni intégralement.
+Il n'injecte aucun exemple de question réglementaire ou point attendu.
+
+Ce premier incrément vise les pièges dont la correction est proposée comme sourçable :
+`answerable_proposed: true`, avec `out_of_corpus_reason: null`. Ce choix concerne la consigne
+de cet aperçu, pas une restriction du schéma général. Les pièges sans correction étayée et les
+candidats hors corpus restent hors de cette étape. Une absence d'information ne prouve pas
+qu'une prémisse est fausse ; la relecture doit vérifier la question, la prémisse, la correction,
+les conditions et exceptions, ainsi que la suffisance des extraits.
+
+La préparation utilise le format existant `agent0-preparation-v1`, avec une seule clé `source`.
+Les modes `--prepare-only` et `--prepare-qwen` sont disponibles. La commande
+`--generate --type adversarial` est explicitement bloquée avant la lecture du corpus,
+la création d'un run ou un appel réseau : les contrôles de sortie propres aux pièges restent
+à implémenter. Cette protection concerne la CLI ; aucun nouveau garde-fou n'est ajouté à
+l'orchestrateur Python interne dans cet incrément.
+
+### Contrôles exécutés ici
+
+**118 tests réussis** sous Python 3.12.14 et Pydantic 2.14.0 : les 110 précédents et 8 nouveaux.
+Les nouveaux tests couvrent le passage intégral sans réécriture, les sources/paramètres invalides,
+la reproductibilité de la préparation, l'aperçu sans réseau ni modèle, le budget simulé sans
+génération, le blocage précoce de `--generate`, la protection d'une sortie existante et le refus
+d'une paire pour cette catégorie à source unique. Les fixtures sont techniques, sans question
+juridique ni appel au vrai modèle. Un ancien test de catégorie indisponible cible désormais
+`hors_corpus`, qui reste indisponible dans la CLI.
+
+Compilation et aide CLI contrôlées. Les trois objets prompts existants, simple/reformulation/
+multi-passage, sont comparés avant/après sur les mêmes fixtures et sont identiques. Schéma,
+client Qwen, orchestrateur, validateur, budget, dépendances et corpus ne changent pas.
+
+La première source de `selection_001.json` est reconstruite depuis M2 avec `count=5`,
+`seed=20261018` : `m2-article374529-0004`, 318 caractères conservés intégralement.
+L'empreinte des passages reste `aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
+Prompt adversarial `medium` reconstruit :
+`1b25e5b176af89409244ed6f01fbae133fc920418de38930e70171b3ba573a27`.
+Ce contrôle ne lit pas le manifeste Windows complet et ne lui attribue aucune nouvelle provenance.
+Aucun appel Ollama ni comptage du vrai tokeniseur ici ; aucun budget réel ou candidat adversarial obtenu.
+
+### Vérification progressive sur Windows
+
+Sur `feat/94-agent0-categories`, vérifier d'abord que le dépôt est propre avant l'avance rapide,
+puis lancer les tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 118 tests passent, préparer l'aperçu avec le manifeste à source unique existant :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\selection_001.json --group 1 --type adversarial --difficulty medium --output .\data\synthetic\preparations\adversarial_001.json
+```
+
+Résultat attendu : `statut: prompt_prepare`, `passage_id: m2-article374529-0004`,
+`version_prompt: agent0-adversarial-v1`, `ollama_appele: false`, `budget_tokens_verifie: false`.
+La difficulté `medium` est demandée, non mesurée. Une sortie existante est refusée sans écrasement.
+Transmettre le résultat des tests et le résumé de préparation avant le contrôle du budget réel.
+Ne pas utiliser `paires_002.json` pour ce premier aperçu à source unique.
+
+La suite sera le contrôle du budget Windows, puis les règles de validation de sortie et l'activation
+explicite de la génération adversarial. La relecture indépendante de #95 reste requise avant admission
+des cas au Challenge Set. #94 reste partielle et #103 en brouillon ; aucun candidat, verdict humain,
+gel, fusion, clôture ou temps réel déclaré pour ce nouvel incrément.
+
+
+## 20. #94 — Budget Windows et activation des cas pièges sourçables
+
+### Retours vérifiés
+
+Jibril transmet **118 tests Windows réussis** (`Ran 118 tests in 1.433s`, `OK`), puis l'aperçu
+et le contrôle du budget adversarial au commit `f9ee12acce5815830ae87519e818a6b5019bb611`,
+copie propre, Python 3.12.15. Source `m2-article374529-0004`, prompt `agent0-adversarial-v1`.
+L'empreinte de prompt de la section 19 est retrouvée. Les empreintes CRLF des quatre scripts
+generate/prompts/schema/client concordent également avec le retour Windows.
+
+Le contrôle Qwen annonce **1450 tokens HF + 512 de sortie + 64 de marge = 2026/8192**,
+`generation_appelee: false`, sans comparaison HF/Ollama encore possible. Le texte raw reconstruit
+ici retrouve exactement `d9df91b5040c028d34a8d5e6add187d6baee69273d104ec052f4bad788dc97f5`.
+Ce contrôle d'empreinte ne constitue pas un recomptage avec le vrai tokeniseur dans cet environnement.
+
+Ollama est maintenant rapporté en **0.40.6**, contre 0.40.5 lors des retours précédents ; ne pas
+attribuer ce changement à une action ou une date non déclarée. Le modèle, son digest de référence,
+la révision du tokeniseur, le gabarit `d5495a1e...`, les dépendances et le budget restent identiques.
+Cette version de serveur sera conservée dans les traces du prochain run. Aucun effet sur la qualité
+ou les performances n'est déduit de ce seul changement de version.
+
+### Contrôles et limites de la génération
+
+La CLI autorise désormais `--generate --type adversarial` avec un nouveau `run_id`. Le validateur
+exige une préparation v1 avec une seule source identifiée et non vide, sans tableau `sources` ambigu.
+Pour cet incrément, `answerable_proposed` doit être vrai. Le schéma existant impose alors une prémisse
+et une correction proposées non vides, des preuves et aucun motif hors corpus. Le schéma général
+continue de représenter d'autres situations ; elles ne sont pas générables dans cette étape.
+
+Les contrôles communs restent appliqués : JSON strict, catégorie/difficulté, preuve appartenant au
+passage fourni, extrait exact dans ce passage et déduplication normalisée. Le programme ne confirme
+pas que la prémisse figure sémantiquement dans la question, qu'elle est fausse, que la correction
+la réfute, ni que la preuve suffit. Ces points restent à relire humainement. La correction n'a pas
+à être un extrait littéral ; ce sont les citations `evidence` qui doivent être exactes.
+
+La prémisse et la correction sont conservées telles que reçues dans le candidat exploratoire,
+sans réécriture ni points attendus confirmés. `automatic: passed` laisse `human: pending`,
+`answerable_confirmed: null`, sans relecteur ou note. Ces champs d'annotation ne devront pas être
+transmis au RAG évalué lors du futur benchmark. Aucun branchement au benchmark n'est ajouté ici.
+
+Un seul appel, budget recompté avant génération, sortie brute conservée avant contrôle, puis candidat
+ou rejet tracé. Une réponse tronquée reste une erreur technique prioritaire ; pas de réparation ou
+relance automatique. Prompt, schéma, client, orchestrateur, modèle, budget, corpus et RAG inchangés.
+
+### Vérifications et premier essai Windows
+
+**126 tests réussis ici** sous Python 3.12.14 / Pydantic 2.14.0. Le test de blocage temporaire devient
+un succès CLI simulé ; 8 tests sont ajoutés : textes et attente humaine conservés, champs invalides et
+proposition non sourçable refusés, préparation ambiguë/invalide, preuves invalides, verdict injecté ou
+paramètres différents, doublon, rejet avec brut conservé et sortie tronquée traitée comme erreur technique.
+Toutes les fixtures sont techniques, sans nouvelle question juridique ou appel au vrai modèle.
+Compilation contrôlée ; prompt et texte raw comparés avant/après : identiques à la préparation budgétée.
+
+Sur `feat/94-agent0-categories`, vérifier le dépôt propre avant l'avance rapide, puis les tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 126 tests passent, avec Ollama démarré, lancer un seul essai :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id adversarial_001 --sources .\data\synthetic\sources\selection_001.json --group 1 --type adversarial --difficulty medium
+```
+
+Si le résumé annonce `candidat_prepare`, transmettre le candidat complet :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\adversarial_001\candidates.jsonl
+```
+
+En cas de rejet ou d'erreur, transmettre d'abord le résumé ; conserver les traces avant de décider
+d'un nouvel essai. Aucune question adversarial réelle n'a encore été rapportée. #94 reste partielle,
+hors_corpus et relecture indépendante encore à réaliser ; PR #103 en brouillon avec Mahé/Remy demandés.
+Pas de verdict humain, gel, fusion, clôture ou temps réel déclaré ; estimation initiale de 7 h inchangée.
+
+
+## 21. #94 — Premier candidat adversarial et forme de la question
+
+Jibril transmet **126 tests Windows réussis** (`Ran 126 tests in 0.678s`, `OK`), puis le résumé
+et le candidat complet de `adversarial_001` : **1450 HF / 1450 Ollama**, 419 tokens générés,
+fin `stop`, un candidat et aucun rejet. La comparaison des comptes est réussie. Le manifeste
+complet n'est pas transmis ; le SHA et l'état Git de cette inférence ne sont pas déduits du résumé.
+
+Le champ `question` contient cette affirmation, conservée mot pour mot :
+« Pendant le congé sans solde, le salaire du salarié est maintenu grâce à un compte épargne-temps (CET). »
+Il est identique à `adversarial_premise` et ne formule pas de demande explicite. Le contrôle existant
+accepte structurellement un texte non vide ; il ne vérifie pas la forme interrogative.
+
+La preuve et la correction correspondent exactement au texte complet de `m2-article374529-0004`.
+La correction conserve donc le non-maintien de la rémunération et la possibilité conditionnelle
+d'utiliser les droits acquis sur un CET, si le dispositif existe et si son accord le prévoit.
+La lecture assistée relève un mélange entre maintien du salaire et financement conditionnel ;
+elle n'attribue pas de verdict définitif de fausseté à la prémisse. Le candidat demeure inchangé,
+`human: pending`, sans relecteur, note ou point attendu confirmé. Aucune admission au lot figé.
+
+### Ajustement limité du prompt
+
+`agent0-adversarial-v2` précise trois consignes générales : phrase interrogative explicite terminée
+par un point d'interrogation, prémisse intégrée dans cette demande plutôt qu'affirmation seule,
+correction réservée à `correction_proposed` et non dévoilée dans la question. Aucun exemple
+juridique n'est ajouté et le candidat initial n'est pas réécrit. Le validateur reste inchangé :
+une ponctuation ne constitue pas une validation sémantique automatique.
+
+**126 tests réussis ici** sous Python 3.12.14 / Pydantic 2.14.0, sans nouveau test ni appel réel.
+Compilation contrôlée ; les prompts simple, reformulation et multi-passage sont identiques avant/après
+sur les mêmes fixtures. La source de 318 caractères est conservée ; le prompt v2 `medium`
+reconstruit a pour empreinte `ddecefb77e5573621c0bc072628829a358715bf552cfca02b18f4f7e48133728`.
+Ces vérifications ne démontrent pas que Qwen suivra mieux la nouvelle consigne.
+
+### Nouvel essai distinct
+
+Sur la même branche, vérifier le dépôt propre avant récupération et relancer les 126 tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Puis, avec Ollama démarré, utiliser un nouveau run :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id adversarial_002 --sources .\data\synthetic\sources\selection_001.json --group 1 --type adversarial --difficulty medium
+```
+
+Le budget est recompté avant l'appel ; les 1450 tokens concernent v1, pas ce nouveau prompt.
+Les limites 8192/512/64 sont conservées. Si le résultat annonce `candidat_prepare` :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\adversarial_002\candidates.jsonl
+```
+
+Transmettre le résumé et le candidat, ou d'abord le motif du rejet. Conserver `adversarial_001`
+pour comparaison. Ces essais constituent une mise au point, pas un benchmark de qualité.
+Hors_corpus et relecture indépendante restent à réaliser ; #94 partielle, #103 en brouillon,
+Mahé/Remy demandés. Aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 22. #94 — Question neutre et piège à prémisse fausse
+
+Jibril transmet **126 tests Windows réussis** (`Ran 126 tests in 0.887s`, `OK`) et le candidat
+complet de `adversarial_002` : **1509 HF / 1509 Ollama**, 255 tokens générés, fin `stop`, un candidat
+et aucun rejet. Budget réservé v2 : 2085/8192. Manifeste complet non transmis ; aucune provenance
+Git détaillée de l'inférence n'est déduite du seul résumé.
+
+La question reçue est : « Pendant le congé sans solde, la rémunération du salarié est-elle maintenue ? »
+La preuve est une copie exacte de la première phrase de `m2-article374529-0004` ; la correction
+est une reformulation cohérente avec celle-ci selon la lecture assistée. La forme interrogative est
+obtenue, mais la question ne présente pas le maintien de la rémunération comme acquis : elle demande
+si c'est le cas. L'affirmation du champ `adversarial_premise` n'est donc pas présupposée par la question.
+La justification générée qui dit que la question « affirme » cette prémisse n'est pas une validation.
+
+Avis assisté : ce cas ressemble à une question fermée simple ; son adéquation à un piège avec prémisse
+fausse n'est pas établie. Le candidat et sa catégorie restent inchangés, `human: pending`, sans verdict
+humain, requalification automatique ou admission au lot figé. Les contrôles de copie/structure ne
+permettent pas de détecter ce défaut de catégorie.
+
+### Consigne générale v3 et diversification annoncée
+
+`agent0-adversarial-v3` ajoute trois consignes : la question présente la prémisse comme acquise pour
+que répondre correctement impose de la contester ; une interrogation neutre ne suffit pas ; le champ
+`adversarial_premise` ne remplace pas cette présupposition dans la question. Aucun exemple juridique,
+question de remplacement ou point attendu n'est ajouté. Le validateur reste inchangé.
+
+**126 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0, sans nouveau test ajouté ni appel modèle.
+Compilation et comparaison des prompts simple/reformulation/multi avant/après contrôlées : identiques.
+Ces vérifications ne mesurent pas la qualité des questions ni l'efficacité de la consigne v3.
+
+Pour ne pas continuer à ajuster la consigne sur le congé sans solde, les deux prochains essais utiliseront
+les groupes 2 puis 3 du manifeste existant `selection_001.json`. Ils proviennent du tirage initial à
+cinq fiches, graine 20261018 ; aucun nouveau tirage selon une réponse favorable. Garder v3 et conserver
+les deux résultats, y compris les rejets, avant tout autre ajustement des consignes.
+
+| Ordre | Groupe | Run prévu | Passage attendu | Fiche |
+|---|---:|---|---|---|
+| 1 | 2 | `adversarial_003` | `m2-article377050-0003` | Attributions SSCT du CSE |
+| 2 | 3 | `adversarial_004` | `m2-article374500-0003` | Médaille d'honneur du travail |
+
+Les deux sources sont reconstruites et conservées intégralement, respectivement 1895 et 1383 caractères.
+Cela ne lit pas le manifeste Windows complet et ne démontre pas la faisabilité de chaque piège.
+Les caractères de contrôle déjà repérés dans le passage CSE restent inchangés ; le corpus figé et
+le contrôle d'extrait exact ne sont pas assouplis. Empreintes des prompts v3 `medium` reconstruits :
+
+- groupe 2 : `bd19aa3825433add5520d143697340c6bd233cdb20bf2117abcacd2aefd6337d` ;
+- groupe 3 : `e20021c3abfeb04ba4c196333fb0bc6b87450efba2575e254ee67e02ebddcdb8`.
+
+Après récupération sur la même branche et réussite des 126 tests Windows, premier essai avec Ollama démarré :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id adversarial_003 --sources .\data\synthetic\sources\selection_001.json --group 2 --type adversarial --difficulty medium
+```
+
+Si le résultat annonce `candidat_prepare` :
+
+```powershell
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\adversarial_003\candidates.jsonl
+```
+
+Transmettre résumé/candidat ou le motif du rejet avant de lancer le groupe 3. Le script recompte
+le budget avant chaque appel ; les 1509 tokens concernent l'ancien prompt et l'ancienne source.
+Limites, modèle, schéma, client, orchestrateur, corpus et RAG inchangés. Il s'agit d'une mise au point,
+pas d'un score de benchmark. #94 partielle, hors_corpus et relecture indépendante encore à réaliser ;
+#103 en brouillon, Mahé/Remy demandés, aucun gel, fusion, clôture ou temps réel déclaré.
+
+
+## 23. #94 — Bilan des deux autres sources adversarial v3
+
+Les groupes 2 et 3 de la sélection initiale sont exécutés dans l'ordre annoncé, avec v3 conservé.
+Jibril transmet **126 tests Windows réussis** avant le groupe 2 (`0.888s`, `OK`), puis son candidat
+complet. Pour le groupe 3, il transmet le résumé de rejet et ensuite la proposition JSON brute.
+Les manifestes et traces complets ne sont pas transmis ; aucun état Git détaillé des inférences
+n'est déduit de ces résumés. Aucun nouveau test n'est annoncé entre les deux générations.
+
+| Run | Groupe | HF / Ollama | Sortie | Fin | Résultat automatique |
+|---|---:|---:|---:|---|---|
+| `adversarial_003` | 2, CSE | 2028 / 2028 | 372 tokens | stop | 1 candidat, 0 rejet |
+| `adversarial_004` | 3, médaille | 1866 / 1866 | 499 tokens | stop | 0 candidat, 1 rejet |
+
+Budgets réservés calculés sur ces entrées : 2604 et 2442 sur 8192, avec 512 de sortie et 64 de marge.
+Les 499 tokens du second run restent sous la limite ; aucune troncature n'est signalée.
+Les deux comptes HF/Ollama concordent.
+
+### CSE : copie exacte et catégorisation à relire
+
+Le candidat mélange l'enquête mentionnée pour certaines alertes avec l'examen conjoint évoqué pour
+la santé publique/l'environnement. Sa preuve est exacte dans `m2-article377050-0003`, mais commence
+par « Dans ce cas » : le contexte précédent doit être lu pour établir à quelle situation elle se rapporte.
+La correction proposée reprend cette distinction selon la lecture assistée ; la justification du modèle
+va plus loin en affirmant une absence d'obligation d'enquête, là où le passage décrit la formulation
+du Code dans ce cas. Ne pas transformer cette justification en règle générale.
+
+La question reste formulée comme une demande de confirmation d'une obligation. Son adéquation à
+une présupposition trompeuse, plutôt qu'à une question fermée, reste à examiner. Candidat inchangé,
+`human: pending`, sans verdict, points attendus confirmés ou admission au lot figé.
+
+### Médaille : rejet de copie et correction incohérente
+
+La preuve est attribuée au bon passage `m2-article374500-0003`, mais **trois sauts de ligne de la
+liste sont remplacés par des espaces**, sans autre différence dans ce segment. Le contrôle local
+retrouve exactement la sortie après ce seul aplatissement ; le texte original n'est pas normalisé
+dans le validateur ni réparé dans le run. Le fichier de candidats vide et le rejet sont conservés.
+
+Indépendamment du rejet de copie, la correction parle d'un employeur étranger puis exige qu'il soit
+français. Elle présente aussi les cas listés comme exclusifs avec « seulement si », en omettant le
+paragraphe suivant qui prévoit une attribution exceptionnelle hors des établissements énumérés,
+sous conditions d'ancienneté et de contribution au bon renom de la France. La question et le champ
+prémisse restent des interrogations de confirmation, avec une portée « sans aucune exception » peu
+claire. Ces observations sont une lecture assistée, pas un verdict humain supplémentaire.
+
+### Conclusion de mise au point et suite
+
+Cette série v3 produit un candidat à relire et un rejet tracé. Elle montre que la copie exacte et la
+présence de champs ne garantissent pas une vraie prémisse fausse, une correction cohérente ou la
+conservation des exceptions. Aucun taux général de qualité ou de difficulté n'en est déduit.
+
+Conserver v3, les deux résultats et les runs précédents ; pas de nouvel ajustement de consigne
+ou de relance dans ce bilan. La relecture indépendante de #95 reste nécessaire avant admission.
+La suite technique prévue en #94 est l'aperçu `hors_corpus` : absence seulement proposée par le
+générateur, preuves positives vides, verdict non confirmé et vérification sur le corpus figé complet.
+Ni la seule source fournie ni un échec de récupération ne devront confirmer cette absence.
+
+Mise à jour documentaire uniquement : étude et journal IA. Pas de code, prompt, source, budget,
+modèle, validateur ou RAG modifié ; aucun test unitaire ou appel réel relancé ici. Les 126 tests
+restent ceux précédemment exécutés et ceux rapportés sur Windows. #103 reste en brouillon,
+Mahé/Remy demandés, #94 partielle ; aucun verdict humain, gel, fusion, clôture ou temps réel déclaré.
+
+
+## 24. #94 — Aperçu hors corpus, sans absence confirmée
+
+### Contrat et portée
+
+Le nouveau prompt `agent0-hors-corpus-v1` utilise un passage complet comme point de départ pour
+proposer une question voisine insuffisamment traitée dans ce passage. Le modèle ne reçoit pas
+le corpus entier : une réponse peut se trouver dans une autre fiche. Il doit proposer un motif
+provisoire dans `out_of_corpus_reason`, sans prétendre avoir déjà recherché dans les autres textes.
+Une réponse conditionnelle suffisamment sourcée ne constitue pas un cas hors corpus.
+
+Le contrat existant est réutilisé : `answerable_proposed: false`, `evidence: []`, motif non vide,
+`adversarial_premise: null` et `correction_proposed: null`. La source de départ demeure dans la
+provenance ; elle n'est ni une preuve positive de réponse ni une preuve d'absence. Le classement
+reste une proposition, sans `answerable_confirmed` ou verdict humain attribué par le générateur.
+
+L'aperçu garde `agent0-preparation-v1` et une seule clé `source`. La CLI charge les métadonnées du
+corpus pour contrôler l'intégrité de la sélection ; cela n'est pas une vérification sémantique de
+l'absence dans tous les passages. Les cinq catégories sont désormais proposées par la CLI dans
+les modes `--prepare-only` et `--prepare-qwen`. **La génération hors_corpus reste bloquée** avant
+lecture du corpus, création de run ou appel réseau ; ses contrôles de sortie attendent l'étape suivante.
+Cette protection concerne la CLI, pas un nouveau verrou de l'orchestrateur interne.
+
+### Relecture prévue, alignée avec #94 et #95
+
+Avant d'admettre un futur candidat hors corpus au lot figé, la relecture humaine devra :
+
+1. Identifier le corpus complet utilisé, son empreinte et son périmètre ; conserver la question générée
+   et sa provenance. Le passage de départ ne limite pas la vérification aux seules sources de génération.
+2. Chercher dans l'ensemble des textes figés avec les termes utiles et leurs variantes, puis lire les
+   fiches et passages pertinents pour le besoin précis, les conditions et les exceptions. Une recherche
+   ou une récupération sert d'aide ; l'absence de résultat ne constitue pas un verdict d'absence.
+3. Si une réponse suffisante, même conditionnelle, est trouvée, ne pas confirmer le type hors corpus.
+   Conserver les références qui contredisent le classement proposé ; ne pas réécrire la question pour
+   la faire sortir du corpus ou satisfaire un quota de catégorie.
+4. Tracer qui a relu, quand, sur quelle empreinte, les termes/méthodes utilisés, les passages examinés,
+   le motif de décision et les limites. Tant que le verdict est en attente, garder ces notes dans le
+   support de relecture distinct : le contrat interdit une `review_note` dans un candidat `human: pending`.
+   Les champs de verdict existants ne seront remplis qu'après une décision humaine effective.
+
+Si la vérification reste incertaine ou dépasse l'enveloppe du pilote, conserver le cas non confirmé
+et documenter cette limite, comme prévu en #95. Aucun juge Qwen, contrôle lexical seul ou consultation
+du Web ne remplace la vérification de notre corpus figé. Cette procédure reste à relire avec le pilote ;
+elle ne modifie pas le Gold Set, ses quotas ou le protocole officiel d'évaluation.
+
+### Vérifications exécutées ici
+
+**134 tests réussis**, Python 3.12.14 / Pydantic 2.14.0 : les 126 précédents et 8 nouveaux tests
+de l'aperçu hors corpus, sur fixtures techniques. Passage complet, entrées invalides, reproductibilité
+sans verdict, aperçu sans réseau, budget simulé sans génération, blocage CLI précoce, protection d'une
+sortie existante et refus d'une paire sont contrôlés. Le test d'ancienne catégorie indisponible utilise
+désormais une catégorie inconnue. Compilation et aide CLI vérifiées.
+
+Les quatre prompts existants, simple/reformulation/multi/adversarial, sont identiques avant/après sur
+les mêmes fixtures. Schéma, client, orchestrateur, validateur, corpus, budget, dépendances et RAG inchangés.
+Ces tests ne démontrent aucune absence de réponse ni l'efficacité du prompt.
+
+La source initiale est reconstruite avec le tirage déjà utilisé, `count=5`, graine `20261018` :
+`m2-article374529-0004`, 318 caractères conservés intégralement. Corpus M2 inchangé, empreinte
+`aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d`.
+Prompt hors_corpus `medium` : `c7188861ca3a65932b61a712592a814fa89163b43d669a64e86873e8b54177e6`.
+Ce contrôle ne lit pas le manifeste Windows complet et ne lui attribue pas de nouvelle provenance.
+Aucun Ollama, vrai tokeniseur, budget réel ou question hors corpus obtenu ici.
+
+### Première vérification Windows
+
+Sur `feat/94-agent0-categories`, vérifier le dépôt propre avant l'avance rapide, puis les tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 134 tests passent, préparer l'aperçu avec le manifeste à source unique existant :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --prepare-only --sources .\data\synthetic\sources\selection_001.json --group 1 --type hors_corpus --difficulty medium --output .\data\synthetic\preparations\hors_corpus_001.json
+```
+
+Attendu : `prompt_prepare`, source `m2-article374529-0004`, version `agent0-hors-corpus-v1`,
+`ollama_appele: false`, `budget_tokens_verifie: false`. Une sortie existante est refusée sans écrasement.
+Transmettre les tests et le résumé avant le budget réel. La génération et ses contrôles seront un
+incrément ultérieur ; l'admission exige ensuite la relecture du corpus complet. #94 reste partielle,
+#103 en brouillon, Mahé/Remy demandés ; aucun candidat hors corpus, verdict humain, gel, fusion,
+clôture ou temps réel déclaré. Estimation initiale de 7 h inchangée.
+
+
+## 25. #94 — Budget Windows vérifié et génération hors corpus activée
+
+### Preuves transmises et contrôle du budget
+
+Jibril transmet **134 tests Windows réussis** (`1.105s`, `OK`), puis l'aperçu et la préparation
+Qwen au commit `65774deb68df98c50e7652ce24f5c803713ca6cc`, copie propre, Python 3.12.15.
+Source `m2-article374529-0004`, prompt `agent0-hors-corpus-v1`, difficulté `medium`.
+
+Le contrôle rapporte **1441 HF + 512 sortie + 64 marge = 2017/8192**, sans génération :
+`generation_appelee: false`, `comptage_ollama_compare: false`. L'égalité HF/Ollama reste à
+vérifier sur le premier run. Ollama 0.40.6, digest Qwen, gabarit, révision du tokeniseur et versions
+des dépendances identiques aux références transmises précédemment.
+
+Empreintes retrouvées ici sur la source M2 intégrale de 318 caractères, sans utiliser le vrai
+tokeniseur ni appeler Ollama :
+
+- prompt : `c7188861ca3a65932b61a712592a814fa89163b43d669a64e86873e8b54177e6` ;
+- texte raw : `542f8728dab2b409ecd4290efbc5d311ac2ecec00457f02b6efddacf942f75f3`.
+
+Les empreintes Windows des quatre scripts déclarés sont retrouvées avec leurs fins de ligne CRLF.
+Cette reconstruction ne remplace pas la lecture du manifeste Windows complet et ne refait pas le
+comptage de 1441 tokens. Le message PyTorch est cohérent avec l'usage du seul tokeniseur dans Python ;
+l'inférence locale reste exécutée par Ollama.
+
+### Contrôles et activation
+
+Le validateur exige désormais aussi pour `hors_corpus` une préparation v1, une seule clé `source`,
+un identifiant et un texte non vides ; une préparation ambiguë avec `sources` est refusée.
+Ce contrôle partage la règle déjà appliquée à adversarial, dont le comportement est conservé.
+
+Les règles croisées du schéma existant sont réutilisées : `answerable_proposed: false`,
+`evidence: []`, motif non vide et champs adversarial nuls. Le motif, la question et la justification
+reçus restent intacts. Le programme ne vérifie pas que le motif est juste ni qu'une réponse est absente
+du passage de départ ou du corpus entier. La source reste dans `generation_source_ids` comme
+provenance, sans devenir une preuve positive ou une preuve d'absence.
+
+Le blocage temporaire de `--generate --type hors_corpus` est levé. Les contrôles communs demeurent :
+JSON strict, catégorie/difficulté demandées, déduplication normalisée et un seul appel maximum.
+Une sortie valide structurellement crée un candidat `automatic: passed`, `human: pending`,
+`answerable_confirmed: null`, sans relecteur, note humaine ou points attendus.
+La relecture complète décrite en section 24 reste nécessaire avant toute admission.
+
+Brut, manifeste, candidat ou rejet et erreurs techniques sont tracés par l'orchestrateur existant.
+Aucune réparation ou relance automatique. Les cinq catégories ont maintenant leurs trois modes CLI ;
+cela ne constitue pas une validation sémantique ou l'achèvement du pilote.
+
+### Vérifications exécutées ici et premier essai Windows
+
+**142 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0 : 8 nouveaux tests de validation/traces ;
+l'ancien test de blocage est remplacé par un succès CLI simulé avec un seul appel.
+Textes/provenance et attente humaine, proposition répondable ou preuves positives interdites,
+motif/champs adversarial incohérents, préparation ambiguë, verdict injecté, catégorie/difficulté,
+doublon, rejet brut et sortie tronquée couverts sur des fixtures techniques.
+Compilation et aide CLI contrôlées. Prompt, schéma, client, orchestrateur, corpus, budget, modèle,
+dépendances et RAG inchangés ; aucun vrai tokeniseur, appel réel ou candidat hors corpus obtenu ici.
+
+Sur le Legion, vérifier le dépôt propre puis récupérer et tester :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 142 tests passent, un seul premier run :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id hors_corpus_001 --sources .\data\synthetic\sources\selection_001.json --group 1 --type hors_corpus --difficulty medium
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_001\candidates.jsonl
+```
+
+Le budget est recompté avant l'appel ; un candidat ou un rejet sera conservé. Transmettre le résumé
+et le candidat complet, ou la réponse brute en cas de rejet, avant une nouvelle génération.
+Les préparations existantes ne sont pas écrasées et les autres runs restent conservés.
+
+#94 reste partielle en attente des essais et relectures ; #103 en brouillon avec Mahé/Remy demandés.
+Aucun verdict humain, admission au lot figé, gel, fusion, clôture ou temps réel déclaré ;
+estimation initiale de 7 h inchangée.
+
+
+## 26. #94 — Premier essai hors corpus : question couverte par sa source
+
+### Résultat transmis
+
+Jibril transmet **142 tests Windows réussis** (`0.985s`, `OK`), puis le résumé et le candidat
+complet de `hors_corpus_001` : **1441 HF / 1441 Ollama**, 156 tokens générés, fin `stop`,
+un candidat et aucun rejet automatique. Identifiant `SYN_hors_corpus_001_0001`,
+source `m2-article374529-0004`, validation automatique passée et humaine `pending`.
+Manifeste et traces complets non transmis : ne pas déduire le SHA/état Git, la version exacte du
+prompt ou les autres détails de cette inférence du seul résumé et du budget précédent.
+
+Question conservée : « Quelles conditions doivent être remplies pour que le salarié puisse utiliser
+son compte épargne-temps (CET) pendant son congé sans solde ? »
+Motif proposé : « L'information sur les conditions spécifiques n'est pas fournie dans ce passage. »
+
+### Lecture assistée contre la source figée
+
+Le passage M2 intégral donne déjà les conditions pertinentes : CET mis en place dans l'entreprise,
+utilisation des droits acquis et possibilité de financement prévue par l'accord ayant instauré le CET.
+La question ne précise pas d'autre information manquante. Le motif d'absence est ainsi contredit
+par le passage de départ lui-même : `evidence: []` signifie seulement qu'aucune preuve positive
+n'a été proposée dans ce candidat, pas que le corpus n'en contient pas.
+
+Avis assisté : **ne pas admettre ce candidat en l'état au lot figé comme hors corpus**.
+Le candidat reste intact et humain en attente ; aucune décision humaine, réécriture, réparation,
+requalification ou admission automatique. Cette contre-preuve locale suffit à contester le classement
+proposé ; elle n'est pas une vérification exhaustive d'absence dans le corpus complet.
+Les futurs cas non contredits ainsi exigeront toujours la procédure de relecture de la section 24.
+
+### Suite annoncée avant de nouveaux résultats
+
+Conserver `agent0-hors-corpus-v1` : il demandait déjà d'éviter une question traitable par le passage,
+même conditionnellement. Ce premier essai montre que la consigne n'a pas suffi sur cette source ;
+il ne justifie ni un taux général de qualité ni un filtre lexical présenté comme vérification sémantique.
+Aucun ajout d'exemple juridique ou juge LLM.
+
+Pour compléter la mise au point avec des thèmes distincts, les deux groupes suivants du tirage initial
+sont préannoncés, sans modifier le prompt :
+
+| Ordre | Groupe | Source attendue | Run prévu |
+|---|---:|---|---|
+| 1 | 2 | `m2-article377050-0003` — CSE | `hors_corpus_002` |
+| 2 | 3 | `m2-article374500-0003` — médaille du travail | `hors_corpus_003` |
+
+Identifiants retrouvés par reconstruction du tirage `count=5`, graine `20261018`, sur le corpus
+figé inchangé ; cela ne constitue pas une lecture du manifeste Windows complet.
+Conserver tous les résultats, candidats et rejets, et lire chaque sortie avant la suivante.
+Ces sources déjà utilisées pendant la mise au point ne constituent pas un pilote indépendant #95.
+
+Prochain essai, groupe 2 :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id hors_corpus_002 --sources .\data\synthetic\sources\selection_001.json --group 2 --type hors_corpus --difficulty medium
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_002\candidates.jsonl
+```
+
+Budget recompté avant chaque appel, sans troncature ; les 1441 tokens concernent le premier passage.
+Documentation et journal seulement : aucun code, prompt, validateur, corpus, modèle ou budget modifié,
+aucun test unitaire ou appel réel relancé ici. #94 partielle, #103 en brouillon avec Mahé/Remy demandés ;
+aucun verdict humain, admission, gel, fusion, clôture ou temps réel déclaré. Estimation 7 h inchangée.
+
+
+## 27. #94 — Trois motifs hors corpus contredits par leurs sources et prompt v2
+
+### Série annoncée, résultats conservés
+
+Après le premier essai et la préannonce des deux autres thèmes, Jibril transmet les résumés et
+candidats complets de `hors_corpus_002` (CSE) et `hors_corpus_003` (médaille).
+Le pull affiché avant le CSE avance de `72ea697` à `c54561c`, documentation seulement.
+Les 142 tests Windows réussis (`0.985s`) avaient été transmis avant `001` ; aucun nouveau
+résultat de tests n'est rapporté pour les deux runs suivants.
+
+| Run | Groupe / source | HF / Ollama | Sortie | Fin | Résultat automatique |
+|---|---|---:|---:|---|---|
+| `hors_corpus_001` | 1 / `m2-article374529-0004` | 1441 / 1441 | 156 tokens | stop | 1 candidat, aucun rejet |
+| `hors_corpus_002` | 2 / `m2-article377050-0003` | 1883 / 1883 | 175 tokens | stop | 1 candidat, aucun rejet |
+| `hors_corpus_003` | 3 / `m2-article374500-0003` | 1721 / 1721 | 167 tokens | stop | 1 candidat, aucun rejet |
+
+Les trois propositions ont `answerable_proposed: false`, des preuves positives vides et un motif ;
+leur statut humain reste `pending`. Essais annoncés avec v1, mais manifestes et traces complets non
+transmis : la version exacte, le SHA/état Git et les autres détails de chaque inférence ne sont pas
+déduits des résumés, du pull ou du budget précédent. Tous les résultats restent conservés.
+
+### Lecture assistée des deux nouveaux cas
+
+**CSE.** La question demande les conditions de déclenchement d'une alerte en santé/sécurité ; le motif
+déclare ces informations absentes du passage. Celui-ci énumère pourtant l'atteinte aux droits, notamment
+à la santé physique/mentale, le danger grave et imminent, puis le risque grave pour la santé publique
+ou l'environnement. La question générale ne distingue pas un renseignement manquant. Le motif est
+contredit par cette source, sans prétendre que le passage détaille toutes les formalités possibles.
+
+**Médaille.** La question demande les conditions pour les salariés résidant à l'étranger ; le motif
+déclare ces informations absentes. Le passage distingue les situations de travail à l'étranger selon
+l'employeur ou la structure, puis une attribution exceptionnelle pour d'autres établissements :
+résidence à l'étranger, conditions d'ancienneté de services prévues par la réglementation et contribution
+au bon renom de la France. Il mentionne aussi des exclusions. Les seuils d'ancienneté ne sont pas
+détaillés, mais ce manque ne permet pas de déclarer absentes toutes les conditions demandées par
+cette formulation générale. Conserver la distinction entre lieu de résidence et lieu de travail.
+
+Comme pour le CET, **avis assisté de ne pas admettre ces deux cas en l'état comme hors corpus**.
+Les candidats restent intacts et humains en attente ; aucune décision humaine ou requalification
+automatique. Dans cette série de mise au point, les trois motifs d'absence sont contredits par leurs
+sources. Ce constat ne fournit ni un taux général de qualité ni une validation exhaustive du corpus.
+Une liste `evidence: []` n'établit pas une absence documentaire.
+
+### Ajustement général, sans nouvelle règle de validation
+
+Prompt `agent0-hors-corpus-v2` : demander une information différente et précisément délimitée,
+sans transformer les règles, conditions, cas, exceptions ou procédures déjà décrits en questions
+déclarées hors corpus. Une demande générale sur les conditions du sujet déjà traité ne définit pas
+une information différente. `generation_reason` doit distinguer le contenu du passage et
+l'information visée ; `out_of_corpus_reason` doit nommer cette information et rappeler que son absence
+dans tout le corpus reste à vérifier. Ces justifications sont elles-mêmes des propositions à relire.
+
+Aucun exemple juridique, question de remplacement, filtre lexical ou second juge Qwen ajouté.
+Le programme ne teste pas sémantiquement ces consignes : schéma/validateur inchangés, source complète,
+absence seulement proposée, relecture du corpus complet toujours requise. Les anciens candidats
+et le prompt v1 de leurs traces ne sont pas réécrits.
+
+**142 tests réussis ici**, Python 3.12.14 / Pydantic 2.14.0 (`0.334s`), sans nouveau test de texte
+de consigne ajouté. Compilation contrôlée ; objets prompts simple/reformulation/multi/adversarial
+identiques avant/après sur les mêmes fixtures techniques. Ces tests ne mesurent pas l'efficacité
+sémantique de v2. Client, orchestrateur, schéma, validateur, corpus, modèle, budget, dépendances et RAG
+inchangés. Aucun vrai tokeniseur, Ollama ou nouvelle question générée ici.
+
+Contrôle préparatoire reconstruit sur la source CET intégrale, 318 caractères :
+prompt v2 `medium` = `1978ece8defbf604a082009d7e3a2ce796191ee3b105dbd1ff3a3f18ca4eec64`.
+Manifeste Windows complet non lu ; aucun budget réel v2 encore mesuré.
+
+### Comparaison prévue avant résultats
+
+Conserver v2 pour trois essais dans le même ordre : `hors_corpus_004` groupe 1 CET,
+`hors_corpus_005` groupe 2 CSE, `hors_corpus_006` groupe 3 médaille. Lire chaque sortie avant
+la suivante, garder tous les candidats/rejets et ne pas ajuster la consigne entre ces trois essais.
+Comparaison sur des sources utilisées pour la mise au point, pas un pilote indépendant #95.
+
+Sur le Legion, dépôt propre puis mise à jour et tests :
+
+```powershell
+git status --short --branch
+git pull --ff-only
+.\.venv-agent0\Scripts\python.exe -m unittest discover -s scripts/synthetic -p "test_*.py" -v
+```
+
+Si les 142 tests passent, premier essai v2 sur la même source que `001` :
+
+```powershell
+.\.venv-agent0\Scripts\python.exe .\scripts\synthetic\generate.py --generate --run-id hors_corpus_004 --sources .\data\synthetic\sources\selection_001.json --group 1 --type hors_corpus --difficulty medium
+Get-Content -Raw -Encoding UTF8 .\data\synthetic\hors_corpus_004\candidates.jsonl
+```
+
+Budget recompté avant l'appel ; les 1441 tokens concernent v1 sur ce passage.
+#94 partielle, #103 en brouillon avec Mahé/Remy demandés ; aucun verdict humain, admission,
+gel, fusion, clôture ou temps réel déclaré. Estimation initiale de 7 h inchangée.
+
+
+## 28. #94 — Bilan comparatif hors corpus : limite persistante de v2
+
+### Retours de la série prévue
+
+Jibril transmet **142 tests Windows réussis** (`1.057s`, `OK`) avant `hors_corpus_004`,
+puis les résumés et candidats complets de `004`, `005` et `006`, dans l'ordre prévu.
+Chaque run se termine par `stop`, avec un candidat, aucun rejet automatique et humain `pending`.
+
+| Run | Groupe / source | HF / Ollama | Sortie | Lecture assistée |
+|---|---|---:|---:|---|
+| `hors_corpus_004` | 1 / `m2-article374529-0004` | 1528 / 1528 | 184 tokens | Conditions CET déjà présentes ; question proche de `001` |
+| `hors_corpus_005` | 2 / `m2-article377050-0003` | 1970 / 1970 | 222 tokens | « Conséquences légales » ambigu ; examen conjoint déjà évoqué |
+| `hors_corpus_006` | 3 / `m2-article374500-0003` | 1808 / 1808 | 185 tokens | Attribution exceptionnelle explicitement décrite |
+
+Essais annoncés avec v2 ; manifestes et traces complets non transmis. Ne pas déduire la provenance
+Git, l'état local, la version exacte du prompt ou du serveur de chaque inférence des seuls résumés
+et des références antérieures. Aucun nouveau résultat de tests rapporté après celui précédant `004`.
+
+### Ce que change v2 sur les trois mêmes sources
+
+| Thème | Première série annoncée v1 | Seconde série annoncée v2 | Conclusion sur ces sorties |
+|---|---|---|---|
+| CET | `001` demande les conditions d'utilisation | `004` reprend cette demande générale | Pas de correction du classement sur cet exemple |
+| CSE | `002` demande les conditions de l'alerte | `005` demande ses « conséquences légales » | Angle différent, absence toujours non établie |
+| Médaille | `003` demande les conditions à l'étranger | `006` cible l'attribution exceptionnelle | Demande encore couverte par la source |
+
+**CET.** La justification de `004` reconnaît la possibilité prévue par l'accord, puis prétend que
+les conditions exactes ne sont pas précisées. La question ne délimite pourtant aucun renseignement
+différent de ceux fournis : CET mis en place, droits acquis et possibilité prévue par l'accord.
+La proximité avec `001` illustre aussi la limite d'une déduplication lexicale sur des paraphrases.
+
+**CSE.** `005` affirme qu'aucune conséquence légale n'est donnée. Le passage mentionne pourtant,
+pour le risque grave de santé publique/environnement visé, un examen conjoint de la situation.
+La question pourrait viser d'autres conséquences, notamment des sanctions, mais elle ne le dit pas.
+Ne pas la réécrire ni lui attribuer cette intention pour sauver le classement. Cas ambigu,
+motif trop catégorique, absence dans le corpus complet non vérifiée.
+
+**Médaille.** `006` demande précisément les conditions d'attribution exceptionnelle pour les salariés
+résidant à l'étranger. Le paragraphe commençant par « À titre exceptionnel » fournit ce cas :
+résidence à l'étranger et travail dans d'autres établissements que ceux énumérés, conditions
+d'ancienneté de services prévues par la réglementation et contribution au bon renom de la France.
+Les seuils d'ancienneté ne sont pas chiffrés ici ; cela ne rend pas absentes les conditions énoncées.
+La justification et le motif de `006` sont donc contredits par la source.
+
+Avis assisté : **ne pas admettre `004`/`006` en l'état comme hors corpus ; conserver `005` non confirmé
+et à clarifier lors de la relecture**. Aucun de ces retours ne confirme un cas hors corpus.
+Les six candidats restent intacts et humains en attente ; aucune décision humaine, réécriture,
+réparation ou requalification automatique. Les conclusions portent sur le contenu du corpus figé.
+
+### Conclusion technique et suite proposée
+
+Les appels, comptages et contrôles de structure fonctionnent sur ces sorties. La génération ne
+vérifie pas la fidélité des motifs d'absence ni le classement sémantique. V2 change un angle de question
+mais n'apporte pas de cas hors corpus confirmé dans cette comparaison. Ces trois sources utilisées
+pour la mise au point ne permettent pas de calculer un taux général, ni de conclure sur d'autres modèles.
+
+Conserver v2 et les six runs. **Recommandation : terminer cette mise au point de prompt, sans lancer
+de nouvelle série de retouches à partir de ces mêmes exemples.** Aucun verrou supplémentaire ou
+désactivation CLI n'est appliqué. Schéma, validateur, prompt, budget, corpus, modèle et RAG inchangés
+dans ce bilan ; aucun test unitaire ou appel réel relancé ici.
+
+La suite utile est la préparation de la relecture indépendante prévue en #95 :
+conserver ces candidats à part, tracer les contre-preuves et les incertitudes, et signaler explicitement
+qu'aucun hors corpus n'est confirmé dans les retours examinés. Les objectifs de génération ne sont
+pas des quotas d'acceptation ; les candidats non confirmés ne servent pas à calculer la qualité du lot.
+La relecture du code avant fusion et la vérification du corpus complet avant admission restent requises.
+Les sorties déjà utilisées pour ajuster le prompt ne constituent pas le pilote indépendant.
+
+Si la construction hors corpus est reprise, revoir d'abord la méthode pour viser des besoins
+documentaires précis et distincts, avec périmètre et protocole de vérification explicites, avant un
+nouvel incrément. Cette orientation est une proposition, pas un changement activé du générateur
+ou du protocole officiel. Aucun nouveau lot, candidat de remplacement ou verdict humain créé ici.
+
+#94 reste partielle, #103 en brouillon avec Mahé/Remy demandés. #95 relue pour ce bilan, non modifiée.
+Aucun candidat admis au lot figé, gel, fusion, clôture ou temps réel déclaré ; estimation initiale
+de 7 h inchangée.
+
+
+## 29. #95 — Préparer la relecture des essais, sans admission
+
+Le 20 octobre 2026, un [support de préparation à la relecture](agent0_relecture/README.md) est créé
+sur une branche documentaire dédiée, depuis le head `36bb4e05094dbc68d1975f1d8ea01eac50de166b` de #103.
+Il inventorie 18 runs rapportés : 15 candidats en attente et 3 rejets automatiques.
+14 formulations sont disponibles ; celle de multi_passage_003 reste à recueillir.
+Les questions/sources, observations assistées et grille humaine vierge sont séparées.
+Huit passages M2 sont recopiés depuis les fichiers versionnés avec leurs empreintes, sans modification.
+
+Les originaux complets des runs et sélections manquent encore ; une procédure d'archive Windows
+hors Git est fournie. Ce support permet une prélecture, sans authentifier des fichiers non reçus
+ou attribuer des verdicts humains. Les essais de mise au point restent distincts du futur pilote
+de 25 candidats et ne servent pas à calculer un taux général de qualité.
+
+Aucun générateur, schéma, validateur, modèle, budget, corpus ou RAG modifié ; aucun test unitaire,
+appel réel ou gel exécuté ici. #94/#95 partielles, #103 en brouillon ; relecture du code et relecture
+sémantique indépendantes nécessaires. Estimations initiales 7 h (#94) et 4 h (#95) inchangées,
+aucun temps réel déclaré. La nouvelle PR documentaire dépend de #103 et cible dev.
+
+
+## 30. #95 — Originaux reçus et vérification technique de l'archive
+
+L'archive `agent0_relecture_20261020.zip` est reçue le 20 octobre 2026. Son SHA-256
+`e6cb410c6c8cbcdd9fb4f5392cab9fc41a32f74fe48dd3c49b0121326eb76f74` correspond à celui affiché sur le Legion.
+Les 93 fichiers attendus sont présents : cinq par run et trois sélections. Les 18 runs contiennent
+15 candidats, tous humains en attente, et 3 rejets automatiques. Les 15 questions sont désormais
+disponibles ; celle de multi_passage_003 et les extraits précédemment manquants sont complétés
+depuis les originaux. Les 14 formulations déjà recopiées sont conformes.
+
+Le [rapport de vérification](agent0_relecture/verification_archive.md) détaille la comparaison des
+sélections/sources avec le corpus figé, la reconstruction des 18 prompts et validations historiques,
+129 déclarations d'empreintes de code retrouvées avec CRLF dans 13 commits/21 blobs,
+153 empreintes d'antécédents de déduplication concordantes et les égalités HF/Ollama rapportées.
+Aucun appel modèle ou vrai tokeniseur rejoué ; ce contrôle porte sur la cohérence des données
+et déclarations reçues, sans attestation indépendante de leur exécution sur la machine.
+
+Les originaux, leurs questions et les verdicts pending sont conservés. La grille renseigne les
+résultats techniques séparément et garde tous les champs humains vierges. La relecture du sens,
+des catégories, des preuves et du corpus complet pour hors corpus reste nécessaire. Ces essais
+de mise au point ne constituent toujours pas le pilote indépendant de #95.
+
+PR #106 documentaire, dépendante de #103 ; aucun générateur, schéma, validateur, modèle, budget,
+corpus, RAG ou Gold Set modifié. Aucune évaluation du RAG, génération, fusion, clôture ou admission.
+Pas de tests unitaires relancés ; contrôles sur les originaux exécutés. Estimations initiales inchangées,
+aucun temps réel déclaré.
