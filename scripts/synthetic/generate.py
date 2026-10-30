@@ -1,4 +1,4 @@
-"""Préparer ou générer un candidat Agent0 Light traçable (#93)."""
+"""Préparer ou générer un candidat Agent0 Light traçable (#93/#94)."""
 
 import argparse
 import hashlib
@@ -80,15 +80,36 @@ def preparer(selection: dict, empreinte: str, groupe: int, categorie: str,
     if type(groupe) is not int or not 1 <= groupe <= len(selection["groupes"]):
         raise ErreurPreparation("Numéro de groupe hors sélection (numérotation à partir de 1)")
     passages = selection["groupes"][groupe - 1]
-    if len(passages) != 1:
-        raise ErreurPreparation("Simple et reformulation exigent un groupe d'un seul passage")
-    prompt = prompts.preparer_prompt(passages[0], categorie, difficulte)
+    if categorie == "multi_passage":
+        if len(passages) != 2:
+            raise ErreurPreparation("Multi-passage exige un groupe de deux passages")
+        prompt = prompts.preparer_prompt_multiple(passages, difficulte)
+        sources = {"sources": passages}
+        version = "agent0-preparation-v2"
+    elif categorie == "adversarial":
+        if len(passages) != 1:
+            raise ErreurPreparation("Adversarial exige un groupe d'un seul passage")
+        prompt = prompts.preparer_prompt_adversarial(passages[0], difficulte)
+        sources = {"source": passages[0]}
+        version = "agent0-preparation-v1"
+    elif categorie == "hors_corpus":
+        if len(passages) != 1:
+            raise ErreurPreparation("Hors corpus exige un groupe d'un seul passage de départ")
+        prompt = prompts.preparer_prompt_hors_corpus(passages[0], difficulte)
+        sources = {"source": passages[0]}
+        version = "agent0-preparation-v1"
+    else:
+        if len(passages) != 1:
+            raise ErreurPreparation("Simple et reformulation exigent un groupe d'un seul passage")
+        prompt = prompts.preparer_prompt(passages[0], categorie, difficulte)
+        sources = {"source": passages[0]}
+        version = "agent0-preparation-v1"
     octets_prompt = json.dumps(prompt, ensure_ascii=False, sort_keys=True).encode("utf-8")
-    return {"format": "agent0-preparation-v1", "statut": "prompt_prepare",
+    return {"format": version, "statut": "prompt_prepare",
             "type": categorie, "difficulty_target": difficulte,
             "selection": {**{c: selection[c] for c in ("format", "algorithme", "mode", "graine", "code")},
                           "sha256_fichier": empreinte, "groupe": groupe},
-            "corpus": selection["corpus"], "source": passages[0],
+            "corpus": selection["corpus"], **sources,
             "prompt": prompt, "sha256_prompt": hashlib.sha256(octets_prompt).hexdigest(),
             "ollama_appele": False, "matrice_lue": False, "budget_tokens_verifie": False}
 
@@ -149,8 +170,11 @@ def main(argv=None) -> int:
             corpus.enregistrer_manifeste(preparation, args.output)
             resultat = {c: preparation[c] for c in ("statut", "type", "difficulty_target", "code",
                         "sha256_prompt", "ollama_appele", "matrice_lue", "budget_tokens_verifie")}
-            resultat.update({"passage_id": preparation["source"]["passage_id"],
-                             "version_prompt": preparation["prompt"]["version"],
+            if args.type == "multi_passage":
+                resultat["source_ids"] = [p["passage_id"] for p in preparation["sources"]]
+            else:
+                resultat["passage_id"] = preparation["source"]["passage_id"]
+            resultat.update({"version_prompt": preparation["prompt"]["version"],
                              "output": str(args.output.resolve())})
             if args.prepare_qwen:
                 resultat.update({"generation_appelee": False, "ollama": {
