@@ -4,6 +4,10 @@ Responsable : Vaneck DAGAR. Soutien : Maïmouna SIGNATE. Référent de la chaîn
 
 **Statut** proposé le 28 octobre 2026 (étape 1 de #111), à valider par Jibril. Rien n'est implémenté.
 
+Précisions du 30 octobre après relecture de Jibril avec l'assistance de Codex : état prêt,
+format des erreurs, conservation des traces et configuration du modèle. La validation porte
+sur le contrat documentaire ; aucun serveur ou écran n'est testé par cette relecture.
+
 ## 1. Objet
 
 La démonstration du volet B a trois parties :
@@ -48,21 +52,29 @@ sur des sorties enregistrées (étape 2, 04/11), puis branchée sur la vraie cha
   "pret": true,
   "index": {"verifie": true, "nb_passages": 4240, "sha256_index": "2ec45586…"},
   "encodeur_charge": true,
-  "ollama": {"joignable": true, "version": "0.40.5", "modele": "qwen2.5-7b-instruct:q4_k_m-local", "digest": "6ec54444…"},
+  "tokeniseur_disponible": true,
+  "ollama": {"joignable": true, "verifie": true, "version": "0.40.11", "modele": "qwen2.5-7b-instruct:q4_k_m-local", "digest": "6ec54444…"},
   "occupe": false,
   "message": null
 }
 ```
 
-`pret` vaut `false` si l'index est refusé, si E5 n'est pas chargé ou si Ollama ne répond pas ; `message` en donne la
-cause en français. `ollama` reprend les champs de `verifier_ollama()`, sans le gabarit.
+`pret` exige un index vérifié, E5 chargé, le tokeniseur Qwen disponible en cache hors ligne et
+les contrôles de `verifier_ollama()` réussis pour le modèle configuré : nom, digest, GGUF qwen2
+Q4_K_M et gabarit. Pour le Legion, la version cible est Ollama 0.40.11 (décision #107 du 30/10) ;
+un écart rend la chaîne indisponible jusqu'à vérification de sa configuration.
+`message` donne en français la cause de toute indisponibilité. Aucun appel de génération n'est
+nécessaire à ce contrôle. `ollama` sélectionne les champs utiles de `verifier_ollama()`, sans
+gabarit, et la couche ajoute `joignable` et `verifie`. Ces deux booléens ne sont pas des champs
+renvoyés directement par le helper. Les empreintes abrégées de cet exemple seront complètes
+dans les réponses réelles. `occupe` décrit séparément l'appel déjà en cours : POST renvoie alors 409.
 
 ## 5. `POST /api/question`
 
 **Entrée**
 
 ```json
-{"question": "Quelles sont les obligations légales de l'employeur en période de forte chaleur ?"}
+{"question": "Quelles sont les obligations légales de l'empoyeur en période de forte chaleur ?"}
 ```
 
 **Sortie** (code HTTP 200, y compris pour une abstention ou une sortie invalide)
@@ -70,7 +82,7 @@ cause en français. `ollama` reprend les champs de `verifier_ollama()`, sans le 
 ```json
 {
   "version_contrat": "b1-demo-v1",
-  "question": "Quelles sont les obligations légales de l'employeur en période de forte chaleur ?",
+  "question": "Quelles sont les obligations légales de l'empoyeur en période de forte chaleur ?",
   "statut": "reponse_citee",
   "reponse": "… [P1][P5] …",
   "citations": ["[P1]", "[P5]"],
@@ -109,22 +121,25 @@ cause en français. `ollama` reprend les champs de `verifier_ollama()`, sans le 
 ```
 
 Les points de suspension et `duree_totale_s` sont illustratifs. Les autres valeurs viennent de l'essai Q036 de la #85
-et de `front/public/index/passages_m2.json` (passage d'indice 1085). La question est celle de Q036, sans sa faute de
-frappe : la démonstration accepte n'importe quel texte.
+et de `front/public/index/passages_m2.json` (passage d'indice 1085). La question historique Q036
+est conservée mot pour mot, y compris « empoyeur ». Les fixtures issues de Q036/Q003 gardent
+aussi les réponses, textes, références et mesures originales ; seule leur structure est adaptée.
+L'exemple d'état de la section 4 décrit la configuration cible du 30/10, pas la version d'Ollama
+de l'essai historique. Les mesures historiques ne sont jamais présentées comme une nouvelle exécution.
 
 **Provenance de chaque champ**
 
 | Champ | Source dans la #85 |
 |---|---|
 | `statut` | `generer_reponse()["statut"]`, ou `erreur_preparation` (section 6) |
-| `reponse` | `reponse_brute`, non corrigée ; `null` si aucune génération n'a eu lieu |
+| `reponse` | `reponse_brute`, non corrigée ; `null` si aucun texte de réponse n'a été reçu |
 | `citations`, `citations_invalides`, `verifications` | `validation_citations` |
 | `sources` | les cinq `resultats` de `recuperer_passages`, dans l'ordre, avec la référence `[Pk]` de `construire_contexte` ; `citee` vaut `true` si la référence figure dans `citations` |
 | `modele` | `ollama.modele` et `ollama.digest` |
 | `mesures.ollama` | `mesures_ollama`, en nanosecondes comme Ollama les renvoie |
-| `mesures.duree_totale_s` | mesurée par la couche, de la réception de la question à l'envoi de la réponse |
+| `mesures.duree_totale_s` | mesurée par la couche avec une horloge monotone, de la réception de la question à la préparation du JSON de réponse ; hors chargements au démarrage et transport HTTP |
 
-Les cinq passages sont toujours renvoyés, cités ou non, avec leur texte : l'interface peut ainsi ouvrir le passage d'une
+Après une récupération réussie, les cinq passages sont renvoyés, cités ou non, avec leur texte : l'interface peut ainsi ouvrir le passage d'une
 citation et montrer ceux qui ont été consultés. Le score sert à l'affichage ; comme dans la #85, ce n'est ni une
 probabilité ni une preuve que le passage justifie la réponse.
 
@@ -136,7 +151,7 @@ probabilité ni une preuve que le passage justifie la réponse.
 | `abstention_modele` | phrase d'abstention exacte | encadré d'abstention distinct, comme au volet A, puis les passages consultés sur demande |
 | `sortie_invalide` | référence mal formée, absente, ou abstention mêlée | avertissement « réponse non conforme », réponse brute repliée, passages consultés |
 | `erreur_technique` | génération incomplète ou comptes de tokens incohérents | message d'erreur et bouton « Réessayer » ; réponse brute repliée si elle existe |
-| `erreur_preparation` | exception levée avant toute réponse : `ErreurRecuperation` (question vide ou trop longue pour E5) ou `ErreurGeneration` (Ollama injoignable, modèle différent, budget de tokens dépassé) | message d'erreur et bouton « Réessayer » ; `reponse` et `sources` peuvent être vides |
+| `erreur_preparation` | exception sans résultat structuré de génération : `ErreurRecuperation` (question trop longue pour E5) ou `ErreurGeneration` (Ollama injoignable, modèle différent, budget dépassé ou échec HTTP) | message d'erreur et bouton « Réessayer » ; champs conservés selon les règles ci-dessous |
 
 `erreur_preparation` est le seul statut ajouté par la couche. Il couvre les cas où `main()` affiche « Récupération
 refusée » ou « Génération impossible » et renvoie le code 1. Son champ `erreur` porte alors le type et le message de
@@ -146,14 +161,35 @@ l'exception, par exemple :
 {"type": "ErreurGeneration", "message": "Ollama /api/tags : …"}
 ```
 
+**Structure stable des cinq statuts.** Toutes les clés de la section 5 sont présentes.
+`citations`, `citations_invalides` et `sources` sont toujours des listes, vides si leurs données
+ne sont pas disponibles. Les deux booléens de `verifications` restent à `false`. `reponse`
+vaut `null` en l'absence de texte reçu ; `modele` vaut `null` si son identité n'a pas été vérifiée.
+`mesures` conserve `duree_totale_s` et `ollama`, ce dernier valant `null` sans mesures reçues.
+Sur `erreur_technique` ou `erreur_preparation`, `erreur` contient un type et un message ; elle
+vaut `null` pour les autres statuts. En cas de génération retournée comme `erreur_technique`,
+les motifs de `erreurs_techniques` alimentent ce message. Une validation structurelle réussie
+ne doit jamais masquer ce statut d'erreur. Les sources déjà récupérées sont conservées même
+si la génération échoue. L'absence de réponse reçue, notamment après expiration du délai HTTP,
+ne prouve pas qu'Ollama n'a jamais commencé le calcul ; aucune relance automatique n'est prévue.
+
 **Codes HTTP.** 200 pour les cinq statuts ; 400 si le corps n'est pas un JSON avec une question non vide ; 409 si une
 question est déjà en cours.
 
+Pour 400 et 409, le JSON minimal est `version_contrat` et `erreur` (`type`, `message`).
+L'interface traite d'abord le code HTTP avant de lire une réponse complète de la section 5.
+Le refus d'un appel concurrent est aussi assuré par la couche locale, même avec deux onglets ;
+le bouton désactivé dans un seul onglet ne suffit pas.
+
 ## 7. Durées à prévoir dans l'interface
 
-D'après les essais de la #85, la réponse arrive en environ 46 s au premier appel (dont 21,9 s de chargement de Qwen) et
-en quelques secondes ensuite, quand le modèle reste chargé (`keep_alive: 30m`). L'interface affiche donc un état « réponse
-en cours de rédaction » sans limite de temps inférieure au délai de 300 s de `generation.py`.
+Les deux essais de la #85 rapportent 46,2 s pour Q036 (dont 21,9 s de chargement de Qwen),
+puis 1,16 s pour l'abstention Q003. Ce sont des durées Ollama sur des entrées et sorties différentes,
+pas une promesse de latence générale ou une mesure de la chaîne entière. `keep_alive: 30m`
+peut éviter un rechargement. L'interface affiche un état d'attente pendant les différentes étapes ;
+son délai laisse terminer la récupération, puis l'appel HTTP de génération (300 s maximum dans
+`generation.py`), avec une marge pour le traitement local. Elle ne présente pas la durée de Q003
+comme le temps attendu de toutes les réponses suivantes.
 
 ## 8. Ce dont l'étape 2 a besoin
 
@@ -176,7 +212,13 @@ en cours de rédaction » sans limite de temps inférieure au délai de 300 s de
 4. L'emplacement du code (section 9).
 5. L'envoi des deux sorties enregistrées de Q036 et Q003, pour la maquette.
 
+**Point 5 confirmé le 29/10.** Jibril a transmis les deux JSON complets à Vaneck par Discord,
+comme consigné dans la conversation de #121. Ils restent hors Git. Les quatre choix techniques
+sont relus dans cette version précisée ; leur mise en œuvre et leur contrôle viendront dans #111.
+
 Hors de ce contrat : l'état B2 et son seuil S (protocole 06, PR #108), et le choix du modèle adapté (#107). Si la vidéo
 montre l'avant et l'après adaptation, le champ `modele` indique lequel a répondu ; le format ne change pas. La PR #119
 rend le modèle et son digest paramétrables dans `verifier_ollama()`, avec ceux de #31 par défaut : une fois fusionnée,
-la couche pourra désigner le modèle adapté sans toucher à la chaîne.
+la couche pourra désigner le modèle adapté sans toucher à la chaîne. Le couple nom/digest
+est fixé par la configuration locale du serveur et n'est pas fourni librement par le navigateur.
+La baseline de démonstration ne reçoit pas silencieusement le seuil B2 de la mesure.
