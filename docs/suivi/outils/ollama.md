@@ -16,7 +16,7 @@ Chaque membre tient sa propre ligne à jour.
 | Jibril | 0.34.4 | Windows | GPU NVIDIA, Qwen2.5-7B Q4_K_M (PR #41) |
 | Rémy | à compléter | à compléter | |
 | Maïmouna | à compléter | à compléter | |
-| Mahé | à compléter | à compléter | |
+| Mahé | non installé | macOS 27.0.1, arm64 | la mesure de #52 s'exécute sur le Legion ; la faisabilité de l'adaptation sur Mac passe par MLX (PR #109) |
 
 ## Mise en place
 - Temps avant le premier résultat utile :

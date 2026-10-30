@@ -1,6 +1,16 @@
 # Agent0 Light : génération synthétique locale
 
-## Synthèse au 29 octobre 2026
+## Synthèse au 30 octobre 2026
+
+**Périmètre livré, décision de Mahé du 30 octobre dans [#13](https://github.com/datatigersNLP/data_tigers_nlp/issues/13).**
+Le livrable conserve le socle intégré (#99 à #101), les catégories de #103 et le support de
+relecture de #106, à faire relire et fusionner pour le 6 novembre. Les tickets #96, #97 et #98
+sortent du périmètre livré ; l'évaluation synthétique et la boucle ciblée deviennent des suites
+possibles à exposer dans le rapport. Cette décision reste révisable au Weekly 8 du 4 novembre.
+L'exception proposée pour #96 du 13 au 17 novembre exige que la mesure après soit terminée
+le 12 novembre et que Jibril ait de la marge ; aucun lancement n'est programmé par cette note.
+Le pilote indépendant de 25 candidats et le gel d'un Challenge Set ne sont pas livrés.
+Les sections historiques ci-dessous conservent le plan et les résultats de chaque date.
 
 Les cinq catégories sont disponibles : simple, reformulation, multi-passage, piège et hors corpus.
 Les incréments #91 à #93 sont intégrés dans dev ; #94 et le support #95 restent dans #103/#106.
@@ -28,10 +38,12 @@ Les 15 candidats restent en attente humaine ; aucun hors corpus n'est confirmé.
 été ajustés sur trois fiches : ces essais ne constituent pas un benchmark indépendant.
 Les runs historiques, dont l'affirmation `adversarial_001`, restent intacts.
 
-**Décisions ouvertes avant un pilote.** Signaux de proximité et de comparaison à risque ; méthode
-hors corpus et contre-preuves ; maintien ou report de la suite Agent0 (#13). Si le pilote est
-maintenu, figer prompts et commit avant génération sur de nouvelles fiches, puis faire relire et
-figer le lot avant toute réponse du RAG (#95). Aucun quota d'acceptation forcé.
+**Travaux reportés avant tout futur pilote.** Signaux de proximité et de comparaison à risque ;
+méthode hors corpus et contre-preuves ; relecture humaine indépendante des cas. Si le pilote
+est repris par décision explicite, figer prompts et commit avant génération sur de nouvelles
+fiches, puis faire relire et figer le lot avant toute réponse du RAG. Aucun quota d'acceptation forcé.
+Fusionner les outils et le support de relecture ne valide aucun candidat. Les décisions et les
+points attendus restent vierges tant qu'aucune relecture humaine effective n'est consignée.
 
 **Traçabilité.** [Note du 29 octobre](../journal/2026-10-29_agent0_light_94.md).
 La correction des extraits du 24 octobre figure dans le

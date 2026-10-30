@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 25 octobre 2026, sessions 1 à 41 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 27 octobre 2026, sessions 1 à 44 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1218,6 +1218,12 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - Courriel de relance de l'enseignant (étape 1) rédigé pour Mahé, qui l'envoie.
 - Calendrier resserré, après l'avancement de la soutenance au lundi 30/11 annoncé par Mahé : 57 étapes, projet terminé le vendredi 20/11, révision et entraînement ensuite, point d'arrêt de l'adaptation le 12/11.
 - GitHub : jalon J4 au 30/11 ; échéances corrigées dans #49, #52, #107, #111, #113 et #114 ; #52 revenu en J3 ; 13 commentaires, dont les ordres du jour des Weekly 7 à 13 ; #49 et la fin d'Agent0 soumis au Weekly 7.
+- #110 fusionnée, après l'approbation de Jibril sur sa tête.
+- #100 et #101 réapprouvées, puis annulées automatiquement par GitHub : la base mémorisée de ces PR est antérieure à la fusion de la #99. « Update branch » est demandé à Jibril, puisque nous ne poussons pas sur la branche d'un autre membre.
+- #108 : les cinq remarques de la revue de Jibril traitées (valeurs non finies refusées avec une régression, population commune des comparaisons appariées, valeur complète de S, conditions pour confondre T et le modèle de #31, licence du CDTN).
+- #115 : format des exemples d'adaptation proposé à Remy, vérifié dans le code de mlx-lm 0.32.2.
+- PR #116 : lignes de Mahé dans les fiches GitHub CLI, assistants d'IA et Ollama, limitées aux faits vérifiables.
+- Suivi : fermeture de #12 par Jibril reportée (Weekly 6 non tenu, consigné dans le ticket), détectée par le contrôle d'alignement.
 
 **Mesures exécutées.**
 - Seuil S : 479 variantes du CDTN, issues de 103 requêtes, dont 24 sous le seuil ; intervalle à 95 % par rééchantillonnage des requêtes, de 0,8464 à 0,8653.
@@ -1226,6 +1232,8 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 - #49 : trois empreintes du protocole 05 retrouvées sur les fichiers reçus le 14/10.
 - Ollama, au tag `v0.40.5` : `errAdaptersUnsupported` dans `server/create.go` ; la page du Modelfile ne mentionne plus `ADAPTER`.
 - Calendrier contrôlé par script : ordre chronologique, dépendances antérieures, aucune échéance le 11/11, aucune production après le 20/11.
+- Tests d'Agent0 sur le résultat des fusions avec `dev`, calculé par `git merge-tree` : 44 réussis pour la #100, 98 pour la #101.
+- Seuil S recalculé avec le script corrigé : fichier identique octet par octet, même empreinte. La mutation qui retire le contrôle des NaN est détectée.
 
 **Résultats retenus.**
 - S en fp32 dépasse de 0,0005 le seuil du site, calculé en q8 ; l'écart reste dans l'intervalle d'incertitude.
@@ -1240,14 +1248,13 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Ce que l'équipe a validé, et par qui.**
 - Lancement des tâches demandé par Mahé BEGNIS.
 - Le témoin T reste à valider en relecture de la #108.
+- Revue de la #108 par Jibril BENSALEM : principe du témoin approuvé, cinq corrections demandées, toutes faites ; relecture redemandée.
 
 **Temps d'appropriation constaté.**
 - Non relevé.
 
 **Difficultés rencontrées.**
 - Le dépôt est sur un Bureau synchronisé par iCloud : 10 309 fichiers du `.venv` étaient déchargés. Les imports ont été ralentis, puis le premier calcul de S a échoué sur un délai de lecture. Les fichiers ont été rapatriés par lecture, sans rien modifier.
-
----
 
 ### Session 43, 26 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
 
@@ -1270,6 +1277,60 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Temps d'appropriation constaté.** Non relevé.
 
 **Difficultés rencontrées.** L'environnement initial de PyTorch ne contenait pas CUDA. Les avertissements sur le comptage FLOP de Triton et la redirection des processus n'ont pas empêché les tests GPU exécutés par Jibril. Une exécution terminée et des paramètres tous sur CUDA n'établissent pas la résidence physique en VRAM sous WDDM ; les compteurs mémoire et les durées ont empêché de conclure à tort que le montage tenait dans 8 Gio.
+
+### Session 44, 27 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Bilan du dépôt, le matin puis l'après-midi ; revues de la #100, de la #118 et de la #120 ; script de mesure du volet B ; fusion de la #109 ; retour sur le premier jet des supports de J3 ; préparation du Weekly 7. La session 43, de Jibril (26 octobre), est dans la PR #118.
+
+**Produit.**
+- PR #119 : script de mesure du protocole 06 (`scripts/rag/mesure.py`) et ses tests. `generation.py` prend le modèle et le digest en paramètres optionnels, ceux de #31 par défaut.
+- #100 réapprouvée sur `f8deda3`, puis fusionnée par Jibril. #101 approuvée sur `f182489`, après sa mise à jour avec `dev` : 98 tests réussis sur le résultat de la fusion.
+- Relecture technique de la #118, la faisabilité sur le Legion : méthode et chiffres vérifiés, proposition du Mac soutenue. Approuvée sur `0d26e89` une fois passée en « prête » par Jibril.
+- Commentaires sur #8 (relance de l'enseignant abandonnée) et sur #13 (décision sur la machine pour le Weekly 7).
+- #109 fusionnée par Mahé après l'approbation de Remy sur `a0bceb7`.
+- Revue de la #120, la session de Remy du même jour : modifications demandées, dont la renumérotation en 45 et le rétablissement du bilan historique de la section 4.
+- Retour sur le premier jet des supports de J3 (#112) : 16 corrections demandées, chacune avec sa source dans le dépôt.
+- #117 mise à jour avec `dev` : sessions 42, 43 et 44 remises dans l'ordre, un seul trait avant la section 4.
+- Complément sur #13 : plafond mémoire du Mac, changement de système depuis la #109, fichiers de `data/volet_b` déchargés par iCloud.
+- Feuille de route mise à jour avec l'avancement au 27 octobre (versions 6 et 7).
+- Journal de Vaneck reçu de Mahé : déjà intégré le 18 octobre (PR #87), aucun ajout.
+
+**Mesures exécutées.**
+- #100 : 44 tests réussis sur le résultat de la fusion avec `dev`, #85 comprise.
+- #118 : 7 tests réussis sur processeur (torch 2.11.0, transformers 5.20.2, peft 0.21.2) ; chiffres du rapport retrouvés dans son JSON ; parité avec la #109 vérifiée par le nombre de paramètres entraînables (720 896 par couche) et l'échelle de LoRA (20).
+- #119 : 23 tests, 68 avec ceux de la #85 ; sept mutations des règles du protocole détectées ; essai réel sur la calibration avec R+ et R-, qui retrouve M3 = 100 % et M1 = 0 % pour R+.
+- Journal de Vaneck : 10 sessions et 24 lignes d'erreurs comparées au journal. Elles sont identiques, sauf deux formulations où le journal est exact : renvoi à la session 37, et #76 fusionnée par Vaneck (vérifié par l'API).
+- #109 : résultat de la fusion avec `dev` purement additif (4 fichiers, 108 lignes), scripts compilés, `construire_contexte` présent sur `dev`.
+- Mac de Mahé (MLX 0.32.4, `mx.device_info()`) : 24,0 Gio, plafond recommandé par Metal 17,76 Gio, plus grand tampon 13,32 Gio. La marge sous le pic de la #109 est d'environ 10,6 Gio, et non 16,86.
+- Système du Mac : macOS 27.0.1 installé le 23/10 à 20 h 27, après la mesure de la #109, faite sous 26.6.2. Le plafond de Metal est mesuré sous 27.0.1.
+- #120 et supports de J3 : chiffres comparés au notebook 03, à `04_cdtn.md`, au README du moteur, aux études de la #109 et de la #118, et à l'API GitHub (commits de `main` par adresse).
+- Venv MLX : 3 540 fichiers déchargés sur 6 331 ; 907 rapatriés par lecture, puis téléchargement d'iCloud arrêté, 2 633 restants (49,5 Mio). Modèle MLX, aussi dans `data/` : 26 fichiers sur 36 déchargés, poids présents.
+- Suivi : 59 tickets comparés à l'API sur toutes les colonnes, aucun écart.
+
+**Résultats retenus.**
+- Le Legion ne convient pas à l'entraînement : 9,17 Gio alloués pour 7,96 Gio physiques, 274 s par pas contre 10,5 s sur le Mac.
+- Sur la calibration, B2 s'abstiendrait sur une question (Q038, score 0,8466) ; aucune question n'est à moins de 1e-5 de S.
+- La marge mémoire du Mac pour l'entraînement est d'environ 10,6 Gio sous le plafond de Metal : la proposition du Mac tient.
+
+**Ce qui a été écarté, et pourquoi.**
+- Fusionner la #108, approuvée : elle gèlerait le protocole avant le script relu et la machine confirmée.
+- Approuver la #118 tant qu'elle était en brouillon. Elle a été approuvée une fois passée en « prête » ; l'ordre de fusion avec la #117, qui modifie aussi le PDF du journal, est convenu dans la revue.
+- Recalculer S sur le Legion : la mesure doit utiliser le fichier calculé le 26 octobre, contrôlé par son empreinte.
+- Relancer l'enseignant : décision de Mahé, l'enseignant communiquera.
+- Préciser dans la #109 « une large marge sous les 24 Gio » : l'approbation de Remy aurait été annulée pour une précision. Le plafond mesuré est consigné ici et dans #13.
+- Citer dans la revue de la #120 la troisième adresse Git de Remy : le décompte suffit (minimisation).
+
+**Ce que l'équipe a validé, et par qui.**
+- Lancement des tâches, le matin et l'après-midi, et abandon de la relance, par Mahé BEGNIS.
+- Approbation de la #108 et fusions des #85, #100, #101 et #118, par Jibril BENSALEM.
+- Approbation de la #109, par Remy RAYANE.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Les sockets `kernel-ipc` d'un ancien noyau Jupyter, dans `scripts/evaluation`, empêchaient la copie du dossier pour les essais de mutation : seuls les deux modules utiles ont été copiés.
+- Le venv MLX, sur le Bureau synchronisé par iCloud, avait des fichiers déchargés : l'import de MLX dépassait 2 minutes. La lecture, séquentielle puis sur 16 fils, en a rapatrié une partie, puis le téléchargement s'est arrêté, y compris après `brctl download`.
 
 ---
 
@@ -1366,6 +1427,22 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/10 | Tests de la séparation lancés avec le Python 3.9 du système et l'option `-I` : module introuvable | échec de l'import | relancés avec le Python 3.12 du projet |
 | 26/10 | Script de report de S dans le protocole écrivant « 10,000 tirages », au format anglais | relecture du script avant exécution | « 10 000 » |
 | 26/10 | Vérification des 13 commentaires filtrée à partir de 12 h UTC, alors qu'il était 11 h 09 : aucun commentaire trouvé, faux écart | incohérence avec les liens renvoyés à la publication | filtre corrigé ; les 13 sont présents et identiques |
+| 26/10 | Script du seuil S acceptant un vecteur NaN : `abs(NaN - 1) >= tol` est faux, et un NaN aurait contaminé le seuil | revue de Jibril sur la #108, reproduite | contrôle `isfinite`, JSON sans NaN, régression vérifiée par mutation |
+| 26/10 | Docstring du script du seuil déclarant le CDTN sans licence, reprise de `cdtn_seuil.py`, alors qu'il est sous Apache-2.0 depuis le 14/10 | revue de Jibril | deux docstrings corrigées |
+| 26/10 | Protocole 06 sans règle d'appariement après les erreurs techniques, sans valeur exacte de S, et confondant T et le modèle de #31 sur les seuls tenseurs | revue de Jibril | trois règles ajoutées avant le gel |
+| 26/10 | Commande zsh `$c:scripts` interprétée comme le modificateur `:s` : lecture des dépendances d'Agent0 faussée | sortie incohérente, des en-têtes de commit à la place des fichiers | variable écrite `${c}` |
+| 26/10 | Commentaire de la #115 affirmant sans vérification que `SFTTrainer` lit le même format que mlx-lm | relecture après publication | correction publiée dans la #115 |
+| 27/10 | Même piège zsh que la veille, `$B:scripts` lu comme le modificateur `:s` | erreur « bad substitution » | variable écrite `${B}` |
+| 27/10 | Script de mesure, premier jet : variable `l` non définie dans le calcul des médianes, qui aurait fait échouer toute analyse | relecture avant les tests | appel corrigé |
+| 27/10 | Script de mesure : chemins par défaut figés à la définition des fonctions ; un essai aurait écrit dans le vrai `data/` et consommé l'exécution unique de la calibration | préparation de l'essai de bout en bout | chemins résolus à l'appel, essai isolé dans un dossier temporaire |
+| 27/10 | Fiches des juges réduites à des identifiants, sans question ni texte des passages | relecture avant les tests | question et passages cités ajoutés |
+| 27/10 | Note de travail de l'assistant attribuant au q8 de Xenova la taille du témoin de Remy (118 371 400 octets au lieu de 118 308 185) | recalcul en Mio et confrontation aux documents du dépôt | note corrigée ; aucun livrable touché |
+| 27/10 | Note de travail de l'assistant présentant le débordement du Legion vers la RAM système comme un fait | relecture de la #118, qui le qualifie d'hypothèse forte | note corrigée |
+| 27/10 | Réponse à Mahé affirmant que le CDTN n'a servi qu'à fixer le seuil du volet A | relecture de `04_cdtn.md` avant de publier le retour sur les supports de J3 | corrigé avant publication : il compare aussi E5 à BM25 V3 |
+| 27/10 | Utilitaire de l'assistant laissé à la racine du dépôt, non suivi, contenant le chemin du transcript local | `git status` du bilan | déplacé hors du dépôt, jamais commité |
+| 27/10 | Ligne « Dernière mise à jour » de la #117 laissée au 25 octobre | comparaison avec la #120, qui la mettait à jour | corrigée |
+| 27/10 | Fusion automatique de `dev` dans la #117 plaçant la session 44 avant la 43 | lecture des titres après la fusion | ordre rétabli par script, mêmes lignes vérifiées |
+| 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
