@@ -13,7 +13,7 @@ Chaque membre tient sa propre ligne à jour.
 
 | Membre | Version | Système | Remarque |
 |---|---|---|---|
-| Mahé | à compléter | à compléter | mesure de faisabilité du J2 |
+| Mahé | `@playwright/mcp`, non épinglé (`npx @playwright/mcp@latest`, plugin de Claude Code) : 0.0.83, avec Playwright 1.64.0-alpha, dans le cache npx depuis le 29/09 ; version du J2 non consignée | macOS 26.6.2 au J2, 27.0.1 depuis le 23/10 | mesure de faisabilité du J2. Critique : sans version épinglée, la mesure ne se reproduit pas à l'identique ; épingler la version (`@playwright/mcp@0.0.83`) et la consigner avec chaque mesure |
 | Vaneck | `playwright-core` 1.64.0 | Windows | pilote Microsoft Edge déjà installé (`channel: "msedge"`), sans navigateur téléchargé |
 | Jibril | à compléter | à compléter | |
 
