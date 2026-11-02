@@ -1,6 +1,6 @@
 # Agent0 Light : génération synthétique locale
 
-## Synthèse au 30 octobre 2026
+## Synthèse au 2 novembre 2026
 
 **Périmètre livré, décision de Mahé du 30 octobre dans [#13](https://github.com/datatigersNLP/data_tigers_nlp/issues/13).**
 Le livrable conserve le socle intégré (#99 à #101), les catégories de #103 et le support de
@@ -13,7 +13,7 @@ Le pilote indépendant de 25 candidats et le gel d'un Challenge Set ne sont pas 
 Les sections historiques ci-dessous conservent le plan et les résultats de chaque date.
 
 Les cinq catégories sont disponibles : simple, reformulation, multi-passage, piège et hors corpus.
-Les incréments #91 à #93 sont intégrés dans dev ; #94 et le support #95 restent dans #103/#106.
+Les incréments #91 à #94 sont intégrés dans dev ; le support #95 reste en relecture dans #106.
 
 Le validateur contrôle le JSON, les sources, les extraits exacts d'au moins 20 caractères sur des
 limites de mots et les doublons normalisés. Une question piège (`adversarial`) doit désormais
@@ -37,6 +37,13 @@ Aucun nouvel appel réel au modèle ou résultat Windows n'est revendiqué.
 Les 15 candidats restent en attente humaine ; aucun hors corpus n'est confirmé. Les prompts ont
 été ajustés sur trois fiches : ces essais ne constituent pas un benchmark indépendant.
 Les runs historiques, dont l'affirmation `adversarial_001`, restent intacts.
+
+**Exclusion de l'entraînement — précision du 2 novembre.** Les huit passages du support
+de relecture proviennent de trois fiches, dont une appartient aux 61 fiches du lot de test
+humain `jeu-questions-v1`, comme signalé par Mahé en revue. Les 15 candidats historiques
+sont donc exclus de toute réutilisation comme exemples d'entraînement ou d'adaptation,
+pour le générateur comme pour l'encodeur, même après relecture. Ils restent destinés à
+la relecture et à l'exploration de l'évaluation ; aucun lot n'est déclaré figé.
 
 **Travaux reportés avant tout futur pilote.** Signaux de proximité et de comparaison à risque ;
 méthode hors corpus et contre-preuves ; relecture humaine indépendante des cas. Si le pilote
@@ -1915,3 +1922,50 @@ ou du protocole officiel. Aucun nouveau lot, candidat de remplacement ou verdict
 #94 reste partielle, #103 en brouillon avec Mahé/Remy demandés. #95 relue pour ce bilan, non modifiée.
 Aucun candidat admis au lot figé, gel, fusion, clôture ou temps réel déclaré ; estimation initiale
 de 7 h inchangée.
+
+
+## 29. #95 — Préparer la relecture des essais, sans admission
+
+Le 20 octobre 2026, un [support de préparation à la relecture](agent0_relecture/README.md) est créé
+sur une branche documentaire dédiée, depuis le head `36bb4e05094dbc68d1975f1d8ea01eac50de166b` de #103.
+Il inventorie 18 runs rapportés : 15 candidats en attente et 3 rejets automatiques.
+14 formulations sont disponibles ; celle de multi_passage_003 reste à recueillir.
+Les questions/sources, observations assistées et grille humaine vierge sont séparées.
+Huit passages M2 sont recopiés depuis les fichiers versionnés avec leurs empreintes, sans modification.
+
+Les originaux complets des runs et sélections manquent encore ; une procédure d'archive Windows
+hors Git est fournie. Ce support permet une prélecture, sans authentifier des fichiers non reçus
+ou attribuer des verdicts humains. Les essais de mise au point restent distincts du futur pilote
+de 25 candidats et ne servent pas à calculer un taux général de qualité.
+
+Aucun générateur, schéma, validateur, modèle, budget, corpus ou RAG modifié ; aucun test unitaire,
+appel réel ou gel exécuté ici. #94/#95 partielles, #103 en brouillon ; relecture du code et relecture
+sémantique indépendantes nécessaires. Estimations initiales 7 h (#94) et 4 h (#95) inchangées,
+aucun temps réel déclaré. La nouvelle PR documentaire dépend de #103 et cible dev.
+
+
+## 30. #95 — Originaux reçus et vérification technique de l'archive
+
+L'archive `agent0_relecture_20261020.zip` est reçue le 20 octobre 2026. Son SHA-256
+`e6cb410c6c8cbcdd9fb4f5392cab9fc41a32f74fe48dd3c49b0121326eb76f74` correspond à celui affiché sur le Legion.
+Les 93 fichiers attendus sont présents : cinq par run et trois sélections. Les 18 runs contiennent
+15 candidats, tous humains en attente, et 3 rejets automatiques. Les 15 questions sont désormais
+disponibles ; celle de multi_passage_003 et les extraits précédemment manquants sont complétés
+depuis les originaux. Les 14 formulations déjà recopiées sont conformes.
+
+Le [rapport de vérification](agent0_relecture/verification_archive.md) détaille la comparaison des
+sélections/sources avec le corpus figé, la reconstruction des 18 prompts et validations historiques,
+129 déclarations d'empreintes de code retrouvées avec CRLF dans 13 commits/21 blobs,
+153 empreintes d'antécédents de déduplication concordantes et les égalités HF/Ollama rapportées.
+Aucun appel modèle ou vrai tokeniseur rejoué ; ce contrôle porte sur la cohérence des données
+et déclarations reçues, sans attestation indépendante de leur exécution sur la machine.
+
+Les originaux, leurs questions et les verdicts pending sont conservés. La grille renseigne les
+résultats techniques séparément et garde tous les champs humains vierges. La relecture du sens,
+des catégories, des preuves et du corpus complet pour hors corpus reste nécessaire. Ces essais
+de mise au point ne constituent toujours pas le pilote indépendant de #95.
+
+PR #106 documentaire, dépendante de #103 ; aucun générateur, schéma, validateur, modèle, budget,
+corpus, RAG ou Gold Set modifié. Aucune évaluation du RAG, génération, fusion, clôture ou admission.
+Pas de tests unitaires relancés ; contrôles sur les originaux exécutés. Estimations initiales inchangées,
+aucun temps réel déclaré.
