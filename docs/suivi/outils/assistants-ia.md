@@ -16,7 +16,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 |---|---|---|---|---|
 | Vaneck | à compléter | à compléter | à compléter | à compléter |
 | Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
-| Rémy | à compléter | à compléter | à compléter | à compléter |
+| Rémy | Google Antigravity & Gemini 3.8 Flash | Gemini 3.8 Flash (High), agent autonome sous Antigravity IDE | formule gratuite | génération et audit de scripts Python, audits de contributions Git, revue technique de faisabilité LoRA (#109, #115), cadrage des supports J3 (#112) |
 | Jibril | à compléter | à compléter | à compléter | à compléter |
 | Maïmouna | à compléter | à compléter | à compléter | à compléter |
 
