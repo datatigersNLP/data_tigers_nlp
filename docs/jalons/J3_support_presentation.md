@@ -1,26 +1,27 @@
 # Support de présentation — Jalon J3 (15 points)
 **Module** NLP 2 · Master 2 Data & IA · FGES — Université Catholique de Lille  
 **Équipe** Data Tigers : Mahé BEGNIS, Remy RAYANE, Jibril BENSALEM, Vaneck DAGAR, Maïmouna SIGNATE  
-**Statut** Version de cadrage pour le Weekly 7 (Ticket #112) · Projet à 2 volets
+**Statut** Version consolidée pour le Weekly 8 (Ticket #112) · Base chiffrée issue de la PR #124  
+**Responsables des supports** : Vaneck DAGAR (plan et contenu) & Remy RAYANE (assemblage et coordination)
 
 ---
 
 ## Diapositive 1 — Titre, Équipe et Cadrage du Jalon J3
 
 ### Contexte & Rappel des deux volets imposés
-Le projet impose la réalisation conjointe de deux applications complémentaires basées sur le corpus du droit du travail (fiches pratiques du Ministère du Travail / Code du Travail Numérique) :
+Le projet impose la réalisation conjointe de deux applications complémentaires basées sur le corpus du droit du travail (fiches pratiques du Ministère du Travail, instantané SocialGouv du 11 septembre 2026 : 261 fiches, 4 240 passages) :
 
 * **Volet A (Application en ligne)** : Cas A3 — Moteur de recherche sémantique dense sans serveur.
-  * Inférence 100 % client dans le navigateur (Transformers.js / WebAssembly).
+  * Inférence 100 % client dans le navigateur (Transformers.js / WebAssembly / ONNX Runtime Web).
   * Coût d'exploitation nul : hébergement statique sur GitHub Pages, aucun appel API externe.
 * **Volet B (Application locale)** : Cas B1 — Assistant juridique interactif avec chaîne RAG.
-  * Inférence locale sur modèle open-weights (`Qwen2.5-7B-Instruct`).
-  * Adaptation du modèle par fine-tuning LoRA, sourçage formel des réponses (`[Pn]`) et évaluation rigoureuse avant/après.
+  * Inférence locale sur modèle open-weights (`Qwen2.5-7B-Instruct` sous Ollama 0.40.11).
+  * Adaptation du modèle par fine-tuning LoRA (MLX 4 bits sur Mac M4 Pro), sourçage formel des réponses (`[Pn]`) et évaluation rigoureuse avant/après.
 
 ### Objectifs du Jalon J3 (15 points)
-1. **Volet A finalisé et déployé** : Moteur de recherche sémantique réactif, modèle élagué hébergé sous le quota strict de 100 Mio, abstention active et accessibilité validée.
-2. **Volet B engagé** : Socle RAG opérationnel, protocoles de mesure et de séparation verrouillés, faisabilité matérielle du fine-tuning démontrée.
-3. **Supports et méthodologie** : Démonstrations reproductibles, tenue du board et du journal d'usage IA.
+1. **Volet A finalisé et déployé** : Moteur de recherche sémantique réactif, modèle élagué hébergé sous le quota strict de 100 Mio, seuil d'abstention quantifié ($S = 0,8560$) et accessibilité validée (WCAG / navigation clavier).
+2. **Volet B engagé** : Socle RAG opérationnel, protocoles de mesure (Protocole 06, #108) et de séparation (#115) verrouillés, faisabilité matérielle du fine-tuning démontrée.
+3. **Supports et méthodologie** : Démonstrations reproductibles, tenue rigoureuse du board et journal d'usage IA auditable (45 sessions, 87 erreurs documentées).
 
 ---
 
@@ -34,8 +35,10 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 
 ### Optimisation du chargement et du calcul
 * **Normalisation L2 préalable** : Les vecteurs de passages et de requêtes sont normalisés unitairement ($\|v\|_2 = 1$). La similarité cosinus est alors rigoureusement équivalente à un produit scalaire en $O(d)$ ($d = 384$).
-* **Index binaire Little-Endian Float32** : Remplacement de l'index JSON initial par un format binaire direct (`index.bin`). Le chargement s'effectue via l'API `TypedArray` (`Float32Array`) en mémoire vive sans bloquer le thread UI du navigateur, supprimant les 1,2 s de latence observées avec `JSON.parse()`.
-* **Réactivité mesurée** : Recherche effectuée en moins de 25 ms côté client sur Chromium et Firefox.
+* **Index binaire Float32 & Métadonnées** : `moteur.js` lit la matrice des vecteurs directement en mémoire typée (`Float32Array`) via `index.bin` et charge les métadonnées documentaires via `JSON.parse`.
+* **Réactivité mesurée** :
+  * **18,6 ms** pour encoder une requête en q8 dans le navigateur (mesure notebook 02).
+  * Recherche par produit scalaire matriciel quasi-instantanée côté client.
 
 ---
 
@@ -43,141 +46,137 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 
 ### Le verrou technique GitHub Pages
 * **Limite stricte par fichier** : GitHub bloque tout fichier supérieur à 100 Mio.
-* **Le modèle standard intenable** : Le modèle `multilingual-e5-small` quantifié q8 pèse **112,8 Mio**, interdisant son hébergement direct sur le dépôt GitHub du site sans recourir au CDN externe Hugging Face (point de défaillance tiers proscrit par l'audit du sujet).
+* **Le modèle standard intenable** : Le modèle `multilingual-e5-small` quantifié q8 d'origine pèse **112,8 Mio**, interdisant son hébergement direct sur le dépôt GitHub du site sans recourir au CDN externe Hugging Face (point de défaillance tiers proscrit par l'audit du sujet).
 
 ### Analyse structurelle & Élagage sans perte
 * **Diagnostic de l'architecture** : L'analyse des tenseurs révèle que **81,6 % des paramètres** de l'encodeur sont concentrés dans la table d'embeddings du vocabulaire (250 037 lignes de 384 dimensions), conçue pour couvrir plus de 100 langues.
 * **Recette d'élagage ciblé** (`scripts/allegement/`) :
-  * Détection de tous les sous-mots réellement requis par le corpus juridique français M2, le jeu d'évaluation et les requêtes courantes.
+  * Détection de tous les sous-mots réellement requis par le corpus juridique français M2 (261 fiches, 4 240 passages), le jeu d'évaluation et les requêtes courantes.
   * Réduction de la matrice d'embeddings aux seuls tokens nécessaires, sans modifier les couches d'attention ni de feed-forward du Transformer.
 * **Résultats obtenus** :
   * Poids du modèle abaissé de **112,8 Mio à 65,7 Mio** (**-41,8 %**).
-  * **Parité bit à bit stricte** : 100 % d'identité vectorielle vérifiée sur les 822 vecteurs du jeu de contrôle par rapport au q8 de référence.
+  * **Parité bit à bit stricte** : 100 % d'identité vectorielle vérifiée sur les 822 requêtes de contrôle par rapport au q8 de référence (pour tout texte en alphabet latin ou grec).
   * Modèle servi directement en local depuis `front/public/modele/`, garantissant l'autonomie totale du site.
 
 ---
 
 ## Diapositive 4 — Volet A : Évaluation quantitative & Règle d'abstention (#46, #53)
 
-### Chaîne d'évaluation de l'IR (Information Retrieval)
-* **Jeu de test annoté** : 60 questions humaines annotées sur le corpus, complétées par les 155 requêtes du Code du Travail Numérique (CDTN, #56).
-* **Supériorité prouvée face aux baselines lexicales** :
-  * **TF-IDF** (Recall@5 : 54,2 %) et **BM25** (Recall@5 : 56,8 %).
-  * **Recherche dense E5 q8** : **Recall@5 = 83,6 %** sur la bonne fiche (+26,8 points par rapport à BM25).
-* **Test de non-infériorité statistique** : McNemar apparié confirmant l'absence de régression significative entre le modèle exact FP32 et le modèle quantifié q8 ($p > 0,05$).
+### Chaîne d'évaluation de l'Information Retrieval (IR)
+* **Jeu de test annoté figé** (`jeu-questions-v1`, tag `cdb48c9`) :
+  * **73 questions du corpus** (couvrant 61 fiches) et **24 questions hors corpus**, totalisant 97 questions de référence.
+  * Les 155 requêtes du Code du Travail Numérique (CDTN, #56) forment un second jeu indépendant analysé à part (`04_cdtn.md`) pour calibrer le seuil et comparer E5 à BM25 V3.
+* **Comparaison appariée face à la baseline BM25 V3** :
+  * **Au niveau du passage** : Recall@5 de **43,8 %** pour l'encodeur servi contre **42,5 %** pour BM25 de référence (+1,4 point, IC 95 % de -11,5 à +14,3, test exact de McNemar $p = 1,000$).
+  * **Au niveau de la fiche** : Recall@5 de **83,6 %** pour l'encodeur contre **79,5 %** pour BM25 (+4,1 points).
+  * **Critère de validation du J2** : La **non-infériorité** à la marge de 15 points est statistiquement démontrée (score de Tango : $z = 2,45$, $p$ unilatéral 0,007). Aucun des deux systèmes n'est démontré supérieur.
+* **Fidélité de la quantification** : Le passage de FP32 à q8 ne coûte qu'**une question sur 73**, sans écart statistiquement significatif.
 
 ### Mécanisme d'abstention active (#53)
-* **Problématique** : Empêcher le moteur de renvoyer un passage hors-sujet en cas de question hors corpus ou absurde.
-* **Calibrage du seuil d'abstention** : Détermination par courbe ROC / AUC sur jeu de requêtes pièges négatives.
-* **Seuil fixé à $\theta = 0,8165$** :
-  * Si la similarité cosinus maximale est inférieure à ce seuil, le moteur s'abstient explicitement d'afficher des fiches trompeuses.
-  * Affichage d'un message transparent d'avertissement invitant l'utilisateur à reformuler ou à consulter les sources officielles.
+* **Seuil d'abstention fixé à 0,8560** : 5e centile des scores maximaux de 479 variantes du CDTN, figé le 10 octobre avant toute mesure (`moteur.js`).
+* **Séparation corpus vs hors corpus** : L'AUC atteint **0,841** (IC 95 % : $[0,747 ; 0,921]$), mesurant la capacité discriminante du score maximal.
+* **Comportement effectif** : Le seuil rejette 9 questions hors corpus sur 24 et conserve 72 questions du corpus sur 73. L'affichage d'un message d'avertissement invite l'utilisateur à reformuler si le score maximal passe sous 0,8560.
 
 ---
 
 ## Diapositive 5 — Volet B : Socle RAG & Inférence locale (#31, #51, PR #85)
 
 ### Architecture de la chaîne locale
-* **Modèle génératif open-weights** : `Qwen2.5-7B-Instruct` servi localement sous Ollama au format quantifié 4 bits (GGUF Q4_K_M, 4,36 Gio en VRAM).
+* **Modèle génératif open-weights** : `Qwen2.5-7B-Instruct` servi localement sous Ollama (version épinglée **0.40.11**) au format quantifié 4 bits (GGUF Q4_K_M, 4,36 Gio sur disque).
 * **Index commun et récupération** : Réutilisation stricte de l'index des 4 240 passages du corpus M2 (`passages_m2.json`), garantissant la cohérence documentaire entre Volet A et Volet B.
-* **Injection contextuelle** : Récupération des 5 passages les plus pertinents et construction dynamique du prompt de contexte via la fonction certifiée `construire_contexte` (`scripts/rag/rag.py`).
+* **Injection contextuelle certifiée** (`rag-b1-v1`) :
+  * Récupération des 5 passages les plus pertinents par E5 en FP32.
+  * Construction dynamique du prompt de contexte (fenêtre de 8 192 tokens, réponse bornée à 512 tokens) via la fonction `construire_contexte` (`scripts/rag/rag.py`).
 
-### Cadrage de la génération (`rag-b1-v1`)
-* **Prompt système strict** : Interdiction formelle d'extrapoler ou d'inventer des dispositions juridiques non présentes dans le contexte.
-* **Obligation de sourçage** : Chaque assertion factuelle doit être adossée à une balise explicite de citation `[P1]` à `[P5]`, facilitant l'audit d'exactitude par un juriste.
-* **Performances mesurées** :
-  * Débit de génération : **47 à 67 tokens/s** en inférence GPU locale.
-  * Latence au premier token : **< 2,0 s**.
-  * Confidentialité absolue : 100 % des calculs réalisés en local, aucune dépendance réseau.
+### Cadrage de la génération & Sourçage
+* **Consigne système stricte** : Interdiction formelle d'extrapoler ; obligation d'appuyer chaque assertion sur une citation explicite `[P1]` à `[P5]`.
+* **Performances indicatives relevées** : Débit de **47 à 67 tokens/s** mesuré sur deux appels avec prompt court sous Ollama (débit d'inférence interactif).
+* **Auditabilité** : Contrôle automatique de la conformité des citations via `valider_citations` (PR #85).
 
 ---
 
 ## Diapositive 6 — Volet B : Faisabilité de l'adaptation LoRA (Mac vs Legion, #107)
 
-### Cadrage de l'essai de faisabilité (Étape 1 de #107)
-* **Objectif** : Valider sur banc d'essai qu'un fine-tuning LoRA (rang 8) de `Qwen2.5-7B` en 4 bits tient en mémoire avec des longueurs de contexte réelles (1 115 à 2 542 tokens, médiane 1 746 tokens issus du RAG).
-* **Protocole de mesure étanche** : Essai sur données factices (phrase cible fixe) mesurant exclusivement le pic de mémoire GPU et la durée incrémentale par pas (différence entre 6 et 12 itérations).
+### Cadrage expérimental (Étape 1 de #107)
+* **Objectif** : Vérifier sur banc d'essai qu'un fine-tuning LoRA (rang 8) de `Qwen2.5-7B` en 4 bits tient en mémoire avec des longueurs réelles de contexte RAG (1 115 à 2 542 tokens, médiane 1 746 tokens).
+* **Protocole d'isolation métrologique** : Mesure sur données cibles fixes évaluant le pic GPU et la durée incrémentale par itération (différence entre 6 et 12 pas).
 
-### Comparaison expérimentale des deux machines
-| Métrique (LoRA 16 couches) | MacBook M4 Pro (PR #109, Mahé) | PC Legion RTX 4060 (PR #118, Jibril) |
+### Comparaison métrologique des deux machines
+| Métrique (LoRA 16 couches) | MacBook M4 Pro (PR #109, Mahé) | PC Legion RTX 5070 Laptop (PR #118, Jibril) |
 |---|---|---|
-| **Environnement** | macOS 26 · MLX 0.32 · Metal | Windows 11 · PyTorch 2.11 · CUDA 12.8 |
-| **Mémoire physique** | **24 Gio unifiées** | **8 Gio VRAM** (7,96 Gio physiques) |
-| **Pic mémoire GPU mesuré** | **7,14 Gio** (compteur Metal) | **9,17 Gio alloués** (PyTorch) |
-| **Mémoire libre finale** | **16,86 Gio de marge** | **0 octet libre (saturation)** |
-| **Comportement mémoire** | Exécution intégrale en VRAM | Déport sur RAM partagée système |
-| **Temps moyen par pas** | **10,5 s** | **273,9 s (4 min 34 s)** |
+| **Environnement matériel** | Apple M4 Pro · 24 Gio unifiées | Intel i7 · RTX 5070 Laptop (8 Gio VRAM) |
+| **Logiciel & Pilotes** | macOS 27.0.1 · MLX 0.32.4 · Metal | Windows 11 · PyTorch 2.11 · CUDA 12.8 · NF4 |
+| **Pic de mémoire GPU** | **7,14 Gio** (compteur Metal) | **9,17 Gio alloués** (PyTorch) |
+| **Capacité & Marge** | Plafond Metal à 17,76 Gio (**~10,6 Gio de marge**) | 7,96 Gio physiques (**0 octet libre**, dépassement) |
+| **Comportement mémoire** | Exécution unifiée fluide sans contention | Débordement vers RAM système (hypothèse forte) |
+| **Durée par itération** | **10,5 s** (23/10) puis **8,8 s** (30/10) | **273,9 s (4 min 34 s)** — facteur x26 |
 
-### Conclusion opérationnelle
-* **Arbitrage technique** : Le Legion est disqualifié pour l'entraînement (temps x26 plus long et instabilité due au swap). L'entraînement est confié au **MacBook M4 Pro** (~1 h 30 pour 1 époque de 500 exemples).
-* **Répartition des rôles** : Entraînement sur Mac ; conversion, service Ollama et évaluation hébergés sur le Legion.
+### Arbitrage opérationnel
+* **Machine retenue pour l'entraînement** : Le **MacBook M4 Pro** est la seule des deux machines mesurées adaptée à l'entraînement LoRA (~1 h 30 pour 1 époque de 500 exemples).
+* **Répartition des tâches** : Entraînement LoRA sur Mac M4 Pro ; conversion, déploiement Ollama et chaîne de mesure hébergés sur le PC Legion.
 
 ---
 
 ## Diapositive 7 — Volet B : Étanchéité des données & Chaîne de conversion GGUF (#107, PR #115)
 
-### Contrôle formel de séparation des données (Étape 4 de #107)
-* **Garantie anti-fuite (Data Leakage)** : Aucune donnée d'entraînement ne doit provenir des fiches du lot de test humain (`jeu-questions-v1`), et aucune question humaine ne doit être apprise.
-* **Vérification outillée par script** (`scripts/adaptation_qwen/separation.py`, PR #115) :
-  * Exclusion formelle des **61 fiches documentaires** touchées par le lot de test de référence.
-  * Rejet automatique si un passage d'entraînement (cible ou distracteur) provient d'une fiche exclue.
+### Contrôle formel de séparation des données (PR #115)
+* **Règle d'étanchéité absolue** : Aucune donnée d'apprentissage ne doit provenir des fiches du lot de test humain, et aucune question humaine ne doit être apprise.
+* **Validation outillée par script** (`scripts/adaptation_qwen/separation.py`) :
+  * Exclusion formelle des **61 fiches documentaires** touchées par le lot de test (empreinte SHA-256 : `ba0135f4f3acfc2901a43b90dc0bf521bccf5e83b91bf2cb63e9ff526d498ea7`).
+  * Rejet automatique si un passage (cible ou distracteur E5) provient d'une fiche exclue.
   * Rejet de toute question reprenant mot pour mot une question humaine (calibration comprise).
-* **Contrat d'échange validé** : Fichier JSONL au format unifié `{"id": str, "question": str, "passages": [passage_id, ...]}`.
+* **Format d'entraînement** : Fichiers JSONL (`train.jsonl`, `valid.jsonl`) au format `messages` standard compatible `mlx_lm.lora` avec prompt `rag-b1-v1`.
+* **Équilibrage** : Ratio d'abstentions calé sur la part exacte du lot de test ($24 / 97 \approx 24,7\,\%$), combinant questions hors corpus (8 thèmes) et passages retirés.
 
-### Chaîne d'export et Témoin T au Protocole 06
-* **Contrainte Ollama 0.40.5** : L'audit du tag officiel révèle le rejet de la directive `ADAPTER` (`errAdaptersUnsupported`).
-* **Méthode de déploiement retenue** :
-  1. Fusion des poids de l'adaptateur LoRA dans le modèle de base en demi-précision FP16.
-  2. Conversion du modèle fusionné au format GGUF.
-  3. Requantification en 4 bits (Q4_K_M).
-* **Nécessité méthodologique du Témoin T** :
-  * La requantification GGUF introduit de légers bruits d'arrondi indépendants de l'apprentissage.
-  * Pour isoler rigoureusement l'impact du fine-tuning, un **modèle témoin T** (modèle de base subissant exactement le même cycle fusion/requantification GGUF) est évalué en parallèle.
+### Chaîne d'export et Modèle Témoin T
+* **Contrainte Ollama 0.40.11** : Rejet de la directive `ADAPTER` (`errAdaptersUnsupported`) imposant une fusion en amont.
+* **Chaîne de déploiement** :
+  1. Fusion des poids LoRA dans le modèle de base en demi-précision FP16.
+  2. Conversion du modèle fusionné en GGUF.
+  3. Requantification 4 bits (Q4_K_M).
+* **Nécessité du Modèle Témoin T** : Pour isoler le gain sémantique propre à LoRA sans le confondre avec les artefacts d'arrondi de la requantification, un **témoin T** (modèle de base subissant exactement le même cycle fusion/requantification GGUF sans LoRA) est évalué en parallèle.
 
 ---
 
 ## Diapositive 8 — Volet B : Protocole d'évaluation comparative avant/après (#52, PR #108)
 
 ### Le Protocole 06 (PR #108)
-* **Comparaison appariée stricte** : Évaluation du modèle initial (`base`), du modèle témoin (`temoin_T`) et du modèle adapté (`adapte`) sur les mêmes questions d'évaluation.
-* **Critères d'évaluation multidimensionnels** :
-  1. **Exactitude formelle des citations** : Présence des balises `[P1]` à `[P5]` et vérification que le passage cité contient bien l'information alléguée.
-  2. **Fidélité sémantique & exhaustivité** : Conformité juridique de la synthèse textuelle face aux règles du Code du travail.
-  3. **Comportement d'abstention** : Capacité du modèle à refuser de répondre lorsque les passages fournis ne contiennent pas la réponse juridique adéquate.
+* **Comparaison appariée stricte** : Évaluation conjointe du modèle de base nu (B0), du RAG sans consigne (B1), du RAG avec consigne et seuil (B2), face au modèle adapté et au témoin T sur les mêmes 97 questions d'évaluation.
+* **Les 5 métriques officielles (M1 à M5)** :
+  * **M1** : Taux d'abstention correcte sur les 24 questions hors corpus (cible $M_1 \ge 80\,\%$).
+  * **M2** : Taux de fausse réponse affirmative sur les 24 questions hors corpus (cible $M_2 = 0\,\%$).
+  * **M3** : Taux d'abstention à tort sur les 73 questions du corpus.
+  * **M4** : Taux de citation valide et pertinente selon la règle D4 du notebook 03 sur les 73 questions du corpus.
+  * **M5** : Exactitude juridique jugée à l'aveugle par deux annotateurs sur échantillon.
 
-### Métrologie & Double évaluation humaine aveugle
-* **Seuil de référence $S$ calculé** : Seuil $S = 0,8565$ (intervalle de confiance à 95 % par rééchantillonnage bootstrap : $[0,8464 ; 0,8653]$) sur 479 variantes du CDTN.
-* **Jugement humain aveugle** : Attribution de l'évaluation qualitative à deux juges indépendants (Vaneck et Maïmouna) ignorant quel modèle a généré chaque réponse pour prévenir tout biais d'évaluation.
-* **Statut à J3** : Protocole rédigé et revu, seuil $S$ calculé, mesure avant adaptation programmée pour le 03/11.
+### Métrologie & Évaluation humaine aveugle
+* **Seuil de décision $S = 0,8565$** : 5e centile des scores maximaux calculé sur les 103 requêtes du CDTN (479 variantes), IC 95 % par rééchantillonnage bootstrap : $[0,8464 ; 0,8653]$.
+* **Double évaluation à l'aveugle** : Attribution de l'évaluation qualitative à deux juges indépendants (Vaneck et Maïmouna) sans indication du modèle source.
+* **Statut à J3** : Protocole 06 figé, seuil $S$ calculé, mesure avant adaptation prête à être exécutée.
 
 ---
 
 ## Diapositive 9 — Méthodologie, 5 Outils Novateurs & Feuille de route jusqu'à J4
 
-### Rigueur méthodologique & Suivi de l'usage de l'IA
-* **Traçabilité totale** : 42 sessions d'assistance IA consignées à date au fil de l'eau ([JOURNAL_USAGE_IA.md](file:///c:/Users/remyr/data_tigers_nlp/docs/journal/JOURNAL_USAGE_IA.md)).
-* **Culture du contrôle** : 68 erreurs, hallucinations ou pièges matériels documentés et rectifiés par confrontation aux sources primaires et aux mesures réelles.
+### Rigueur méthodologique & Traçabilité de l'usage de l'IA
+* **Traçabilité totale** : **45 sessions** d'assistance IA consignées à date au fil de l'eau ([docs/journal/JOURNAL_USAGE_IA.md](docs/journal/JOURNAL_USAGE_IA.md)).
+* **Culture de la preuve** : **87 erreurs**, hallucinations ou pièges matériels documentés et rectifiés par confrontation aux sources primaires et mesures réelles.
 * **Cinq outils novateurs (Bonus +3 points)** :
-  1. *Transformers.js* : Moteur WASM sans serveur.
-  2. *ONNX Runtime (Web / Python)* : Format pivot et parité d'exécution.
-  3. *Playwright* : Automatisation des parcours multi-navigateurs et accessibilité.
-  4. *GitHub CLI* : Traçabilité et automatisation des audits de dépôt.
-  5. *Assistants IA (Antigravity, Claude Code, Codex)* : Retour d'expérience critique et vérification outillée.
+  1. *Transformers.js* : Moteur d'inférence sémantique client-side WebAssembly sans serveur.
+  2. *ONNX Runtime (Web / Python)* : Pivot d'interopérabilité et garantie de parité des tenseurs.
+  3. *Playwright* : Automatisation des tests de non-régression multi-navigateurs et audit d'accessibilité.
+  4. *GitHub CLI (`gh`)* : Traçabilité des issues, revues de PR et audits de contribution.
+  5. *Assistants IA (Antigravity, Claude Code, Codex)* : Retours d'expérience comparatifs et critiques argumentées.
 
 ### Calendrier resserré jusqu'à la Soutenance (30/11)
-* **28/10 (Weekly 7)** : Arbitrage de la machine d'entraînement (Mac M4 Pro) et décision sur le maintien de #49.
-* **03/11** : Génération des données d'adaptation conformes (#107, étape 4) et mesure avant adaptation (#52).
-* **04/11 (Weekly 8)** : Cadrage formalisé des supports de J3 avec Vaneck (#112).
-* **06/11** : Entraînement LoRA sur Mac (#107, étape 5).
+* **02/11** : Gel du protocole de mesure (#108).
+* **03/11** : Génération des données d'adaptation conformes (#107, lot v1 à 298 exemples) et mesure avant adaptation (#52).
+* **04/11 (Weekly 8)** : Plan arrêté des supports de J3 (Vaneck & Remy) et clôture actée du ticket #49.
+* **06/11** : Entraînement LoRA sur Mac M4 Pro (#107, étape 5).
 * **10/11** : Construction du témoin T et déploiement du modèle adapté sous Ollama.
-* **13/11 (Jalon J3)** : Mesure comparative après adaptation, assemblage final des supports et fiches d'outils.
-* **20/11** : Livraison de la V1 du rapport (#113), gel du code et du site.
+* **12/11** : Mesure comparative après adaptation (point d'arrêt opérationnel).
+* **13/11** : Jugement humain qualitatif, assemblage final des supports et fiches d'outils.
+* **16/11 (Jalon officiel J3)** : Volet A fonctionnel et Volet B adapté présentés.
+* **19/11** : Livraison de la **V1 du rapport final** (#113).
+* **20/11** : Fin du projet : supports et site figés.
 * **30/11 (Jalon J4)** : Soutenance finale du projet.
-
-
-
-
-
-
-
-
