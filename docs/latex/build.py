@@ -21,6 +21,9 @@ BANDEAU = {
  "05_RAPPORT_J2": ("Rapport de jalon J2",
      "Équipe Data Tigers \\textbullet{} NLP~2 \\textbullet{} M2 Data \\& IA \\textbullet{} FGES",
      "Année universitaire 2026-2027"),
+ "RAPPORT_FINAL": ("Rapport du projet",
+     "Équipe Data Tigers \\textbullet{} NLP~2 \\textbullet{} M2 Data \\& IA \\textbullet{} FGES",
+     "Version 0 du 19 octobre 2026, à compléter jusqu'à la V1"),
 }
 SCR = os.path.dirname(os.path.abspath(__file__))
 PRE = os.path.join(SCR, "preambule.tex")
@@ -82,6 +85,7 @@ ENTETE = {
  "03_SUPPORT_REUNION_J2": r"Réunion de cadrage \textbullet{} Projet NLP 2",
  "05_RAPPORT_J2":         r"Rapport de jalon J2 \textbullet{} Équipe Data Tigers",
  "06_JOURNAL_USAGE_IA":   r"Journal d'usage de l'IA \textbullet{} Équipe Data Tigers",
+ "RAPPORT_FINAL":         r"Rapport du projet \textbullet{} Équipe Data Tigers",
 }
 # Noms des fichiers dans le dépôt : même bandeau et même en-tête que les noms de travail
 for _depot, _travail in [("J2_rapport", "05_RAPPORT_J2"), ("JOURNAL_USAGE_IA", "06_JOURNAL_USAGE_IA")]:
