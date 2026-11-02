@@ -7,13 +7,15 @@ Depuis la racine du dépôt, avec l'environnement de scripts/adaptation_qwen/req
 Le script refuse de lancer l'entraînement si :
 - la relecture humaine du lot (étape 28) n'a pas conclu qu'il était utilisable, selon les règles de grille_relecture.py
   écrites avant la relecture, ou si la variante « passage retiré » doit en être retirée (l'essai court s'en dispense) ;
+- la grille remplie ne reprend pas exactement le tirage du lot (ligne manquante, en double, étrangère ou modifiée), ou
+  un verdict obligatoire y manque ;
 - l'empreinte de train.jsonl ou de valid.jsonl diffère de celle du manifeste du lot ;
 - les poids du modèle ne sont pas ceux de la révision publiée (c26a38f6) ;
 - un fichier du modèle ou du lot est déchargé par iCloud ;
 - les versions de mlx ou de mlx-lm diffèrent de requirements.txt ;
 - l'adaptateur demandé existe déjà : un adaptateur n'est jamais remplacé ;
-- scripts/ contient des modifications non committées (l'essai court s'en dispense) : le manifeste de l'adaptateur
-  désigne le code par son commit.
+- scripts/ contient des modifications non committées, ou l'état git ne peut pas être lu (l'essai court s'en dispense) :
+  le manifeste de l'adaptateur désigne le code par son commit.
 
 Réglages fixés avant l'entraînement, à valider par Jibril et Remy : ceux de l'essai de faisabilité de la #109 (LoRA de
 rang 8 sur les 16 dernières couches, lots de 1, contexte de 3 072 tokens, point de contrôle des gradients, perte sur la
@@ -72,24 +74,26 @@ def sha256_fichier(chemin: Path) -> str:
 def fichiers_decharges(*dossiers: Path) -> list[str]:
     """Fichiers « dataless » (déchargés par iCloud) : leur lecture peut bloquer ou échouer en cours d'entraînement."""
     return sorted(str(p) for d in dossiers for p in Path(d).rglob("*")
-                  if p.is_file() and not p.is_symlink() and os.lstat(p).st_flags & SF_DATALESS)
+                  if p.is_file() and not p.is_symlink() and getattr(os.lstat(p), "st_flags", 0) & SF_DATALESS)
 
 
-def controler_relecture(lot: Path) -> dict:
+def controler_relecture(lot: Path, exemples: list[dict]) -> dict:
+    """exemples : train puis valid, dont les empreintes ont été contrôlées."""
     grille = lot / "grille_relecture.csv"
     if not grille.exists():
         raise ErreurEntrainement("Relecture de l'étape 28 absente : grille_relecture.csv introuvable")
     with open(grille, encoding="utf-8-sig", newline="") as f:
         lignes = list(csv.DictReader(f, delimiter=";"))
     try:
+        grille_relecture.verifier_grille(lignes, exemples)
         bilan = grille_relecture.bilan(lignes)
     except ValueError as exc:
-        raise ErreurEntrainement(f"Relecture incomplète : {exc}") from exc
+        raise ErreurEntrainement(f"Relecture incomplète ou non conforme : {exc}") from exc
     if not bilan["utilisable"]:
         raise ErreurEntrainement(f"Lot refusé par la relecture : {bilan['faux']} exemples faux sur {bilan['relus']}")
     if not bilan["garder_passage_retire"]:
         raise ErreurEntrainement("La relecture retire la variante « passage retiré » : réassembler le lot sans elle")
-    return bilan
+    return {**bilan, "grille_sha256": sha256_fichier(grille)}
 
 
 def controler_lot(lot: Path) -> dict:
@@ -127,17 +131,28 @@ def versions() -> dict:
 
 
 def etat_git() -> dict:
-    tete = subprocess.run(["git", "-C", str(RACINE), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
-    modifie = subprocess.run(["git", "-C", str(RACINE), "status", "--porcelain", "--", "scripts"],
-                             capture_output=True, text=True).stdout.strip()
-    return {"commit": tete, "scripts_modifies": bool(modifie)}
+    tete = subprocess.run(["git", "-C", str(RACINE), "rev-parse", "--verify", "HEAD"], capture_output=True, text=True)
+    statut = subprocess.run(["git", "-C", str(RACINE), "status", "--porcelain", "--", "scripts"],
+                            capture_output=True, text=True)
+    commit = tete.stdout.strip()
+    if tete.returncode or statut.returncode or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ErreurEntrainement(f"État git illisible dans {RACINE} : {(tete.stderr or statut.stderr).strip()[:200]}")
+    return {"commit": commit, "scripts_modifies": bool(statut.stdout.strip())}
+
+
+def entier_positif(texte: str) -> int:
+    n = int(texte)
+    if n <= 0:
+        raise argparse.ArgumentTypeError("nombre d'itérations strictement positif attendu")
+    return n
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--lot", required=True)
     parser.add_argument("--run", required=True, help="nom de l'adaptateur, dossier dans data/volet_b/adaptateurs/")
-    parser.add_argument("--essai", type=int, help="nombre d'itérations d'un essai court (contrôle de la relecture omis)")
+    parser.add_argument("--essai", type=entier_positif,
+                        help="nombre d'itérations d'un essai court (contrôles de la relecture et de git omis)")
     args = parser.parse_args(argv)
     if not all(re.fullmatch(r"[a-z0-9_-]{1,40}", x) for x in (args.lot, args.run)):
         print("Nom de lot ou d'exécution invalide", file=sys.stderr)
@@ -148,15 +163,20 @@ def main(argv=None) -> int:
             raise ErreurEntrainement(f"{adaptateur} existe déjà : un adaptateur n'est jamais remplacé")
         if not (lot / "manifeste.json").is_file():
             raise ErreurEntrainement(f"Lot {args.lot} introuvable dans {DONNEES}")
-        git = etat_git()
+        try:
+            git = etat_git()
+        except ErreurEntrainement:
+            if not args.essai:
+                raise
+            git = {"commit": None, "scripts_modifies": None}
         if not args.essai and git["scripts_modifies"]:
             raise ErreurEntrainement("scripts/ diffère du commit courant : committer avant l'entraînement")
         decharges = fichiers_decharges(MODELE, lot)
         if decharges:
             raise ErreurEntrainement(f"{len(decharges)} fichiers déchargés par iCloud, dont {decharges[0]}")
         trouvees = versions()
-        bilan = None if args.essai else controler_relecture(lot)
         donnees = controler_lot(lot)
+        bilan = None if args.essai else controler_relecture(lot, grille_relecture.lire_exemples(lot))
         if sha256_fichier(MODELE / "model.safetensors") != SHA256_POIDS:
             raise ErreurEntrainement("Poids du modèle différents de la révision publiée c26a38f6")
         config = configuration(lot, adaptateur, donnees["effectifs"]["train.jsonl"], args.essai)
