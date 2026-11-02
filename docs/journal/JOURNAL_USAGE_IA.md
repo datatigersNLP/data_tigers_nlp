@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 27 octobre 2026, sessions 1 à 44 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 27 octobre 2026, sessions 1 à 45 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1314,7 +1314,7 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 **Ce qui a été écarté, et pourquoi.**
 - Fusionner la #108, approuvée : elle gèlerait le protocole avant le script relu et la machine confirmée.
-- Approuver la #118 tant qu'elle était en brouillon. Elle a été approuvée une fois passée en « prête » ; l'ordre de fusion avec la #117, qui modifie aussi le PDF du journal, est convenu dans la revue.
+- Approuver la #118 tant qu'elle était en brouillon. Elle a été approuvée une fois passée en « prête » par Jibril ; l'ordre de fusion avec la #117, qui modifie aussi le PDF du journal, est convenu dans la revue.
 - Recalculer S sur le Legion : la mesure doit utiliser le fichier calculé le 26 octobre, contrôlé par son empreinte.
 - Relancer l'enseignant : décision de Mahé, l'enseignant communiquera.
 - Préciser dans la #109 « une large marge sous les 24 Gio » : l'approbation de Remy aurait été annulée pour une précision. Le plafond mesuré est consigné ici et dans #13.
@@ -1331,6 +1331,40 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Les sockets `kernel-ipc` d'un ancien noyau Jupyter, dans `scripts/evaluation`, empêchaient la copie du dossier pour les essais de mutation : seuls les deux modules utiles ont été copiés.
 - Le venv MLX, sur le Bureau synchronisé par iCloud, avait des fichiers déchargés : l'import de MLX dépassait 2 minutes. La lecture, séquentielle puis sur 16 fils, en a rapatrié une partie, puis le téléchargement s'est arrêté, y compris après `brctl download`.
+
+### Session 45, 27 octobre 2026, Remy RAYANE, Google Antigravity & Gemini 3.8 Flash
+
+**Objet.** Relecture technique de la faisabilité de l'adaptation LoRA sur Mac (PR #109) en vue du Weekly 7 ; cadrage et élaboration du squelette des supports de présentation du jalon J3 (ticket #112) ; audit de la visibilité des contributions dans l'historique Git.
+
+**Produit.**
+- Relecture de la PR #109 (`a0bceb7`) : rapport technique détaillé et commentaire d'approbation rédigé, prêt pour validation lors du Weekly 7.
+- `docs/jalons/J3_support_presentation.md` (sur la branche `docs/112-supports-j3`) : support de cadrage de 9 diapositives couvrant l'état d'avancement des deux volets, les métriques d'IR et d'abstention du volet A, le socle RAG, l'arbitrage matériel Mac/Legion, le protocole d'étanchéité des données et le calendrier resserré jusqu'à la soutenance du 30/11.
+- Audit et traçabilité des contributions Git : identification de la restriction de calcul du graphe de contributeurs GitHub à la seule branche `main`, et réconciliation arithmétique exacte des commits sous les identités `Remynou` (14 commits) et mon adresse universitaire (10 commits, dont 8 merges de PR).
+
+**Mesures exécutées.**
+- PR #109 : confirmation de l'isolation du coût incrémental (10,5 s par pas sur 16 couches, 14,3 s sur 28 couches) par différence entre 6 et 12 pas ; validation de la mesure de mémoire crête Metal à 7,14 Gio (marge d'environ 10,6 Gio sous le plafond recommandé Metal de 17,76 Gio sur le Mac M4 Pro).
+- Confrontation métrologique avec le benchmark homologue sur le Legion (PR #118, commit `0d26e89`) : pic alloué PyTorch à 9,168 Gio pour 7,960 Gio physiques, mémoire libre nulle, 273,887 s par pas due au repli vers la RAM partagée Windows. Confirmation que le Mac est la seule des deux machines mesurées adaptée pour l'entraînement.
+- Audit de la chaîne de service Ollama : vérification sur le tag `v0.40.5` du rejet de la directive `ADAPTER` (`errAdaptersUnsupported`) confirmant la nécessité de la chaîne fusion FP16 + conversion GGUF Q4_K_M et du modèle témoin T (protocole 06, PR #108).
+- Audit des lignes de code et commits Git : calcul des ajouts et suppressions sur `main` réconciliant exactement les 3 033 insertions et 1 037 suppressions affichées sur GitHub (1 551 ++ et 1 011 -- pour l'adresse noreply, 1 482 ++ et 26 -- pour mon adresse universitaire).
+
+**Résultats retenus.**
+- La PR #109 est techniquement solide ; #109 approuvée le 27 octobre sur `a0bceb7`, puis fusionnée par Mahé.
+- Le premier jet du support J3 (#112) est structuré sur des bases chiffrées issues du dépôt, prêt pour la revue collective de l'équipe et le travail d'approfondissement prévu avec Vaneck le 04/11.
+- Les commits de Remy sont intègres et correctement ventilés dans Git ; leur prise en compte dans les statistiques GitHub s'effectuera automatiquement à la fusion de `dev` dans `main` pour les adresses liées au compte.
+
+**Ce qui a été écarté, et pourquoi.**
+- Fusionner prématurément le support J3 dans `dev` : réservé à la validation collégiale lors du Weekly 7 et du travail conjoint avec Vaneck (#112).
+- Réécrire l'historique des commits pour unifier les adresses email passées : écarté pour préserver l'immutabilité des hash Git déjà fusionnés et des tags du dépôt (`mi-parcours`, `volet-a-v1`).
+
+**Ce que l'équipe a validé, et par qui.**
+- Revue de la PR #109 effectuée par Remy RAYANE, #109 approuvée le 27 octobre sur `a0bceb7`, puis fusionnée par Mahé.
+- Support préparatoire de J3 initié par Remy RAYANE, soumis à l'équipe au Weekly 7 avant finalisation du plan au Weekly 8 avec Vaneck DAGAR.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Compréhension de la disparité entre le nombre brut de commits dans les branches de travail et le graphe de statistiques GitHub (qui n'agrège que les commits non-vides fusionnés dans la branche par défaut `main`, hors commits de fusion).
 
 ---
 
@@ -1443,6 +1477,8 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Ligne « Dernière mise à jour » de la #117 laissée au 25 octobre | comparaison avec la #120, qui la mettait à jour | corrigée |
 | 27/10 | Fusion automatique de `dev` dans la #117 plaçant la session 44 avant la 43 | lecture des titres après la fusion | ordre rétabli par script, mêmes lignes vérifiées |
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
+| 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
+| 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus hors fusions |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
