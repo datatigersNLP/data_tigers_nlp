@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 27 octobre 2026, sessions 1 à 45 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 2 novembre 2026, sessions 1 à 45 et 48 à 54 ; sessions 46 et 47 dans la PR #122 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -39,7 +39,7 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
 | ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
-| Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN, compilation du PDF du journal (sessions 17 à 19) |
+| Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN et compilation du journal (sessions 17 à 19) ; développement, tests, analyse des sorties et documentation Agent0 (session 40 et sessions 48 à 54) |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
 
@@ -1366,6 +1366,136 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Compréhension de la disparité entre le nombre brut de commits dans les branches de travail et le graphe de statistiques GitHub (qui n'agrège que les commits non-vides fusionnés dans la branche par défaut `main`, hors commits de fusion).
 
+**Consolidation Agent0 du 2 novembre 2026.**
+
+Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conservées dans `docs/journal/` et les PR citées. Les dates des travaux et la date de leur intégration au journal central sont distinctes. Les numéros 46 et 47 sont utilisés dans la PR #122 ; aucune session existante, notamment la 40, n'est renumérotée ou recopiée. Les revues des PR sources sont attribuées à Mahé ; la présente consolidation documentaire reste à relire par lui. Aucun temps d'appropriation n'est reconstitué.
+
+### Session 48, 18 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Construire progressivement le socle Agent0 Light (#91 à #93), séparé du Gold Set humain et de l'entraînement.
+
+**Produit.** Avec l'aide de Codex : contrat Pydantic strict, cinq catégories, identité attribuée par le programme, sélection M2 reproductible par fiche, manifeste de provenance, client Qwen local, préparation du prompt et contrôle du budget, puis génération simple/reformulation avec conservation du brut et des rejets.
+
+**Mesures exécutées.** Les notes du 18 octobre distinguent les tests de développement avec clients simulés (27, puis 44, puis 93 tests selon l'incrément) des commandes Windows exécutées par Jibril. Contrôle des 4 240 passages et 261 fiches ; deux générations réelles simple/reformulation, comptages HF et Ollama concordants, candidats conservés avec statut humain en attente.
+
+**Résultats retenus.** La chaîne technique fonctionne sur ces deux essais ; leur qualité et leur difficulté ne sont pas confirmées. Une graine facilite le rejeu sans garantir la même génération entre matériels ou versions.
+
+**Ce qui a été écarté, et pourquoi.** Lire les questions humaines pour guider la génération, utiliser le modèle comme validateur de ses propres sorties, réparer silencieusement un JSON ou écraser un run existant.
+
+**Ce que l'équipe a validé, et par qui.** Jibril a exécuté et transmis les essais du Legion. Mahé a approuvé le schéma #99 le 18 octobre ; la relecture des autres incréments et les décisions sémantiques restaient distinctes. Sources : notes du 18 octobre pour #91, #92 et #93.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** L'environnement Windows utilise `venv` et `pip`. L'absence de PyTorch n'empêche pas la tokenisation utilisée ici. Un JSON conforme ne garantit pas une question utile.
+
+### Session 49, 18 et 19 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Étendre la génération aux cas multi-passages, adversariaux et hors corpus (#94), puis examiner chaque sortie avant l'essai suivant.
+
+**Produit.** Prompts et contrôles des trois catégories, commandes PowerShell et bilans assistés. Les réponses originales sont conservées lors des ajustements de prompts sur les mêmes trois fiches.
+
+**Mesures exécutées.** Jibril a lancé les générations sur le Legion et transmis les sorties ; jusqu'à 142 tests Windows réussis à ce stade. Les extraits absents mot pour mot sont rejetés, notamment lorsqu'une liste est aplatie. Bilan des essais de mise au point : 18 runs, 15 candidats et 3 rejets automatiques.
+
+**Résultats retenus.** Des erreurs de sens passent les contrôles : comparaison non documentée, pronom ambigu, question neutre présentée comme piège, conditions déclarées absentes alors qu'elles figurent dans la source. Aucun hors corpus confirmé ; les 15 candidats restent en attente humaine.
+
+**Ce qui a été écarté, et pourquoi.** Transformer une recommandation assistée en verdict humain, corriger rétroactivement les sorties ou présenter ces essais ajustés sur trois fiches comme un pilote indépendant.
+
+**Ce que l'équipe a validé, et par qui.** Jibril a autorisé et exécuté les séries successives. La revue indépendante du code et la relecture sémantique restaient attendues. Sources : notes #94 des 18 et 19 octobre.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** Ajouter des consignes ne suffit pas à assurer le respect du sens. Une absence dans un passage ne prouve pas une absence dans le corpus complet ; la méthode hors corpus doit être réexaminée avant une reprise.
+
+### Session 50, 20 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Préparer le support de relecture et recouper les originaux des essais (#95, PR #106).
+
+**Produit.** Questions originales et sources complètes, observations assistées séparées, rapports de vérification et grille humaine vierge. La formulation initialement manquante de `multi_passage_003` est récupérée dans l'archive, sans reconstruction.
+
+**Mesures exécutées.** Archive transmise par Jibril : SHA-256 identique à celui relevé sur le Legion, CRC correct et 93 fichiers attendus présents. Sélections et sources recoupées ; 18 prompts reconstruits, 15 succès et 3 rejets reproduits avec les validateurs historiques, empreintes de code et antécédents de déduplication vérifiés. Aucun appel réel au modèle ni recomptage avec le vrai tokeniseur pour cet audit.
+
+**Résultats retenus.** Cohérence des fichiers et déclarations reçus, sans attestation indépendante de leur exécution. Les huit passages complets du support ne remplacent pas l'examen du corpus entier.
+
+**Ce qui a été écarté, et pourquoi.** Préremplir les décisions, les relecteurs ou les points attendus ; admettre les candidats sur la seule base des contrôles techniques.
+
+**Ce que l'équipe a validé, et par qui.** Jibril a fourni l'archive originale ; support préparé pour Mahé et Remy, sans relecture sémantique déclarée. Source : note du 20 octobre pour #95 et rapports de #106.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** Les premières copies ne remplaçaient pas les originaux ; leur réception permet le recoupement. Les traces complètes restent hors Git et les 15 candidats restent `pending`.
+
+### Session 51, 26 et 27 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Intégrer le socle approuvé et lever le conflit du journal dans la pile Agent0.
+
+**Produit.** Retrait de la modification concurrente du journal central, déjà reprise en session 40 dans la PR #110, puis actualisation des branches avec `dev`, sans réécriture d'historique. Le correctif des extraits est décrit en session 40 et n'est pas dupliqué ici.
+
+**Mesures exécutées.** 44 tests sur #100 puis 98 sur #101, avec les versions exactes du verrou ; scripts inchangés lors des reprises de `dev`. Mahé a également vérifié les résultats de fusion.
+
+**Résultats retenus.** #99 fusionnée le 26 octobre (`aad08f6`), #100 le 27 (`b61873b`), puis #101 le 27 (`a74f9a1`).
+
+**Ce qui a été écarté, et pourquoi.** Écraser les sessions d'autres membres ou considérer qu'une ancienne approbation reste valable après un changement de base.
+
+**Ce que l'équipe a validé, et par qui.** Approbation de Mahé sur #99/`521286d`, puis nouvelles approbations le 27 octobre sur #100/`f8deda3` et #101/`f182489`, avant fusion. Sources : revues et historiques de ces trois PR.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** Collision de numérotation et conflit sur le journal ; la session 40 est conservée dans la chaîne documentaire commune. Les résultats historiques et les champs humains ne sont pas réécrits lors de l'intégration.
+
+### Session 52, 29 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Traiter la forme interrogative des pièges et rendre le bilan Agent0 plus lisible (#94).
+
+**Produit.** Le validateur exige un `?` final pour `adversarial`, après exclusion des espaces finaux pour le contrôle seulement ; le texte reçu reste intact. Deux tests ajoutés, synthèse en tête du guide et report dans #106.
+
+**Mesures exécutées.** Les nouvelles régressions échouent avant correction, puis 149 tests réussissent sous Python 3.12.14 et Pydantic 2.14.0 ; verrou inchangé, `uv pip check` et compilation réussis. Clients et corpus techniques simulés, sans nouvelle inférence réelle ni nouvel essai Windows.
+
+**Résultats retenus.** Le contrôle refuse une affirmation sans point d'interrogation ; il ne démontre ni une fausse prémisse ni la suffisance d'une preuve. Le total de 149 inclut les tests précédents.
+
+**Ce qui a été écarté, et pourquoi.** Réparer les candidats historiques ou ajouter un juge sémantique automatique. Les indicateurs de proximité et la nouvelle méthode hors corpus restent à arbitrer.
+
+**Ce que l'équipe a validé, et par qui.** Incrément demandé par Jibril après la revue de Mahé ; relecture indépendante du nouvel incrément encore attendue à cette date. Source : note du 29 octobre pour #94.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** Le cas historique `adversarial_001` serait refusé par ce nouveau contrôle ; ses fichiers sont préservés et son statut ne devient pas une décision humaine.
+
+### Session 53, 30 octobre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Aligner #103, #106 et leurs tickets sur le périmètre décidé dans #13.
+
+**Produit.** Documentation du livrable réduit : schéma, sources, générateur des cinq catégories et support vérifié de relecture. Préparation des PR pour approbation et intégration avant le 6 novembre.
+
+**Mesures exécutées.** Reprise de `dev` sans conflit, scripts et verrou inchangés, 149 tests réussis avec les versions épinglées ; contrôle de la conservation des questions, sources, rapports et grille humaine.
+
+**Résultats retenus.** Le pilote indépendant de 25 candidats, le gel du Challenge Set et #96 à #98 sont reportés. Livrer le support ne signifie pas accepter les 15 candidats.
+
+**Ce qui a été écarté, et pourquoi.** Étendre Agent0 au détriment de la mesure officielle et de l'adaptation ; annoncer un benchmark synthétique ou une qualité générale non mesurés.
+
+**Ce que l'équipe a validé, et par qui.** Décision de Mahé du 30 octobre dans #13, révisable au Weekly 8, appliquée à la demande de Jibril. Les têtes finales des PR attendent encore la revue indépendante. Source : note d'intégration du 30 octobre.
+
+**Temps d'appropriation constaté.** Non relevé.
+
+**Difficultés rencontrées.** Les anciens objectifs et échéances sont conservés comme historique, mais ne doivent pas être confondus avec les critères du livrable réduit. L'intégration doit suivre l'ordre #103, puis actualisation et nouvelle revue de #106.
+
+### Session 54, 2 novembre 2026, Jibril BENSALEM, Codex dans ChatGPT Work
+
+**Objet.** Terminer l'intégration Agent0, expliciter la séparation avec l'entraînement et actualiser les tickets #91 à #95.
+
+**Produit.** Fusion de #103, actualisation de #106 et précision dans le guide et le README : les 15 candidats sont exclus de tout entraînement ou adaptation du générateur comme de l'encodeur, même après une éventuelle relecture. Puis fusion de #106 et actualisation des validations, preuves de fusion et limites dans les cinq tickets.
+
+**Mesures exécutées.** Avant #103 : environnement isolé recréé depuis le verrou, Python 3.12.14, Pydantic 2.14.0, 33 dépendances applicables compatibles et 149 tests réussis ; résultat de fusion comparé aux chemins, modes et empreintes préparés. Pour #106 : scripts identiques, questions, sources, rapports et grille conservés. Vérification des approbations finales et des fusions via GitHub ; corps des tickets relus après écriture, métadonnées préservées. Les tests sont distincts des inférences Windows historiques.
+
+**Résultats retenus.** #103 intégrée par `dcb790d`, #106 par `5753b86`. Support de 18 runs, 15 candidats `pending`, 3 rejets ; aucun lot pilote figé, aucune admission ou absence hors corpus confirmée. Une des trois fiches sources, `le-conge-sans-solde`, appartient au test humain figé ; les deux autres ne sont pas interdites dans un entraînement correctement séparé.
+
+**Ce qui a été écarté, et pourquoi.** Réutiliser l'approbation annulée de #106/`1defb44`, réemployer les candidats de mise au point pour l'entraînement, inventer une charge réelle ou transformer les tests en validation sémantique.
+
+**Ce que l'équipe a validé, et par qui.** Mahé approuve #103/`c5e3d8d` le 02/11, puis réapprouve #106/`506ffc1` après l'actualisation et la précision documentaire ; les deux fusions sont autorisées par Jibril. Les tickets restent ouverts pour déclaration des temps réels. Sources : note du 02/11, approbations finales, commits de fusion et tickets actualisés.
+
+**Temps d'appropriation constaté.** Non relevé ; estimations initiales distinctes des charges réelles.
+
+**Difficultés rencontrées.** Une modification documentaire après actualisation exige elle aussi une nouvelle revue. Les champs humains restent vierges malgré l'approbation du code et du support. La consolidation du journal est préparée sur une branche séparée ; sa relecture documentaire reste attendue.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1479,6 +1609,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
 | 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
 | 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus hors fusions |
+| 18-19/10 | Sorties Agent0 conformes au JSON mais question neutre présentée comme piège, comparaison non documentée ou motif hors corpus contredit par la source | lecture des candidats et passages | originaux et statut pending conservés ; pas de verdict humain attribué par l'assistant |
+| 19/10 | Retouches de prompts sur les mêmes trois fiches : sorties proches et absence hors corpus non démontrée | comparaison des séries v1/v2 aux sources | essais déclarés de mise au point ; aucun taux général de qualité, aucun pilote indépendant revendiqué |
+| 26-27/10 | Modification du journal dans la pile Agent0 : conflit avec dev et collision de numéro | revue de Mahé et comparaison des branches | session 40 conservée dans le journal commun ; modification concurrente retirée des branches Agent0 |
+| 29/10 | Une consigne demandant une question piège ne contrôle pas sa forme interrogative | régressions échouant avant correction | contrôle du ? final et conservation de la chaîne brute ; fausse prémisse toujours soumise à relecture humaine |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
