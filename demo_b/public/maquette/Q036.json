@@ -1,0 +1,110 @@
+{
+  "version_contrat": "b1-demo-v1",
+  "question": "Quelles sont les obligations légales de l'empoyeur en période de forte chaleur ?",
+  "statut": "reponse_citee",
+  "reponse": "Les obligations légales de l'employeur en période de forte chaleur sont les suivantes [P1][P5] :\n\n- La mise en œuvre de procédés de travail ne nécessitant pas d'exposition à la chaleur ou nécessitant une exposition moindre ;\n- La modification de l’aménagement et de l'agencement des lieux et postes de travail ;\n- L’adaptation de l’organisation du travail, et notamment des horaires de travail, afin de limiter la durée et l'intensité de l'exposition et de prévoir des périodes de repos ;\n- Des moyens techniques pour réduire le rayonnement solaire sur les surfaces exposées, par exemple par l'amortissement ou par l'isolation, ou pour prévenir l’accumulation de chaleur dans les locaux ou au poste de travail ;\n- L’augmentation, autant qu’il est nécessaire, de l’eau potable fraîche mise à disposition des travailleurs ;\n- Le choix d'équipements de travail appropriés permettant, compte tenu du travail à accomplir, de maintenir une température corporelle stable ;\n- La fourniture d’équipements de protection individuelle permettant de limiter ou de compenser les effets des fortes températures ou de se protéger des effets des rayonnements solaires directs ou diffusés ;\n- L'information et la formation adéquates des travailleurs, d’une part, sur la conduite à tenir en cas de forte chaleur et, d'autre part, sur l’utilisation correcte des équipements de travail et des équipements de protection individuelle de manière à réduire leur exposition à la chaleur à un niveau aussi bas qu’il est techniquement possible.",
+  "citations": [
+    "[P1]",
+    "[P5]"
+  ],
+  "citations_invalides": [],
+  "verifications": {
+    "justification_semantique_verifiee": false,
+    "couverture_des_affirmations_verifiee": false
+  },
+  "sources": [
+    {
+      "reference": "[P1]",
+      "citee": true,
+      "rang": 1,
+      "score": 0.8619567155838013,
+      "passage_id": "m2-article115181-0002",
+      "titre_fiche": "Chaleur et canicule au travail",
+      "section_titre": "Un cadre règlementaire renforcé",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre",
+      "url_citation": "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre#:~:text=La%20mise%20en%20%C5%93uvre%20de%20proc%C3%A9d%C3%A9s%20de%20travail",
+      "date_maj": "2025-08-11",
+      "texte": "- La mise en œuvre de procédés de travail ne nécessitant pas d'exposition à la chaleur ou nécessitant une exposition moindre ;\n- La modification de l’aménagement et de l'agencement des lieux et postes de travail ;\n- L’adaptation de l’organisation du travail, et notamment des horaires de travail, afin de limiter la durée et l'intensité de l'exposition et de prévoir des périodes de repos ;\n- Des moyens techniques pour réduire le rayonnement solaire sur les surfaces exposées, par exemple par l'amortissement ou par l'isolation, ou pour prévenir l’accumulation de chaleur dans les locaux ou au poste de travail ;\n- L’augmentation, autant qu’il est nécessaire, de l’eau potable fraîche mise à disposition des travailleurs ;\n- Le choix d'équipements de travail appropriés permettant, compte tenu du travail à accomplir, de maintenir une température corporelle stable ;\n- La fourniture d’équipements de protection individuelle permettant de limiter ou de compenser les effets des fortes températures ou de se protéger des effets des rayonnements solaires directs ou diffusés ;\n- L'information et la formation adéquates des travailleurs, d’une part, sur la conduite à tenir en cas de forte chaleur et, d’autre part, sur l’utilisation correcte des équipements de travail et des équipements de protection individuelle de manière à réduire leur exposition à la chaleur à un niveau aussi bas qu’il est techniquement possible.\nCes mesures de prévention devront s’appliquer en cas d’épisode de chaleur intense et être adaptées par l’employeur en cas d’intensification de la chaleur.\nDans le cas où cette liste de mesures ou actions de prévention contre les risques professionnels liés aux épisodes de chaleur intense n’est pas définie, l’inspection du travail dispose de la possibilité de mettre en demeure l’employeur de l’établir.\nEn cas d’épisode de chaleur intense, de l’eau potable fraîche en quantité suffisante est fournie par l’employeur.\nCes nouvelles dispositions entrent en vigueur le 1er juillet 2025 (en même temps que celles de l’arrêté prévu pour leur application)."
+    },
+    {
+      "reference": "[P2]",
+      "citee": false,
+      "rang": 2,
+      "score": 0.8556755781173706,
+      "passage_id": "m2-article115181-0003",
+      "titre_fiche": "Chaleur et canicule au travail",
+      "section_titre": "Recommandations aux travailleurs en cas de fortes chaleurs",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre",
+      "url_citation": "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre#:~:text=Vous%20travaillez%20par%20fortes%20chaleurs%20%3F%20Adoptez%20des",
+      "date_maj": "2025-08-11",
+      "texte": "Vous travaillez par fortes chaleurs ? Adoptez des gestes simples qui permettent de limiter les effets d’une vague de chaleur sur la santé.\nConseils généraux\n- Surveillez la température ;\n- Buvez régulièrement ;\n- Portez des vêtements légers qui permettent l’évaporation de la sueur (ex. : vêtements de coton), amples, et de couleur claire si le travail est à l’extérieur ;\n- Signalez à votre employeur si vos vêtements et équipements de protection individuelle sont sources d’une gêne supplémentaire ;\n- Protégez-vous la tête du soleil ;\n- Adaptez votre rythme de travail selon votre tolérance à la chaleur ;\n- Demandez à votre employeur d’organiser le travail de façon à réduire la cadence, notamment en aménageant les plages horaires de travail ;\n- Réduisez ou différez les efforts physiques intenses, et demandez à votre employeur de reporter les tâches ardues aux heures les plus fraîches ;\n- Demandez à votre employeur d’alléger la charge de travail par des cycles courts travail/repos ;\n- Évitez toute consommation de boisson alcoolisée ;\n- Faites des repas légers et fractionnés ;\n- Redoublez de prudence si vous avez des antécédents médicaux et si vous prenez des médicaments."
+    },
+    {
+      "reference": "[P3]",
+      "citee": false,
+      "rang": 3,
+      "score": 0.8504210114479065,
+      "passage_id": "m2-article374930-0019",
+      "titre_fiche": "Les obligations de l'employeur lors de l'embauche",
+      "section_titre": "Quelles sont les autres obligations à l'égard du salarié ?",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+      "url_citation": "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche#:~:text=Organiser%20l%27information%20et%20la%20formation%20%C3%A0%20la%20s%C3%A9curit%C3%A9",
+      "date_maj": "2025-05-27",
+      "texte": "- Organiser l'information et la formation à la sécurité du nouvel embauché. Il s'agit de l'informer précisément sur les précautions à prendre afin d'assurer sa propre sécurité et celle des autres. Si le salarié est exposé à des travaux dangereux, sa formation doit être renforcée. L'information doit être donnée d'une manière compréhensible pour chacun ;\n- Communiquer certaines informations aux salariés, soit par voie d’affichage soit par tout moyen (affichage ou autre). Ces informations concernent principalement :\n  - L’horaire de travail des salariés (obligatoirement par affichage) ;\n  - L’adresse, le numéro d’appel de l’inspection du travail et le nom de l'inspecteur compétent, l’adresse et le numéro d’appel du médecin du travail ou du service de santé au travail compétent pour l’établissement et des services de secours d’urgence (obligatoirement par affichage) ;\n  - L’intitulé des conventions et des accords applicables dans l'établissement, le lieu où ces textes sont tenus à la disposition des salariés et les modalités permettant aux salariés de les consulter pendant leur temps de présence (par tout moyen) ;\n  - Le règlement intérieur (par tout moyen) et les textes de loi relatifs à l’égalité de rémunération entre les femmes et les hommes (par tout moyen) ;\n  - Les consignes en cas d’incendie (obligatoirement par affichage) ;\n  - Les coordonnées du service d’accueil téléphonique qui répond aux demandes d’information et de conseil sur les discriminations et sur les conditions de saisine du Défenseur des droits (09 69 39 00 00, coût d’un appel local) (obligatoirement par affichage).\nLutte contre le harcèlement et les discriminations\nLes personnes mentionnées à l'article L. 1152-2 du Code du travail sont informées par tout moyen du texte de l'article 222-33-2 du Code pénal (définition et sanctions pénales du harcèlement moral)."
+    },
+    {
+      "reference": "[P4]",
+      "citee": false,
+      "rang": 4,
+      "score": 0.8481160998344421,
+      "passage_id": "m2-article112732-0007",
+      "titre_fiche": "Les droits et obligations des salariés du particulier employeur",
+      "section_titre": "Quels droits, quelles obligations ?",
+      "chemin": [
+        "Bénéficier d’un suivi médical"
+      ],
+      "url": "https://travail-emploi.gouv.fr/les-droits-et-obligations-des-salaries-du-particulier-employeur",
+      "url_citation": "https://travail-emploi.gouv.fr/les-droits-et-obligations-des-salaries-du-particulier-employeur#:~:text=D%E2%80%99assurer%20le%20suivi%20de%20la%20sant%C3%A9%20des%20salari%C3%A9s",
+      "date_maj": "2026-05-28",
+      "texte": "- D’assurer le suivi de la santé des salariés du secteur ;\n- De prévenir et sensibiliser aux risques professionnels ;\n- De lutter contre la désinsertion professionnelle et accompagner au retour à l’emploi ;\n- De suivre les expositions professionnelles et faire de la veille sanitaire.\nPour en savoir plus, consulter le site dédié : spstn.org"
+    },
+    {
+      "reference": "[P5]",
+      "citee": true,
+      "rang": 5,
+      "score": 0.8480237126350403,
+      "passage_id": "m2-article115181-0001",
+      "titre_fiche": "Chaleur et canicule au travail",
+      "section_titre": "Un cadre règlementaire renforcé",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre",
+      "url_citation": "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre#:~:text=Le%20d%C3%A9cret%20en%20Conseil%20d%E2%80%99Etat%20n%C2%B02025%2D482%20du%2027",
+      "date_maj": "2025-08-11",
+      "texte": "Le décret en Conseil d’Etat n°2025-482 du 27 mai 2025 relatif à la protection des travailleurs contre les risques liés à la chaleur renforce les obligations des employeurs en matière de prévention du risque chaleur.\nEn particulier, les locaux fermés affectés au travail doivent être maintenus à une température adaptée en toute saison, compte tenu de l’activité des travailleurs et de l’environnement dans lequel ils évoluent.\nEn extérieur, les travailleurs doivent être protégés contre les effets des conditions atmosphériques, dont la canicule.\nDes dispositions spécifiques sont prévues pour prévenir les risques liés aux épisodes de chaleur intense, correspondant aux seuils jaune, orange et rouge du dispositif national de vigilance météorologique « canicule » de Météo-France qui matérialise, pour chaque département et en fonction de seuils locaux, la survenue de vagues de chaleur intenses voire caniculaires.\nDésormais, lorsque l’évaluation des risques identifie un risque d’atteinte à la santé et à la sécurité des travailleurs lié à l’exposition à des épisodes de chaleur intense, l’employeur est tenu de définir les mesures ou actions de prévention pour réduire ces risques en se fondant notamment sur :"
+    }
+  ],
+  "modele": {
+    "nom": "qwen2.5-7b-instruct:q4_k_m-local",
+    "digest": "6ec54444a8511aae6c2116b172eb3685d1416c523bfee0252ca33c7e55c481e4"
+  },
+  "mesures": {
+    "duree_totale_s": null,
+    "ollama": {
+      "total_duration": 46200511600,
+      "load_duration": 21901212700,
+      "prompt_eval_duration": 18503807000,
+      "eval_duration": 5774473000,
+      "prompt_eval_count": 2317,
+      "eval_count": 381
+    }
+  },
+  "erreur": null,
+  "trace": {
+    "fichier": "Q036_rag(1).json",
+    "id_question": "Q036",
+    "ollama": "0.40.5"
+  }
+}
