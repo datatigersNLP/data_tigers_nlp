@@ -70,7 +70,7 @@ PART_ERREURS_MAX = 0.05       # section 4 : au-delà, l'état est invalide et re
 NIVEAU = 0.95                 # section 6 : intervalles à 95 %
 NIVEAU_PRINCIPAL = 0.975      # section 6 : analyse principale, Bonferroni pour deux comparaisons
 GRAINE_JUGES, N_JUGES = 20261018, 20
-VERSION_OLLAMA = "0.40.11"    # section 8 : version épinglée du Legion pour toutes les mesures
+VERSION_OLLAMA = "0.40.13"    # section 8 : version épinglée du Legion pour toutes les mesures (arbitrage du 02/11)
 # Section 3 : B0 reprend mot pour mot la phrase de brièveté de la consigne de la #85, que B1 conserve, pour que B0 et
 # B1 ne diffèrent que par les passages (calibration du 29 octobre : B0 coupé à 512 tokens sans elle).
 BRIEVETE = [l for l in CONSIGNE_RAG.split("\n") if l.startswith("Réponds brièvement")]
@@ -383,7 +383,9 @@ def versions_ollama(lignes: list[dict]) -> list[str]:
 def comparer(lignes_a: list[dict], lignes_b: list[dict], pertinents: dict, principale: bool = False) -> dict:
     """Écarts A moins B sur la population commune : questions sans erreur technique dans les deux états, par
     identifiant, jamais par position. Dans l'analyse principale, M1 et M4 sont à 97,5 % avec la règle de conclusion ;
-    tout le reste, et toute comparaison qui n'est pas l'analyse principale, est descriptif à 95 %."""
+    tout le reste, et toute comparaison qui n'est pas l'analyse principale, est descriptif à 95 %. Si l'un des deux
+    états dépasse 5 % d'erreurs techniques, l'analyse principale n'est pas conclue : tout est descriptif, et les états
+    invalides sont signalés (section 4)."""
     if lignes_a[0]["etat"] != lignes_b[0]["etat"]:
         raise ErreurMesure("Comparaison de deux états différents")
     a = {l["id"]: l for l in lignes_a}
@@ -393,15 +395,20 @@ def comparer(lignes_a: list[dict], lignes_b: list[dict], pertinents: dict, princ
     va, vb = versions_ollama(lignes_a), versions_ollama(lignes_b)
     if len(va) > 1 or len(vb) > 1 or (va and vb and va != vb):
         raise ErreurMesure(f"Versions d'Ollama différentes ({va}, {vb}) : la comparaison est invalide (section 8)")
-    resultat = {"etat": lignes_a[0]["etat"], "analyse": "principale (section 6)" if principale else "descriptive",
-                "versions_ollama": sorted(set(va) | set(vb))}
+    erreurs = {"a": part_erreurs(lignes_a), "b": part_erreurs(lignes_b)}
+    invalides = sorted(k for k, p in erreurs.items() if p > PART_ERREURS_MAX)
+    conclure = principale and not invalides
+    resultat = {"etat": lignes_a[0]["etat"],
+                "analyse": ("principale (section 6)" if conclure
+                            else "principale non conclue : état invalide (section 4)" if principale else "descriptive"),
+                "versions_ollama": sorted(set(va) | set(vb)), "part_erreurs": erreurs, "etats_invalides": invalides}
     for m, population in POPULATIONS.items():
         if resultat["etat"] == "B0" and m in ("M3", "M4"):
             continue
         ids = sorted(i for i in a if a[i]["type"] == population)
         exclus = sorted(i for i in ids if "erreur_technique" in (a[i]["classe"], b[i]["classe"]))
         commune = [i for i in ids if i not in exclus]
-        principal = principale and m in ("M1", "M4")
+        principal = conclure and m in ("M1", "M4")
         niveau = NIVEAU_PRINCIPAL if principal else NIVEAU
         entree = {"population": population, "effectif_commun": len(commune), "exclus": exclus,
                   "analyse_principale": principal, "niveau": niveau}

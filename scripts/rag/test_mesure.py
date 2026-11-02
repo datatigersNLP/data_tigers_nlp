@@ -148,12 +148,13 @@ class ExecutionTests(unittest.TestCase):
         self.assertTrue(all(l["classe"] == "erreur_technique" and l["citations"] == [] for l in lignes))
 
     def test_version_d_ollama_autre_que_l_epinglee_interrompt_la_mesure(self):
-        self.assertEqual(mesure.VERSION_OLLAMA, "0.40.11")
+        self.assertEqual(mesure.VERSION_OLLAMA, "0.40.13")             # arbitrage du 02/11 (#108)
         for etat in ("B0", "B1", "B2"):
-            with self.assertRaisesRegex(mesure.ErreurMesure, "version épinglée"):
-                mesure.executer_etat(etat, self.preparees, FauxGenerateur(version="0.40.13"), "m", "d")
+            for autre in ("0.40.11", "0.40.14"):                         # l'ancienne épinglée, une future
+                with self.assertRaisesRegex(mesure.ErreurMesure, "version épinglée"):
+                    mesure.executer_etat(etat, self.preparees, FauxGenerateur(version=autre), "m", "d")
         lignes = mesure.executer_etat("B1", self.preparees, FauxGenerateur(), "m", "d")
-        self.assertEqual(mesure.versions_ollama(lignes), ["0.40.11"])
+        self.assertEqual(mesure.versions_ollama(lignes), ["0.40.13"])
         # références dégénérées et abstentions sous le seuil : aucun appel, donc rien à contrôler
         self.assertEqual(mesure.versions_ollama(mesure.executer_etat("R+", self.preparees,
                                                                      FauxGenerateur(version="x"), "m", "d")), [])
@@ -348,16 +349,18 @@ class ComparaisonTests(unittest.TestCase):
                 for i, t, f, c in classes]
 
     def test_population_commune_par_identifiant_et_analyse_principale(self):
+        # 20 questions hors corpus valides et identiques : 1 erreur sur 25 (4 %), les deux états restent valides
+        complement = [(f"F{i:02d}", "hors_corpus", None, "abstention") for i in range(20)]
         a = self.lignes([("H1", "hors_corpus", None, "abstention"), ("H2", "hors_corpus", None, "abstention"),
                          ("H3", "hors_corpus", None, "erreur_technique"), ("C1", "dans_corpus", "f0", "reponse_citee"),
-                         ("C2", "dans_corpus", "f1", "reponse_citee")])
+                         ("C2", "dans_corpus", "f1", "reponse_citee")] + complement)
         b = self.lignes([("C2", "dans_corpus", "f1", "abstention"), ("H3", "hors_corpus", None, "abstention"),
                          ("H2", "hors_corpus", None, "reponse_citee"), ("C1", "dans_corpus", "f0", "reponse_citee"),
-                         ("H1", "hors_corpus", None, "abstention")])
+                         ("H1", "hors_corpus", None, "abstention")] + complement)
         r = mesure.comparer(a, b, {"C1": {"p0"}, "C2": {"p0"}}, principale=True)
-        self.assertEqual(r["analyse"], "principale (section 6)")
-        self.assertEqual((r["M1"]["effectif_commun"], r["M1"]["exclus"]), (2, ["H3"]))
-        self.assertEqual((r["M1"]["proportion_a"], r["M1"]["proportion_b"]), (1.0, 0.5))
+        self.assertEqual((r["analyse"], r["etats_invalides"]), ("principale (section 6)", []))
+        self.assertEqual((r["M1"]["effectif_commun"], r["M1"]["exclus"]), (22, ["H3"]))
+        self.assertEqual((r["M1"]["proportion_a"], r["M1"]["proportion_b"]), (1.0, 21 / 22))
         self.assertEqual((r["M1"]["niveau"], r["M4"]["niveau"], r["M2"]["niveau"]), (0.975, 0.975, 0.95))
         self.assertIn("amelioration_demontree", r["M4"])
         self.assertNotIn("amelioration_demontree", r["M2"])
@@ -371,6 +374,30 @@ class ComparaisonTests(unittest.TestCase):
         self.assertEqual({k: v for k, v in d["M1"].items() if k not in ("niveau", "analyse_principale", "intervalle")},
                          {k: v for k, v in r["M1"].items()
                           if k not in ("niveau", "analyse_principale", "intervalle", "amelioration_demontree")})
+
+    def test_etat_b2_invalide_bloque_la_conclusion_principale(self):
+        """Revue de Jibril (#119, 30/10) : deux séries B2 de 20 questions, 2 erreurs techniques dans « après »."""
+        def serie(erreurs, succes_corpus):
+            lignes = self.lignes([(f"C{i}", "dans_corpus", f"f{i % 5}",
+                                   "reponse_citee" if i < succes_corpus else "abstention") for i in range(10)]
+                                 + [(f"H{i}", "hors_corpus", None, "abstention") for i in range(10)])
+            for l in lignes[:erreurs]:
+                l["classe"] = "erreur_technique"
+            return lignes
+        pertinents = {f"C{i}": {"p0"} for i in range(10)}
+        apres, avant = serie(2, 10), serie(0, 2)                       # 10 % d'erreurs dans « après »
+        r = mesure.comparer(apres, avant, pertinents, principale=True)
+        self.assertEqual(r["analyse"], "principale non conclue : état invalide (section 4)")
+        self.assertEqual((r["etats_invalides"], r["part_erreurs"]["a"]), (["a"], 0.10))
+        for m in ("M1", "M2", "M3", "M4", "M5"):
+            self.assertFalse(r[m]["analyse_principale"])
+            self.assertNotIn("amelioration_demontree", r[m])
+            self.assertEqual(r[m]["niveau"], 0.95)
+        self.assertGreater(r["M4"]["effectif_commun"], 0)               # les résultats descriptifs restent
+        limite = mesure.comparer(serie(1, 10), avant, pertinents, principale=True)   # 5 % : pas invalide
+        self.assertEqual((limite["analyse"], limite["etats_invalides"]), ("principale (section 6)", []))
+        self.assertIn("amelioration_demontree", limite["M4"])
+        self.assertEqual(mesure.comparer(avant, serie(2, 10), pertinents)["etats_invalides"], ["b"])
 
     def test_designation_de_l_analyse_principale(self):
         p = mesure.est_principale
