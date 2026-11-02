@@ -14,7 +14,7 @@ Chaque membre tient sa propre ligne à jour.
 | Membre | Version | Système | Remarque |
 |---|---|---|---|
 | Jibril | 0.34.4 | Windows | GPU NVIDIA, Qwen2.5-7B Q4_K_M (PR #41) |
-| Rémy | à compléter | à compléter | |
+| Rémy | 0.40.11 (épinglée) | Windows 11 | audit du code source officiel au tag v0.40.5 (rejet d'ADAPTER), préparation de la chaîne d'export FP16 + GGUF Q4_K_M pour le témoin T (#107, protocole 06) |
 | Maïmouna | à compléter | à compléter | |
 | Mahé | non installé | macOS 27.0.1, arm64 | la mesure de #52 s'exécute sur le Legion ; la faisabilité de l'adaptation sur Mac passe par MLX (PR #109) |
 
@@ -31,10 +31,11 @@ Chaque membre tient sa propre ligne à jour.
 - Temps gagné ou perdu, s'il peut être estimé :
 
 ## Qualités observées
--
+- API HTTP standard et simple d'intégration, gestion automatique de l'allocation GPU (VRAM) et CPU.
 
 ## Défauts et limites observés
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
+  - (Remy) Rejet de la directive `ADAPTER` : l'audit du code source d'Ollama au tag `v0.40.5` a révélé le renvoi systématique de `errAdaptersUnsupported`. Ollama ne permet pas de charger à chaud un adaptateur LoRA externe sur un GGUF quantifié. L'intégration impose une fusion préalable des poids en FP16 puis une reconversion complète en GGUF Q4_K_M, justifiant la création du modèle témoin T au protocole 06 (#108).
 
 ## Comparaison
 - Méthode ou outil utilisé auparavant :
@@ -42,8 +43,8 @@ Chaque membre tient sa propre ligne à jour.
 - Cas où l'ancienne méthode reste préférable :
 
 ## Décision
-À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
-- Motif :
+Adopté pour le service local de `Qwen2.5-7B-Instruct`.
+- Motif : (Remy) Solution robuste et standardisée pour servir le modèle du volet B en local via `scripts/rag/generation.py`.
 
 ## À retenir pour le rapport
 - Apport :
