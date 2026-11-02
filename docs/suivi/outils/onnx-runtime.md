@@ -18,14 +18,18 @@
 ## Usage réel
 - Tâche réalisée, ticket ou pull request :
   - (Mahé) Notebook 02 (#30, PR #40) : parité entre ONNX fp32 et PyTorch, puis comparaison de cinq précisions du modèle servi, mesurée dans le navigateur.
+  - (Remy) Élagage de la table d'embeddings ONNX sans perte (#50, PR #78) pour passer sous le quota des 100 Mio de GitHub Pages.
 - Commande, configuration ou scénario :
   - (Mahé) Fichiers ONNX de `Xenova/multilingual-e5-small`, révision `761b726`, exécutés en Python par ONNX Runtime et dans Chromium par ONNX Runtime Web.
+  - (Remy) Script `scripts/allegement/elaguer_vocabulaire.py` inspectant le graphe ONNX pour réécrire la matrice de vocabulaire sur 261 fiches et 4 240 passages.
 - Résultat obtenu :
   - (Mahé) Premier résultat identique au calcul exact, dans le navigateur : q8 91,8 % (112,8 Mio), uint8 90,8 %, int8 85,8 %, fp16 99,9 % (224,4 Mio), fp32 100 % (448,5 Mio) (notebook 02, section 8).
+  - (Remy) Modèle élagué de 65,7 Mio (-41,8 %) exécuté par ONNX Runtime Web avec une parité vectorielle stricte sur les 822 requêtes de contrôle.
 - Temps gagné ou perdu, s'il peut être estimé :
 
 ## Qualités observées
 - (Mahé) En fp32, le même modèle donne exactement les mêmes vecteurs en Python et dans le navigateur (cosinus 1).
+- (Remy) Flexibilité du format binaire ONNX permettant d'éditer directement les tenseurs de poids sans altérer les graphes de calcul du Transformer.
 
 ## Défauts et limites observés
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
