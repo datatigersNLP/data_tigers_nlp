@@ -15,11 +15,11 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * Inférence 100 % client dans le navigateur (Transformers.js / WebAssembly / ONNX Runtime Web).
   * Coût d'exploitation nul : hébergement statique sur GitHub Pages, aucun appel API externe.
 * **Volet B (Application locale)** : Cas B1 — Assistant juridique interactif avec chaîne RAG.
-  * Inférence locale sur modèle open-weights (`Qwen2.5-7B-Instruct` sous Ollama 0.40.11).
+  * Inférence locale sur modèle open-weights (`Qwen2.5-7B-Instruct` sous Ollama 0.40.13, version épinglée par l'arbitrage du 02/11).
   * Adaptation du modèle par fine-tuning LoRA (MLX 4 bits sur Mac M4 Pro), sourçage formel des réponses (`[Pn]`) et évaluation rigoureuse avant/après.
 
 ### Objectifs du Jalon J3 (15 points)
-1. **Volet A finalisé et déployé** : Moteur de recherche sémantique réactif, modèle élagué hébergé sous le quota strict de 100 Mio, seuil d'abstention quantifié ($S = 0,8560$) et accessibilité validée (WCAG / navigation clavier).
+1. **Volet A finalisé et déployé** : Moteur de recherche sémantique réactif, modèle élagué hébergé sous le quota strict de 100 Mio, seuil d'abstention quantifié (S = 0,8560) et accessibilité validée (WCAG / navigation clavier).
 2. **Volet B engagé** : Socle RAG opérationnel, protocoles de mesure (Protocole 06, #108) et de séparation (#115) verrouillés, faisabilité matérielle du fine-tuning démontrée.
 3. **Supports et méthodologie** : Démonstrations reproductibles, tenue rigoureuse du board et journal d'usage IA auditable (45 sessions, 87 erreurs documentées).
 
@@ -34,10 +34,10 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 * **Asymétrie de l'encodage E5** : Préfixe obligatoire `query: ` pour la requête utilisateur et `passage: ` pour les documents indexés, garantissant le respect de la géométrie de l'espace latent.
 
 ### Optimisation du chargement et du calcul
-* **Normalisation L2 préalable** : Les vecteurs de passages et de requêtes sont normalisés unitairement ($\|v\|_2 = 1$). La similarité cosinus est alors rigoureusement équivalente à un produit scalaire en $O(d)$ ($d = 384$).
+* **Normalisation L2 préalable** : Les vecteurs de passages et de requêtes sont normalisés unitairement (norme euclidienne égale à 1). La similarité cosinus est alors rigoureusement équivalente à un produit scalaire en O(d) (d = 384).
 * **Index binaire Float32 & Métadonnées** : `moteur.js` lit la matrice des vecteurs directement en mémoire typée (`Float32Array`) via `index.bin` et charge les métadonnées documentaires via `JSON.parse`.
 * **Réactivité mesurée** :
-  * **18,6 ms** pour encoder une requête en q8 dans le navigateur (mesure notebook 02).
+  * **18,3 ms** pour encoder une requête avec le modèle élagué dans le navigateur (`scripts/allegement/README.md`, ligne 44) ; les 18,6 ms mesuraient le q8 d'origine non élagué (notebook 02).
   * Recherche par produit scalaire matriciel quasi-instantanée côté client.
 
 ---
@@ -55,7 +55,7 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * Réduction de la matrice d'embeddings aux seuls tokens nécessaires, sans modifier les couches d'attention ni de feed-forward du Transformer.
 * **Résultats obtenus** :
   * Poids du modèle abaissé de **112,8 Mio à 65,7 Mio** (**-41,8 %**).
-  * **Parité bit à bit stricte** : 100 % d'identité vectorielle vérifiée sur les 822 requêtes de contrôle par rapport au q8 de référence (pour tout texte en alphabet latin ou grec).
+  * **Parité bit à bit stricte** : 100 % d'identité vectorielle vérifiée sur les 822 requêtes de contrôle par rapport au q8 de référence dans le navigateur (source : `scripts/allegement/README.md`, ligne 44, et non le README racine ; pour tout texte en alphabet latin ou grec).
   * Modèle servi directement en local depuis `front/public/modele/`, garantissant l'autonomie totale du site.
 
 ---
@@ -67,14 +67,14 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * **73 questions du corpus** (couvrant 61 fiches) et **24 questions hors corpus**, totalisant 97 questions de référence.
   * Les 155 requêtes du Code du Travail Numérique (CDTN, #56) forment un second jeu indépendant analysé à part (`04_cdtn.md`) pour calibrer le seuil et comparer E5 à BM25 V3.
 * **Comparaison appariée face à la baseline BM25 V3** :
-  * **Au niveau du passage** : Recall@5 de **43,8 %** pour l'encodeur servi contre **42,5 %** pour BM25 de référence (+1,4 point, IC 95 % de -11,5 à +14,3, test exact de McNemar $p = 1,000$).
+  * **Au niveau du passage** : Recall@5 de **43,8 %** pour l'encodeur servi contre **42,5 %** pour BM25 de référence (+1,4 point, IC 95 % de -11,5 à +14,3, test exact de McNemar p = 1,000).
   * **Au niveau de la fiche** : Recall@5 de **83,6 %** pour l'encodeur contre **79,5 %** pour BM25 (+4,1 points).
-  * **Critère de validation du J2** : La **non-infériorité** à la marge de 15 points est statistiquement démontrée (score de Tango : $z = 2,45$, $p$ unilatéral 0,007). Aucun des deux systèmes n'est démontré supérieur.
+  * **Critère de validation du J2** : La **non-infériorité** à la marge de 15 points est statistiquement démontrée (score de Tango : z = 2,45, p unilatéral 0,007). Aucun des deux systèmes n'est démontré supérieur.
 * **Fidélité de la quantification** : Le passage de FP32 à q8 ne coûte qu'**une question sur 73**, sans écart statistiquement significatif.
 
 ### Mécanisme d'abstention active (#53)
 * **Seuil d'abstention fixé à 0,8560** : 5e centile des scores maximaux de 479 variantes du CDTN, figé le 10 octobre avant toute mesure (`moteur.js`).
-* **Séparation corpus vs hors corpus** : L'AUC atteint **0,841** (IC 95 % : $[0,747 ; 0,921]$), mesurant la capacité discriminante du score maximal.
+* **Séparation corpus vs hors corpus** : L'AUC atteint **0,841** (IC 95 % : [0,747 ; 0,921]), mesurant la capacité discriminante du score maximal.
 * **Comportement effectif** : Le seuil rejette 9 questions hors corpus sur 24 et conserve 72 questions du corpus sur 73. L'affichage d'un message d'avertissement invite l'utilisateur à reformuler si le score maximal passe sous 0,8560.
 
 ---
@@ -82,7 +82,7 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 ## Diapositive 5 — Volet B : Socle RAG & Inférence locale (#31, #51, PR #85)
 
 ### Architecture de la chaîne locale
-* **Modèle génératif open-weights** : `Qwen2.5-7B-Instruct` servi localement sous Ollama (version épinglée **0.40.11**) au format quantifié 4 bits (GGUF Q4_K_M, 4,36 Gio sur disque).
+* **Modèle génératif open-weights** : `Qwen2.5-7B-Instruct` servi localement sous Ollama (version épinglée **0.40.13**, arbitrage du 02/11, mises à jour automatiques coupées) au format quantifié 4 bits (GGUF Q4_K_M, 4,36 Gio sur disque).
 * **Index commun et récupération** : Réutilisation stricte de l'index des 4 240 passages du corpus M2 (`passages_m2.json`), garantissant la cohérence documentaire entre Volet A et Volet B.
 * **Injection contextuelle certifiée** (`rag-b1-v1`) :
   * Récupération des 5 passages les plus pertinents par E5 en FP32.
@@ -126,10 +126,10 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * Rejet automatique si un passage (cible ou distracteur E5) provient d'une fiche exclue.
   * Rejet de toute question reprenant mot pour mot une question humaine (calibration comprise).
 * **Format d'entraînement** : Fichiers JSONL (`train.jsonl`, `valid.jsonl`) au format `messages` standard compatible `mlx_lm.lora` avec prompt `rag-b1-v1`.
-* **Équilibrage** : Ratio d'abstentions calé sur la part exacte du lot de test ($24 / 97 \approx 24,7\,\%$), combinant questions hors corpus (8 thèmes) et passages retirés.
+* **Équilibrage** : Ratio d'abstentions calé sur la part exacte du lot de test (24 / 97 ≈ 24,7 %), combinant questions hors corpus (8 thèmes) et passages retirés.
 
 ### Chaîne d'export et Modèle Témoin T
-* **Contrainte Ollama 0.40.11** : Rejet de la directive `ADAPTER` (`errAdaptersUnsupported`) imposant une fusion en amont.
+* **Contrainte Ollama 0.40.13** : Rejet de la directive `ADAPTER` (`errAdaptersUnsupported`) imposant une fusion en amont.
 * **Chaîne de déploiement** :
   1. Fusion des poids LoRA dans le modèle de base en demi-précision FP16.
   2. Conversion du modèle fusionné en GGUF.
@@ -143,16 +143,16 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 ### Le Protocole 06 (PR #108)
 * **Comparaison appariée stricte** : Évaluation conjointe du modèle de base nu (B0), du RAG sans consigne (B1), du RAG avec consigne et seuil (B2), face au modèle adapté et au témoin T sur les mêmes 97 questions d'évaluation.
 * **Les 5 métriques officielles (M1 à M5)** :
-  * **M1** : Taux d'abstention correcte sur les 24 questions hors corpus (cible $M_1 \ge 80\,\%$).
-  * **M2** : Taux de fausse réponse affirmative sur les 24 questions hors corpus (cible $M_2 = 0\,\%$).
+  * **M1** : Taux d'abstention correcte sur les 24 questions hors corpus (cible M1 ≥ 80 %).
+  * **M2** : Taux de fausse réponse affirmative sur les 24 questions hors corpus (cible M2 = 0 %).
   * **M3** : Taux d'abstention à tort sur les 73 questions du corpus.
   * **M4** : Taux de citation valide et pertinente selon la règle D4 du notebook 03 sur les 73 questions du corpus.
   * **M5** : Exactitude juridique jugée à l'aveugle par deux annotateurs sur échantillon.
 
 ### Métrologie & Évaluation humaine aveugle
-* **Seuil de décision $S = 0,8565$** : 5e centile des scores maximaux calculé sur les 103 requêtes du CDTN (479 variantes), IC 95 % par rééchantillonnage bootstrap : $[0,8464 ; 0,8653]$.
+* **Seuil de décision S = 0,8565** : 5e centile des scores maximaux calculé sur les 103 requêtes du CDTN (479 variantes), IC 95 % par rééchantillonnage bootstrap : [0,8464 ; 0,8653].
 * **Double évaluation à l'aveugle** : Attribution de l'évaluation qualitative à deux juges indépendants (Vaneck et Maïmouna) sans indication du modèle source.
-* **Statut à J3** : Protocole 06 figé, seuil $S$ calculé, mesure avant adaptation prête à être exécutée.
+* **Statut à J3** : Protocole 06 figé, seuil S calculé, mesure avant adaptation prête à être exécutée.
 
 ---
 
@@ -169,10 +169,12 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   5. *Assistants IA (Antigravity, Claude Code, Codex)* : Retours d'expérience comparatifs et critiques argumentées.
 
 ### Calendrier resserré jusqu'à la Soutenance (30/11)
-* **02/11** : Gel du protocole de mesure (#108).
-* **03/11** : Génération des données d'adaptation conformes (#107, lot v1 à 298 exemples) et mesure avant adaptation (#52).
+* **30/10 (acté le 02/11)** : Données d'adaptation générées (#107, lot v1 à 298 exemples) ; PR #115 validée et fusionnée le 02/11.
+* **03/11 au plus tôt** : Gel du protocole de mesure, reporté du 02/11 (#108, section 9 : B0 doit être recalibré sous Ollama 0.40.13).
+* **04/11 au plus tôt** : Mesure avant adaptation (#52), consécutive au gel du protocole.
 * **04/11 (Weekly 8)** : Plan arrêté des supports de J3 (Vaneck & Remy) et clôture actée du ticket #49.
-* **06/11** : Entraînement LoRA sur Mac M4 Pro (#107, étape 5).
+* **05/11** : Relecture d'un échantillon de 30 exemples des données d'adaptation (#107, PR #125).
+* **06/11** : Entraînement LoRA sur Mac M4 Pro (#107, étape 5, PR #125).
 * **10/11** : Construction du témoin T et déploiement du modèle adapté sous Ollama.
 * **12/11** : Mesure comparative après adaptation (point d'arrêt opérationnel).
 * **13/11** : Jugement humain qualitatif, assemblage final des supports et fiches d'outils.
