@@ -8,6 +8,9 @@ Précisions du 30 octobre après relecture de Jibril avec l'assistance de Codex 
 format des erreurs, conservation des traces et configuration du modèle. La validation porte
 sur le contrat documentaire ; aucun serveur ou écran n'est testé par cette relecture.
 
+**Alignement du 2 novembre :** version cible d'Ollama 0.40.13, conformément à #108 et à
+la constante de #119 (`f556471`). Le format des routes et des réponses reste inchangé.
+
 ## 1. Objet
 
 La démonstration du volet B a trois parties :
@@ -53,7 +56,7 @@ sur des sorties enregistrées (étape 2, 04/11), puis branchée sur la vraie cha
   "index": {"verifie": true, "nb_passages": 4240, "sha256_index": "2ec45586…"},
   "encodeur_charge": true,
   "tokeniseur_disponible": true,
-  "ollama": {"joignable": true, "verifie": true, "version": "0.40.11", "modele": "qwen2.5-7b-instruct:q4_k_m-local", "digest": "6ec54444…"},
+  "ollama": {"joignable": true, "verifie": true, "version": "0.40.13", "modele": "qwen2.5-7b-instruct:q4_k_m-local", "digest": "6ec54444…"},
   "occupe": false,
   "message": null
 }
@@ -61,7 +64,7 @@ sur des sorties enregistrées (étape 2, 04/11), puis branchée sur la vraie cha
 
 `pret` exige un index vérifié, E5 chargé, le tokeniseur Qwen disponible en cache hors ligne et
 les contrôles de `verifier_ollama()` réussis pour le modèle configuré : nom, digest, GGUF qwen2
-Q4_K_M et gabarit. Pour le Legion, la version cible est Ollama 0.40.11 (décision #107 du 30/10) ;
+Q4_K_M et gabarit. Pour le Legion, la version cible est Ollama 0.40.13 (arbitrage #108 du 02/11) ;
 un écart rend la chaîne indisponible jusqu'à vérification de sa configuration.
 `message` donne en français la cause de toute indisponibilité. Aucun appel de génération n'est
 nécessaire à ce contrôle. `ollama` sélectionne les champs utiles de `verifier_ollama()`, sans
