@@ -71,8 +71,8 @@ NIVEAU = 0.95                 # section 6 : intervalles à 95 %
 NIVEAU_PRINCIPAL = 0.975      # section 6 : analyse principale, Bonferroni pour deux comparaisons
 GRAINE_JUGES, N_JUGES = 20261018, 20
 VERSION_OLLAMA = "0.40.13"    # section 8 : version épinglée du Legion pour toutes les mesures (arbitrage du 02/11)
-# Section 3 : B0 reprend mot pour mot la phrase de brièveté de la consigne de la #85, que B1 conserve, pour que B0 et
-# B1 ne diffèrent que par les passages (calibration du 29 octobre : B0 coupé à 512 tokens sans elle).
+# Section 3 : B0 reprend mot pour mot la phrase de brièveté de la consigne de la #85, que B1 conserve (calibration du
+# 29 octobre : B0 coupé à 512 tokens sans elle). B0 et B1 gardent chacun leurs autres consignes.
 BRIEVETE = [l for l in CONSIGNE_RAG.split("\n") if l.startswith("Réponds brièvement")]
 if len(BRIEVETE) != 1:
     raise RuntimeError("La consigne de la #85 n'a plus exactement une phrase de brièveté")
