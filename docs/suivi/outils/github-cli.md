@@ -16,7 +16,7 @@ Chaque membre tient sa propre ligne à jour.
 |---|---|---|---|
 | Vaneck | 2.101.0 | Windows | |
 | Mahé | 2.92.0 | macOS 27.0.1, arm64 | version relevée le 26/10 ; PR, revues, tickets et lectures de l'API sous l'identité `mahebegnis`, vérifiée par `gh api user` |
-| Rémy | à compléter | à compléter | |
+| Rémy | non installé | Windows 11 | non installé au 02/11 : requêtes d'audit et lectures de l'API REST via scripts Python et PowerShell (`Invoke-RestMethod`), client `git` standard pour les branches et commits |
 | Jibril | à compléter | à compléter | |
 | Maïmouna | à compléter | à compléter | |
 
@@ -31,6 +31,7 @@ Chaque membre tient sa propre ligne à jour.
 - Ticket #29 : activation de GitHub Pages en mode « GitHub Actions » par l'API
   (`gh api -X POST repos/<dépôt>/pages -f build_type=workflow`), vérification de l'état du site et des
   exécutions de l'action (`gh run list`).
+- (Remy) Audit des statuts de PRs, extraction des commentaires de relecture et suivi des assignations de tickets via requêtes REST JSON directes.
 
 ## Qualités observées
 - Toutes les opérations courantes tiennent en une commande, réutilisable et traçable.
@@ -48,6 +49,7 @@ Chaque membre tient sa propre ligne à jour.
 - Méthode précédente : interface web de GitHub.
 - L'interface reste préférable pour les réglages ponctuels réservés aux administrateurs, et pour relire une
   pull request ligne à ligne.
+- (Remy) Par rapport à l'installation d'un binaire CLI dédié, l'utilisation de l'API REST standard (via Python ou `curl`) évite une dépendance logicielle sur machine locale tout en offrant les mêmes garanties d'automatisation.
 
 ## Décision
 Adopté.
