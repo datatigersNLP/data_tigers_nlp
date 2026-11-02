@@ -2,7 +2,7 @@
 
 **Équipe** Data Tigers  
 **Ticket** #112 (supports de présentation du jalon J3)  
-**Établi le** 30 octobre 2026 par Mahé BEGNIS, chaque chiffre relu dans sa source à cette date  
+**Établi le** 30 octobre 2026 par Mahé BEGNIS, chaque chiffre relu dans sa source à cette date ; mis à jour le 2 novembre (version d'Ollama, calendrier)  
 **Usage** reprendre ces chiffres et leurs formulations dans les supports ; un chiffre absent d'ici n'y figure qu'avec sa source.
 
 ---
@@ -38,15 +38,17 @@
 | 17,76 Gio, marge d'environ 10,6 Gio | plafond de mémoire recommandé par Metal sur ce Mac de 24 Gio, et marge sous le pic | mesure du 27 octobre (#13) | « exécution intégrale en VRAM » : le Mac a une mémoire unifiée |
 | 10,5 puis 8,8 s par itération | Mac, 16 couches, le 23 (macOS 26.6.2) puis le 30 octobre (macOS 27.0.1) ; une exécution par configuration, écart non distinguable du bruit | PR #109 ; mesure du 30 octobre | |
 | 9,17 Gio pour 7,96 Gio, 274 s par pas | Legion, RTX 5070 Laptop de 8 Gio : mémoire allouée au-delà de la mémoire physique, 0 octet libre ; le débordement vers la mémoire partagée est une hypothèse forte, pas une mesure | `docs/etudes/faisabilite_legion_20261026.md` | « RTX 4060 », « instabilité due au swap » |
-| 0.40.11 | version d'Ollama épinglée pour toutes les mesures, avant comme après ; elle refuse les adaptateurs LoRA, d'où le témoin T | protocole 06 (PR #108), sections 3 et 8 | |
+| 0.40.13 | version d'Ollama épinglée pour toutes les mesures, avant comme après, mises à jour automatiques coupées (arbitrage du 2 novembre) ; elle refuse les adaptateurs LoRA, d'où le témoin T | protocole 06 (PR #108), sections 3 et 8 | « 0.40.11 », version retenue le 30 octobre puis abandonnée |
 
 ## Calendrier
 
 | Date | Fait | Source |
 |---|---|---|
-| 02/11 | gel du protocole de mesure, ou 03/11 si un prérequis manque | #108, #13 |
-| 03/11 | mesure avant adaptation, données d'adaptation | #52, #107 |
-| 06/11 | entraînement de l'adaptateur, sur le Mac | #107 |
+| 30/10 | données d'adaptation : lot de 298 exemples (273 pour l'entraînement, 25 pour la validation), 24,8 % d'abstentions | #107, PR #115 |
+| 03/11 au plus tôt | gel du protocole de mesure, reporté du 02/11 : B0 doit être recalibré sous Ollama 0.40.13 | #108, section 9 |
+| après le gel | mesure avant adaptation, sur le Legion | #52 |
+| 05/11 | relecture d'un échantillon de 30 exemples des données d'adaptation, condition de l'entraînement | #107, PR #125 |
+| 06/11 | entraînement de l'adaptateur, sur le Mac | #107, PR #125 |
 | 12/11 | mesure après adaptation ; point d'arrêt | #107, #15 |
 | 16/11 | J3, à confirmer par écrit | #8 |
 | 19/11 | V1 du rapport | #113 |
