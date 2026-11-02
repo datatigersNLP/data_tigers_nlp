@@ -19,7 +19,7 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
   * Adaptation du modèle par fine-tuning LoRA (MLX 4 bits sur Mac M4 Pro), sourçage formel des réponses (`[Pn]`) et évaluation rigoureuse avant/après.
 
 ### Objectifs du Jalon J3 (15 points)
-1. **Volet A finalisé et déployé** : Moteur de recherche sémantique réactif, modèle élagué hébergé sous le quota strict de 100 Mio, seuil d'abstention quantifié (S = 0,8560) et accessibilité validée (WCAG / navigation clavier).
+1. **Volet A finalisé et déployé** : Moteur de recherche sémantique réactif, modèle élagué hébergé sous le quota strict de 100 Mio, seuil d'abstention 0,8560 et contrastes vérifiés au niveau AA des WCAG 2.1.
 2. **Volet B engagé** : Socle RAG opérationnel, protocoles de mesure (Protocole 06, #108) et de séparation (#115) verrouillés, faisabilité matérielle du fine-tuning démontrée.
 3. **Supports et méthodologie** : Démonstrations reproductibles, tenue rigoureuse du board et journal d'usage IA auditable (45 sessions, 87 erreurs documentées).
 
@@ -143,8 +143,8 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 ### Le Protocole 06 (PR #108)
 * **Comparaison appariée stricte** : Évaluation conjointe du modèle de base nu (B0), du RAG sans consigne (B1), du RAG avec consigne et seuil (B2), face au modèle adapté et au témoin T sur les mêmes 97 questions d'évaluation.
 * **Les 5 métriques officielles (M1 à M5)** :
-  * **M1** : Taux d'abstention correcte sur les 24 questions hors corpus (cible M1 ≥ 80 %).
-  * **M2** : Taux de fausse réponse affirmative sur les 24 questions hors corpus (cible M2 = 0 %).
+  * **M1** : Taux d'abstention correcte sur les 24 questions hors corpus.
+  * **M2** : Taux de fausse réponse affirmative sur les 24 questions hors corpus.
   * **M3** : Taux d'abstention à tort sur les 73 questions du corpus.
   * **M4** : Taux de citation valide et pertinente selon la règle D4 du notebook 03 sur les 73 questions du corpus.
   * **M5** : Exactitude juridique jugée à l'aveugle par deux annotateurs sur échantillon.
@@ -152,7 +152,7 @@ Le projet impose la réalisation conjointe de deux applications complémentaires
 ### Métrologie & Évaluation humaine aveugle
 * **Seuil de décision S = 0,8565** : 5e centile des scores maximaux calculé sur les 103 requêtes du CDTN (479 variantes), IC 95 % par rééchantillonnage bootstrap : [0,8464 ; 0,8653].
 * **Double évaluation à l'aveugle** : Attribution de l'évaluation qualitative à deux juges indépendants (Vaneck et Maïmouna) sans indication du modèle source.
-* **Statut à J3** : Protocole 06 figé, seuil S calculé, mesure avant adaptation prête à être exécutée.
+* **Statut à J3** : Protocole 06 figé, seuil S calculé ; la mesure avant aura eu lieu à J3, à recompter le 13/11.
 
 ---
 
