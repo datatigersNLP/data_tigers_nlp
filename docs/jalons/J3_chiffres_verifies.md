@@ -2,7 +2,7 @@
 
 **Équipe** Data Tigers  
 **Ticket** #112 (supports de présentation du jalon J3)  
-**Établi le** 30 octobre 2026 par Mahé BEGNIS, chaque chiffre relu dans sa source à cette date ; mis à jour le 2 novembre (version d'Ollama, calendrier)  
+**Établi le** 30 octobre 2026 par Mahé BEGNIS, chaque chiffre relu dans sa source à cette date ; mis à jour le 2 novembre (version d'Ollama, calendrier, sources des 822 requêtes et des temps d'encodage)  
 **Usage** reprendre ces chiffres et leurs formulations dans les supports ; un chiffre absent d'ici n'y figure qu'avec sa source.
 
 ---
@@ -13,8 +13,9 @@
 |---|---|---|---|
 | 261 fiches, 4 240 passages | corpus des fiches pratiques du ministère du Travail, instantané SocialGouv du 11 septembre 2026 | `README.md` | |
 | 112,8 puis 65,7 Mio | modèle `multilingual-e5-small` en q8 : 112,8 Mio chez Xenova, 65,7 Mio après élagage sans perte du vocabulaire (-41,8 %) | `README.md`, `docs/etudes/evaluation/05_protocole_ajustement.md` | |
-| 822 requêtes | vecteurs identiques bit à bit au q8 d'origine, pour tout texte en alphabet latin ou grec | `README.md` | |
-| 18,6 ms | temps d'encodage d'une requête en q8 dans le navigateur, mesuré au notebook 02 | `docs/etudes/indexation/02_indexation.md` | « moins de 25 ms sur Chromium et Firefox », sans source |
+| 822 requêtes | vecteurs du modèle élagué identiques bit à bit au q8 d'origine dans le navigateur, sur les 822 requêtes de contrôle ; l'élagage garde intact tout texte en alphabet latin ou grec | `scripts/allegement/README.md` (lignes 42 et 44) ; `README.md` pour l'alphabet | |
+| 18,3 ms | temps d'encodage d'une requête par le modèle élagué, celui que sert le site, dans le navigateur | `scripts/allegement/README.md` (ligne 44) | « moins de 25 ms sur Chromium et Firefox », sans source |
+| 18,6 ms | même mesure avec le q8 d'origine non élagué (112,8 Mio), dans Chromium en WASM, au notebook 02 ; les temps varient d'une session du navigateur à l'autre | `docs/etudes/indexation/02_indexation.md` | 18,6 ms attribués au site |
 | 73 et 24 questions | lot de test de `jeu-questions-v1` : 73 questions du corpus, issues de 61 fiches, et 24 hors corpus | `docs/etudes/evaluation/03_evaluation.md` | « 60 questions complétées par les 155 requêtes du CDTN » |
 | 43,8 % contre 42,5 % | Recall@5 au niveau du passage : encodeur servi contre BM25 de référence (V3), écart +1,4 point, IC 95 % de -11,5 à +14,3 | `03_evaluation.md` | « supériorité prouvée », « +26,8 points » |
 | critère du J2 satisfait | non-infériorité à la marge de 15 points (score de Tango : z = 2,45, p unilatéral 0,007) ; aucun des deux systèmes n'est démontré meilleur (McNemar p = 1,000) | `03_evaluation.md` | |
