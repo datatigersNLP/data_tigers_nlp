@@ -17,6 +17,17 @@ automatique des candidats. La grille, les 15 formulations, leurs sources et les 
 vierges sont conservées. Toute future acceptation exige une relecture effective, indépendante
 de l'auteur ; aucun hors corpus n'est confirmé par la livraison du support.
 
+## Exclusion des données d'entraînement
+
+Les huit passages de ce support proviennent de trois fiches. Comme l'a signalé Mahé dans sa
+revue du 2 novembre, l'une de ces fiches appartient aux 61 fiches du lot de test humain
+`jeu-questions-v1`.
+
+**Les 15 candidats de ce support sont exclus de toute réutilisation comme exemples
+d'entraînement ou d'adaptation, pour le générateur comme pour l'encodeur.** Cette exclusion
+vaut même après une éventuelle relecture humaine. Ils restent destinés à la relecture et à
+l'exploration de l'évaluation, sans constituer un Challenge Set figé.
+
 ## Parcours de relecture
 
 1. Lire [les questions et sources](questions_et_sources.md), avec les formulations originales et les éléments proposés par le générateur.
@@ -73,7 +84,8 @@ Les objectifs de #95 ne sont pas des quotas d'acceptation. Les cas non confirmé
 
 Le dossier est complet pour commencer la relecture humaine de ces essais. Les décisions restent à prendre ; aucun lot de 25 nouveaux candidats ou manifeste d'évaluation n'est figé.
 Les relecteurs peuvent recouper les fichiers d'origine dans l'archive transmise hors Git. Les questions de ce support restent distinctes du futur pilote indépendant.
-Les #103 et #106 sont préparées pour leur relecture indépendante dans ce périmètre réduit.
+La #103 est fusionnée dans dev depuis le 2 novembre 2026. Le présent support (#106) attend une
+nouvelle relecture après actualisation depuis dev et ajout de l'exclusion des données d'entraînement.
 Leur fusion n'est pas une validation humaine des 15 candidats ni un gel d'évaluation.
 Aucun candidat, rejet ou verdict d'origine modifié, aucune génération ou évaluation du RAG,
 fusion dans dev/main ou clôture déclarée par cette préparation.

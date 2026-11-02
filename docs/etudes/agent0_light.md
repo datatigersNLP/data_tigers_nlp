@@ -1,6 +1,6 @@
 # Agent0 Light : génération synthétique locale
 
-## Synthèse au 30 octobre 2026
+## Synthèse au 2 novembre 2026
 
 **Périmètre livré, décision de Mahé du 30 octobre dans [#13](https://github.com/datatigersNLP/data_tigers_nlp/issues/13).**
 Le livrable conserve le socle intégré (#99 à #101), les catégories de #103 et le support de
@@ -13,7 +13,7 @@ Le pilote indépendant de 25 candidats et le gel d'un Challenge Set ne sont pas 
 Les sections historiques ci-dessous conservent le plan et les résultats de chaque date.
 
 Les cinq catégories sont disponibles : simple, reformulation, multi-passage, piège et hors corpus.
-Les incréments #91 à #93 sont intégrés dans dev ; #94 et le support #95 restent dans #103/#106.
+Les incréments #91 à #94 sont intégrés dans dev ; le support #95 reste en relecture dans #106.
 
 Le validateur contrôle le JSON, les sources, les extraits exacts d'au moins 20 caractères sur des
 limites de mots et les doublons normalisés. Une question piège (`adversarial`) doit désormais
@@ -37,6 +37,13 @@ Aucun nouvel appel réel au modèle ou résultat Windows n'est revendiqué.
 Les 15 candidats restent en attente humaine ; aucun hors corpus n'est confirmé. Les prompts ont
 été ajustés sur trois fiches : ces essais ne constituent pas un benchmark indépendant.
 Les runs historiques, dont l'affirmation `adversarial_001`, restent intacts.
+
+**Exclusion de l'entraînement — précision du 2 novembre.** Les huit passages du support
+de relecture proviennent de trois fiches, dont une appartient aux 61 fiches du lot de test
+humain `jeu-questions-v1`, comme signalé par Mahé en revue. Les 15 candidats historiques
+sont donc exclus de toute réutilisation comme exemples d'entraînement ou d'adaptation,
+pour le générateur comme pour l'encodeur, même après relecture. Ils restent destinés à
+la relecture et à l'exploration de l'évaluation ; aucun lot n'est déclaré figé.
 
 **Travaux reportés avant tout futur pilote.** Signaux de proximité et de comparaison à risque ;
 méthode hors corpus et contre-preuves ; relecture humaine indépendante des cas. Si le pilote
