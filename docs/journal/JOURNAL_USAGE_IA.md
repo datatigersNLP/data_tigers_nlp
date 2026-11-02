@@ -1392,30 +1392,44 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 
 ### Session 47, 2 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
 
-**Objet.** État des lieux depuis le 30 octobre ; revue de Jibril du 30 octobre sur les #108 et #119 ; arbitrage de la version d'Ollama ; traitement des PR de Mahé ; messages à l'équipe.
+**Objet.** État des lieux depuis le 30 octobre ; revue de Jibril du 30 octobre sur les #108 et #119 ; arbitrage de la version d'Ollama ; traitement des PR de Mahé ; messages à l'équipe ; script d'entraînement de l'adaptateur ; contrôle des PR de Remy et de Jibril.
 
 **Produit.**
 - #119 (`f556471`) : l'analyse principale n'est plus conclue si une série B2 dépasse 5 % d'erreurs techniques ; Ollama 0.40.13 épinglé. Réponse dans le fil de Jibril, relecture redemandée.
 - #108 (`e87b9ff`) : version de référence 0.40.13, mises à jour automatiques coupées, différence entre B0 et B1 reformulée selon Jibril, historique ; PDF de 7 pages. Arbitrage publié dans la PR, relecture redemandée.
 - Corps des #108 et #119 remis à jour.
 - #115 : commentaire, passage en « prête » et ajout d'un relecteur refusés par le classifieur de permissions de l'assistant ; commandes et texte remis à Mahé.
+- #115 fusionnée (`fe657f4`), après son passage en « prête » par Mahé et l'approbation de Remy.
+- Relectures : #103 et #106 approuvées, puis #103 fusionnée par Jibril ; #120 de Remy approuvée sur `7b00a2e`.
+- #119 (`06af30e`) : commentaire au-dessus de `BRIEVETE` aligné sur la section 3 de la #108, après la remarque de Jibril. Le changement est fait avant le gel, car le verrou porte sur le script. Jibril a renouvelé son approbation.
+- #125 : script d'entraînement de l'adaptateur (étape 29), avec une configuration entièrement explicite. Il refuse de lancer l'entraînement si la relecture de l'étape 28 n'a pas validé le lot, si une empreinte ou une version diffère, si un fichier est déchargé par iCloud, si l'adaptateur existe déjà ou si `scripts/` n'est pas committé.
+- #124 (`6ddeccd`) : passage à Ollama 0.40.13 et nouveau calendrier du gel. Remy avait approuvé la version du 30/10, et sa relecture est redemandée. Ses diapositives (`61cb985`) reprennent les mêmes valeurs périmées : elles lui sont signalées.
+- Contrôle horaire, en lecture seule, du travail de Remy et de Jibril.
 
 **Mesures exécutées.**
 - #119 : 75 tests (Python 3.12.11, numpy 2.5.3, scipy 1.18.1, environnement hors d'iCloud) ; la mutation qui ignore les états invalides fait échouer la régression.
 - Ollama : aucune version après la 0.40.13 (28 octobre). Entre 0.40.11 et 0.40.13, 11 commits et 153 fichiers, aucun sur l'exécution d'un GGUF qwen2 sur CUDA (nouveaux modèles, audio, moteur MLX d'Apple, correctif Metal). Refus des LoRA identique (`server/create.go`). Le réglage `AutoUpdateEnabled` est vérifié avant tout téléchargement (`app/updater/updater.go`).
 - Suivi : 59 tickets comparés à l'API sur toutes les colonnes, aucun écart.
+- #106 : après la fusion de la #103, son diff réel contre `dev` se limite à ses 9 fichiers, et sa tête `1defb44` est celle qui a été approuvée.
+- #125, code de mlx-lm 0.32.2 relu : la configuration n'est pas écrasée par les valeurs par défaut de la ligne de commande, et 546 itérations font exactement deux époques.
+- #125, tests : 46 dans `scripts/adaptation_qwen`, dont 9 nouveaux.
+- #125, longueurs calculées comme le fait mlx-lm : 2 964 tokens au plus, sous le plafond de 3 072, donc aucune troncature ; 27 377 tokens de réponse par époque.
+- #125, essai de 2 itérations sur le lot v1 : 254 s, pic de 6,61 Gio, perte de validation de 0,226 puis 0,213. L'entraînement réel est refusé tant que la grille de relecture est vide.
 
 **Résultats retenus.**
 - Le risque signalé le 30 octobre s'est réalisé : le Legion est passé seul à Ollama 0.40.13. Le contrôle du script l'a fait voir avant toute exécution.
 - Gel reporté : au plus tôt le 3 novembre, et la mesure avant le 4.
+- La perte de validation part basse, car les réponses du lot ont été écrites par Qwen lui-même, puis filtrées. L'adaptation doit donc renforcer les comportements gardés par les filtres ; elle n'apporte pas de connaissances nouvelles.
 
 **Ce qui a été écarté, et pourquoi.**
 - Revenir à la 0.40.11 : réinstallation manuelle sous Windows, sans gain de comparabilité, puisque aucune mesure n'a été faite.
 - Refaire toute la calibration sous 0.40.13 : la calibration met le script au point et ne fournit aucun résultat ; seul B0, invalide, est recalibré.
 - Contourner le refus du classifieur : les commandes sont données à Mahé.
+- Choisir le point de contrôle d'après la perte de validation : ce serait un degré de liberté non déclaré au protocole. L'adaptateur retenu est le dernier.
 
 **Ce que l'équipe a validé, et par qui.**
 - Arbitrage de la version d'Ollama, par Mahé BEGNIS, qui a délégué le traitement de ses PR.
+- Approbations du jour : Jibril sur la #119 (`06af30e`), Vaneck sur la #108 (`e87b9ff`), Remy sur la #115.
 
 **Temps d'appropriation constaté.**
 - Non relevé.
@@ -1550,6 +1564,8 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 02/11 | Commande `echo ======` : zsh lit `=mot` comme le chemin d'une commande | erreur « not found » | chaînes entre guillemets |
 | 02/11 | Réponse au fil de Jibril dans la #119 adressée à un identifiant vide : sa remarque répondait à un fil existant | erreur 404, rien publié | racine du fil retrouvée, réponse publiée dessous |
 | 02/11 | Copie de sauvegarde de `mesure.py` lancée vers `/tmp` | relecture de la commande | supprimée ; sauvegardes dans `~/NLP2_local/outils` |
+| 02/11 | Chiffres de J3 (PR #124) approuvés avec Ollama 0.40.11 et l'ancien calendrier du gel, changés le matin même, et repris dans les diapositives | contrôle des PR approuvées avant leur fusion | corrigés (`6ddeccd`), relecture redemandée, Remy prévenu pour ses diapositives |
+| 02/11 | Contrôle des longueurs en tokens en échec : `apply_chat_template` de transformers 5 renvoie un dictionnaire par défaut | assertion du script de contrôle | appel aligné sur celui de mlx-lm (`return_dict=False`) |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
