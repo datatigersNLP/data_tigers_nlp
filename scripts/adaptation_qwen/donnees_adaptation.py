@@ -8,6 +8,7 @@ Le format est celui proposé dans la PR #115 le 26 octobre 2026 (champ `messages
     <rag> sources    --lot L --n 600        # passages cibles tirés hors des 61 fiches du lot de test
     <mlx> questions  --lot L                # une question par passage cible, et les questions hors corpus
     <rag> contextes  --lot L                # récupération restreinte aux fiches autorisées, contextes de la #85
+    <rag> reprendre  --lot L --depuis L0    # lot v2 : à la place des trois étapes précédentes, voir plus bas
     <mlx> reponses   --lot L                # réponses de Qwen (MLX 4 bits, glouton, 512 tokens au plus)
     <rag> assembler  --lot L                # filtres, train.jsonl, valid.jsonl, échantillon à relire, manifeste
 <rag> : environnement de scripts/rag/requirements.txt ; <mlx> : celui de scripts/adaptation_qwen/requirements.txt.
@@ -25,6 +26,18 @@ Choix déclarés, à revoir avec Remy (PR #115) :
     des 261 fiches et le genre des questions hors corpus du lot de calibration, jamais d'après le lot de test.
 - Validation : 10 % des fiches autorisées, tirées au hasard ; un exemple va en validation si sa fiche source y est.
 - Relecture humaine (étape 28) : 10 % des exemples, et au moins 30, en échantillon stratifié (tirage_relecture).
+
+Lot v2, décision du 4 novembre 2026 (#107), après le refus du lot v1 à la relecture (8 exemples faux sur 30, dont 6
+sur 15 exemples cités : la réponse prêtait aux passages ce qu'ils ne disent pas) :
+- reprendre : sources, questions et contextes repris du lot v1, contrôlés par ses empreintes ; seule la réponse change.
+  Les questions relues du lot v1 sont écartées : elles ont servi à choisir le correctif et ne peuvent pas le juger ;
+- réponses citées : la consigne de la #85 reçoit, pour la seule génération, CONSIGNE_RECOPIE (recopier des phrases ou
+  lignes entières, chacune suivie de sa référence). L'exemple garde la consigne et le texte de la #85 ;
+- filtre ajouté (verifier_recopie) : chaque phrase ou ligne de la réponse doit reprendre une unité entière de chacun
+  des passages qu'elle cite, aucun mot après la dernière référence, au moins 3 mots par segment cité ;
+- abstentions : hors corpus seulement, générées avec la seule consigne de la #85. La variante « passage retiré » est
+  retirée (amendement du 04/11, avant la génération du lot complet) : la relecture du lot v1 y a trouvé 2 abstentions
+  injustifiées sur 8, la limite de la règle, et elle apprend à s'abstenir là où une réponse partielle existait.
 """
 
 from __future__ import annotations
@@ -35,7 +48,9 @@ import hashlib
 import json
 import random
 import re
+import shutil
 import sys
+import unicodedata
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[2]
@@ -45,7 +60,7 @@ import rag  # noqa: E402
 from generation import NUM_PREDICT, valider_citations  # noqa: E402
 import separation  # noqa: E402
 
-VERSION = "donnees-adaptation-v1"
+VERSION = "donnees-adaptation-v2"     # v2 : étape reprendre, réponses citées recopiées (04/11)
 GRAINE = 20261030
 DOSSIER = RACINE / "data" / "volet_b" / "donnees_adaptation"
 MODELE_MLX = RACINE / "data" / "volet_b" / "qwen25-7b-instruct-4bit-mlx"
@@ -79,6 +94,17 @@ CONSIGNE_HORS = """Tu écris des questions qu'un salarié ou un particulier pour
 Écris comme de vrais utilisateurs : questions concrètes, variées, parfois à la première personne.
 Réponds uniquement par les questions, une par ligne, chacune terminée par un point d'interrogation, sans numérotation."""
 REFERENCES_INTERDITES = re.compile(r"\b(passage|ce texte|le texte|la fiche|ce document|le document)\b", re.I)
+
+# Lot v2 (décision du 04/11, #107) : réponses citées recopiées des passages. La consigne s'ajoute à celle de la #85 pour
+# la seule génération ; l'exemple d'entraînement garde la consigne et le texte de la #85, seule la réponse change.
+CONSIGNE_RECOPIE = """Consigne supplémentaire pour cette réponse : réponds uniquement en recopiant mot pour mot, sans rien changer, une ou plusieurs phrases ou lignes complètes des passages qui répondent à la question.
+Termine chaque phrase ou ligne recopiée par la référence du passage d'où elle vient, par exemple [P2].
+Chaque phrase recopiée doit se comprendre seule : si elle renvoie à une phrase précédente, par exemple « à défaut » ou « dans ce cas », recopie aussi cette phrase.
+N'écris aucune phrase d'introduction, de liaison ou de conclusion, et ne reformule rien."""
+VARIANTES_V2 = ("citee", "hors_corpus")   # « passage retiré » retirée du lot v2 (amendement du 04/11, #107)
+MOTS_MIN_SEGMENT = 3          # un segment cité plus court ne peut pas être distingué d'une coïncidence
+SEPARATEUR_UNITES = re.compile(r"(?<=[.!?;:])\s+|\n+")
+MARQUEURS = re.compile(r"(?:\[P\d\])+")
 
 
 class ErreurDonnees(ValueError):
@@ -192,6 +218,41 @@ def garder_citee(reponse: dict, contexte: dict, passage_cible: str, abstention: 
     if passage_cible not in {refs[c] for c in v["citations"] if c in refs}:
         return False, "cible_non_citee"
     return True, "ok"
+
+
+def mots(texte: str) -> tuple[str, ...]:
+    """Mots d'un texte, à la casse, aux espaces, aux apostrophes et à la ponctuation près."""
+    return tuple(re.findall(r"\w+", unicodedata.normalize("NFKC", texte).replace("’", "'").casefold()))
+
+
+def unites(texte: str) -> set[tuple[str, ...]]:
+    """Phrases et lignes d'un passage, découpées comme les réponses : une unité est recopiée entière ou pas du tout."""
+    return {m for u in SEPARATEUR_UNITES.split(texte) if (m := mots(u))}
+
+
+def verifier_recopie(reponse: str, textes: dict[str, str]) -> str:
+    """« ok » si chaque phrase ou ligne de la réponse reprend une unité entière de chacun des passages qu'elle cite.
+
+    textes : référence [Pk] vers le texte original du passage. La réponse est découpée en segments, chacun clos par
+    un groupe de références ; aucun mot n'est admis après la dernière. Une unité entière, et non un fragment : un
+    fragment pourrait omettre une condition ou une exception."""
+    segments, debut = [], 0
+    for m in MARQUEURS.finditer(reponse):
+        segments.append((reponse[debut:m.start()], re.findall(r"\[P\d\]", m.group(0))))
+        debut = m.end()
+    if not segments:
+        return "aucune_reference"
+    if mots(reponse[debut:]):
+        return "texte_apres_la_derniere_reference"
+    for texte, refs in segments:
+        if len(mots(texte)) < MOTS_MIN_SEGMENT:
+            return "segment_trop_court"
+        if any(r not in textes for r in refs):
+            return "reference_inconnue"
+        for u in (m for u in SEPARATEUR_UNITES.split(texte) if (m := mots(u))):
+            if any(u not in unites(textes[r]) for r in refs):
+                return "non_recopiee"
+    return "ok"
 
 
 def garder_retire(reponse: dict, abstention: str) -> tuple[bool, str]:
@@ -333,11 +394,65 @@ def etape_contextes(lot: Path) -> None:
                                                     for v in ("citee", "passage_retire", "hors_corpus")))
 
 
+REPRIS = ("1_sources.jsonl", "2_questions.jsonl", "3_contextes.jsonl", "fiches_validation.json")
+
+
+def lire_config(lot: Path) -> dict:
+    """Configuration d'un lot repris (étape reprendre) ; vide pour un lot construit depuis les sources (lot v1)."""
+    chemin = lot / "config.json"
+    return json.loads(chemin.read_text(encoding="utf-8")) if chemin.exists() else {}
+
+
+def etape_reprendre(lot: Path, depuis: Path, pilote: Path | None = None) -> None:
+    """Lot v2 : reprend les étapes 1 à 3 d'un lot antérieur, contrôlées par ses empreintes, pour que seule la réponse
+    change ; écarte les questions déjà relues de ce lot, qui ont servi à choisir le correctif et ne peuvent pas le juger,
+    et celles d'un pilote (JSONL, champ « question ») dont les réponses ont été lues pour régler la consigne."""
+    import grille_relecture
+    manifeste = json.loads((depuis / "manifeste.json").read_text(encoding="utf-8"))
+    for n in REPRIS + ("train.jsonl", "valid.jsonl"):
+        if sha256_fichier(depuis / n) != manifeste["sha256"][n]:
+            raise ErreurDonnees(f"{depuis.name}/{n} diffère de son manifeste")
+    if lot.exists():
+        raise ErreurDonnees(f"Le lot {lot.name} existe déjà : un lot n'est jamais remplacé")
+    lot.mkdir(parents=True)
+    for n in REPRIS:
+        shutil.copyfile(depuis / n, lot / n)
+    relues = sorted(e["question"] for e in grille_relecture.echantillon(grille_relecture.lire_exemples(depuis)))
+    du_pilote = sorted({l["question"] for l in lire_jsonl(pilote)}) if pilote else []
+    config = {"version": VERSION, "depuis": depuis.name, "sha256_depuis": {n: manifeste["sha256"][n] for n in REPRIS},
+              "reponses_citees": "recopiees", "variantes": list(VARIANTES_V2),
+              "consigne_recopie_sha256": hashlib.sha256(CONSIGNE_RECOPIE.encode("utf-8")).hexdigest(),
+              "questions_exclues": sorted(set(relues) | set(du_pilote)), "questions_relues": len(relues),
+              "questions_du_pilote": len(du_pilote), "pilote_sha256": sha256_fichier(pilote) if pilote else None}
+    with open(lot / "config.json", "x", encoding="utf-8") as f:
+        f.write(json.dumps(config, ensure_ascii=False, indent=1) + "\n")
+    print(f"Étapes 1 à 3 reprises de {depuis.name} ; {len(relues)} questions relues et {len(du_pilote)} du pilote exclues")
+
+
+def entree_reponse(c: dict, config: dict) -> str:
+    """Texte envoyé à Qwen : celui de la #85, plus la consigne de recopie pour un exemple cité d'un lot v2."""
+    system = c["contexte"]["system"]
+    if c["variante"] == "citee" and config.get("reponses_citees") == "recopiees":
+        system = system + "\n\n" + CONSIGNE_RECOPIE
+    return texte_brut(system, c["contexte"]["prompt"])
+
+
+def ecarte(c: dict, config: dict) -> str | None:
+    """Motif d'écart d'un contexte dans un lot repris : variante retirée ou question déjà relue ; None sinon."""
+    if c["variante"] not in config.get("variantes", ("citee", "passage_retire", "hors_corpus")):
+        return "variante_retiree"
+    if separation.normaliser(c["question"]) in {separation.normaliser(q) for q in config.get("questions_exclues", [])}:
+        return "question_relue"
+    return None
+
+
 def etape_reponses(lot: Path) -> None:
+    config = lire_config(lot)
+    contextes = [c for c in lire_jsonl(lot / "3_contextes.jsonl") if not ecarte(c, config)]
     modele, tok = charger_mlx()
     sorties = []
-    for c in lire_jsonl(lot / "3_contextes.jsonl"):
-        r = generer_mlx(modele, tok, texte_brut(c["contexte"]["system"], c["contexte"]["prompt"]))
+    for c in contextes:
+        r = generer_mlx(modele, tok, entree_reponse(c, config))
         sorties.append({**c, "reponse_qwen": r})
     ecrire_jsonl(lot / "4_reponses.jsonl", sorties)
     print(f"{len(sorties)} réponses")
@@ -347,10 +462,19 @@ def etape_assembler(lot: Path) -> None:
     index = rag.charger_index()
     exclues, fiches, humaines = contexte_separation(index)
     valid = set(json.loads((lot / "fiches_validation.json").read_text(encoding="utf-8")))
-    exemples, rejets = [], {}
+    config = lire_config(lot)
+    textes = {p["passage_id"]: p["texte"] for p in index.passages}
+    exemples, rejets, ecartes = [], {}, {}
     for n, c in enumerate(lire_jsonl(lot / "4_reponses.jsonl"), 1):
+        if motif := ecarte(c, config):                      # déjà écartés à l'étape reponses ; contrôle redondant
+            ecartes[motif] = ecartes.get(motif, 0) + 1
+            continue
         if c["variante"] == "citee":
             ok, motif = garder_citee(c["reponse_qwen"], c["contexte"], c["passage_cible"], rag.ABSTENTION)
+            if ok and config.get("reponses_citees") == "recopiees":
+                motif = verifier_recopie(c["reponse_qwen"]["texte"].strip(),
+                                         {s["reference"]: textes[s["passage_id"]] for s in c["contexte"]["sources"]})
+                ok = motif == "ok"
             cible = c["reponse_qwen"]["texte"].strip()
         elif c["variante"] == "passage_retire":
             ok, motif = garder_retire(c["reponse_qwen"], rag.ABSTENTION)
@@ -394,10 +518,12 @@ def etape_assembler(lot: Path) -> None:
                       **{v: sum(e["variante"] == v for e in exemples) for v in ("citee", "passage_retire", "hors_corpus")}},
         "avant_equilibrage": avant_equilibrage, "part_abstentions_visee": round(PART_ABSTENTIONS, 4),
         "part_abstentions": round(sum(e["type"] == "abstention" for e in exemples) / max(1, len(exemples)), 3),
-        "rejets": dict(sorted(rejets.items())),
+        "rejets": dict(sorted(rejets.items())), "variantes": config.get("variantes", ["citee", "passage_retire", "hors_corpus"]),
+        "questions_relues_exclues": len(config.get("questions_exclues", [])), "ecartes_a_l_assemblage": ecartes,
         "sha256": {n: sha256_fichier(lot / n) for n in ("1_sources.jsonl", "2_questions.jsonl", "3_contextes.jsonl",
                                                         "4_reponses.jsonl", "train.jsonl", "valid.jsonl",
-                                                        "a_relire.jsonl", "fiches_validation.json")},
+                                                        "a_relire.jsonl", "fiches_validation.json")
+                   + (("config.json",) if config else ())},
     }
     (lot / "manifeste.json").write_text(json.dumps(manifeste, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({k: manifeste[k] for k in ("effectifs", "part_abstentions", "rejets")}, ensure_ascii=False))
@@ -405,16 +531,22 @@ def etape_assembler(lot: Path) -> None:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("etape", choices=("sources", "questions", "contextes", "reponses", "assembler"))
+    parser.add_argument("etape", choices=("sources", "questions", "contextes", "reprendre", "reponses", "assembler"))
     parser.add_argument("--lot", required=True, help="nom du lot, dossier dans data/volet_b/donnees_adaptation/")
     parser.add_argument("--n", type=int, default=600, help="nombre de passages sources (étape sources)")
+    parser.add_argument("--depuis", help="lot dont les étapes 1 à 3 sont reprises (étape reprendre)")
+    parser.add_argument("--pilote", type=Path, help="sorties d'un pilote dont les questions sont exclues (étape reprendre)")
     args = parser.parse_args(argv)
-    if not re.fullmatch(r"[a-z0-9_-]{1,40}", args.lot):
+    if not all(re.fullmatch(r"[a-z0-9_-]{1,40}", x) for x in (args.lot, args.depuis or "x")):
         print("Nom de lot invalide", file=sys.stderr)
+        return 2
+    if args.etape == "reprendre" and not args.depuis:
+        print("L'étape reprendre exige --depuis", file=sys.stderr)
         return 2
     lot = DOSSIER / args.lot
     try:
         {"sources": lambda: etape_sources(lot, args.n), "questions": lambda: etape_questions(lot),
+         "reprendre": lambda: etape_reprendre(lot, DOSSIER / args.depuis, args.pilote),
          "contextes": lambda: etape_contextes(lot), "reponses": lambda: etape_reponses(lot),
          "assembler": lambda: etape_assembler(lot)}[args.etape]()
     except (ErreurDonnees, separation.ErreurSeparation, rag.ErreurIndex, rag.ErreurRecuperation) as exc:

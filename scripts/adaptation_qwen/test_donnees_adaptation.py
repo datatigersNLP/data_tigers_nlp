@@ -130,6 +130,100 @@ class ConservationTests(unittest.TestCase):
         self.assertEqual(sum(i.startswith("R") for i in da.tirage_relecture(peu)), 2)
 
 
+class RecopieTests(unittest.TestCase):
+    """Lot v2 : chaque phrase ou ligne citée reprend une unité entière de chacun des passages qu'elle cite."""
+    textes = {"[P1]": "L'employeur doit consulter le CSE. Le délai est d'un mois.\n- Premier cas ;\n- Second cas.",
+              "[P2]": "Une autre fiche, sans rapport avec la question posée."}
+
+    def verdict(self, reponse):
+        return da.verifier_recopie(reponse, self.textes)
+
+    def test_recopies_acceptees(self):
+        for r in ("L'employeur doit consulter le CSE. [P1]",
+                  "L'employeur doit consulter le CSE [P1].",                              # référence avant le point
+                  "l’employeur DOIT consulter le CSE [P1].",                              # casse et apostrophe
+                  "Le délai est d'un mois. [P1]\nL'employeur doit consulter le CSE. [P1]",  # ordre libre
+                  "Le délai est d'un mois.\n- Premier cas ;\n- Second cas. [P1]"):          # lignes d'une liste
+            self.assertEqual(self.verdict(r), "ok", r)
+
+    def test_recopies_refusees(self):
+        cas = {"Le délai est d'un [P1].": "non_recopiee",                                   # fragment
+               "L'employeur consulte le comité. [P1]": "non_recopiee",                      # reformulation
+               "Voici la réponse : L'employeur doit consulter le CSE. [P1]": "non_recopiee",  # introduction
+               "L'employeur doit consulter le CSE. [P1][P2]": "non_recopiee",               # citation superflue
+               "L'employeur doit consulter le CSE. [P1] Bonne journée.": "texte_apres_la_derniere_reference",
+               "Oui [P1].": "segment_trop_court",
+               "L'employeur doit consulter le CSE. [P6]": "reference_inconnue",
+               "L'employeur doit consulter le CSE.": "aucune_reference"}
+        for r, motif in cas.items():
+            self.assertEqual(self.verdict(r), motif, r)
+
+    def test_consigne_de_recopie_seulement_pour_les_exemples_cites_d_un_lot_v2(self):
+        c = {"variante": "citee", "contexte": {"system": "S85", "prompt": "U"}}
+        v2 = {"reponses_citees": "recopiees"}
+        self.assertEqual(da.entree_reponse(c, {}), da.texte_brut("S85", "U"))                   # lot v1
+        self.assertEqual(da.entree_reponse(c, v2), da.texte_brut("S85\n\n" + da.CONSIGNE_RECOPIE, "U"))
+        for v in ("passage_retire", "hors_corpus"):                                            # abstentions : la #85
+            self.assertEqual(da.entree_reponse({**c, "variante": v}, v2), da.texte_brut("S85", "U"))
+
+    def test_contextes_ecartes_d_un_lot_v2(self):
+        v2 = {"variantes": list(da.VARIANTES_V2), "questions_exclues": ["Ma question relue ?"]}
+        c = lambda v, q="Une autre question ?": {"variante": v, "question": q}
+        self.assertEqual([da.ecarte(c(v), v2) for v in ("citee", "passage_retire", "hors_corpus")],
+                         [None, "variante_retiree", None])
+        self.assertEqual(da.ecarte(c("citee", "ma question  RELUE ?"), v2), "question_relue")   # normalisée
+        self.assertIsNone(da.ecarte(c("passage_retire"), {}))                                  # lot v1 : tout est gardé
+
+
+class RepriseTests(unittest.TestCase):
+    def lot_v1(self, d: Path) -> Path:
+        lot = d / "v1"
+        lot.mkdir()
+        for n in da.REPRIS:
+            (lot / n).write_text(f"contenu de {n}\n", encoding="utf-8")
+        variantes = ["citee"] * 40 + ["passage_retire"] * 10 + ["hors_corpus"] * 10
+        ex = [{"id": f"A{i:04d}", "variante": v, "question": f"Question {i} ?"} for i, v in enumerate(variantes)]
+        da.ecrire_jsonl(lot / "train.jsonl", ex[:54])
+        da.ecrire_jsonl(lot / "valid.jsonl", ex[54:])
+        noms = da.REPRIS + ("train.jsonl", "valid.jsonl")
+        (lot / "manifeste.json").write_text(json.dumps({"sha256": {n: da.sha256_fichier(lot / n) for n in noms}}),
+                                            encoding="utf-8")
+        return lot
+
+    def test_reprise_controlee_et_questions_relues_exclues(self):
+        with tempfile.TemporaryDirectory() as d:
+            v1 = self.lot_v1(Path(d))
+            v2 = Path(d) / "v2"
+            da.etape_reprendre(v2, v1)
+            for n in da.REPRIS:
+                self.assertEqual((v2 / n).read_bytes(), (v1 / n).read_bytes())
+            config = da.lire_config(v2)
+            exemples = da.lire_jsonl(v1 / "train.jsonl") + da.lire_jsonl(v1 / "valid.jsonl")
+            relues = set(da.tirage_relecture(exemples))
+            self.assertEqual(len(relues), 30)
+            self.assertEqual(config["questions_exclues"], sorted(e["question"] for e in exemples if e["id"] in relues))
+            self.assertEqual((config["depuis"], config["reponses_citees"], config["version"], config["variantes"]),
+                             ("v1", "recopiees", da.VERSION, ["citee", "hors_corpus"]))
+            with self.assertRaisesRegex(da.ErreurDonnees, "existe déjà"):          # jamais remplacé
+                da.etape_reprendre(v2, v1)
+            pilote = Path(d) / "pilote.jsonl"
+            da.ecrire_jsonl(pilote, [{"question": "Question du pilote ?"}, {"question": config["questions_exclues"][0]}])
+            da.etape_reprendre(Path(d) / "v2b", v1, pilote)
+            c2 = da.lire_config(Path(d) / "v2b")
+            self.assertEqual((len(c2["questions_exclues"]), c2["questions_relues"], c2["questions_du_pilote"]), (31, 30, 2))
+            self.assertIn("Question du pilote ?", c2["questions_exclues"])
+            self.assertEqual(c2["pilote_sha256"], da.sha256_fichier(pilote))
+
+    def test_lot_source_modifie_refuse(self):
+        with tempfile.TemporaryDirectory() as d:
+            v1 = self.lot_v1(Path(d))
+            with open(v1 / "3_contextes.jsonl", "a", encoding="utf-8") as f:
+                f.write("ajout\n")
+            with self.assertRaisesRegex(da.ErreurDonnees, "diffère de son manifeste"):
+                da.etape_reprendre(Path(d) / "v2", v1)
+            self.assertFalse((Path(d) / "v2").exists())
+
+
 class AssemblageTests(unittest.TestCase):
     """Bout en bout sur le vrai index et le vrai jeu, avec des réponses fabriquées."""
 
@@ -165,6 +259,26 @@ class AssemblageTests(unittest.TestCase):
             self.assertEqual(json.loads((lot / "manifeste.json").read_text())["separation"]["violations"], 0)
             with self.assertRaises(FileExistsError):             # une sortie n'est jamais remplacée
                 da.etape_assembler(lot)
+
+    def test_lot_v2_recopie_et_questions_exclues(self):
+        autorises = [p["passage_id"] for p in self.index.passages if self.fiches[p["passage_id"]] not in self.exclues]
+        texte = next(p["texte"] for p in self.index.passages if p["passage_id"] == autorises[0])
+        unite = next(u for u in da.SEPARATEUR_UNITES.split(texte) if len(da.mots(u)) >= 3).strip()
+        cas = ((f"{unite} [P1]", [], {"citee": 1}, {}),
+               ("Une phrase reformulée qui ne vient pas du passage [P1].", [], {"citee": 0}, {"citee:non_recopiee": 1}),
+               (f"{unite} [P1]", ["Question de test ?"], {"citee": 0}, {}))
+        for reponse_texte, exclues, effectifs, rejets in cas:
+            with self.subTest(reponse_texte[:30], exclues=exclues), tempfile.TemporaryDirectory() as d:
+                lot = self.preparer(d, autorises[:5], reponse_texte=reponse_texte)
+                (lot / "config.json").write_text(json.dumps({"reponses_citees": "recopiees",
+                                                             "questions_exclues": exclues}), encoding="utf-8")
+                da.etape_assembler(lot)
+                m = json.loads((lot / "manifeste.json").read_text())
+                self.assertEqual(m["effectifs"]["citee"], effectifs["citee"])
+                self.assertEqual(m["rejets"], rejets)
+                self.assertEqual(m["questions_relues_exclues"], len(exclues))
+                self.assertEqual(m["ecartes_a_l_assemblage"], {"question_relue": 1} if exclues else {})
+                self.assertIn("config.json", m["sha256"])
 
     def test_passage_d_une_fiche_du_lot_de_test_arrete_tout(self):
         interdit = next(p["passage_id"] for p in self.index.passages if self.fiches[p["passage_id"]] in self.exclues)
