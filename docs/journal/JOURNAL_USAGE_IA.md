@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 27 octobre 2026, sessions 1 à 45 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
+**Dernière mise à jour** 2 novembre 2026, sessions 1 à 47 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1366,6 +1366,120 @@ Le clone local pointait encore vers l'ancienne adresse personnelle du dépôt, p
 **Difficultés rencontrées.**
 - Compréhension de la disparité entre le nombre brut de commits dans les branches de travail et le graphe de statistiques GitHub (qui n'agrège que les commits non-vides fusionnés dans la branche par défaut `main`, hors commits de fusion).
 
+### Session 46, 30 octobre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux depuis le 27 octobre ; corrections de la #119 après la calibration de Jibril ; arbitrages du protocole (#108) ; décisions laissées ouvertes par le Weekly 7 ; fusions des #105, #116 et #117 ; relance de Remy ; préparation du Mac pour l'entraînement. La session 45, de Remy (27 octobre), est dans la PR #120.
+
+**Produit.**
+- #119 (`f501793`) : `analyser` ne remplace plus une analyse ; analyse principale désignée seulement pour B2, en mode mesure, après contre la référence `--reference` ; Ollama 0.40.11 épinglé et contrôlé ; consigne de B0 alignée sur la phrase de brièveté de B1 ; test de bout en bout indépendant de `data/`. Réponse dans leur fil aux trois remarques de Jibril.
+- #108 (`a612c20`) : sections 3, 4, 6, 8, 9 et 10 du protocole, PDF de 7 pages ; arbitrages publiés dans la PR ; relectures de Jibril et de Vaneck redemandées.
+- Décisions du 30 octobre, publiées dans #107 (machines), #13 (synthèse), #49 (encodeur ajusté) et #15 (Weekly 9).
+- Fusions de la #117 (`7811fcc`), de la #105 (`234e4b7`) et de la #116 (`3700b5c`), chacune sur sa tête approuvée.
+- Relance de Remy dans la #115, avec un repli : sans réponse le 1er novembre à 20 h, le format du 26 octobre est retenu.
+- `data/volet_b` sorti d'iCloud : copie contrôlée dans le dossier personnel de Mahé, venv MLX recréé, ancien dossier renommé et conservé, chemin d'origine gardé par un lien symbolique.
+- Feuille de route en versions 9 et 10 ; brouillon de la section 4.1 remis à Mahé, hors du dépôt.
+- Fin d'après-midi : empreintes du verrou indépendantes des fins de ligne, dans la #119 (`f170903`) et la section 8 du protocole (#108, `f231c17`).
+- Générateur des données d'adaptation dans la #115 (`2534cc5`), au format proposé le 26 octobre, avec deux pilotes réels sur le Mac.
+- PR #123 : ligne Playwright de Mahé, avec la critique de la version non épinglée. PR #124 : chiffres vérifiés pour les supports de J3.
+- Proposition des cinq outils du bonus pour le Weekly 8, dans #14.
+
+**Mesures exécutées.**
+- #119 : 28 tests de la mesure, 73 avec ceux de la #85 (Python 3.12.11, numpy 2.5.3, scipy 1.18.1, environnement hors d'iCloud) ; 9 mutations des nouvelles règles, toutes détectées.
+- Ollama : `server/create.go` identique aux tags `v0.40.5` et `v0.40.11` pour le refus des LoRA (lignes 42 et 1098) ; versions 0.40.12 et 0.40.13 publiées les 27 et 28 octobre.
+- Calibration du Legion (Jibril, 29 octobre) et essai à blanc du 27 octobre sur le Mac : R+, R- et l'abstention de B2 sous S (Q038 seule) donnent les mêmes résultats.
+- Fusions : résultats de `git merge-tree` sans conflit avec `dev` et entre les trois PR.
+- iCloud : 39 368 des 39 476 fichiers de `.venv/lib` déchargés ; dans `data/volet_b`, tout l'était, poids du modèle compris (4 Gio).
+- Copie hors d'iCloud : 53 fichiers, 4,40 Gio, en 61 s, chacun vérifié par SHA-256 ; les 11 fichiers du modèle conformes à la révision `c26a38f6` publiée, poids compris (`86110f36…`). Venv MLX recréé aux versions de la #109 ; import de MLX en 0,45 s.
+- Mesure de la #109 refaite sous macOS 27.0.1, mêmes données et même graine : 16 couches, 91,1 s pour 6 itérations et 143,8 s pour 12, soit 8,8 s par itération et 38 s de coûts fixes, contre 10,5 s et 25 s le 23 octobre ; pic de mémoire du GPU de 7,14 Gio, identique ; adaptateur de 44,0 Mio.
+- Suivi : 59 tickets comparés à l'API sur toutes les colonnes.
+- Verrou : `.gitattributes` ne protège que `front/public/index/**` ; sous Windows avec `core.autocrlf`, protocole et scripts auraient d'autres octets. Après normalisation, les empreintes égalent celles des objets Git ; 29 tests de la mesure, 74 avec la #85, mutation sans normalisation détectée.
+- Données d'adaptation : 24 tests du générateur et de la séparation. Pilote 1 (12 sources) : 10 questions gardées, cible récupérée pour 9, 7 réponses gardées, soit 58 % des sources ; les 2 rejets sont des abstentions de Qwen avec le bon passage dans le contexte. Pilote 2 (20 sources) : 10 exemples cités gardés sur 14 ; passage retiré : 0 sur 3, Qwen répondant à raison (deux fiches traitent des heures supplémentaires) ; hors corpus : Qwen s'abstient déjà sur 75 questions sur 80 ; 23 % d'abstentions après équilibrage. `mlx_lm.lora` charge ce format et s'entraîne 2 itérations sans erreur. Lot complet provisoire `v1-20261030` (500 sources, 602 réponses en 56 minutes) : 298 exemples après équilibrage, 273 pour l'entraînement et 25 pour la validation, 24,8 % d'abstentions, 0 violation de la séparation. Qwen s'abstient à tort sur 82 des 361 contextes qui contiennent le bon passage (23 %).
+
+**Résultats retenus.**
+- B0 et B1 différaient par la consigne de brièveté autant que par les passages : B0 reprend désormais la phrase de B1.
+- La génération étant déterministe, une coupure à 512 tokens se reproduit à la reprise : la règle de reprise ne protège que des erreurs passagères.
+- La version d'Ollama change presque chaque jour : sans épinglage, avant et après pouvaient être mesurés sous deux versions.
+- Sous macOS 27, l'entraînement tient toujours : même pic de 7,14 Gio, soit une marge d'environ 10,6 Gio sous le plafond de Metal. Avec une seule exécution par configuration, l'écart de temps par itération ne se distingue pas du bruit.
+
+**Ce qui a été écarté, et pourquoi.**
+- « Réponds brièvement. » seul, proposé par Jibril : il laissait une différence de formulation entre B0 et B1.
+- Porter la sortie au-delà de 512 tokens : paramètre commun de la #85, il aurait changé B1 et B2.
+- Reconstituer les sources de la feuille de route en rejouant le transcript : des retouches passaient par des scripts ; la page a été modifiée depuis sa version publiée.
+- Fermer la #49 : elle reste ouverte jusqu'au Weekly 8, pour la réponse de Remy.
+- Modifier les tickets d'Agent0 : proposé à Jibril, qui en est le titulaire.
+- Supprimer l'ancien `data/volet_b` : renommé, à supprimer par Mahé une fois la copie éprouvée.
+- Générer les données avec la chaîne d'Agent0 : elle passe par Ollama, absent du Mac, et le Legion est réservé à la mesure ; elle produit aussi un candidat par exécution, pour une relecture humaine.
+- Des questions hors corpus hors du domaine (fiscalité, divorce) : les questions hors corpus du jeu portent sur le travail, sans fiche (lot de calibration) ; huit thèmes de ce genre, choisis d'après les titres des 261 fiches.
+- Forcer l'abstention en « passage retiré » : un autre passage peut répondre ; l'exemple n'est gardé que si Qwen s'abstient.
+
+**Ce que l'équipe a validé, et par qui.**
+- Lancement des tâches et délégation des décisions ouvertes, par Mahé BEGNIS ; les décisions du 30 octobre sont prises en son nom et révisables au Weekly 8.
+- Approbations de la #105 (Maïmouna SIGNATE), de la #116 (Vaneck DAGAR) et de la #117 (Vaneck DAGAR et Maïmouna SIGNATE).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- iCloud avait déchargé le `.venv` du projet et tout `data/volet_b` : tests lancés depuis un environnement du scratchpad, puis `data/volet_b` déplacé hors du dossier synchronisé.
+- Une référence distante est restée verrouillée quelques secondes pendant une récupération, par un accès concurrent ; rien n'a été supprimé.
+- zsh ne découpe pas une variable non citée en mots, contrairement à bash : la première exécution du pilote n'a rien lancé, et le code d'erreur était masqué par un `tail`.
+
+### Session 47, 2 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux depuis le 30 octobre ; revue de Jibril du 30 octobre sur les #108 et #119 ; arbitrage de la version d'Ollama ; traitement des PR de Mahé ; messages à l'équipe ; script d'entraînement de l'adaptateur ; contrôle des PR de Remy et de Jibril.
+
+**Produit.**
+- #119 (`f556471`) : l'analyse principale n'est plus conclue si une série B2 dépasse 5 % d'erreurs techniques ; Ollama 0.40.13 épinglé. Réponse dans le fil de Jibril, relecture redemandée.
+- #108 (`e87b9ff`) : version de référence 0.40.13, mises à jour automatiques coupées, différence entre B0 et B1 reformulée selon Jibril, historique ; PDF de 7 pages. Arbitrage publié dans la PR, relecture redemandée.
+- Corps des #108 et #119 remis à jour.
+- #115 : commentaire, passage en « prête » et ajout d'un relecteur refusés par le classifieur de permissions de l'assistant ; commandes et texte remis à Mahé.
+- #115 fusionnée (`fe657f4`), après son passage en « prête » par Mahé et l'approbation de Remy.
+- Relectures : #103 et #106 approuvées, puis #103 fusionnée par Jibril ; #120 de Remy approuvée sur `7b00a2e`.
+- #119 (`06af30e`) : commentaire au-dessus de `BRIEVETE` aligné sur la section 3 de la #108, après la remarque de Jibril. Le changement est fait avant le gel, car le verrou porte sur le script. Jibril a renouvelé son approbation.
+- #125 : script d'entraînement de l'adaptateur (étape 29), avec une configuration entièrement explicite. Il refuse de lancer l'entraînement si la relecture de l'étape 28 n'a pas validé le lot, si une empreinte ou une version diffère, si un fichier est déchargé par iCloud, si l'adaptateur existe déjà ou si `scripts/` n'est pas committé.
+- #124 (`6ddeccd`) : passage à Ollama 0.40.13 et nouveau calendrier du gel. Remy avait approuvé la version du 30/10, et sa relecture est redemandée. Ses diapositives (`61cb985`) reprennent les mêmes valeurs périmées : elles lui sont signalées.
+- Contrôle horaire, en lecture seule, du travail de Remy et de Jibril.
+- #125 (`fc0a8ad`), après la revue de Jibril, qui demandait des modifications : la grille remplie doit reprendre exactement le tirage du lot, la fidélité est obligatoire pour un exemple cité, un échec de git refuse l'entraînement final, et `--essai` doit être strictement positif.
+- Grille de relecture du lot v1, remplie par Vaneck : préremplie par une IA, puis vérifiée par lui. Bilan recalculé et chacun des 30 verdicts relu.
+
+**Mesures exécutées.**
+- #119 : 75 tests (Python 3.12.11, numpy 2.5.3, scipy 1.18.1, environnement hors d'iCloud) ; la mutation qui ignore les états invalides fait échouer la régression.
+- Ollama : aucune version après la 0.40.13 (28 octobre). Entre 0.40.11 et 0.40.13, 11 commits et 153 fichiers, aucun sur l'exécution d'un GGUF qwen2 sur CUDA (nouveaux modèles, audio, moteur MLX d'Apple, correctif Metal). Refus des LoRA identique (`server/create.go`). Le réglage `AutoUpdateEnabled` est vérifié avant tout téléchargement (`app/updater/updater.go`).
+- Suivi : 59 tickets comparés à l'API sur toutes les colonnes, aucun écart.
+- #106 : après la fusion de la #103, son diff réel contre `dev` se limite à ses 9 fichiers, et sa tête `1defb44` est celle qui a été approuvée.
+- #125, code de mlx-lm 0.32.2 relu : la configuration n'est pas écrasée par les valeurs par défaut de la ligne de commande, et 546 itérations font exactement deux époques.
+- #125, tests : 46 dans `scripts/adaptation_qwen`, dont 9 nouveaux.
+- #125, longueurs calculées comme le fait mlx-lm : 2 964 tokens au plus, sous le plafond de 3 072, donc aucune troncature ; 27 377 tokens de réponse par époque.
+- #125, essai de 2 itérations sur le lot v1 : 254 s, pic de 6,61 Gio, perte de validation de 0,226 puis 0,213. L'entraînement réel est refusé tant que la grille de relecture est vide.
+- #125, après correction : 53 tests, dont 16 pour l'entraînement ; chaque contrôle ajouté, retiré à la main dans une copie, fait échouer au moins un test.
+- Grille du lot v1 : 30 lignes, aucun doublon, colonnes fixes identiques à la grille vierge. 8 exemples faux sur 30 (26,7 %, IC 95 % de 14,2 à 44,4 %) : 6 sur les 15 exemples cités, 2 abstentions injustifiées sur 8 en « passage retiré », 0 sur 7 hors corpus.
+- Contrôle lexical de fidélité sur les 15 exemples cités relus : au seuil de 0,85 de mots couverts par les passages cités, il écarte 3 des 6 faux et 1 des 9 justes ; un faux couvre 98 % de ses mots.
+
+**Résultats retenus.**
+- Le risque signalé le 30 octobre s'est réalisé : le Legion est passé seul à Ollama 0.40.13. Le contrôle du script l'a fait voir avant toute exécution.
+- Gel reporté : au plus tôt le 3 novembre, et la mesure avant le 4.
+- La perte de validation part basse, car les réponses du lot ont été écrites par Qwen lui-même, puis filtrées. L'adaptation doit donc renforcer les comportements gardés par les filtres ; elle n'apporte pas de connaissances nouvelles.
+- Lot v1 refusé par la règle écrite avant la relecture : l'entraînement du 6 novembre attend un lot corrigé. Même avec la lecture la plus clémente des trois verdicts discutables (A0068, A0332, A0343), 5 faux sur 30 dépassent encore 10 %.
+- Les faux viennent surtout d'attributions erronées : la réponse prête à un passage ce qu'il ne dit pas. Un contrôle lexical ne les sépare pas des justes ; le choix du correctif revient à Mahé.
+
+**Ce qui a été écarté, et pourquoi.**
+- Revenir à la 0.40.11 : réinstallation manuelle sous Windows, sans gain de comparabilité, puisque aucune mesure n'a été faite.
+- Refaire toute la calibration sous 0.40.13 : la calibration met le script au point et ne fournit aucun résultat ; seul B0, invalide, est recalibré.
+- Contourner le refus du classifieur : les commandes sont données à Mahé.
+- Choisir le point de contrôle d'après la perte de validation : ce serait un degré de liberté non déclaré au protocole. L'adaptateur retenu est le dernier.
+
+**Ce que l'équipe a validé, et par qui.**
+- Arbitrage de la version d'Ollama, par Mahé BEGNIS, qui a délégué le traitement de ses PR.
+- Approbations du jour : Jibril sur la #119 (`06af30e`) et sur la #108 (`e87b9ff`), Vaneck sur la #108 (`e87b9ff`), Remy sur la #115 ; #120 fusionnée par Remy.
+- Relecture de l'échantillon du lot v1 par Vaneck DAGAR.
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Le scratchpad a de nouveau été vidé : les outils de l'assistant sont désormais rangés dans `~/NLP2_local/outils`, hors du dépôt et hors d'iCloud.
+- Le préremplissage de la grille par une IA n'est consigné nulle part : Vaneck doit le déclarer dans sa session, avec l'outil employé.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1479,6 +1593,27 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
 | 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
 | 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus hors fusions |
+| 30/10 | Même piège zsh, une troisième fois : `$b:scripts` lu comme le modificateur `:s` | erreur « bad substitution » | commande réécrite |
+| 30/10 | Reconstitution des sources de la feuille de route par rejeu du transcript, incomplète : des retouches passaient par des scripts | assertion du script de reconstitution | page modifiée depuis sa version publiée ; seules les 16 lignes visées changent, données intactes |
+| 30/10 | Remplacement sur la page sans l'espace insécable que le rendu place avant « : » | assertion du script | typographie de la page reproduite |
+| 30/10 | Test des versions d'Ollama construit sur une seule question, que le test de McNemar refuse | erreur du test | deux questions |
+| 30/10 | Tests de la mesure comptés 26 au lieu de 28 : deux lignes de résultat portaient un message d'erreur attendu | écart avec le nombre de fonctions de test | tests relancés seuls : réussis |
+| 30/10 | `git rev-parse --short` appelé avec deux révisions, qui échoue (« Needed a single revision ») : pris pour un verrou passager de la branche | même message sur une autre branche, puis lecture de l'erreur | une révision par appel ; aucune action n'en avait dépendu |
+| 30/10 | Empreintes du verrou calculées sur les octets du disque : sous Windows, le gel aurait bloqué la mesure | relecture du mécanisme du gel avant de l'expliquer à Mahé | normalisation des fins de ligne, test et mutation |
+| 30/10 | Pilote lancé avec `set -- $e` : zsh ne découpe pas la variable, aucune étape n'a tourné, code masqué par `tail` | sortie « command not found: -I » | commandes explicites, arrêt au premier échec |
+| 30/10 | Même piège zsh une quatrième fois : `$R:front` lu comme un modificateur | chemin tronqué dans l'erreur | variable écrite `${R}` |
+| 30/10 | Questions hors corpus lues une par ligne, alors que Qwen les enchaîne sur une ligne : aucune gardée au pilote 1 | effectif nul au pilote | découpage après chaque « ? », test, sortie brute conservée |
+| 30/10 | Proposition des outils attribuant à la fiche ONNX Runtime un écart entre processeurs qu'elle n'écrit pas | relecture de la fiche avant de publier | phrase remplacée par ce que la fiche écrit |
+| 30/10 | Journal d'une étape du pilote écrit dans `/tmp` au lieu du scratchpad | relecture de la commande | journaux suivants dans le scratchpad ; aucune donnée sensible |
+| 30/10 | Échantillon de relecture tiré au hasard : environ 4 abstentions « passage retiré » sur 30, trop peu pour contrôler la variante la plus exposée aux abstentions à tort de Qwen | lecture des rejets du lot v1 | échantillon stratifié (15, 8, 7) et règle propre à la variante, écrite avant la relecture |
+| 02/11 | Commande `echo ======` : zsh lit `=mot` comme le chemin d'une commande | erreur « not found » | chaînes entre guillemets |
+| 02/11 | Réponse au fil de Jibril dans la #119 adressée à un identifiant vide : sa remarque répondait à un fil existant | erreur 404, rien publié | racine du fil retrouvée, réponse publiée dessous |
+| 02/11 | Copie de sauvegarde de `mesure.py` lancée vers `/tmp` | relecture de la commande | supprimée ; sauvegardes dans `~/NLP2_local/outils` |
+| 02/11 | Chiffres de J3 (PR #124) approuvés avec Ollama 0.40.11 et l'ancien calendrier du gel, changés le matin même, et repris dans les diapositives | contrôle des PR approuvées avant leur fusion | corrigés (`6ddeccd`), relecture redemandée, Remy prévenu pour ses diapositives |
+| 02/11 | Contrôle des longueurs en tokens en échec : `apply_chat_template` de transformers 5 renvoie un dictionnaire par défaut | assertion du script de contrôle | appel aligné sur celui de mlx-lm (`return_dict=False`) |
+| 02/11 | Contrôle des 15 candidats d'Agent0 contre le lot v1 lu avec de mauvaises clés : aucun trouvé, par construction | invraisemblance d'un résultat nul | clés réelles lues, contrôle refait |
+| 02/11 | Contrôle de relecture de la #125 acceptant une grille partielle, dupliquée ou d'un autre lot, et une fidélité vide | revue de Jibril | grille comparée au tirage du lot, fidélité obligatoire (`fc0a8ad`) |
+| 02/11 | `a_relire.jsonl` du lot v1 écrit deux minutes avant le commit du tirage stratifié : 2 identifiants en commun avec la grille | comparaison de la grille au tirage | tirage recalculé sur `train.jsonl` et `valid.jsonl`, `a_relire.jsonl` écarté comme référence |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
