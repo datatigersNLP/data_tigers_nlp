@@ -22,3 +22,9 @@ Aucun nouveau test de code, appel modèle, verdict humain ou résultat RAG ; les
 Distinguer fonctionnement technique, qualité sémantique et mesure du RAG. Les candidats ont franchi les contrôles de leur version historique, ce qui ne démontre pas leur conformité au validateur renforcé. Les exemples restent dans leur corpus figé ; aucune vérification du droit actuel n'est revendiquée.
 
 Le générateur et le support sont intégrés ; le pilote indépendant et le gel restent reportés. Les 15 candidats restent exclus de l'entraînement/adaptation du générateur et de l'encodeur. La nouvelle note n'attribue aucun verdict de relecture sémantique ni nouvelle approbation du bilan à Mahé.
+
+## Précisions du 4 novembre 2026 après la revue de Mahé
+
+La version initiale du bilan a été approuvée sur `f854e54`. À la demande de Jibril, Codex assiste la reprise de ses remarques : portée limitée au contrôle de cohérence des 18 originaux, observations assistées distinguées des décisions humaines, trois catégories ajoutées par #94 pour cinq au total, et consigne de références écrites lors de l'intégration au rapport PDF. Les décomptes de mots sont actualisés sans marqueurs Markdown dans le corps de la PR.
+
+Lecture du diff et contrôle des liens internes, des chiffres et des limites ; aucun test de code ou appel modèle relancé. La nouvelle tête nécessite une revalidation ; aucune fusion ni modification du rapport collectif.

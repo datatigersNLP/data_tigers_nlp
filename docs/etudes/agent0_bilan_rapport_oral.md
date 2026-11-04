@@ -3,7 +3,7 @@
 **État vérifié :** 2 novembre 2026.  
 **Contribution :** Jibril BENSALEM, avec l'assistance de Codex dans ChatGPT Work.  
 **Destination :** rapport final (#113), supports de présentation (#112, puis #114).  
-**Statut :** proposition documentaire à relire par Mahé ; les revues des PR techniques ne valent pas approbation de ce texte.
+**Statut :** version initiale approuvée par Mahé le 4 novembre sur `f854e54` ; précisions documentaires du même jour à revalider. Les revues des PR techniques restent distinctes de celle de ce bilan.
 
 ## 1. Message à retenir
 
@@ -25,13 +25,15 @@ La suite commune atteint 149 tests réussis, également vérifiés indépendamme
 
 ### Limites et enseignements
 
-Ces résultats attestent le fonctionnement des contrôles dans les cas testés, sans valider la pertinence des questions. Les 15 candidats sont encore en attente de relecture humaine ; aucun cas hors corpus n'est confirmé. Des erreurs de sens persistent malgré un JSON conforme : une interrogation neutre est présentée comme un piège, une question demande une comparaison non documentée, ou le modèle déclare une information absente alors qu'elle figure dans la source.
+Ces résultats attestent le fonctionnement des contrôles dans les cas testés, sans valider la pertinence des questions. Les 15 candidats sont encore en attente de relecture humaine ; aucun cas hors corpus n'est confirmé. Les observations assistées et la revue de Mahé du 23 octobre sur #103 relèvent des défauts de sens malgré un JSON conforme : interrogation neutre présentée comme piège, comparaison non documentée ou information déclarée absente alors qu'elle figure dans la source. Ces observations ne valent pas décisions humaines dans la grille.
 
 Les prompts ont été retouchés sur les mêmes trois fiches. Ces essais servent donc à la mise au point et ne permettent pas d'estimer une qualité générale ou un gain du RAG. La présence d'un extrait exact ne prouve pas qu'il suffit à répondre ; l'absence de preuve proposée ne démontre pas l'absence d'une réponse dans le corpus.
 
 Le principal enseignement est de séparer la proposition du modèle, les contrôles automatiques et la décision humaine. Les 15 candidats sont exclus de l'entraînement ou de l'adaptation du générateur et de l'encodeur, même après relecture. Une des trois fiches sources appartient au test humain figé. Le pilote indépendant de 25 candidats, son gel et le benchmark synthétique sont reportés selon le périmètre retenu le 30 octobre. Une reprise demanderait une nouvelle décision, des fiches distinctes de la mise au point, un protocole figé et une relecture humaine effective.
 
 Sources du texte : [étude et bilan par catégorie](agent0_light.md), [rapport de vérification des originaux](agent0_relecture/verification_archive.md), [grille humaine](agent0_relecture/grille_relecture.json), [approbation de #103](https://github.com/datatigersNLP/data_tigers_nlp/pull/103#pullrequestreview-5735781157), [approbation finale de #106](https://github.com/datatigersNLP/data_tigers_nlp/pull/106#pullrequestreview-5736081101) et preuves d'intégration en section 6.
+
+À l'intégration dans le rapport PDF, reprendre ces sources comme références écrites : le convertisseur md2tex ne conserve pas les liens Markdown de ce paragraphe. Ajouter les observations assistées (`docs/etudes/agent0_relecture/observations_assistees.md`) et la revue de #103 du 23 octobre, n° 5629789477.
 
 ## 3. Trame orale, environ deux minutes
 
@@ -54,7 +56,7 @@ Durée indicative à vérifier lors d'une répétition ; aucun chronométrage n'
 **Titre :** Agent0 Light : générer des cas traçables, puis les faire relire
 
 - **Livré et intégré :** générateur local, cinq catégories, contrôles et support de relecture.
-- **Vérifié :** 149 tests ; 18 essais réels, 15 candidats, 3 rejets automatiques.
+- **Contrôles :** 149 tests ; cohérence des 18 originaux vérifiée, exécution non attestée indépendamment ; 15 candidats, 3 rejets automatiques.
 - **Limite centrale :** 15 candidats en attente humaine ; aucun hors corpus confirmé.
 - **Conclusion :** outil disponible pour explorer l'évaluation ; pilote indépendant et mesure de qualité reportés.
 
@@ -98,6 +100,7 @@ Source : [synthèse de l'étude](agent0_light.md), [inventaire des originaux](ag
 | Suite commune finale | 149 tests réussis | Revue indépendante de #103 du 02/11, Python 3.12.11 / Pydantic 2.14.0, versions du verrou et `uv pip check` ; contrôles locaux également consignés dans la note du 02/11. Aucune nouvelle exécution pour ce bilan. |
 | Relecture sémantique consignée | 0 décision ; 15 entrées `pending` | Grille relue au snapshot ci-dessous ; relecteurs, points attendus et confirmations vierges. Ce n'est pas une mesure de qualité à 0 %. |
 | Support documentaire | 8 passages complets, issus de 3 fiches | Revue finale de #106 ; une seule fiche, `le-conge-sans-solde`, appartient aux 61 fiches de test. |
+| Originaux historiques | Cohérence des 18 originaux vérifiée ; exécution non attestée indépendamment | Rapport de vérification de l'archive reçue : rapprochement des données et déclarations, pas attestation indépendante de l'exécution sur le Legion. |
 | Gel du pilote | `lot_pilote_fige: false` | Grille ; pas de lot indépendant de 25 candidats livré. |
 
 ### Intégrations vérifiées dans GitHub
@@ -107,7 +110,7 @@ Source : [synthèse de l'étude](agent0_light.md), [inventaire des originaux](ag
 | #91 : contrat | [#99](https://github.com/datatigersNLP/data_tigers_nlp/pull/99) | 26/10/2026 | `aad08f6` |
 | #92 : sources | [#100](https://github.com/datatigersNLP/data_tigers_nlp/pull/100) | 27/10/2026 | `b61873b` |
 | #93 : génération simple/reformulation | [#101](https://github.com/datatigersNLP/data_tigers_nlp/pull/101) | 27/10/2026 | `a74f9a1` |
-| #94 : cinq catégories et contrôles | [#103](https://github.com/datatigersNLP/data_tigers_nlp/pull/103) | 02/11/2026 | `dcb790d` |
+| #94 : trois catégories ajoutées, cinq au total, et contrôles | [#103](https://github.com/datatigersNLP/data_tigers_nlp/pull/103) | 02/11/2026 | `dcb790d` |
 | #95 : support vérifié de relecture | [#106](https://github.com/datatigersNLP/data_tigers_nlp/pull/106) | 02/11/2026 | `5753b86` |
 
 Les approbations finales de Mahé sur #103 et #106 portent respectivement sur `c5e3d8d` et `506ffc1`. La fusion du support est distincte de la validation des candidats.
