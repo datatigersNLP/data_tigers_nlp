@@ -2,7 +2,7 @@
 
 **Équipe** Data Tigers  
 **Ticket** #112 (supports de présentation du jalon J3)  
-**Établi le** 30 octobre 2026 par Mahé BEGNIS, chaque chiffre relu dans sa source à cette date ; mis à jour le 2 novembre (version d'Ollama, calendrier, sources des 822 requêtes et des temps d'encodage)  
+**Établi le** 30 octobre 2026 par Mahé BEGNIS, chaque chiffre relu dans sa source à cette date ; mis à jour le 2 novembre (version d'Ollama, calendrier, sources des 822 requêtes et des temps d'encodage), puis le 4 novembre (gel, lots d'adaptation, réserve sur J4)  
 **Usage** reprendre ces chiffres et leurs formulations dans les supports ; un chiffre absent d'ici n'y figure qu'avec sa source.
 
 ---
@@ -35,26 +35,28 @@
 | 0,8565 | seuil S de l'état B2 (valeur complète 0,856489074230194), IC 95 % de 0,8464 à 0,8653 par rééchantillonnage des 103 requêtes du CDTN (479 variantes) | protocole 06 (PR #108), section 7 | |
 | M1 à M5 | abstention correcte et réponse affirmative sur les 24 hors corpus ; abstention à tort, citation valide et citation pertinente (règle D4) sur les 73 du corpus ; exactitude jugée à l'aveugle sur un échantillon | protocole 06 (PR #108), section 5 | trois « critères » sans rapport avec M1 à M5 |
 | 8 questions | calibration du 29 octobre sur le Legion : elle valide le parcours, mais aucun taux de qualité ne se tire de 8 questions | revue de Jibril, PR #119 | un taux présenté comme résultat |
-| 7,14 Gio | pic de mémoire du GPU de l'adaptation LoRA sur le Mac (16 couches), identique le 23 et le 30 octobre | PR #109 ; mesure du 30 octobre (#13) | « 16,86 Gio de mémoire libre » |
+| 7,14 Gio | pic de mémoire du GPU de l'adaptation LoRA sur le Mac (16 couches), identique le 23 et le 30 octobre | PR #109 ; mesure du 30 octobre, session 46 du journal (#122, `963bf9e`) | « 16,86 Gio de mémoire libre » |
 | 17,76 Gio, marge d'environ 10,6 Gio | plafond de mémoire recommandé par Metal sur ce Mac de 24 Gio, et marge sous le pic | mesure du 27 octobre (#13) | « exécution intégrale en VRAM » : le Mac a une mémoire unifiée |
-| 10,5 puis 8,8 s par itération | Mac, 16 couches, le 23 (macOS 26.6.2) puis le 30 octobre (macOS 27.0.1) ; une exécution par configuration, écart non distinguable du bruit | PR #109 ; mesure du 30 octobre | |
+| 10,5 puis 8,8 s par itération | Mac, 16 couches, le 23 (macOS 26.6.2) puis le 30 octobre (macOS 27.0.1) ; une exécution par configuration, écart non distinguable du bruit | PR #109 ; mesure du 30 octobre, session 46 du journal (#122, `963bf9e`) | |
 | 9,17 Gio pour 7,96 Gio, 274 s par pas | Legion, RTX 5070 Laptop de 8 Gio : mémoire allouée au-delà de la mémoire physique, 0 octet libre ; le débordement vers la mémoire partagée est une hypothèse forte, pas une mesure | `docs/etudes/faisabilite_legion_20261026.md` | « RTX 4060 », « instabilité due au swap » |
-| 0.40.13 | version d'Ollama épinglée pour toutes les mesures, avant comme après, mises à jour automatiques coupées (arbitrage du 2 novembre) ; elle refuse les adaptateurs LoRA, d'où le témoin T | protocole 06 (PR #108), sections 3 et 8 | « 0.40.11 », version retenue le 30 octobre puis abandonnée |
+| 0.40.13 | version d'Ollama épinglée pour toutes les mesures, avant comme après (arbitrage du 2 novembre) ; le protocole exige de couper les mises à jour automatiques, et Jibril déclare l'avoir fait sur le Legion, sans inspection à distance ; elle refuse les adaptateurs LoRA, d'où le témoin T | protocole 06 (PR #108), sections 3 et 8 | « 0.40.11 », version retenue le 30 octobre puis abandonnée |
 
 ## Calendrier
 
-| Date | Fait | Source |
+| Date | Étape et état | Source |
 |---|---|---|
-| 30/10 | données d'adaptation : lot de 298 exemples (273 pour l'entraînement, 25 pour la validation), 24,8 % d'abstentions | #107, PR #115 |
-| 03/11 au plus tôt | gel du protocole de mesure, reporté du 02/11 : B0 doit être recalibré sous Ollama 0.40.13 | #108, section 9 |
-| après le gel | mesure avant adaptation, sur le Legion | #52 |
-| 05/11 | relecture d'un échantillon de 30 exemples des données d'adaptation, condition de l'entraînement | #107, PR #125 |
-| 06/11 | entraînement de l'adaptateur, sur le Mac | #107, PR #125 |
-| 12/11 | mesure après adaptation ; point d'arrêt | #107, #15 |
+| 30/10 | réalisé : lot d'adaptation v1 généré, 298 exemples (273 pour l'entraînement, 25 pour la validation), 24,8 % d'abstentions ; refusé à la relecture du 02/11, 8 exemples faux sur 30 : il ne sert pas à l'entraînement | #107, PR #115 |
+| 02/11 | réalisé : B0 recalibré sur le Legion, 0 erreur technique sur 8, sous Ollama 0.40.13 | PR #119 |
+| 04/11 | réalisé : gel du protocole de mesure, #108 et #119 fusionnées | #52, #108 |
+| 04/11 | réalisé : lot v2 décidé, puis amendé avant sa génération (réponses recopiées des passages, variante « passage retiré » retirée) ; génération en cours, effectifs non connus | #107 |
+| après le verrou | prévu : mesure avant adaptation, sur le Legion, une fois le verrou de mesure versionné | #52 |
+| 05/11 | prévu : relecture du lot v2 par deux relecteurs séparés, condition de l'entraînement | #107 |
+| 06/11 | conditionnel : entraînement de l'adaptateur sur le Mac, si le lot v2 est accepté | #107, PR #125 |
+| 12/11 | prévu : mesure après adaptation ; point d'arrêt | #107, #15 |
 | 16/11 | J3, à confirmer par écrit | #8 |
 | 19/11 | V1 du rapport | #113 |
 | 20/11 | fin du projet : supports, site figé | #114 |
-| 30/11 | J4, soutenance | #8 |
+| 30/11 | J4, soutenance annoncée au 30/11, confirmation écrite attendue | #8 |
 
 ## À recompter le 13 novembre
 
