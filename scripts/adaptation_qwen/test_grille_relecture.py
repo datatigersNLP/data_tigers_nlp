@@ -63,6 +63,8 @@ class BilanTests(unittest.TestCase):
     def test_grille_incomplete_refusee(self):
         with self.assertRaisesRegex(ValueError, "verdict manquant"):
             gr.bilan([self.ligne("C1", "citee")])
+        with self.assertRaisesRegex(ValueError, "verdict manquant"):                   # fidélité obligatoire
+            gr.bilan([self.ligne("C1", "citee", "oui")])
         with self.assertRaisesRegex(ValueError, "reponse_juste"):
             gr.bilan([self.ligne("C1", "citee", "peut-être", "oui")])
 
