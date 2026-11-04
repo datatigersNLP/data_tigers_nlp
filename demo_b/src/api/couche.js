@@ -14,10 +14,12 @@ export class ErreurAppel extends Error {
   }
 }
 
-async function lireJson(reponse) {
+// corps illisible : null, le code HTTP décide alors ; une coupure due au délai remonte telle quelle (revue de la #128)
+async function lireJson(reponse, arret = null) {
   try {
     return await reponse.json();
-  } catch {
+  } catch (e) {
+    if (arret?.signal.aborted) throw e;
     return null;
   }
 }
@@ -35,17 +37,21 @@ export async function lireEtat() {
   return corps;
 }
 
-export async function poserQuestion(question) {
+// le délai couvre aussi la lecture du corps : fetch se résout dès les en-têtes, et un corps bloqué laisserait sinon
+// l'interface occupée sans échéance (revue de la #128). delaiMs et base servent aux tests.
+export async function poserQuestion(question, { delaiMs = DELAI_MS, base = "" } = {}) {
   const arret = new AbortController();
-  const minuterie = setTimeout(() => arret.abort(), DELAI_MS);
+  const minuterie = setTimeout(() => arret.abort(), delaiMs);
   let reponse;
+  let corps;
   try {
-    reponse = await fetch("/api/question", {
+    reponse = await fetch(`${base}/api/question`, {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ question }),
       signal: arret.signal,
     });
+    corps = await lireJson(reponse, arret);
   } catch {
     // contrat, §6 : sans réponse, rien ne prouve qu'Ollama n'a pas commencé le calcul ; aucune relance automatique
     throw arret.signal.aborted
@@ -54,7 +60,6 @@ export async function poserQuestion(question) {
   } finally {
     clearTimeout(minuterie);
   }
-  const corps = await lireJson(reponse);
   if (reponse.status === 200 && corps?.version_contrat === VERSION_CONTRAT) return corps;
   if (reponse.status === 409)
     throw new ErreurAppel("occupe", "Une autre question est déjà en cours sur cet ordinateur. Réessayez quand elle sera terminée.", 409);

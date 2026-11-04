@@ -215,8 +215,11 @@ export default function Reponse({ echange, basculer, montrer, reessayer }) {
             Je ne peux pas répondre à cette question à partir des fiches consultées.
           </p>
           <p className="mt-1 text-sm leading-relaxed text-texte">
-            Les passages trouvés ne contiennent pas l'information. La question sort peut-être du périmètre des fiches
-            pratiques du droit du travail : reformulez-la en décrivant votre situation, ou consultez les passages.
+            {/* revue de la #128 : le statut rapporte une abstention du modèle, pas l'absence vérifiée de l'information ;
+                un modèle peut s'abstenir à tort */}
+            Le modèle s'est abstenu à partir des passages fournis. Vous pouvez les consulter pour vérifier leur contenu.
+            La question sort peut-être du périmètre des fiches pratiques du droit du travail : essayez de la reformuler
+            en décrivant votre situation.
           </p>
           <div className="mt-2">
             <BoutonBascule
