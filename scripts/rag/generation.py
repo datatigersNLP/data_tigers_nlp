@@ -36,24 +36,26 @@ def _api(route: str, donnees=None, timeout=5) -> dict:
     return resultat
 
 
-def verifier_ollama() -> dict:
+def verifier_ollama(modele: str = MODELE_QWEN, digest_attendu: str = DIGEST_QWEN_31) -> dict:
+    """Contrôle le modèle servi. Par défaut, celui de #31 ; la mesure après adaptation désigne le sien (#107)."""
     version = _api("/api/version").get("version")
     catalogue = _api("/api/tags").get("models", [])
     if not isinstance(catalogue, list):
         raise ErreurGeneration("Catalogue Ollama invalide")
-    entrees = [m for m in catalogue if isinstance(m, dict) and m.get("name") == MODELE_QWEN]
+    entrees = [m for m in catalogue if isinstance(m, dict) and m.get("name") == modele]
     if len(entrees) != 1:
-        raise ErreurGeneration(f"Modèle local absent ou ambigu : {MODELE_QWEN}")
+        raise ErreurGeneration(f"Modèle local absent ou ambigu : {modele}")
     entree = entrees[0]
     digest = entree.get("digest")
     if not isinstance(digest, str):
         raise ErreurGeneration("Digest du modèle absent du catalogue Ollama")
     digest = digest.removeprefix("sha256:")
-    if digest != DIGEST_QWEN_31:
+    if digest != digest_attendu:
         raise ErreurGeneration(
-            f"Digest différent de #31 : {digest}. Vérifier le modèle avant de changer la référence."
+            f"Digest différent de celui attendu ({digest_attendu}) : {digest}. "
+            "Vérifier le modèle avant de changer la référence."
         )
-    infos = _api("/api/show", {"model": MODELE_QWEN})
+    infos = _api("/api/show", {"model": modele})
     details = infos.get("details", {})
     if (not isinstance(details, dict) or details.get("format") != "gguf"
             or details.get("family") != "qwen2" or details.get("quantization_level") != "Q4_K_M"):
@@ -61,7 +63,7 @@ def verifier_ollama() -> dict:
     template = infos.get("template")
     if not isinstance(version, str) or not isinstance(template, str) or not template.strip():
         raise ErreurGeneration("Version Ollama ou gabarit du modèle absent")
-    return {"version": version, "modele": MODELE_QWEN, "digest": digest,
+    return {"version": version, "modele": modele, "digest": digest,
             "details": details, "template": template, "parameters": infos.get("parameters")}
 
 
@@ -136,12 +138,13 @@ def valider_citations(texte: str, sources: list[dict], abstention: str) -> dict:
             "citations": valides, "citations_invalides": invalides, "motifs": motifs}
 
 
-def generer_reponse(contexte: dict, abstention: str) -> dict:
-    infos = verifier_ollama()
+def generer_reponse(contexte: dict, abstention: str, modele: str = MODELE_QWEN,
+                    digest_attendu: str = DIGEST_QWEN_31) -> dict:
+    infos = verifier_ollama(modele, digest_attendu)
     tokeniseur = charger_tokeniseur_qwen()
     entree = preparer_entree(contexte, infos["template"], tokeniseur)
     # Le gabarit a déjà été rendu et compté. raw évite tout second habillage.
-    requete = {"model": MODELE_QWEN, "prompt": entree["texte"], "raw": True,
+    requete = {"model": modele, "prompt": entree["texte"], "raw": True,
                "stream": False, "keep_alive": "30m", "options": dict(OPTIONS)}
     resultat = _api("/api/generate", requete, timeout=300)
     texte = resultat.get("response")
