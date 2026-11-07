@@ -29,14 +29,33 @@ change : question, réponse, références, textes et mesures sont ceux de la tra
 npm run convertir -- <dossier des traces>
 ```
 
-## Avec la chaîne locale (étape 3, 10/11)
+## Avec la chaîne locale (étape 3)
 
-Sans le mode maquette, l'interface appelle `GET /api/etat` et `POST /api/question` sur la couche locale
-(`scripts/rag/serveur_demo.py`, à écrire), relayés par Vite vers http://127.0.0.1:8765 en développement.
+La couche locale `scripts/rag/serveur_demo.py` relie l'interface à la chaîne de la #85 : elle sert l'interface construite
+et les routes `GET /api/etat` et `POST /api/question`, sur http://127.0.0.1:8765/ uniquement. Elle fonctionne hors ligne :
+E5 et le tokeniseur Qwen doivent donc être en cache, et Ollama lancé, en version 0.40.13, avec le modèle de la #31.
+
+Préparer le cache une fois, avec une connexion, depuis `scripts/rag` :
 
 ```powershell
-npm run dev
+..\..\.venv\Scripts\python.exe -c "from rag import charger_encodeur; from generation import charger_tokeniseur_qwen; charger_encodeur(); charger_tokeniseur_qwen()"
 ```
+
+Puis construire l'interface et lancer la couche :
+
+```powershell
+cd demo_b
+npm ci
+npm run build
+cd ..
+.venv\Scripts\python.exe scripts\rag\serveur_demo.py
+```
+
+Ouvrir http://127.0.0.1:8765/. Si un élément manque, la couche démarre quand même et l'interface en affiche la cause. Une
+fois le manque corrigé, relancer la couche si c'est l'index, E5 ou le tokeniseur ; pour Ollama, cliquer sur « Réessayer ».
+
+Le modèle servi se règle sur le serveur, jamais depuis le navigateur : `--modele <nom> --digest <empreinte>` pour le modèle
+adapté (#107). Pour modifier l'interface, `npm run dev` dans `demo_b/` relaie `/api` vers cette couche.
 
 ## Tests
 
@@ -45,4 +64,5 @@ npm test
 ```
 
 Ils couvrent la mise en forme des réponses (`src/citations.js`) et le convertisseur, dont la conformité au contrat des
-deux réponses versionnées.
+deux réponses versionnées. La couche locale a les siens, avec Ollama et E5 simulés : `python -m unittest test_serveur_demo`
+depuis `scripts/rag`.
