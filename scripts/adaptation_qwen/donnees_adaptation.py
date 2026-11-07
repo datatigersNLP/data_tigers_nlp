@@ -8,7 +8,7 @@ Le format est celui proposé dans la PR #115 le 26 octobre 2026 (champ `messages
     <rag> sources    --lot L --n 600        # passages cibles tirés hors des 61 fiches du lot de test
     <mlx> questions  --lot L                # une question par passage cible, et les questions hors corpus
     <rag> contextes  --lot L                # récupération restreinte aux fiches autorisées, contextes de la #85
-    <rag> reprendre  --lot L --depuis L0    # lot v2 : à la place des trois étapes précédentes, voir plus bas
+    <rag> reprendre  --lot L --depuis L0 --pilote P [--reponses-de L1]   # lot v2 : voir plus bas
     <mlx> reponses   --lot L                # réponses de Qwen (MLX 4 bits, glouton, 512 tokens au plus)
     <rag> assembler  --lot L                # filtres, train.jsonl, valid.jsonl, échantillon à relire, manifeste
 <rag> : environnement de scripts/rag/requirements.txt ; <mlx> : celui de scripts/adaptation_qwen/requirements.txt.
@@ -35,6 +35,8 @@ sur 15 exemples cités : la réponse prêtait aux passages ce qu'ils ne disent p
   lignes entières, chacune suivie de sa référence). L'exemple garde la consigne et le texte de la #85 ;
 - filtre ajouté (verifier_recopie) : chaque phrase ou ligne de la réponse doit reprendre une unité entière de chacun
   des passages qu'elle cite, aucun mot après la dernière référence, au moins 3 mots par segment cité ;
+- v2.1, après la revue de Jibril (07/11) : « : » et « ; » ne coupent plus une phrase en unités ; le pilote est exigé
+  (ou son absence déclarée) ; reponses-de reprend les réponses d'un lot de même configuration (lot v2b) ;
 - abstentions : hors corpus seulement, générées avec la seule consigne de la #85. La variante « passage retiré » est
   retirée (amendement du 04/11, avant la génération du lot complet) : la relecture du lot v1 y a trouvé 2 abstentions
   injustifiées sur 8, la limite de la règle, et elle apprend à s'abstenir là où une réponse partielle existait.
@@ -60,7 +62,7 @@ import rag  # noqa: E402
 from generation import NUM_PREDICT, valider_citations  # noqa: E402
 import separation  # noqa: E402
 
-VERSION = "donnees-adaptation-v2"     # v2 : étape reprendre, réponses citées recopiées (04/11)
+VERSION = "donnees-adaptation-v2.1"   # v2 : reprendre, réponses recopiées (04/11) ; v2.1 : unités sans « : » ni « ; » (07/11)
 GRAINE = 20261030
 DOSSIER = RACINE / "data" / "volet_b" / "donnees_adaptation"
 MODELE_MLX = RACINE / "data" / "volet_b" / "qwen25-7b-instruct-4bit-mlx"
@@ -103,7 +105,9 @@ Chaque phrase recopiée doit se comprendre seule : si elle renvoie à une phrase
 N'écris aucune phrase d'introduction, de liaison ou de conclusion, et ne reformule rien."""
 VARIANTES_V2 = ("citee", "hors_corpus")   # « passage retiré » retirée du lot v2 (amendement du 04/11, #107)
 MOTS_MIN_SEGMENT = 3          # un segment cité plus court ne peut pas être distingué d'une coïncidence
-SEPARATEUR_UNITES = re.compile(r"(?<=[.!?;:])\s+|\n+")
+# Unités : phrases et lignes. « : » et « ; » ne coupent pas une phrase (revue de Jibril sur la #130, 04/11) : une
+# proposition recopiée seule y perdrait sa condition. Pas de coupure après une initiale ni « art. » (« art. L. 1234-5 »).
+SEPARATEUR_UNITES = re.compile(r"(?<=[.!?])(?<!\b[A-Z]\.)(?<!\bart\.)(?<!\bArt\.)\s+|\n+")
 MARQUEURS = re.compile(r"(?:\[P\d\])+")
 
 
@@ -403,30 +407,55 @@ def lire_config(lot: Path) -> dict:
     return json.loads(chemin.read_text(encoding="utf-8")) if chemin.exists() else {}
 
 
-def etape_reprendre(lot: Path, depuis: Path, pilote: Path | None = None) -> None:
+CLES_REPONSES = ("sha256_depuis", "reponses_citees", "variantes", "consigne_recopie_sha256", "questions_exclues")
+
+
+def etape_reprendre(lot: Path, depuis: Path, pilote: Path | None = None, sans_pilote: bool = False,
+                    reponses_de: Path | None = None) -> None:
     """Lot v2 : reprend les étapes 1 à 3 d'un lot antérieur, contrôlées par ses empreintes, pour que seule la réponse
     change ; écarte les questions déjà relues de ce lot, qui ont servi à choisir le correctif et ne peuvent pas le juger,
-    et celles d'un pilote (JSONL, champ « question ») dont les réponses ont été lues pour régler la consigne."""
+    et celles d'un pilote (JSONL, champ « question ») dont les réponses ont été lues pour régler la consigne.
+
+    Le pilote est exigé : son absence doit être déclarée (sans_pilote), jamais implicite. reponses_de reprend les
+    réponses d'un lot de même configuration (lot v2b : même génération, filtre corrigé), contrôlées par son manifeste.
+    Tous les contrôles précèdent la création du lot."""
     import grille_relecture
+    if (pilote is None) == (not sans_pilote):
+        raise ErreurDonnees("La reprise exige soit --pilote (questions du pilote à exclure), soit --sans-pilote déclaré")
     manifeste = json.loads((depuis / "manifeste.json").read_text(encoding="utf-8"))
     for n in REPRIS + ("train.jsonl", "valid.jsonl"):
         if sha256_fichier(depuis / n) != manifeste["sha256"][n]:
             raise ErreurDonnees(f"{depuis.name}/{n} diffère de son manifeste")
     if lot.exists():
         raise ErreurDonnees(f"Le lot {lot.name} existe déjà : un lot n'est jamais remplacé")
-    lot.mkdir(parents=True)
-    for n in REPRIS:
-        shutil.copyfile(depuis / n, lot / n)
     relues = sorted(e["question"] for e in grille_relecture.echantillon(grille_relecture.lire_exemples(depuis)))
-    du_pilote = sorted({l["question"] for l in lire_jsonl(pilote)}) if pilote else []
+    du_pilote = sorted({q for l in lire_jsonl(pilote) if isinstance(q := l.get("question"), str) and q.strip()}) \
+        if pilote else []
+    if pilote and not du_pilote:
+        raise ErreurDonnees(f"Aucune question dans le pilote {pilote.name}")
     config = {"version": VERSION, "depuis": depuis.name, "sha256_depuis": {n: manifeste["sha256"][n] for n in REPRIS},
               "reponses_citees": "recopiees", "variantes": list(VARIANTES_V2),
               "consigne_recopie_sha256": hashlib.sha256(CONSIGNE_RECOPIE.encode("utf-8")).hexdigest(),
               "questions_exclues": sorted(set(relues) | set(du_pilote)), "questions_relues": len(relues),
-              "questions_du_pilote": len(du_pilote), "pilote_sha256": sha256_fichier(pilote) if pilote else None}
+              "questions_du_pilote": len(du_pilote), "pilote_sha256": sha256_fichier(pilote) if pilote else None,
+              "sans_pilote": sans_pilote}
+    if reponses_de:
+        source = lire_config(reponses_de)
+        if any(source.get(k) != config[k] for k in CLES_REPONSES):
+            raise ErreurDonnees(f"{reponses_de.name} n'a pas la même configuration de génération : réponses non reprises")
+        m = json.loads((reponses_de / "manifeste.json").read_text(encoding="utf-8"))
+        if sha256_fichier(reponses_de / "4_reponses.jsonl") != m["sha256"]["4_reponses.jsonl"]:
+            raise ErreurDonnees(f"{reponses_de.name}/4_reponses.jsonl diffère de son manifeste")
+        config.update(reponses_reprises_de=reponses_de.name, sha256_reponses=m["sha256"]["4_reponses.jsonl"])
+    lot.mkdir(parents=True)
+    for n in REPRIS:
+        shutil.copyfile(depuis / n, lot / n)
+    if reponses_de:
+        shutil.copyfile(reponses_de / "4_reponses.jsonl", lot / "4_reponses.jsonl")
     with open(lot / "config.json", "x", encoding="utf-8") as f:
         f.write(json.dumps(config, ensure_ascii=False, indent=1) + "\n")
-    print(f"Étapes 1 à 3 reprises de {depuis.name} ; {len(relues)} questions relues et {len(du_pilote)} du pilote exclues")
+    print(f"Étapes 1 à 3 reprises de {depuis.name} ; {len(relues)} questions relues et {len(du_pilote)} du pilote exclues"
+          + (f" ; réponses reprises de {reponses_de.name}" if reponses_de else ""))
 
 
 def entree_reponse(c: dict, config: dict) -> str:
@@ -536,8 +565,10 @@ def main(argv=None) -> int:
     parser.add_argument("--n", type=int, default=600, help="nombre de passages sources (étape sources)")
     parser.add_argument("--depuis", help="lot dont les étapes 1 à 3 sont reprises (étape reprendre)")
     parser.add_argument("--pilote", type=Path, help="sorties d'un pilote dont les questions sont exclues (étape reprendre)")
+    parser.add_argument("--sans-pilote", action="store_true", help="déclare qu'aucun pilote n'a été lu (étape reprendre)")
+    parser.add_argument("--reponses-de", help="lot de même configuration dont les réponses sont reprises (étape reprendre)")
     args = parser.parse_args(argv)
-    if not all(re.fullmatch(r"[a-z0-9_-]{1,40}", x) for x in (args.lot, args.depuis or "x")):
+    if not all(re.fullmatch(r"[a-z0-9_-]{1,40}", x) for x in (args.lot, args.depuis or "x", args.reponses_de or "x")):
         print("Nom de lot invalide", file=sys.stderr)
         return 2
     if args.etape == "reprendre" and not args.depuis:
@@ -546,7 +577,8 @@ def main(argv=None) -> int:
     lot = DOSSIER / args.lot
     try:
         {"sources": lambda: etape_sources(lot, args.n), "questions": lambda: etape_questions(lot),
-         "reprendre": lambda: etape_reprendre(lot, DOSSIER / args.depuis, args.pilote),
+         "reprendre": lambda: etape_reprendre(lot, DOSSIER / args.depuis, args.pilote, args.sans_pilote,
+                                              DOSSIER / args.reponses_de if args.reponses_de else None),
          "contextes": lambda: etape_contextes(lot), "reponses": lambda: etape_reponses(lot),
          "assembler": lambda: etape_assembler(lot)}[args.etape]()
     except (ErreurDonnees, separation.ErreurSeparation, rag.ErreurIndex, rag.ErreurRecuperation) as exc:

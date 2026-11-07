@@ -1,9 +1,12 @@
 """Tests du générateur de données d'adaptation (#107, étape 22), sans modèle génératif ni encodeur."""
 
+import contextlib
+import io
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -146,6 +149,16 @@ class RecopieTests(unittest.TestCase):
                   "Le délai est d'un mois.\n- Premier cas ;\n- Second cas. [P1]"):          # lignes d'une liste
             self.assertEqual(self.verdict(r), "ok", r)
 
+    def test_deux_points_et_point_virgule_ne_coupent_pas_une_phrase(self):
+        """Revue de Jibril sur la #130 : une proposition recopiée seule perdrait sa condition (fixtures techniques)."""
+        for source in ("Uniquement si le drapeau est actif : le traitement est autorisé.",
+                       "Le traitement est autorisé ; uniquement si le drapeau est actif."):
+            self.assertEqual(da.verifier_recopie("Le traitement est autorisé. [P1]", {"[P1]": source}), "non_recopiee")
+            self.assertEqual(da.verifier_recopie(source + " [P1]", {"[P1]": source}), "ok")        # phrase entière
+        art = "Selon l'art. L. 1234-5, le salarié a droit au préavis."
+        self.assertEqual(da.verifier_recopie("L. 1234-5, le salarié a droit au préavis. [P1]", {"[P1]": art}), "non_recopiee")
+        self.assertEqual(da.verifier_recopie(art + " [P1]", {"[P1]": art}), "ok")
+
     def test_recopies_refusees(self):
         cas = {"Le délai est d'un [P1].": "non_recopiee",                                   # fragment
                "L'employeur consulte le comité. [P1]": "non_recopiee",                      # reformulation
@@ -194,7 +207,7 @@ class RepriseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             v1 = self.lot_v1(Path(d))
             v2 = Path(d) / "v2"
-            da.etape_reprendre(v2, v1)
+            da.etape_reprendre(v2, v1, sans_pilote=True)
             for n in da.REPRIS:
                 self.assertEqual((v2 / n).read_bytes(), (v1 / n).read_bytes())
             config = da.lire_config(v2)
@@ -205,7 +218,7 @@ class RepriseTests(unittest.TestCase):
             self.assertEqual((config["depuis"], config["reponses_citees"], config["version"], config["variantes"]),
                              ("v1", "recopiees", da.VERSION, ["citee", "hors_corpus"]))
             with self.assertRaisesRegex(da.ErreurDonnees, "existe déjà"):          # jamais remplacé
-                da.etape_reprendre(v2, v1)
+                da.etape_reprendre(v2, v1, sans_pilote=True)
             pilote = Path(d) / "pilote.jsonl"
             da.ecrire_jsonl(pilote, [{"question": "Question du pilote ?"}, {"question": config["questions_exclues"][0]}])
             da.etape_reprendre(Path(d) / "v2b", v1, pilote)
@@ -214,13 +227,52 @@ class RepriseTests(unittest.TestCase):
             self.assertIn("Question du pilote ?", c2["questions_exclues"])
             self.assertEqual(c2["pilote_sha256"], da.sha256_fichier(pilote))
 
+    def test_pilote_exige_ou_absence_declaree(self):
+        with tempfile.TemporaryDirectory() as d:
+            v1 = self.lot_v1(Path(d))
+            vide = Path(d) / "vide.jsonl"
+            vide.write_text("", encoding="utf-8")
+            pilote = Path(d) / "pilote.jsonl"
+            da.ecrire_jsonl(pilote, [{"question": "Question du pilote ?"}])
+            for kw, motif in (({}, "exige"), ({"pilote": vide}, "Aucune question"),
+                              ({"pilote": pilote, "sans_pilote": True}, "exige")):
+                with self.subTest(kw=kw), self.assertRaisesRegex(da.ErreurDonnees, motif):
+                    da.etape_reprendre(Path(d) / "v2", v1, **kw)
+                self.assertFalse((Path(d) / "v2").exists())                    # refus avant toute création
+            with patch.object(da, "DOSSIER", Path(d)), contextlib.redirect_stderr(io.StringIO()) as err:
+                self.assertEqual(da.main(["reprendre", "--lot", "v2", "--depuis", "v1"]), 1)    # commande sans --pilote
+            self.assertIn("--pilote", err.getvalue())
+            da.etape_reprendre(Path(d) / "v2", v1, sans_pilote=True)
+            self.assertTrue(da.lire_config(Path(d) / "v2")["sans_pilote"])
+
+    def test_reponses_reprises_d_un_lot_de_meme_configuration(self):
+        with tempfile.TemporaryDirectory() as d:
+            v1 = self.lot_v1(Path(d))
+            pilote = Path(d) / "pilote.jsonl"
+            da.ecrire_jsonl(pilote, [{"question": "Question du pilote ?"}])
+            v2 = Path(d) / "v2"
+            da.etape_reprendre(v2, v1, pilote)
+            da.ecrire_jsonl(v2 / "4_reponses.jsonl", [{"question": "Q ?", "reponse_qwen": {"texte": "R"}}])
+            (v2 / "manifeste.json").write_text(json.dumps({"sha256": {"4_reponses.jsonl": da.sha256_fichier(v2 / "4_reponses.jsonl")}}),
+                                              encoding="utf-8")
+            da.etape_reprendre(Path(d) / "v2b", v1, pilote, reponses_de=v2)
+            self.assertEqual((Path(d) / "v2b" / "4_reponses.jsonl").read_bytes(), (v2 / "4_reponses.jsonl").read_bytes())
+            self.assertEqual(da.lire_config(Path(d) / "v2b")["reponses_reprises_de"], "v2")
+            with self.assertRaisesRegex(da.ErreurDonnees, "même configuration"):                  # autre exclusion
+                da.etape_reprendre(Path(d) / "v2c", v1, sans_pilote=True, reponses_de=v2)
+            with open(v2 / "4_reponses.jsonl", "a", encoding="utf-8") as f:
+                f.write("ajout\n")
+            with self.assertRaisesRegex(da.ErreurDonnees, "diffère de son manifeste"):
+                da.etape_reprendre(Path(d) / "v2d", v1, pilote, reponses_de=v2)
+            self.assertFalse((Path(d) / "v2c").exists() or (Path(d) / "v2d").exists())
+
     def test_lot_source_modifie_refuse(self):
         with tempfile.TemporaryDirectory() as d:
             v1 = self.lot_v1(Path(d))
             with open(v1 / "3_contextes.jsonl", "a", encoding="utf-8") as f:
                 f.write("ajout\n")
             with self.assertRaisesRegex(da.ErreurDonnees, "diffère de son manifeste"):
-                da.etape_reprendre(Path(d) / "v2", v1)
+                da.etape_reprendre(Path(d) / "v2", v1, sans_pilote=True)
             self.assertFalse((Path(d) / "v2").exists())
 
 
