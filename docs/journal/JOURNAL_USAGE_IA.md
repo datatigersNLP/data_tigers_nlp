@@ -1612,6 +1612,86 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Difficultés rencontrées.** Une modification documentaire après actualisation exige elle aussi une nouvelle revue. Les champs humains restent vierges malgré l'approbation du code et du support. La consolidation du journal est préparée sur une branche séparée ; sa relecture documentaire reste attendue.
 
+**Sessions 61 à 63, de Maïmouna SIGNATE.** Les travaux qu'elles décrivent s'étendent du 28 octobre au 8 novembre ; le travail sur la chaîne RAG avait commencé dès le 20 octobre. Elles sont rédigées à partir de l'historique de la conversation avec l'assistant, des fichiers produits et des revues et commentaires datés (#85, #105, #117, #51, #128). Les temps d'appropriation sont ceux que j'ai déclarés dans ces commentaires ou que j'ai estimés.
+
+### Session 61, 28 et 29 octobre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Prise en main des tâches du volet B ; relecture de la chaîne RAG (#85) ; relectures des #105 et #117 ; charge sur la #51 ; lecture de la #111.
+
+**Produit.**
+- Revue de la #85, approuvée le 28/10, après sa fusion du 27/10.
+- #105 et #117 approuvées.
+- Commentaire sur la #51 : accord sur l'estimation de 6 h, charge réelle de la relecture de la #85.
+
+**Mesures exécutées.** Traces Q036 et Q003 de Jibril relues et comparées aux passages de l'index M2 (indices 1084 et 1085). Recherche de « fonctionnaire », « fonction publique » et « cumul » dans les cinq passages de Q003. Tests de la #85 non rejoués à cette date ; la reproduction est faite en session 63.
+
+**Résultats retenus.**
+- Q036 : les 8 puces de la réponse sont recopiées mot pour mot de P1 ; [P5] est cité sans que son contenu soit repris ; la condition sur l'évaluation des risques est omise, comme le notait déjà `rag_51.md` ; le découpage sépare la liste (P1, `m2-article115181-0002`) de son introduction (P5, `-0001`).
+- Q003 : abstention justifiée, aucun passage ne traite du sujet.
+
+**Ce qui a été écarté, et pourquoi.** Les formulations reprises d'une autre revue de la #85 : la revue devait être écrite avec mes propres mots.
+
+**Ce que l'équipe a validé, et par qui.** Estimation de 6 h pour notre part de la #51, avec Vaneck.
+
+**Temps d'appropriation constaté.** 2 h 30 pour comprendre la chaîne, sur laquelle je travaillais depuis le 20 octobre, et relire la #85, déclarées sur la #51.
+
+**Difficultés rencontrées.** La première version de la revue proposée par l'assistant était trop technique pour que je puisse la défendre : elle a été réexpliquée, puis réécrite. « Presque mot pour mot » a été corrigé en « mot pour mot » après une nouvelle vérification sur les traces, faite à ma demande.
+
+### Session 62, 7 et 8 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Relecture des 30 exemples du lot d'adaptation v2b (#107), seule et sans préremplissage par une IA, comme demandé par Mahé.
+
+**Produit.**
+- Page HTML locale de lecture de la grille, hors dépôt : un exemple par écran, toutes les cases de verdict vides au départ, export au format de la grille reçue (même en-tête, séparateur `;`).
+- `grille_relecture_maimouna_remplie.csv`, que j'ai remplie seule.
+
+**Mesures exécutées.** Empreinte SHA-256 de la grille reçue comparée à ses deux copies : identiques ; 30 lignes, 15 réponses citées et 15 hors corpus. Contrôle de forme du fichier rempli, sans lecture des verdicts : 30 lignes, en-tête et séparateur identiques, un commentaire pour chaque « non ».
+
+**Résultats retenus.** Tous les verdicts sont les miens. L'assistant n'a proposé aucun verdict : il m'a expliqué le sens des colonnes et des niveaux (oui, partiel, non), et a remis en français correct un commentaire que j'avais rédigé (A0068), sans en changer le sens.
+
+**Ce qui a été écarté, et pourquoi.** Le fichier `grille_relecture_preremplie.csv`, non ouvert : la consigne excluait tout préremplissage par une IA.
+
+**Ce que l'équipe a validé, et par qui.** En attente : la grille est à comparer avec celle de Vaneck.
+
+**Temps d'appropriation constaté.** 2 h 30.
+
+**Difficultés rencontrées.** Excel affichait mal le CSV (colonnes et accents), d'où la page de lecture. Pour un exemple dont la réponse ne reprenait que le début d'une liste, la question était de savoir s'il fallait l'excuser parce qu'elle venait du programme de génération : j'ai jugé la réponse telle qu'elle est, conformément à la consigne.
+
+### Session 63, 8 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Reproduction de la chaîne (#51) sur ma machine ; exemples commentés sur la calibration ; relecture de la maquette et de la couche locale de la démonstration (#128).
+
+**Produit.**
+- Commentaire sur la #51 : reproduction, exemples commentés Q001, Q002, Q003 et Q036, charge.
+- Revue de la #128, en commentaire.
+- Outils locaux, hors dépôt : un lanceur qui remplace seulement l'empreinte attendue du modèle, et un script d'affichage lisible des traces.
+
+**Mesures exécutées.**
+- Chaîne : 75 tests réussis, 1 ignoré ; `--check-index` conforme ; SHA-256 des fragments GGUF conformes ; Q036 lancée deux fois, Q003 deux fois, Q001 et Q002 une fois.
+- #128 : 17 tests JavaScript et 95 tests Python réussis ; maquette testée à la souris, au clavier et en fenêtre étroite ; couche locale branchée sur Qwen, avec Q003 et trois questions libres (congés payés, période d'essai d'un CDI, congé pour mariage) ; requêtes invalides refusées.
+
+**Résultats retenus.**
+- Q036 : mêmes passages, même entrée de 2 317 tokens ; le second essai donne une réponse identique au caractère près à la trace de Jibril, le premier une réponse au même contenu, mais citée autrement.
+- Q001 : abstention injustifiée, le passage annoté étant récupéré en P1. Q002 et Q003 : abstentions justifiées. Q036 : réponse juste mais incomplète.
+- #128 : deux remarques (Vite 8.3.0, description de la PR) et une observation sur une phrase de conclusion sans citation.
+
+**Ce qui a été écarté, et pourquoi.**
+- La remarque sur le lien « Voir dans la fiche » : l'erreur venait de ma connexion, et le lien fonctionne.
+- Les questions libres dans les exemples de la #51, réservés à la calibration.
+
+**Ce que l'équipe a validé, et par qui.** En attente des lectures de Jibril et de Vaneck.
+
+**Temps d'appropriation constaté.** Reproduction : 1 h 30. Exemples commentés : 1 h 30. Relecture de la #128 : environ 2 h.
+
+**Difficultés rencontrées.**
+- Sans carte graphique, Q036 prend 3 min 45 sur une limite de 5 min.
+- Le digest du modèle importé diffère, alors que les fragments sont identiques.
+- Python s'exécute en x86 émulé sur processeur ARM.
+- Le chemin du dossier temporaire dépasse la longueur admise sous Windows : la copie de travail a été déplacée.
+- La connexion a coupé pendant le téléchargement de Qwen et lors d'un clic sur un lien de fiche.
+- Un rechargement de la page pendant un calcul a bloqué les questions suivantes jusqu'à sa fin.
+- Une question tapée avec des apostrophes droites ne récupère pas les mêmes passages que le texte officiel.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1750,6 +1830,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 02/11 | Contrôle des 15 candidats d'Agent0 contre le lot v1 lu avec de mauvaises clés : aucun trouvé, par construction | invraisemblance d'un résultat nul | clés réelles lues, contrôle refait |
 | 02/11 | Contrôle de relecture de la #125 acceptant une grille partielle, dupliquée ou d'un autre lot, et une fidélité vide | revue de Jibril | grille comparée au tirage du lot, fidélité obligatoire (`fc0a8ad`) |
 | 02/11 | `a_relire.jsonl` du lot v1 écrit deux minutes avant le commit du tirage stratifié : 2 identifiants en commun avec la grille | comparaison de la grille au tirage | tirage recalculé sur `train.jsonl` et `valid.jsonl`, `a_relire.jsonl` écarté comme référence |
+| 28/10 | Revue de la #85 décrivant la réponse de Q036 comme recopiée « presque mot pour mot » | question de Maïmouna, nouvelle comparaison avec la trace | « mot pour mot » ; la condition omise est attribuée à `rag_51.md`, qui la notait déjà |
+| 08/11 | Remarque sur la #128 attribuant au site du ministère le refus du lien « Voir dans la fiche » | nouvel essai de Maïmouna, connexion vérifiée | remarque retirée, le lien fonctionne |
+| 08/11 | Phrase de conclusion de la réponse sur les congés payés présentée comme inventée et contradictoire | question de Maïmouna, relecture des cinq passages | son contenu figure en P1, P3 et P5 ; seule l'absence de citation est retenue |
+| 08/11 | Fichier d'annotation complet, lot de test compris, ouvert par l'assistant dans l'éditeur au lieu des seules questions de calibration | relecture de la commande par l'assistant | onglet fermé sans lecture, fichier supprimé et remplacé par les 8 questions de calibration |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
