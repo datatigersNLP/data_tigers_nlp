@@ -3,7 +3,7 @@
 ## Identification
 - Version : variable selon les membres, voir « Versions utilisées »
 - Nature : application d'exécution locale de modèles de langage
-- Assignés : Jibril (#31, PR #41), Rémy (#49) ; prévus : Maïmouna (#51) ; Mahé (#52)
+- Assignés : Jibril (#31, PR #41), Rémy (#49), Maïmouna (#51) ; prévus : Mahé (#52)
 - Coordination : Jibril
 - Période d'utilisation : à compléter
 - Besoin du projet auquel il répond : faire tourner le modèle de langage du volet B en local, sans service externe.
@@ -15,7 +15,7 @@ Chaque membre tient sa propre ligne à jour.
 |---|---|---|---|
 | Jibril | 0.34.4 | Windows | GPU NVIDIA, Qwen2.5-7B Q4_K_M (PR #41) |
 | Rémy | à compléter | à compléter | |
-| Maïmouna | à compléter | à compléter | |
+| Maïmouna | 0.40.15 | Windows 11, ARM (Snapdragon X Plus), sans GPU NVIDIA | reproduction de la chaîne de la #85 (#51) : import des deux fragments GGUF officiels par `ollama create`, digest différent de celui de la #31 malgré des fragments identiques ; Q036 en 3 min 45 sur processeur seul |
 | Mahé | non installé | macOS 27.0.1, arm64 | la mesure de #52 s'exécute sur le Legion ; la faisabilité de l'adaptation sur Mac passe par MLX (PR #109) |
 
 ## Mise en place
