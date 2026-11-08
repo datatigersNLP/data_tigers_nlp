@@ -18,7 +18,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 | Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
 | Rémy | à compléter | à compléter | à compléter | à compléter |
 | Jibril | à compléter | à compléter | à compléter | à compléter |
-| Maïmouna | à compléter | à compléter | à compléter | à compléter |
+| Maïmouna | Claude Code dans VS Code | Claude Opus 5.5 | — | compréhension des tâches et du code, relectures de pull requests, vérification de la chaîne RAG, relecture du lot d'adaptation, rédaction du journal et des fiches |
 
 ## Mise en place
 - Temps avant le premier résultat utile :
