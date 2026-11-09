@@ -41,6 +41,25 @@ Le volet A renvoie des passages. Le volet B ajoute une réponse rédigée à par
 
 **Sources.** `scripts/rag/rag.py` (`charger_encodeur`, `recuperer_passages`, `construire_contexte`) ; `scripts/rag/generation.py` (`preparer_entree`, `valider_citations`) ; `docs/jalons/J3_chiffres_verifies.md` ; protocole 06, sections 3 à 5 et 8. Cette version corrige l'affirmation de la PR #134 selon laquelle les citations permettraient de contrôler l'absence d'hallucination.
 
+### Agent0 Light, complément en fin de diapositive 5
+
+**Complément à afficher.** Agent0 Light : générateur de cas exploratoires, avec contrôles et support de relecture. Sur 18 essais : 15 candidats, 3 rejets automatiques. Relecture humaine des candidats à faire.
+
+**Passage oral proposé, 30 à 45 secondes visées.** Durée à vérifier en répétition.
+
+J'ai aussi développé Agent0 Light pour proposer des questions complémentaires à partir du corpus. Il couvre cinq catégories et garde une trace des sources et des rejets. Sur 18 essais historiques, nous avons obtenu 15 candidats et 3 rejets automatiques. Passer les contrôles automatiques ne suffit pas à valider le sens des questions. La relecture humaine reste à faire. Ces candidats restent séparés du jeu humain et exclus de l'entraînement, y compris du lot v2b. Aucun gain du RAG n'est démontré par ces essais.
+
+**Détails à garder dans les notes.**
+
+- Les cinq catégories sont simple, reformulation, multi-passage, piège à fausse prémisse et hors corpus.
+- Le bilan documente 149 tests réussis sur le générateur et ses contrôles. Aucun test n'est relancé pour cet ajout au support.
+- Les 15 candidats ont franchi les contrôles historiques de leur run. Cela ne signifie pas qu'ils ont été revalidés par tous les contrôles finaux, ni qu'ils sont corrects à 83 %.
+- Aucun cas hors corpus n'est confirmé humainement dans le bilan. Une question classée hors corpus par le modèle reste une proposition à examiner.
+- Le générateur et le support de relecture sont intégrés. Le pilote indépendant et le benchmark synthétique restent reportés. Agent0 relève de l'évaluation exploratoire, distincte de l'adaptation de la diapositive 7 et de la mesure officielle de la diapositive 8.
+- Ce passage termine la diapositive 5 avant la démonstration de la diapositive 6. Le plan reste à dix diapositives.
+
+**Sources.** `docs/etudes/agent0_bilan_rapport_oral.md`, état vérifié du 2 novembre, sections 1 à 6 ; `docs/etudes/agent0_relecture/verification_archive.md` ; `docs/etudes/agent0_relecture/grille_relecture.json`. Ces sources distinguent les essais historiques, les contrôles techniques et la validation humaine encore attendue.
+
 ## Diapositive 8 : contribution orale de Jibril
 
 **Contenu et chiffres à afficher.** La source commune reste la section « Diapositive 8 » de `docs/jalons/J3_diapositives_mahe.md`, complétée dans la même PR. Rémy peut y reprendre le tableau et Vaneck le mettre en forme. Le tableau n'est pas recopié ici.
