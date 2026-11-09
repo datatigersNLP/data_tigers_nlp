@@ -2,6 +2,11 @@
 
     python scripts/adaptation_qwen/grille_relecture.py grille <lot>     # écrit grille_relecture.csv (tirage stratifié)
     python scripts/adaptation_qwen/grille_relecture.py bilan <lot>      # contrôle la grille remplie, applique la règle
+    python scripts/adaptation_qwen/grille_relecture.py accord <lot> <A.csv> <B.csv>   # deux relectures séparées
+
+Lot v2 (décision du 04/11, #107) : deux relecteurs remplissent chacun une copie de la grille, sans préremplissage ;
+accord compare leurs verdicts (désaccords, kappa de Cohen sur « faux »). Les désaccords sont tranchés ensemble, et la
+grille commune ainsi obtenue devient grille_relecture.csv, la seule que lisent bilan et l'entraînement.
 
 La grille s'ouvre dans un tableur (UTF-8 avec BOM, séparateur « ; »). Les relecteurs remplissent, pour chaque exemple :
 - question_naturelle : oui ou non (une vraie question d'utilisateur, autonome) ;
@@ -132,13 +137,37 @@ def bilan(lignes: list[dict]) -> dict:
             "garder_passage_retire": injustifiees <= RETIRE_INJUSTIFIEES_MAX}
 
 
+def accord(a: list[dict], b: list[dict]) -> dict:
+    """Deux relectures séparées de la même grille : désaccords et kappa de Cohen sur le verdict « faux »."""
+    ids = [l["id"] for l in a]
+    if ids != [l["id"] for l in b]:
+        raise ValueError("Les deux grilles ne portent pas sur les mêmes exemples, dans le même ordre")
+    fa, fb = set(bilan(a)["ids_faux"]), set(bilan(b)["ids_faux"])
+    n = len(ids)
+    po = sum((i in fa) == (i in fb) for i in ids) / n
+    pe = (len(fa) / n) * (len(fb) / n) + (1 - len(fa) / n) * (1 - len(fb) / n)
+    colonnes = [c for c in COLONNES_VERDICT if c != "commentaire"]
+    ecarts = {la["id"]: [c for c in colonnes if la[c].strip().lower() != lb[c].strip().lower()] for la, lb in zip(a, b)}
+    return {"relus": n, "faux_a": len(fa), "faux_b": len(fb), "accord_observe": round(po, 3),
+            "kappa": round((po - pe) / (1 - pe), 3) if pe < 1 else None,     # indéfini si un seul verdict partout
+            "desaccords_sur_faux": sorted(fa ^ fb), "desaccords_par_colonne": {i: c for i, c in ecarts.items() if c}}
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
-    if len(argv) != 2 or argv[0] not in ("grille", "bilan"):
+    if not (len(argv) == 2 and argv[0] in ("grille", "bilan") or len(argv) == 4 and argv[0] == "accord"):
         print(__doc__)
         return 2
     lot = DOSSIER / argv[1]
     exemples = lire_exemples(lot)
+    if argv[0] == "accord":
+        grilles = []
+        for nom in argv[2:]:
+            with open(lot / Path(nom).name, encoding="utf-8-sig", newline="") as f:
+                grilles.append(list(csv.DictReader(f, delimiter=";")))
+            verifier_grille(grilles[-1], exemples)
+        print(json.dumps(accord(*grilles), ensure_ascii=False, indent=1))
+        return 0
     if argv[0] == "grille":
         choisis = echantillon(exemples)
         with open(lot / "grille_relecture.csv", "x", encoding="utf-8-sig", newline="") as f:

@@ -73,6 +73,23 @@ class BilanTests(unittest.TestCase):
         self.assertEqual(bas, 0.0)
         self.assertAlmostEqual(haut, 0.0918, places=3)
 
+    def test_accord_de_deux_relectures_separees(self):
+        a = [self.ligne(f"C{i}", "citee", "non" if i < 3 else "oui", "oui") for i in range(15)]
+        a += [self.ligne(f"H{i}", "hors_corpus", abst="oui") for i in range(15)]
+        b = [dict(l) for l in a]
+        r = gr.accord(a, b)
+        self.assertEqual((r["kappa"], r["desaccords_sur_faux"], r["desaccords_par_colonne"]), (1.0, [], {}))
+        b[0]["reponse_juste"] = "oui"                                   # C0 : faux pour A seulement
+        b[3]["fidele_aux_passages"] = "non"                             # C3 : faux pour B seulement
+        r = gr.accord(a, b)
+        # 3 faux de chaque côté, 2 en commun : accord 28/30, attendu 0,1 × 0,1 + 0,9 × 0,9 = 0,82
+        self.assertEqual((r["faux_a"], r["faux_b"], r["accord_observe"]), (3, 3, round(28 / 30, 3)))
+        self.assertAlmostEqual(r["kappa"], (28 / 30 - 0.82) / 0.18, places=3)
+        self.assertEqual(r["desaccords_sur_faux"], ["C0", "C3"])
+        self.assertEqual(r["desaccords_par_colonne"], {"C0": ["reponse_juste"], "C3": ["fidele_aux_passages"]})
+        with self.assertRaisesRegex(ValueError, "mêmes exemples"):
+            gr.accord(a, b[1:] + b[:1])
+
 
 if __name__ == "__main__":
     unittest.main()
