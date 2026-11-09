@@ -109,6 +109,71 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(lot.cas[0].validation.expected_points, ["SENTINELLE_ATTENDU"])
         self.assertFalse(self.sorties.exists())
 
+    def test_adversarial_accepte_sans_interrogation_refuse_avant_factory(self):
+        c = cas_technique()
+        c.update(type="adversarial", question="Affirmation fictive du banc technique",
+                 adversarial_premise="Prémisse fictive", correction_proposed="Correction fictive")
+        self.ecrire([c])
+        with self.assertRaisesRegex(evaluate.ErreurEvaluation, "terminée par"):
+            self.executer()
+        self.creer.assert_not_called()
+        self.assertFalse(self.sorties.exists())
+
+    def test_adversarial_non_repondable_refuse_meme_declare_accepte(self):
+        c = cas_technique()
+        c.update(type="adversarial", answerable_proposed=False, evidence=[],
+                 adversarial_premise="Prémisse fictive", correction_proposed=None,
+                 out_of_corpus_reason="Motif fictif",
+                 validation={**c["validation"], "answerable_confirmed": False, "expected_points": []})
+        self.ecrire([c])
+        with self.assertRaisesRegex(evaluate.ErreurEvaluation, "correction proposée comme sourçable"):
+            self.executer()
+        self.creer.assert_not_called()
+        self.assertFalse(self.sorties.exists())
+
+    def test_nombre_sources_generation_incompatible_refuse_avant_factory(self):
+        for categorie in ("simple", "reformulation", "multi_passage", "adversarial", "hors_corpus"):
+            with self.subTest(categorie=categorie):
+                c = cas_technique()
+                c["type"] = categorie
+                c["generation_source_ids"] = ["fixture-5", "fixture-4"]
+                if categorie == "multi_passage":
+                    c["generation_source_ids"].append("fixture-3")
+                    c["evidence"].append({"passage_id": "fixture-4",
+                                          "excerpt": index_technique().passages[4]["texte"]})
+                elif categorie == "adversarial":
+                    c.update(adversarial_premise="Prémisse fictive", correction_proposed="Correction fictive")
+                elif categorie == "hors_corpus":
+                    c.update(answerable_proposed=False, evidence=[], out_of_corpus_reason="Motif fictif",
+                             validation={**c["validation"], "answerable_confirmed": False, "expected_points": []})
+                self.ecrire([c])
+                with self.assertRaisesRegex(evaluate.ErreurEvaluation, "sources de génération"):
+                    self.executer()
+                self.creer.assert_not_called()
+                self.assertFalse(self.sorties.exists())
+
+    def test_cinq_categories_conformes_conservent_question_et_verdict(self):
+        for categorie in ("simple", "reformulation", "multi_passage", "adversarial", "hors_corpus"):
+            with self.subTest(categorie=categorie):
+                c = cas_technique()
+                c["type"] = categorie
+                if categorie == "multi_passage":
+                    c["generation_source_ids"].append("fixture-4")
+                    c["evidence"].append({"passage_id": "fixture-4",
+                                          "excerpt": index_technique().passages[4]["texte"]})
+                elif categorie == "adversarial":
+                    c.update(adversarial_premise="Prémisse fictive", correction_proposed="Correction fictive")
+                elif categorie == "hors_corpus":
+                    c.update(answerable_proposed=False, evidence=[], out_of_corpus_reason="Motif fictif",
+                             validation={**c["validation"], "answerable_confirmed": False, "expected_points": []})
+                self.ecrire([c])
+                avant = (self.lot / "questions.jsonl").read_bytes()
+                lot = evaluate.charger_lot(self.lot)
+                evaluate.verifier_sources(lot, self.chaine.index)
+                self.assertEqual(lot.cas[0].question, c["question"])
+                self.assertEqual(lot.cas[0].validation.model_dump(), c["validation"])
+                self.assertEqual((self.lot / "questions.jsonl").read_bytes(), avant)
+
     def test_separateur_unicode_dans_question_ne_decoupe_pas_le_jsonl(self):
         self.cas[0]["question"] = "  Position\u2028du témoin\u0085technique ?\n"
         self.ecrire()

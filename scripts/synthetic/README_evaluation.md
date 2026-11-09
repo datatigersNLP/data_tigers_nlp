@@ -37,6 +37,10 @@ Gabarit documentaire incomplet, **volontairement refusé** par le lanceur :
 
 Le format d'entrée est proposé à la revue de #96. Le lanceur ne fournit aucune commande pour attribuer un verdict humain ou fabriquer un gel. La date de gel doit être passée avec fuseau explicite, l'effectif compris entre 1 et 25, les champs stricts et les empreintes cohérentes. Les doublons d'identifiant ou de question normalisée, les clés JSON dupliquées et les nombres non finis sont refusés. Les espaces et caractères des questions restent inchangés dans les appels.
 
+La déclaration `automatic: passed` ne dispense pas des contrôles d'entrée. Le générateur et le lanceur partagent les contraintes techniques de catégorie : une source de génération, ou exactement deux sources distinctes pour `multi_passage`, chacune couverte par une preuve ; pour `adversarial`, une correction proposée comme sourçable et une question terminée par `?` après les éventuels espaces finaux. Une incohérence est refusée dès la lecture du lot, avant la création du run ou de la chaîne RAG. Le texte et les verdicts ne sont jamais réparés. Le schéma et ces contrôles ne prouvent ni la présence d'une fausse prémisse ni la nécessité sémantique de combiner deux passages.
+
+La comparaison avec la catégorie et la difficulté de la demande de génération d'origine reste effectuée lors de la génération : le lot ne contient pas cette demande. Sa provenance reste donc à examiner en revue. L'ancrage exact des extraits dans le corpus est revérifié séparément avant l'inférence.
+
 Les identifiants des 15 candidats historiques de mise au point, inventoriés dans `docs/etudes/agent0_relecture/grille_relecture.json`, sont refusés même si une copie les marque acceptés. La grille historique vierge n'est pas un lot d'évaluation. Renommer des candidats ou mettre `pilote_independant` à `true` ne prouve pas l'indépendance : la revue humaine doit vérifier la séparation des fiches et la provenance des générations, puis figer le lot avant toute réponse du RAG. Les champs de validation restent des déclarations, sans authentification de l'identité humaine par le programme.
 
 ## Vérifier sans modèle

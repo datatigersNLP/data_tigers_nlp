@@ -27,12 +27,14 @@ if __package__:
     from .corpus import provenance_code
     from .schema import (CasSynthetique, IdentifiantLot, ModeleStrict, Texte,
                          _constante_interdite, _objet_sans_doublon)
-    from .validation import extrait_valide, normaliser_question
+    from .validation import (extrait_valide, normaliser_question,
+                             verifier_contraintes_generation)
 else:
     from corpus import provenance_code
     from schema import (CasSynthetique, IdentifiantLot, ModeleStrict, Texte,
                         _constante_interdite, _objet_sans_doublon)
-    from validation import extrait_valide, normaliser_question
+    from validation import (extrait_valide, normaliser_question,
+                            verifier_contraintes_generation)
 
 
 RACINE = Path(__file__).resolve().parents[2]
@@ -126,6 +128,10 @@ def charger_lot(dossier: Path) -> LotFige:
             raise ErreurEvaluation(f"{c.id} : candidat de mise au point exclu du pilote indépendant")
         if c.validation.human != "accepted" or c.validation.automatic != "passed":
             raise ErreurEvaluation(f"{c.id} : acceptation humaine et contrôles requis")
+        try:
+            verifier_contraintes_generation(c, c.generation_source_ids)
+        except ValueError as exc:
+            raise ErreurEvaluation(f"{c.id} : {exc}") from exc
         cle = normaliser_question(c.question)
         if c.id in ids or not cle or cle in questions:
             raise ErreurEvaluation("Identifiant ou question normalisée vide/dupliqué")
