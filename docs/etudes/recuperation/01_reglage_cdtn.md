@@ -4,7 +4,7 @@
 **Projet** NLP 2 · Master 2 Data & IA · FGES, Université Catholique de Lille  
 **Ticket** #138 (récupération v2 du volet B)  
 **Responsable** Mahé BEGNIS  
-**Statut** réglage fait le 9 novembre 2026, sur le seul jeu CDTN ; règle de choix corrigée par l'amendement A1 avant la lecture des résultats des reclasseurs ; confirmation sur le lot de test à faire selon le protocole 07.
+**Statut** réglage fait le 9 novembre 2026, sur le seul jeu CDTN ; règle de choix corrigée par l'amendement A1 avant la lecture des résultats des reclasseurs ; confirmation sur le lot de test faite le même jour selon le protocole 07 (`02_confirmation_test.md`) : rappel du contexte de 45,2 % à 72,6 %, amélioration démontrée.
 
 ---
 
@@ -134,10 +134,10 @@ Les durées ont été mesurées alors que d'autres calculs tournaient sur la mac
 
 ## 10. Suite
 
-* **Protocole 07** : confirmation unique sur le lot de test, avec la règle D4 et un test apparié groupé par fiche.
+* **Protocole 07** : confirmation unique sur le lot de test, faite le 9 novembre (`02_confirmation_test.md`). Le rappel du contexte passe de 45,2 % à 72,6 %, soit +27,4 points [+16,3 ; +38,5].
 * **#139** : jugement manuel des passages pour évaluer les voisins et corriger le biais de l'extrait unique.
 * **Après la mesure du protocole 06** : la chaîne complète avec la récupération v2, modèle de base et modèle adapté, à titre exploratoire.
 
 ## 11. Historique
 
-* **9 novembre 2026** : préparation, grille sans reclasseur, amendement A1, scores des trois reclasseurs, grille complète.
+* **9 novembre 2026** : préparation, grille sans reclasseur, amendement A1, scores des trois reclasseurs, grille complète, puis confirmation sur le lot de test.
