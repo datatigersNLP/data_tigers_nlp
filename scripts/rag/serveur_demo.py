@@ -231,13 +231,19 @@ class Gestionnaire(SimpleHTTPRequestHandler):
         if not chaine.verrou.acquire(blocking=False):
             self._refus(409, "occupe", "Une question est déjà en cours.")
             return
+        # Le verrou ne couvre que le calcul : il est libéré avant l'envoi de la réponse. Sinon, un client qui enchaîne
+        # sa question suivante dès la réception du corps pourrait recevoir un faux 409 (revue de la #128).
         try:
-            self._json(200, chaine.repondre(question))
+            reponse = chaine.repondre(question)
         except Exception:  # défaut inattendu : tracé ici, sans bloquer les questions suivantes
             traceback.print_exc()
-            self._refus(500, "erreur_interne", "Erreur inattendue de la couche locale, voir son terminal.")
+            reponse = None
         finally:
             chaine.verrou.release()
+        if reponse is None:
+            self._refus(500, "erreur_interne", "Erreur inattendue de la couche locale, voir son terminal.")
+        else:
+            self._json(200, reponse)
 
 
 class Serveur(ThreadingHTTPServer):

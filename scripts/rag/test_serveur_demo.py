@@ -285,6 +285,25 @@ class QuestionTests(BaseServeur):
             self.assertFalse(json.loads(self.appel("GET", "/api/etat")[1])["occupe"])
             self.assertEqual(self.question()[0], 200)
 
+    def test_verrou_libere_avant_l_envoi_de_la_reponse(self):
+        # Revue de la #128 : libéré seulement après l'envoi, le verrou pouvait refuser en 409 la question suivante d'un
+        # client qui attend pourtant la réponse précédente. On relève son état au moment où chaque réponse part.
+        etats, envoyer = [], serveur_demo.Gestionnaire._json
+
+        def espion(gestionnaire, code, corps):
+            if gestionnaire.path == "/api/question":
+                etats.append((code, self.chaine.verrou.locked()))
+            envoyer(gestionnaire, code, corps)
+        with patch.object(serveur_demo.Gestionnaire, "_json", espion), \
+                patch.object(serveur_demo, "generer_reponse", return_value=generation()):
+            self.assertEqual(self.question()[0], 200)
+            with patch.object(serveur_demo, "generer_reponse", side_effect=RuntimeError("inattendu")), \
+                    patch("serveur_demo.traceback.print_exc"):
+                self.assertEqual(self.question()[0], 500)
+            codes = [self.question()[0] for _ in range(50)]
+        self.assertEqual(etats[:2], [(200, False), (500, False)])
+        self.assertEqual(codes, [200] * 50)
+
     def test_defaut_inattendu_libere_le_verrou(self):
         with patch.object(serveur_demo, "generer_reponse", side_effect=RuntimeError("inattendu")), \
                 patch("serveur_demo.traceback.print_exc"):
