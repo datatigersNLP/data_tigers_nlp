@@ -3,6 +3,7 @@
 from pathlib import Path
 import sys
 import unittest
+import unittest.mock
 from unittest.mock import Mock
 
 import numpy as np
@@ -134,6 +135,37 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(rc.classement_final(c, e5, bm25, {3: 0.1, 1: 0.5, 2: 0.9}), [2, 1, 3])
         with self.assertRaises(rc.ErreurRecuperationV2):
             rc.classement_final(c, e5, bm25, {3: 0.1})
+
+
+class ConfirmationTests(unittest.TestCase):
+    def test_rang_premier_et_fiche(self):
+        import confirmer_test as ct
+        self.assertEqual(ct.rang_premier([5, 3, 9], {9}), 3)
+        self.assertEqual(ct.rang_premier([5, 3, 9], {9}, profondeur=2), float("inf"))
+        self.assertEqual(ct.rang_premier([5, 3], set()), float("inf"))
+        self.assertEqual(ct.fiche_url("https://exemple.invalid/fiche/#section"), "https://exemple.invalid/fiche")
+
+    def test_controle_notebook03(self):
+        import tempfile
+        import confirmer_test as ct
+        with tempfile.TemporaryDirectory() as d:
+            chemin = Path(d) / "rangs.csv"
+            chemin.write_text("question,fiche,E5 fp32, m2,BM25 de référence (V3)\n".replace("E5 fp32, m2", '"E5 fp32, m2"')
+                              + "QX1,f,1.0,inf\nQX2,f,7.0,2.0\n", encoding="utf-8")
+            questions = [{"id": "QX1"}, {"id": "QX2"}]
+            with unittest.mock.patch.object(ct, "RANGS_NB03", chemin), unittest.mock.patch.object(ct, "RAPPEL5_NB03", (1, 2)):
+                self.assertTrue(ct.controle_notebook03(questions, [1, 7], [float("inf"), 2])["conforme"])
+                faux = ct.controle_notebook03(questions, [1, 6], [float("inf"), 2])
+                self.assertFalse(faux["conforme"])
+                self.assertEqual(faux["ecarts"], [("QX2", "e5", 7.0, 6)])
+            # le Recall@5 publié (33 sur 73) n'est pas celui de ces deux questions factices : refus
+            with unittest.mock.patch.object(ct, "RANGS_NB03", chemin):
+                self.assertFalse(ct.controle_notebook03(questions, [1, 7], [float("inf"), 2])["conforme"])
+
+    def test_configuration_du_protocole(self):
+        import confirmer_test as ct
+        self.assertEqual(ct.CONFIGURATION.nom, "rrf+k10+bge-m3@20")
+        self.assertEqual(ct.VERROU_131, VERROU_131)
 
 
 class VerrouTests(unittest.TestCase):

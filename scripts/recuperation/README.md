@@ -14,7 +14,8 @@ Quatre leviers, réglés sur le jeu CDTN et jamais sur le lot de test : le nombr
   * Le contexte a le même format que `rag.construire_contexte`, pour un nombre quelconque de passages ; un test vérifie l'égalité exacte pour cinq passages.
   * Budget : la règle de `generation.preparer_entree`, soit 8 192 − 512 − 64 = 7 616 tokens de prompt au plus. Au-delà, les derniers groupes (une ancre et ses voisins) sont retirés ; aucun passage n'est tronqué.
 * `reglage_cdtn.py` : préparation (population, E5, BM25 V3), scores des reclasseurs, grille des configurations.
-* `test_recuperation.py` : 16 tests sans modèle ni question d'évaluation.
+* `confirmer_test.py` : la confirmation unique sur le lot de test, selon le protocole 07 (`docs/etudes/evaluation/07_protocole_recuperation_v2.md`). Il refuse de tourner si le protocole, le script ou le module ne sont pas committés à l'identique, et ne calcule la v2 qu'après avoir reproduit les rangs publiés par le notebook 03.
+* `test_recuperation.py` : 19 tests sans modèle ni question d'évaluation.
 
 ## Reclasseurs
 
@@ -35,6 +36,7 @@ python scripts/recuperation/reglage_cdtn.py reclasser mmarco-minilm
 python scripts/recuperation/reglage_cdtn.py reclasser camembert-mmarco
 python scripts/recuperation/reglage_cdtn.py reclasser bge-m3
 python scripts/recuperation/reglage_cdtn.py grille
+python scripts/recuperation/confirmer_test.py          # une seule fois, après le gel du protocole 07
 ```
 
 Les sorties vont dans `data/evaluation/recuperation/`, qui n'est pas versionné ; chaque cache est lié aux classements par son empreinte.
