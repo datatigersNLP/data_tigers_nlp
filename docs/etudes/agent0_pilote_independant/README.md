@@ -1,80 +1,79 @@
-# Préparer un pilote Agent0 indépendant
+# Préparer le pilote exploratoire Agent0
 
-Préparation du 9 novembre 2026 pour #95/#96. **Aucune question générée, aucun verdict humain et aucun lot figé.** Le lanceur proposé reste dans la [PR #144](https://github.com/datatigersNLP/data_tigers_nlp/pull/144). Ce dossier prépare les éléments à examiner pendant l'attente ; il ne déclare pas la livraison complète de #96 et ne remplace pas la décision de reprise de l'évaluation.
+Révision 2 du 9 novembre 2026, #95/#96, préparée à la demande de Jibril. **25 emplacements, aucune question générée, aucun verdict humain, aucun gel ni essai RAG.** Le dossier est prêt pour examiner les sources, la méthode et le contrat ; la validation humaine reste à effectuer.
 
-## Contenu prêt à examiner
+## Contenu à relire
 
-| Fichier | Contenu | État |
-|---|---|---|
-| [preparation.json](preparation.json) | Plan de 25 emplacements, algorithme de sélection et points à confirmer | Non figé ; zéro candidat |
-| [sources_m2.json](sources_m2.json) | 25 passages complets répartis sur 20 fiches nouvelles pour la mise au point | Sources provisoires, textes et empreintes contrôlés |
-| [grille_relecture.json](grille_relecture.json) | 25 lignes avec champs humains vierges | Aucun nom, verdict ou attente prérempli |
-| [revue_lanceur_144.md](revue_lanceur_144.md) | Revue assistée et contre-exemple du contrat d'entrée | Un point technique à traiter avant l'export du lot |
+| Fichier | Contenu |
+|---|---|
+| [preparation.json](preparation.json) | Plan versionné, sélection et conditions de démarrage |
+| [sources_m2.json](sources_m2.json) | 30 passages exacts sur 25 fiches, avec empreintes ; cinq paires |
+| [grille_relecture.json](grille_relecture.json) | 25 lignes vierges, dont la trace de recherche hors corpus |
+| [separation_adaptation.md](separation_adaptation.md) | Contrôle des exclusions, limites des lots privés et vérifications restantes |
+| [audit_separation.json](audit_separation.json) | Références, ensembles d'URLs, rapprochement initial et tirage révisé |
+| [methode_hors_corpus.md](methode_hors_corpus.md) | Procédure opérationnelle soumise à relecture, sans question préécrite |
+| [revue_lanceur_144.md](revue_lanceur_144.md) | Constat historique sur bb80096 et suivi du correctif a62c9b2 |
 
-Les trois fiches historiques (congé sans solde, médaille du travail et attributions du CSE en santé/sécurité) sont exclues. Les 15 anciens candidats restent exclus de toute réutilisation, même renommés ou relus.
+La [révision 1](https://github.com/datatigersNLP/data_tigers_nlp/tree/377717f477abd8d85eb80b1f2ee9157692c3a6c7/docs/etudes/agent0_pilote_independant) reste accessible dans Git. Elle excluait seulement les trois fiches de mise au point. Le contrôle montre que 17 de ses 20 fiches sont hors des listes d'exclusion de l'adaptation ; ce n'est pas une preuve de leur utilisation réelle. La révision 2 change les sources **avant toute génération ou réponse RAG**. La première version et son motif de remplacement restent traçables par le commit et l'audit.
 
-La répartition vise cinq emplacements par catégorie : 5 simples, 5 reformulations, 5 multi-passages, 5 pièges et 5 hors corpus. **Ce ne sont pas des quotas d'acceptation.** Les 20 premiers emplacements ont des sources provisoires distinctes par fiche. Les cinq hors corpus n'ont volontairement ni source affectée ni question : la méthode doit être revue avant leur construction. Le générateur historique qui part d'un passage couvert n'a pas démontré une méthode hors corpus fiable.
+## Sélection reproductible de la révision 2
 
-## Comment les sources ont été préparées
+Corpus M2 de `dev/a294d252d1ecc285dfd7df88e43a3ec5df891fe7` : 4 240 passages, 261 fiches, empreintes intégrales dans `sources_m2.json`. La matrice n'est pas lue ; son empreinte est celle de l'en-tête.
 
-Référence : corpus M2 de `dev/a294d252d1ecc285dfd7df88e43a3ec5df891fe7`, 4 240 passages, 261 fiches. Les octets de l'en-tête et du JSON complet ont les empreintes `586cf190…` et `aee5bbdb…` consignées intégralement dans le fichier de sources. La matrice n'a pas été chargée ; son empreinte est reprise de l'en-tête.
+Algorithme `sha256-fiches-reservees-puis-passages-v2`, graine textuelle `20261109` :
 
-Sélection déterministe `sha256-fiches-puis-passages-v1`, graine textuelle `20261109` :
+1. Extraire seulement URL, lot et type du jeu humain figé après contrôle de son SHA-256. Les questions et extraits humains ne servent pas au tirage.
+2. Prendre l'intersection des fiches exclues par les deux chaînes d'adaptation : 61 fiches côté Qwen, incluses dans les 66 URLs non vides constatées côté encodeur. Retirer les trois fiches historiques ; une seule appartient à cette intersection. Le vivier restant comporte 60 fiches.
+3. Grouper les passages par URL sans ancre ni barre finale, conserver ceux dont `len(texte) >= 200` caractères Unicode. Ce filtre technique écarte les fragments très courts ; il ne certifie pas la suffisance des textes.
+4. Trier les fiches par SHA-256 de l'UTF-8 `20261109|fiche|URL`, puis URL en cas d'égalité.
+5. Parcourir cinq emplacements de chaque catégorie dans cet ordre : simple, reformulation, multi_passage, adversarial, hors_corpus. Prendre la première fiche restante ayant un passage admissible, ou deux pour multi_passage, et retirer la fiche.
+6. Dans la fiche, trier les passages admissibles par SHA-256 de `20261109|passage|passage_id`, puis identifiant ; prendre un ou deux passages.
 
-1. Grouper les passages par URL de fiche sans ancre ni barre finale ; retirer les trois URLs du support de mise au point.
-2. Trier les fiches par SHA-256 de l'UTF-8 `20261109|fiche|URL`, puis URL en cas d'égalité.
-3. Parcourir les catégories dans l'ordre déclaré dans `preparation.json`. Prendre la première fiche restante avec au moins un passage, ou deux pour multi-passage, puis retirer cette fiche des possibilités suivantes.
-4. Dans chaque fiche, trier les passages par SHA-256 de `20261109|passage|passage_id`, puis identifiant ; prendre un passage, ou deux pour multi-passage.
+Résultat : **25 fiches distinctes, 30 passages, aucune fiche du vivier autorisé par les règles d'adaptation examinées**. Les cinq sources hors corpus sont des ancrages de génération, jamais des preuves positives d'absence ou de réponse. Une paire ne prouve pas la nécessité sémantique de ses deux passages.
 
-Aucune question ou annotation du jeu humain n'a été lue pour ce tirage ; aucune sortie RAG n'a guidé le choix. Les textes sont copiés exactement du corpus figé. La paire tirée ne prouve pas que ses deux passages sont nécessaires à une réponse : ce sera un contrôle humain.
+Les lots privés effectivement utilisés n'ont pas été reçus : l'audit ne certifie pas leur contenu. Les 25 fiches appartiennent aussi au test humain ; ce pilote partage donc ses fiches et n'est pas un nouveau benchmark humain indépendant. Ses futures questions resteront synthétiques, séparées et non représentatives ; leurs résultats ne seront pas combinés à la mesure officielle. Aucune question humaine ni sortie RAG n'a guidé le tirage. Les futurs candidats sont exclus de l'entraînement.
 
-**Portée de l'indépendance :** seules les trois fiches de mise au point sont exclues par cette préparation. Le chevauchement avec les données d'adaptation n'a pas été vérifié. Avant le gel, documenter ce rapprochement et décider du périmètre de comparaison ; ne pas annoncer un jeu entièrement inconnu de l'adaptation. Les candidats futurs ne doivent pas alimenter l'entraînement. Le jeu humain et son protocole restent inchangés.
+Le README d'adaptation annonce 67 fiches exclues alors que les octets vérifiés en donnent 66. Cet écart est consigné dans l'audit ; aucun fichier d'adaptation n'est corrigé ici.
 
-Le tirage n'établit ni représentativité ni puissance statistique. Ne pas remplacer silencieusement une fiche ou un candidat après lecture des réponses du RAG. Une modification du plan avant génération crée une nouvelle version avec son motif et ses empreintes.
+## Ordre d'exécution après relecture
 
-## Étapes restantes, dans l'ordre
+### 1. Examiner la préparation et la séparation
 
-### 1. Arrêter le protocole de ce petit pilote
+Faire relire le code et le format de la [PR #144](https://github.com/datatigersNLP/data_tigers_nlp/pull/144), ainsi que cette préparation. Le correctif `a62c9b2` partage les contrôles techniques avec le générateur ; sa publication ne vaut pas approbation humaine. L'indépendance sémantique ne se déduit pas de ces contrôles.
 
-Relire le lanceur et son format, traiter le point sur la revalidation des contrôles automatiques, confirmer le responsable de la relecture indépendante et la disponibilité de l'équipe. La décision du 30/10 dans #13 garde la mesure officielle et l'adaptation prioritaires ; elle ne devient pas une autorisation d'inférence par la création de ce dossier.
+Compléter le contrôle des lots privés décrit dans `separation_adaptation.md`, puis consigner le responsable de la relecture indépendante. La décision du 30/10 conserve la priorité de l'adaptation et de la mesure officielle. La demande présente autorise la préparation, sans déclarer une reprise complète ou un lancement réel.
 
-Définir la méthode hors corpus et ses contre-preuves avant de produire ces cinq emplacements. Une catégorie peut rester sans cas retenu. Il n'y a pas de tentative supplémentaire automatique pour remplir les cases.
+### 2. Consigner la configuration avant génération
 
-### 2. Figer le générateur et préparer les appels
+Épingler le commit retenu après revue, les versions exactes des cinq prompts, les paramètres et la graine des appels, le digest du modèle et la version d'Ollama constatée sur le Legion. La graine des sources ne remplace pas celle de génération. Conserver l'environnement de mesure officielle et préparer un environnement distinct. Les versions disponibles lors des derniers tests de #144 diffèrent du verrou annoncé ; cette compatibilité reste à vérifier sur la machine d'exécution.
 
-Avant toute génération, consigner le commit exact du générateur, les versions des prompts, les paramètres, le digest du modèle et la version d'Ollama constatée sur le Legion. La graine de sélection des sources ne remplace pas la graine des appels de génération.
+Préparer les sélections dans le format attendu par `generate.py` à partir des identifiants du plan et du corpus vérifié. Les présents JSON sont des documents préparatoires, pas des sélections de génération ni un lot d'évaluation. Aucun gel ou acceptation n'est fabriqué pour contourner les contrôles.
 
-Créer des sélections de génération avec les outils existants à partir des identifiants préparés ; les comparer au corpus complet. Utiliser de nouveaux identifiants de runs. Le nombre maximal visé reste 25 candidats, avec un appel par emplacement et conservation des rejets et erreurs ; pas de réparation ou remplacement silencieux. L'efficacité des nouveaux cas n'est pas présumée.
+### 3. Générer puis relire les candidats
 
-### 3. Produire les candidats, puis faire relire
+Budget maximal : **25 appels, un par emplacement**, sans relance automatique pour remplacer un échec ou remplir une catégorie. Les nombres sont des objectifs de préparation, pas des quotas d'acceptation. Conserver les sorties brutes, prompts, traces, erreurs et rejets, avec de nouveaux identifiants de runs ; ne pas écraser les anciens.
 
-Conserver les originaux, les prompts, les paramètres et les traces. Rattacher chaque fichier de candidat à son emplacement et à son empreinte ; aucun emplacement vide de cette grille n'est déjà un `CasSynthetique`.
+Chaque futur candidat est rattaché à son emplacement et à son empreinte. Le relecteur humain distinct de l'auteur vérifie la question exacte, les conditions, exceptions, preuves, doublons de sens et catégorie. Pour multi_passage, chaque source doit être nécessaire et leur ensemble suffisant ; pour adversarial, la question doit effectivement présupposer une prémisse fausse corrigible par les sources. La procédure hors corpus est détaillée dans son document ; elle ne fournit encore aucun verdict.
 
-Le relecteur humain distinct de l'auteur examine la question exacte, les conditions et exceptions, les preuves, les doublons de sens et la difficulté seulement visée. Pour multi-passage : chaque source doit être nécessaire et l'ensemble suffisant. Pour piège : la fausse prémisse doit réellement être présupposée par la question et corrigible par les sources. Pour hors corpus : examiner le corpus figé, tracer méthodes, termes, passages et contre-preuves ; l'échec d'une recherche ou l'avis du modèle ne prouve pas une absence.
+Les champs humains restent vides jusqu'à la relecture. Un cas incertain reste `pending` ; un classement erroné conduit au rejet, sans changement silencieux de type. La difficulté est seulement visée. Les originaux ne sont pas réécrits à partir des résultats du RAG.
 
-Remplir nom, date, décision, répondabilité, justification et points attendus seulement après cette intervention. Les décisions possibles sont accepté, rejeté ou incertain ; un incertain reste `pending`. Une erreur de classement ne se corrige pas en changeant silencieusement le type. Les décisions ne sont ni créées ni appliquées automatiquement par ce dossier.
+### 4. Figer les seuls cas acceptés, puis vérifier le lanceur
 
-### 4. Exporter et figer les seuls cas acceptés
+Après acceptation du contrat, exporter hors Git `questions.jsonl` et `manifest.json` au format `agent0-challenge-v1`, avec entre 1 et 25 cas acceptés. Si aucun ne l'est, déclarer qu'aucun lot évaluable n'est disponible. Garder rejets et incertains à part. Documenter provenance, séparation, relectures, configuration, empreintes exactes, effectif et date de gel avec fuseau avant toute réponse du RAG.
 
-Exporter vers un dossier hors Git distinct : `questions.jsonl` et `manifest.json` du format proposé `agent0-challenge-v1`, seulement après acceptation du contrat de #144. Conserver aussi tous les rejets et incertains à part, sans les faire évaluer comme acceptés.
+Ce dossier n'est pas cet export. `--check-lot` vérifie les déclarations, les contraintes d'entrée et le JSONL ; le corpus et les extraits sont contrôlés au début de l'exécution, avant E5/Ollama. Aucun de ces contrôles ne remplace la validation sémantique.
 
-Renseigner les empreintes exactes du JSONL final, des passages et de la matrice, l'effectif entre 1 et 25, la date de gel avec fuseau, et une note de séparation vérifiable. La note renvoie au générateur figé, à ses traces, aux sources, à la grille signée par les relecteurs et aux vérifications de séparation. Le champ `pilote_independant: true` ne remplace pas ces éléments.
+Après revue du code, du lot et autorisation de l'essai réel borné, utiliser un nouveau run dans l'environnement distinct. L'analyse de #97 reste une étape ultérieure ; #98 n'est pas engagé.
 
-Ce dossier préparatoire n'est pas cet export : il ne contient pas de `questions.jsonl` ni de manifeste de gel accepté, et son format est volontairement distinct.
+## État des points de préparation
 
-### 5. Vérifier puis exécuter, après autorisation
+- [x] Exclusions des viviers d'adaptation reproduites et limites des données privées consignées.
+- [x] Tirage révisé, ancrages hors corpus, textes et empreintes préparés.
+- [x] Méthode hors corpus écrite et grille de recherche prête, sans question ni verdict.
+- [x] Correctif technique de #144 référencé.
+- [ ] Relecture humaine du contrat, des sources et de la méthode ; relecteur disponible confirmé.
+- [ ] Lots privés contrôlés et provenance des données d'adaptation rapprochée.
+- [ ] Configuration du générateur et environnement arrêtés avant génération.
+- [ ] Candidats produits, relus, puis lot figé avant RAG.
 
-Le contrôle `--check-lot` de #144 est un contrôle des déclarations et du JSONL ; le contrôle du corpus et des extraits intervient au début de l'exécution, avant E5 et Ollama. Ne pas présenter le premier comme un contrôle complet du corpus ou une validation sémantique.
-
-Après la vraie relecture du lanceur et du lot, préparer l'environnement isolé, puis effectuer un essai réel borné avec un nouveau run. Le manifeste et le lot à comparer sont figés avant toute réponse du RAG. Les paramètres d'un essai ne sont pas ajustés sur les réponses du lot. Les métriques et conclusions de #97 restent un travail distinct.
-
-## Points ouverts
-
-- [ ] Revalidation des contrôles de génération dans #144 ou décision explicite sur le contrat d'entrée.
-- [ ] Autorisation et périmètre de reprise, disponibilité et relecteur indépendant confirmés.
-- [ ] Séparation avec les données d'adaptation vérifiée et documentée.
-- [ ] Méthode hors corpus arrêtée.
-- [ ] Générateur, prompts, paramètres et environnement figés avant génération.
-- [ ] Candidats effectivement produits, relus et lot final figé avant RAG.
-
-**Traçabilité IA :** [note du 9 novembre](../../journal/2026-11-09_agent0_pilote_preparation_revue.md). La préparation ne déclare ni charge réelle, ni validation humaine, ni résultat de benchmark.
+**Traçabilité IA :** [note du 9 novembre](../../journal/2026-11-09_agent0_pilote_preparation_revue.md). Aucun temps réel, verdict humain ni résultat de benchmark n'est déclaré.

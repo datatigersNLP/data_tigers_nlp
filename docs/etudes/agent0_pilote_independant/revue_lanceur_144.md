@@ -33,3 +33,7 @@ Les empreintes du corpus source complet sont également contrôlées pour la pr�
 L'identité du relecteur et l'indépendance ne peuvent pas être certifiées par les booléens du manifeste. Il faut des traces de génération, des sources distinctes de la mise au point, une vraie grille humaine et un gel avant réponses du RAG. Les dates de relecture et la provenance du générateur ne figurent pas comme champs structurés dédiés dans le manifeste proposé : les pièces à examiner doivent être rattachées à la note de séparation et conservées.
 
 Le [dossier préparatoire](README.md) fournit des sources provisoires et une grille vierge. Aucun nouveau cas n'est accepté et la PR #144 reste inchangée par cette revue. La relecture humaine du lanceur et du contrat, le traitement du point ci-dessus, puis l'essai réel restent nécessaires.
+
+## Suivi du 9 novembre après la revue historique
+
+Le constat ci-dessus concerne uniquement `bb80096`. Le correctif `a62c9b23e5a54944e686fab13fe86f3c52ac007b` a depuis été publié dans #144 : partage des contraintes techniques avec le générateur et quatre régressions, 184 tests synthétiques réussis dans l'environnement de revue documenté. La publication du correctif n'est pas une approbation humaine ; celle du contrat et de sa dernière version reste attendue. Ce rapport historique est conservé sans lui attribuer une revue du nouveau code.
