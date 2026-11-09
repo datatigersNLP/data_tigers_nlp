@@ -1,0 +1,286 @@
+{
+  "format": "agent0-pilot-preparation-v1",
+  "date_preparation": "2026-11-09",
+  "statut": "preparation_non_figee",
+  "pilote_fige": false,
+  "generation_effectuee": false,
+  "nb_candidats_generes": 0,
+  "lot_evaluable": false,
+  "nombre_maximal_candidats_vises": 25,
+  "sources_preparees_pour_slots": 20,
+  "fiches_distinctes_preparees": 20,
+  "reference_lanceur": {
+    "pr": 144,
+    "commit_revu": "bb80096aa2164e60f7db4ad703e0f2957bb65ebf",
+    "contrat_propose": "agent0-challenge-v1",
+    "acceptation_humaine_contrat": null,
+    "point_revalidation_automatic_passed": "a_traiter_avant_export"
+  },
+  "selection": {
+    "graine_texte": "20261109",
+    "algorithme": "sha256-fiches-puis-passages-v1",
+    "cle_fiche": "UTF8(graine + '|fiche|' + URL_sans_ancre_sans_barre_finale)",
+    "cle_passage": "UTF8(graine + '|passage|' + passage_id)",
+    "tri": "SHA256 hexadecimal croissant, identifiant croissant en cas degalite",
+    "affectation": "5 simple, 5 reformulation, 5 multi_passage, 5 adversarial ; retirer chaque fiche choisie ; premiere fiche restante avec au moins 1 passage, ou 2 pour multi_passage",
+    "lecture_questions_humaines": false,
+    "choix_semantique_manuel_sources": false,
+    "portee_independance": "Exclusion des 3 fiches de mise au point seulement ; chevauchement avec les donnees dadaptation a verifier avant gel. Pas de representativite revendiquee."
+  },
+  "a_confirmer_avant_generation": {
+    "autorisation_reprise_pilote": null,
+    "generateur_commit_fige": null,
+    "versions_prompts_figees": null,
+    "ollama_version_constatee_legion": null,
+    "relecteur_semantique_independant": null,
+    "methode_hors_corpus": null,
+    "calendrier_et_charge_reelle": null
+  },
+  "slots": [
+    {
+      "slot": "PILOTE_PREP_001",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/cadre-general-du-detachement-des-salaries",
+      "titre_fiche": "Cadre général du détachement des salariés",
+      "source_ids_provisoires": [
+        "m2-article376105-0012"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_002",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-collective",
+      "titre_fiche": "La rupture conventionnelle collective",
+      "source_ids_provisoires": [
+        "m2-article376493-0014"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_003",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/emplois-domicile-credit-dimpot-et-exoneration-de-charges-patronales",
+      "titre_fiche": "Emplois à domicile : crédit d'impôt et exonération de charges patronales",
+      "source_ids_provisoires": [
+        "m2-article112737-0000"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_004",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/laide-lembauche-dun-jeune-en-contrat-initiative-emploi-cie-jeunes",
+      "titre_fiche": "L'aide à l’embauche d’un jeune en Contrat Initiative Emploi (CIE Jeunes)",
+      "source_ids_provisoires": [
+        "m2-article378348-0000"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_005",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-droit-aux-allocations-chomage-du-salarie-demissionnaire",
+      "titre_fiche": "Le droit aux allocations chômage du salarié démissionnaire",
+      "source_ids_provisoires": [
+        "m2-article374504-0009"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_006",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-cse-dans-les-entreprises-de-11-49-salaries",
+      "titre_fiche": "Le CSE dans les entreprises de 11 à 49 salariés",
+      "source_ids_provisoires": [
+        "m2-article377198-0001"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_007",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/loi-pacte-et-epargne-salariale-questions-reponses",
+      "titre_fiche": "Loi Pacte et Epargne salariale : Questions-Réponses",
+      "source_ids_provisoires": [
+        "m2-article377588-0020"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_008",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/entreprises-bonnes-pratiques-pour-recruter-sans-discriminer",
+      "titre_fiche": "Entreprises | Bonnes pratiques pour recruter sans discriminer",
+      "source_ids_provisoires": [
+        "m2-article375375-0001"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_009",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-lutte-contre-le-travail-illegal",
+      "titre_fiche": "La lutte contre le travail illégal",
+      "source_ids_provisoires": [
+        "m2-article103097-0009"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_010",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-risques-lies-aux-xylenes",
+      "titre_fiche": "Les risques liés aux xylènes",
+      "source_ids_provisoires": [
+        "m2-article200153-0005"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_011",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+      "titre_fiche": "Questions-réponses | Le versement du salaire",
+      "source_ids_provisoires": [
+        "m2-article376095-0004",
+        "m2-article376095-0000"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_012",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-creches-vocation-dinsertion-professionnelle-vip-en-quoi-cela-consiste",
+      "titre_fiche": "Les crèches à vocation d’insertion professionnelle (VIP), en quoi cela consiste ?",
+      "source_ids_provisoires": [
+        "m2-article375435-0003",
+        "m2-article375435-0000"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_013",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+      "titre_fiche": "La modification du contrat de travail",
+      "source_ids_provisoires": [
+        "m2-article100988-0003",
+        "m2-article100988-0002"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_014",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-risques-lies-lhydrogene-sulfure",
+      "titre_fiche": "Les risques liés à l'hydrogène sulfuré",
+      "source_ids_provisoires": [
+        "m2-article200185-0005",
+        "m2-article200185-0006"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_015",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-fonds-pour-linsertion-des-personnes-handicapees-dans-la-fonction-publique-fiphfp",
+      "titre_fiche": "Le fonds pour l’insertion des personnes handicapées dans la fonction publique (FIPHFP)",
+      "source_ids_provisoires": [
+        "m2-article373004-0008",
+        "m2-article373004-0006"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_016",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-valeurs-limites-dexposition-professionnelle-aux-risques-chimiques",
+      "titre_fiche": "Les valeurs limites d’exposition professionnelle aux risques chimiques",
+      "source_ids_provisoires": [
+        "m2-article376935-0002"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_017",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-conge-dadoption",
+      "titre_fiche": "Le congé d'adoption",
+      "source_ids_provisoires": [
+        "m2-article112740-0001"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_018",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-remuneration-du-salarie-en-contrat-duree-determinee",
+      "titre_fiche": "La rémuneration du salarié en contrat à durée déterminée",
+      "source_ids_provisoires": [
+        "m2-article374538-0007"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_019",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-risques-lies-au-formaldehyde",
+      "titre_fiche": "Les risques liés au formaldehyde",
+      "source_ids_provisoires": [
+        "m2-article200188-0009"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_020",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+      "titre_fiche": "Les documents remis aux salariés lors de la rupture du contrat de travail",
+      "source_ids_provisoires": [
+        "m2-article374502-0007"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee"
+    },
+    {
+      "slot": "PILOTE_PREP_021",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": null,
+      "titre_fiche": null,
+      "source_ids_provisoires": [],
+      "statut": "reserve_methode_hors_corpus_a_arbitrer"
+    },
+    {
+      "slot": "PILOTE_PREP_022",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": null,
+      "titre_fiche": null,
+      "source_ids_provisoires": [],
+      "statut": "reserve_methode_hors_corpus_a_arbitrer"
+    },
+    {
+      "slot": "PILOTE_PREP_023",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": null,
+      "titre_fiche": null,
+      "source_ids_provisoires": [],
+      "statut": "reserve_methode_hors_corpus_a_arbitrer"
+    },
+    {
+      "slot": "PILOTE_PREP_024",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": null,
+      "titre_fiche": null,
+      "source_ids_provisoires": [],
+      "statut": "reserve_methode_hors_corpus_a_arbitrer"
+    },
+    {
+      "slot": "PILOTE_PREP_025",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": null,
+      "titre_fiche": null,
+      "source_ids_provisoires": [],
+      "statut": "reserve_methode_hors_corpus_a_arbitrer"
+    }
+  ]
+}

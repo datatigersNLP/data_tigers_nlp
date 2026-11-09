@@ -1,0 +1,411 @@
+{
+  "format": "agent0-pilot-sources-preparation-v1",
+  "date_preparation": "2026-11-09",
+  "nature": "Sources provisoires de preparation ; aucun candidat genere ou gel devaluation.",
+  "corpus": {
+    "git_commit_reference": "a294d252d1ecc285dfd7df88e43a3ec5df891fe7",
+    "sha256_entete": "586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23",
+    "sha256_passages": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d",
+    "sha256_index": "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
+    "nb_passages": 4240,
+    "nb_fiches": 261
+  },
+  "fiches_mise_au_point_exclues": [
+    "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail",
+    "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+    "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail"
+  ],
+  "sources": [
+    {
+      "source": {
+        "passage_id": "m2-article100988-0002",
+        "titre_fiche": "La modification du contrat de travail",
+        "section_titre": "L'employeur peut-il modifier le contrat de travail ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail#:~:text=L%27employeur%20peut%20proposer%20au%20salari%C3%A9%20une%20modification%20d%E2%80%99un",
+        "date_maj": "2025-04-16",
+        "texte": "L'employeur peut proposer au salarié une modification d’un élément essentiel de son contrat de travail ou un simple changement de ses conditions de travail.\nSituation des salariés protégés\nL’employeur ne peut imposer au salarié bénéficiant d’une protection particulière (délégué syndical, membre élu de la délégation du personnel au CSE, etc. ) ni une modification de son contrat de travail, ni un simple changement de ses conditions de travail (y compris un placement en activité partielle). Dans l’un ou l’autre cas, l’accord du salarié est requis. En cas de refus, il appartient à l’employeur, soit de maintenir le salarié dans ses fonctions, soit de mettre en œuvre la procédure spéciale de licenciement.\nLes éléments essentiels du contrat de travail ne font pas l’objet d’une définition légale. En font partie la rémunération, la qualification, la durée du travail stipulée au contrat (voir toutefois ci-dessous) et, plus généralement, les attributions du salarié.\nLa modification peut également porter sur un élément du contrat qui pouvait être déterminant pour le salarié lors de la conclusion du contrat à condition que cela soit stipulé par une clause claire et précise dans le contrat de travail ou dans un avenant à ce contrat.",
+        "articles": []
+      },
+      "sha256_texte": "2f16d3c2ab89223dc679c26d4867e55b7c4362e8ba4ce05f552fd1f9c7f743df"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article100988-0003",
+        "titre_fiche": "La modification du contrat de travail",
+        "section_titre": "L'employeur peut-il modifier le contrat de travail ?",
+        "chemin": [
+          "Exemples",
+          "Le lieu de travail"
+        ],
+        "url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail#:~:text=Le%20changement%20de%20lieu%20de%20travail%20constitue%20une",
+        "date_maj": "2025-04-16",
+        "texte": "Le changement de lieu de travail constitue une modification du contrat de travail si le nouveau lieu de travail se situe dans un secteur géographique différent. Même dans ce cas, il n’y a toutefois pas modification du contrat de travail si le salarié est soumis à une obligation contractuelle ou conventionnelle de mobilité. Le contrat de travail (ou un avenant à ce contrat) peut toutefois prévoir, par une clause claire et précise, que le salarié exécutera son travail exclusivement dans le lieu qu’il mentionne ; dans ce cas, tout changement de lieu de travail, y compris dans le même secteur géographique, constitue une modification d’un élément essentiel du contrat de travail qui ne peut être imposée au salarié. À noter également que la mise en œuvre du télétravail peut être considérée comme un aménagement du poste de travail, rendu nécessaire pour permettre la continuité de l'activité de l'entreprise et garantir la protection des salariés, lorsqu’elle intervient en cas de circonstances exceptionnelles, notamment de menace d'épidémie, ou en cas de force majeure.",
+        "articles": []
+      },
+      "sha256_texte": "6a3e2460a92df12b9b33799fdce230fc50b9bf33eedbf13e697efa29d3338fe2"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article103097-0009",
+        "titre_fiche": "La lutte contre le travail illégal",
+        "section_titre": "Documents",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-lutte-contre-le-travail-illegal",
+        "url_citation": "https://travail-emploi.gouv.fr/la-lutte-contre-le-travail-illegal#:~:text=Travail%20ill%C3%A9gal%20%2D%20conna%C3%AEtre%20la%20r%C3%A9glementation%20%28PDF%20%2D",
+        "date_maj": "2024-02-06",
+        "texte": "Travail illégal - connaître la réglementation (PDF - 371.65 Ko)",
+        "articles": []
+      },
+      "sha256_texte": "bfdd09ac102794f45ec1119afc853f2661d5adca8a9101296405edce646a9241"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article112737-0000",
+        "titre_fiche": "Emplois à domicile : crédit d'impôt et exonération de charges patronales",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/emplois-domicile-credit-dimpot-et-exoneration-de-charges-patronales",
+        "url_citation": "https://travail-emploi.gouv.fr/emplois-domicile-credit-dimpot-et-exoneration-de-charges-patronales#:~:text=Tout%20particulier%20qui%20effectue%20des%20d%C3%A9penses%20pour%20des",
+        "date_maj": "2026-08-24",
+        "texte": "- Tout particulier qui effectue des dépenses pour des services à la personne rendus à son domicile (par exemple : employé de maison, garde d’enfant) bénéficie d’un avantage fiscal qui prend actuellement la forme d’un crédit d’impôt ;\n- Le montant de cet avantage fiscal ne peut pas excéder, dans le cas général, 6 000 € ;\n- Si ce particulier emploie directement un salarié, il peut bénéficier, sous certaines conditions d’une exonération de cotisations patronales normalement dues.",
+        "articles": []
+      },
+      "sha256_texte": "5dea4f9bf33738c6817a19fc38c5a2887ebf241c82e57e248cdbc9889c9b5074"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article112740-0001",
+        "titre_fiche": "Le congé d'adoption",
+        "section_titre": "Le congé d'adoption",
+        "chemin": [
+          "Dernières actualités"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-conge-dadoption",
+        "url_citation": "https://travail-emploi.gouv.fr/le-conge-dadoption#:~:text=Les%20parents%20d%E2%80%99un%20enfant%20n%C3%A9%20ou%20adopt%C3%A9%20%C3%A0",
+        "date_maj": "2026-06-12",
+        "texte": "Les parents d’un enfant né ou adopté à compter du 1er janvier 2026 (ou né avant cette date mais dont la naissance était censée intervenir à compter du 1er janvier 2026) bénéficient d’un congé parental supplémentaire, d’un ou de deux mois, selon le choix du parent.\nCe « congé supplémentaire de naissance » peut être posé à compter du 1er juillet 2026 (plus d’informations ci-dessous).\nPar la loi n° 2025-595 du 30 juin 2025 visant à protéger les personnes engagées dans un projet parental des discriminations au travail, en vigueur à compter du 2 juillet 2025, les hommes ou les femmes engagés dans un projet parental de procréation médicalement assistée (PMA) ou d’adoption bénéficient des mesures de protection renforcée contre la discrimination au même titre que les femmes enceintes, telles que l’interdiction de discrimination à l’embauche d’un candidat ou d’une candidate, la protection contre le licenciement, etc.\nÀ ce titre, tous les salariés (femmes ou hommes) engagés dans une procédure d’adoption bénéficient d'autorisations d'absence pour se présenter aux entretiens obligatoires nécessaires à l'obtention de l'agrément (prévus à l'article L. 225-2 du Code de l'action sociale et des familles). Le nombre maximal d’absences autorisées est défini par décret.\nÀ savoir !\nLa durée du congé d'adoption est assimilée à une période de travail effectif pour la détermination des droits que le salarié tient de son ancienneté.",
+        "articles": []
+      },
+      "sha256_texte": "ecbd9d5cd3be0219c99ea00b455713ec12b5c3d870f97d4a9225ec2fd854c0a4"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200153-0005",
+        "titre_fiche": "Les risques liés aux xylènes",
+        "section_titre": "Sources réglementaires",
+        "chemin": [
+          "Classement et étiquetage"
+        ],
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-aux-xylenes",
+        "url_citation": "https://travail-emploi.gouv.fr/les-risques-lies-aux-xylenes#:~:text=Le%20xyl%C3%A8ne%20est%20class%C3%A9%20nocif%20par%20inhalation%20et",
+        "date_maj": "2009-01-08",
+        "texte": "Le xylène est classé nocif par inhalation et contact avec la peau.\nValeur limite à ne pas dépasser\nEn France: VME égale à 100 PPM ou 435 mg/ m3.\nVLE égale à 150 PPM ou 650 mg/ m3.\nTableaux de maladie professionnelle\nTableaux n° 4 bis des maladies professionnelles.",
+        "articles": []
+      },
+      "sha256_texte": "badbc4840a1f52db30d6d994822cebd5b02f7268a4103351a03dfb356aa0fbb7"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200185-0005",
+        "titre_fiche": "Les risques liés à l'hydrogène sulfuré",
+        "section_titre": "Les moyens de prévention",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-lhydrogene-sulfure",
+        "url_citation": "https://travail-emploi.gouv.fr/les-risques-lies-lhydrogene-sulfure#:~:text=Information%20et%20formation%20r%C3%A9guli%C3%A8re%20des%20salari%C3%A9s%20sur%20les",
+        "date_maj": "2021-12-20",
+        "texte": "- Information et formation régulière des salariés sur les risques encourus, en particulier sur les conditions d’exposition accidentelle, et sur les moyens de s’en prémunir ;\n- Dans les cuves, fosses, réservoirs, puits, égouts, caniveaux : évacuation (si possible mécanique) des dépôts et résidus avant de pénétrer dans l’espace confiné ;\n- Utiliser des détecteurs de gaz fixes ou portatifs qui permettent d’avertir les salariés lorsque les seuils d’alerte sont atteints et contrôler régulièrement le bon fonctionnement de ces appareils à l’aide de gaz étalons (un recalibrage des détecteurs peut être nécessaire en fonction des résultats des tests car tout système de détection peut donner un faux sentiment de sécurité alors que les appareils peuvent défaillir ; leur installation doit toujours être accompagnée d’une procédure de contrôle périodique) ;\n- En cas de fuite, utiliser un masque de protection respiratoire isolant.",
+        "articles": []
+      },
+      "sha256_texte": "c3fcf5ef1fc6b4ab3d17de26370cbe74dea3b1548e10dc4f70dae306f0c41192"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200185-0006",
+        "titre_fiche": "Les risques liés à l'hydrogène sulfuré",
+        "section_titre": "Sources réglementaires",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-lhydrogene-sulfure",
+        "url_citation": "https://travail-emploi.gouv.fr/les-risques-lies-lhydrogene-sulfure#:~:text=Articles%20R.%204222%2D10%20et%20suivants%20concernant%20les%20locaux",
+        "date_maj": "2021-12-20",
+        "texte": "- Articles R. 4222-10 et suivants concernant les locaux à pollution spécifique\n- Articles R. 4412-1 et suivants sur la prévention des risques chimiques\n- Recommandations CNAM R 420\n- Valeur moyenne d’exposition (sur 8 heures) : 5 PPM\n- Valeur limite d’exposition (sur 15 minutes) : 10 PPM",
+        "articles": [
+          "LEGIARTI000018530954",
+          "LEGIARTI000018532318"
+        ]
+      },
+      "sha256_texte": "19f9a9fda46ed22cad289de6fbb4ec07a2e0652cb00177218b058066389e4176"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200188-0009",
+        "titre_fiche": "Les risques liés au formaldehyde",
+        "section_titre": "Pour en savoir plus",
+        "chemin": [
+          "Agence nationale de sécurité sanitaire de l'alimentation, de l'environnement et du travail (ANSES)"
+        ],
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-au-formaldehyde",
+        "url_citation": "https://travail-emploi.gouv.fr/les-risques-lies-au-formaldehyde#:~:text=%C3%89valuation%20des%20risques%20sanitaires%20li%C3%A9s%20%C3%A0%20la%20pr%C3%A9sence",
+        "date_maj": "2021-12-20",
+        "texte": "Évaluation des risques sanitaires liés à la présence de formaldéhyde\nConnu pour ses effets irritants sur les yeux, la gorge et le nez, le formaldéhyde est une substance retrouvée principalement dans les environnements intérieurs car les sources y sont multiples : produits de construction et de décoration (bois agglomérés et contre-plaqués, textiles, résines, matériaux d’isolation, tissus d’ameublement), ameublement, fumée de cigarette, cosmétiques, etc. Le formaldéhyde connait de multiples applications en raison de ses propriétés physico-chimiques en tant que biocide, conservateur ou fixateur. La voie d’exposition principale est l’inhalation, bien que les voies digestive et cutanée soient possibles.",
+        "articles": []
+      },
+      "sha256_texte": "d652b8eddc01e1b677d88dc8e4eef4885fd3df7fb4054f790b1a7cee47f2e7d2"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article373004-0006",
+        "titre_fiche": "Le fonds pour l’insertion des personnes handicapées dans la fonction publique (FIPHFP)",
+        "section_titre": "Le FIPHFP, c'est quoi ?",
+        "chemin": [
+          "3. Assurer la pérennité des compétences et connaissances relatives au handicap au travail"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-fonds-pour-linsertion-des-personnes-handicapees-dans-la-fonction-publique-fiphfp",
+        "url_citation": "https://travail-emploi.gouv.fr/le-fonds-pour-linsertion-des-personnes-handicapees-dans-la-fonction-publique-fiphfp#:~:text=Former%20les%20personnes%20en%20situation%20de%20handicap%20%3A",
+        "date_maj": "2013-03-25",
+        "texte": "- Former les personnes en situation de handicap : bilan de compétences et bilan professionnel, formation destinée à compenser le handicap, formation dans le cadre d’un reclassement ou d’une reconversion professionnelle pour raison de santé, frais et surcoûts liés aux actions de formation.\n- Informer, sensibiliser les former les collaborateurs : communication, information et sensibilisation des collaborateurs, formation des collaborateurs en charge de l’accompagnement des personnes en situation de handicap, formation à la fonction de tuteur.",
+        "articles": []
+      },
+      "sha256_texte": "92f959652fc843566393e64bebe1e2ebe5d271d2499390fd5a1e192d132f2c53"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article373004-0008",
+        "titre_fiche": "Le fonds pour l’insertion des personnes handicapées dans la fonction publique (FIPHFP)",
+        "section_titre": "Quelles sont les procédures d'obtention des aides?",
+        "chemin": [
+          "Une politique de conventionnement pluriannuelle"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-fonds-pour-linsertion-des-personnes-handicapees-dans-la-fonction-publique-fiphfp",
+        "url_citation": "https://travail-emploi.gouv.fr/le-fonds-pour-linsertion-des-personnes-handicapees-dans-la-fonction-publique-fiphfp#:~:text=Les%20employeurs%20qui%20s%E2%80%99engagent%20dans%20une%20politique%20globale",
+        "date_maj": "2013-03-25",
+        "texte": "Les employeurs qui s’engagent dans une politique globale d’emploi des personnes handicapées peuvent signer une convention pluriannuelle avec le FIPHFP. La convention permet de structurer la démarche, les objectifs de l’employeur et les actions à venir dans un document et de bénéficier, en amont, de financement pour mettre en œuvre ce programme d’insertion professionnelle et de maintien dans l’emploi des personnes handicapées.",
+        "articles": []
+      },
+      "sha256_texte": "1ba16fc7f794daf90f2bd9d7aa8758595b53b124360c0705ff199ac1a6168ebf"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374502-0007",
+        "titre_fiche": "Les documents remis aux salariés lors de la rupture du contrat de travail",
+        "section_titre": "Textes de référence",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail#:~:text=Articles%20L.%201234%2D19%2C%20L.%201234%2D20%2C%20D.%201234%2D6%20%C3%A0",
+        "date_maj": "2025-09-03",
+        "texte": "- Articles L. 1234-19, L. 1234-20, D. 1234-6 à D. 1234-8, R. 1234-5-1, R. 1234-9 à R. 1234-12, R. 1238-3 et R. 1238-7 du Code du travail\n- Loi n° 2023-1196 du 18 décembre 2023 pour le plein emploi (JO du 19 ; création de France Travail)",
+        "articles": [
+          "LEGIARTI000006901138",
+          "LEGIARTI000018537466",
+          "LEGIARTI000018537474",
+          "LEGIARTI000018537540",
+          "LEGIARTI000018537550",
+          "LEGIARTI000019071122",
+          "LEGIARTI000029544357",
+          "LEGIARTI000041433069",
+          "LEGIARTI000041455673"
+        ]
+      },
+      "sha256_texte": "9d2c637894c724a15e93d81a252600156d6ba4244d2a11ad2e6f5c52855a5683"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374504-0009",
+        "titre_fiche": "Le droit aux allocations chômage du salarié démissionnaire",
+        "section_titre": "Pour aller plus loin",
+        "chemin": [
+          "Caractère réel et sérieux du projet de reconversion professionnelle et procédure"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-droit-aux-allocations-chomage-du-salarie-demissionnaire",
+        "url_citation": "https://travail-emploi.gouv.fr/le-droit-aux-allocations-chomage-du-salarie-demissionnaire#:~:text=Le%20salari%C3%A9%20qui%20envisage%20de%20d%C3%A9missionner%20et%20souhaite",
+        "date_maj": "2025-01-02",
+        "texte": "Le salarié qui envisage de démissionner et souhaite bénéficier des allocations d’assurance chômage doit justifier d’un projet de reconversion professionnelle nécessitant le suivi d’une formation ou d’un projet de création ou de reprise d’entreprise. Ce projet doit présenter un caractère réel et sérieux attesté par l’Association Transition Pro (« ATPro ») compétente.",
+        "articles": []
+      },
+      "sha256_texte": "c73c1bdf48a5c283fca140d7216e0cd369e64d87a44912b175952b3a1c149f67"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374538-0007",
+        "titre_fiche": "La rémuneration du salarié en contrat à durée déterminée",
+        "section_titre": "Le salarié peut-il bénéficier d'autres avantages ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-remuneration-du-salarie-en-contrat-duree-determinee",
+        "url_citation": "https://travail-emploi.gouv.fr/la-remuneration-du-salarie-en-contrat-duree-determinee#:~:text=%C3%80%20conditions%20identiques%2C%20les%20salari%C3%A9s%20sous%20contrat%20%C3%A0",
+        "date_maj": "2025-07-03",
+        "texte": "À conditions identiques, les salariés sous contrat à durée déterminée bénéficient des mêmes avantages que les salariés permanents : tickets restaurant, congés supplémentaires, indemnisation en cas de maladie ou de chômage-intempéries, prestations offertes par le comité social et économique (CSE)…",
+        "articles": []
+      },
+      "sha256_texte": "cb691670d758e0429df7551be915d9f2ae5988403cd23a365fb8bc6458defb34"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375375-0001",
+        "titre_fiche": "Entreprises | Bonnes pratiques pour recruter sans discriminer",
+        "section_titre": "Conseils pour rédiger et publier votre offre d'emploi",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/entreprises-bonnes-pratiques-pour-recruter-sans-discriminer",
+        "url_citation": "https://travail-emploi.gouv.fr/entreprises-bonnes-pratiques-pour-recruter-sans-discriminer#:~:text=Quel%20que%20soit%20son%20mode%20de%20diffusion%20%28presse",
+        "date_maj": "2025-06-26",
+        "texte": "Quel que soit son mode de diffusion (presse écrite, site internet, etc. ), l’offre d’emploi que vous souhaitez publier ne doit pas être formulée de façon à écarter certaines catégories de candidats.\nAttention : toute référence à un critère discriminatoire entraîne l’application de sanctions pénales.\nLire la fiche pratique sur la protection contre les discriminations",
+        "articles": []
+      },
+      "sha256_texte": "3783b56d15931b9c328df5c5167010ba033f4e36457e7fd954c94c6c63849c2e"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375435-0000",
+        "titre_fiche": "Les crèches à vocation d’insertion professionnelle (VIP), en quoi cela consiste ?",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-creches-vocation-dinsertion-professionnelle-vip-en-quoi-cela-consiste",
+        "url_citation": "https://travail-emploi.gouv.fr/les-creches-vocation-dinsertion-professionnelle-vip-en-quoi-cela-consiste#:~:text=Faciliter%20l%E2%80%99acc%C3%A8s%20%C3%A0%20l%E2%80%99emploi%20des%20parents%20de%20jeunes",
+        "date_maj": "2024-04-05",
+        "texte": "Faciliter l’accès à l’emploi des parents de jeunes enfants, notamment les mères isolées, et soutenir l’accueil des jeunes enfants (0-3 ans) : tels sont les objectifs des crèches à vocation d’insertion professionnelle (VIP). Qui peut en bénéficier ? Quelles sont les démarches ? Focus sur les points principaux de ce dispositif.",
+        "articles": []
+      },
+      "sha256_texte": "f947d5047f37205fb535275979d75d28ed8575de1a644c5c0d6d6d004f328071"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375435-0003",
+        "titre_fiche": "Les crèches à vocation d’insertion professionnelle (VIP), en quoi cela consiste ?",
+        "section_titre": "Comment bénéficier de ce dispositif?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-creches-vocation-dinsertion-professionnelle-vip-en-quoi-cela-consiste",
+        "url_citation": "https://travail-emploi.gouv.fr/les-creches-vocation-dinsertion-professionnelle-vip-en-quoi-cela-consiste#:~:text=R%C3%A9p%C3%A9rage%20et%20orientation",
+        "date_maj": "2024-04-05",
+        "texte": "1. Répérage et orientation\nLe repérage et l’orientation des parents vers les crèches à vocation d’insertion professionnelle s’effectuent:\n- soit sur proposition de Pôle emploi au regard des besoins constatés et de l’engagement du parent concerné,\n- soit sur proposition de la crèche\n- ou d’un autre acteur ayant repéré un besoin, notamment les associations d’accompagnement social, à l’instar des centres d’hébergement et de réinsertion sociale.\n2. Signature d'un document contractualisant l'engagement\nLa crèche contractualise avec la famille qui accepte d’entrer dans une démarche active d’insertion professionnelle en échange d’une place en crèche.\nLe contrat précise que :\n- le parent bénéficiaire s’engage dans une démarche active de recherche d’emploi ;\n- la crèche s’engage à accueillir l’enfant au minimum 3 jours par semaine ;\n- Pôle emploi ou la Mission locale s’engage à accompagner de manière intensive le parent dans sa démarche de recherche d’emploi.\nLe contrat est conclu pour une durée initiale de six mois, renouvelable suite à un bilan partagé dès lors que le parent bénéficiaire est toujours en recherche active d’emploi, et ce dans la limite de 12 mois maximum.\n3. Accompagnement vers l'emploi\nL’accompagnement est mis en œuvre dans les locaux de Pôle emploi et, le cas échéant, du Conseil départemental.\nLes conseillers Pôle emploi sont spécifiquement dédiés à l’accompagnement global permettant ainsi d’assurer un suivi intensif, personnalisé et adapté aux besoins du parent.\nLes entretiens personnalisés permettent d’établir un parcours de recherche d’emploi adapté à chaque situation et articulé avec les actions proposées par le professionnel du social.\nPôle emploi informe la crèche à vocation d’insertion professionnelle des périodes de formation, de prestations, d’immersions en entreprises ou de reprise d’emploi, afin de permettre d’adapter les périodes d’accueil de l’enfant aux besoins du parent bénéficiaire.\nSi le parent bénéficiaire trouve un poste ou une formation, il garde la place en crèche jusqu’à l’entrée de l’enfant en école maternelle.",
+        "articles": []
+      },
+      "sha256_texte": "0481f6a6f639feb41b8a631487be018aa55b1dff55c6baf465a68384f61478ae"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376095-0000",
+        "titre_fiche": "Questions-réponses | Le versement du salaire",
+        "section_titre": "Comment est fixé le salaire minimum ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "url_citation": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire#:~:text=Le%20salaire%20est%20la%20contrepartie%20du%20travail%20fourni.",
+        "date_maj": "2026-05-28",
+        "texte": "Le salaire est la contrepartie du travail fourni. Son montant est fixé librement entre l’employeur et le salarié. Toutefois, il ne peut pas être inférieur au SMIC, pour tout salarié âgé d’au moins 18 ans.\nBon à savoir\nUn taux réduit du SMIC peut être pratiqué pour :\n- Les apprentis et les jeunes salariés en contrat de professionnalisation, en fonction de leur âge et de la durée du contrat ;\n- Les jeunes salariés âgés de moins de 18 ans qui ont moins de 6 mois de pratique professionnelle dans la branche d’activité. Un abattement de 10 % peut ainsi être pratiqué lorsque le jeune salarié est âgé de 17 à 18 ans et de 20 % lorsque le jeune salarié est âgé de moins de 17 ans.\nDepuis du 1er juin 2026, le montant du SMIC brut horaire s’élève à 12,31 €, soit 1 867,02 euros bruts mensuels sur la base de la durée légale du travail de 35 heures hebdomadaires.\nQu’est-ce que le salaire minimum conventionnel ?\nEn général, les conventions collectives (et accords collectifs) fixent une classification des emplois et déterminent leur rémunération minimale. C’est que l’on appelle les « minima conventionnels ». Si l’entreprise relève d’une convention ou d’un accord le prévoyant, l’employeur ne peut pas rémunérer ses salariés en dessous du minimum qui correspond à leur classification. Le bulletin de paie du salarié doit indiquer sa position dans la classification de la convention collective. A noter : quel que soit le niveau du salaire minimum conventionnel dont il dépend, un salarié ne peut pas être rémunéré en dessous du SMIC, sauf cas particuliers mentionnés ci-dessus.\nPour en savoir plus, consultez notre fiche sur le SMIC.",
+        "articles": []
+      },
+      "sha256_texte": "88bec74dd421fe04e3cae6b383e99f7d6ecb0a1fdb108799f82db6b8c2326dc3"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376095-0004",
+        "titre_fiche": "Questions-réponses | Le versement du salaire",
+        "section_titre": "La garantie des salaires : c’est quoi ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "url_citation": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire#:~:text=Le%20r%C3%A9gime%20de%20garantie%20des%20salaires%20%28AGS%29%20intervient",
+        "date_maj": "2026-05-28",
+        "texte": "Le régime de garantie des salaires (AGS) intervient si l’entreprise se trouve en procédure collective (sauvegarde, redressement ou liquidation judiciaire) et n’a pas de fonds disponibles pour payer les salaires, préavis ou indemnités. L’AGS, financée par une cotisation obligatoire à la charge des employeurs, garantit ainsi le paiement des sommes dues aux salariés en exécution de leur contrat de travail.\nPour la mise en jeu de l’AGS, un mandataire judiciaire est désigné. C'est lui qui accomplit l'ensemble des démarches pour obtenir le remboursement des créances salariales.\nDésigné par les salariés, un représentant des salariés contrôle le montant des sommes dues et versées aux salariés et sert d’intermédiaire entre ceux-ci et l’administrateur ou le tribunal.\nLe montant des sommes garanties est-il limité ? Oui, et le plafond est variable en fonction de l’ancienneté du contrat du salarié.\nPour en savoir plus, consultez notre fiche sur la garantie en cas de sauvegarde, de redressement ou de liquidation judiciaire.\nVous pouvez également consulter le site de l’AGS.",
+        "articles": []
+      },
+      "sha256_texte": "5c66b851a832878dfa3943ad57c36ac22d68ebf55a968b68ff215cec62eb3064"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376105-0012",
+        "titre_fiche": "Cadre général du détachement des salariés",
+        "section_titre": "Le régime du détachement : des conditions et formalités à respecter",
+        "chemin": [
+          "Références juridiques pour aller plus loin"
+        ],
+        "url": "https://travail-emploi.gouv.fr/cadre-general-du-detachement-des-salaries",
+        "url_citation": "https://travail-emploi.gouv.fr/cadre-general-du-detachement-des-salaries#:~:text=Plus%20de%20pr%C3%A9cisions%20sur%20le%20r%C3%A9gime%20de%20d%C3%A9tachement",
+        "date_maj": "2024-07-23",
+        "texte": "- Plus de précisions sur le régime de détachement dans le Code du travail : articles L. 1262-1 ou L. 1262-2\n- Plus de précisions concernant les conditions à respecter : articles L. 1261-3 et L. 1262-3 du Code du travail",
+        "articles": [
+          "LEGIARTI000018764665",
+          "LEGIARTI000031013760",
+          "LEGIARTI000037388951",
+          "LEGIARTI000038156567"
+        ]
+      },
+      "sha256_texte": "c8b5f16f892e2adcf5f50e3c1eaf60c08c4f2ebf05fdfb1d6d4f6de1d6b8fbf6"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376493-0014",
+        "titre_fiche": "La rupture conventionnelle collective",
+        "section_titre": "L’accord de rupture conventionnelle collective peut-il être contesté ?",
+        "chemin": [
+          "Le portail RUPCO"
+        ],
+        "url": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-collective",
+        "url_citation": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-collective#:~:text=Site%20de%20d%C3%A9mat%C3%A9rialisation%20des%20proc%C3%A9dures%20relatives%20%C3%A0%20des",
+        "date_maj": "2025-10-31",
+        "texte": "Site de dématérialisation des procédures relatives à des ruptures collectives de contrat de travail : plan de sauvegarde de l'emploi (PSE), licenciement économique (hors PSE), rupture conventionnelle collective (RCC), bilan des congés de mobilité dans le cadre d'un accord de GPEC.",
+        "articles": []
+      },
+      "sha256_texte": "51aa1c9bf6a6676994d5364b5111bed6aa69b769c91398f446301e0477869b86"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376935-0002",
+        "titre_fiche": "Les valeurs limites d’exposition professionnelle aux risques chimiques",
+        "section_titre": "Quelle méthodologie pour établir les VLEP ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-valeurs-limites-dexposition-professionnelle-aux-risques-chimiques",
+        "url_citation": "https://travail-emploi.gouv.fr/les-valeurs-limites-dexposition-professionnelle-aux-risques-chimiques#:~:text=Le%20dispositif%20fran%C3%A7ais%20d%E2%80%99%C3%A9tablissement%20des%20VLEP%20comporte%20trois",
+        "date_maj": "2018-10-25",
+        "texte": "Le dispositif français d’établissement des VLEP comporte trois phases clairement distinctes :\n- Une phase d’expertise scientifique indépendante confiée à l’Agence nationale de sécurité sanitaire de l'alimentation, de l'environnement et du travail (ANSES) ;\n- Une phase d’établissement d’un projet réglementaire de valeur limite contraignante ou indicative par le ministère chargé du travail ;\n- Une phase de concertation sociale lors de la présentation du projet réglementaire au sein du Conseil d’Orientation sur les Conditions de Travail (COCT).",
+        "articles": []
+      },
+      "sha256_texte": "c8d8d498c30fba70b531baeec29dfbd8437d3cb0e30f031a74f76d927d3f3174"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article377198-0001",
+        "titre_fiche": "Le CSE dans les entreprises de 11 à 49 salariés",
+        "section_titre": "Comment est composée la délégation du personnel au CSE dans les entreprises de 11 à 49 salariés ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-cse-dans-les-entreprises-de-11-49-salaries",
+        "url_citation": "https://travail-emploi.gouv.fr/le-cse-dans-les-entreprises-de-11-49-salaries#:~:text=Dans%20les%20entreprises%20de%2011%20%C3%A0%2024%20salari%C3%A9s%2C",
+        "date_maj": "2025-12-11",
+        "texte": "Dans les entreprises de 11 à 24 salariés, le Code du travail prévoit que la délégation du personnel est composée d'un titulaire et d'un suppléant. Dans les entreprises de 25 à 49 salariés, cette délégation est composée de deux titulaires et de deux suppléants (article R. 2314-1 du Code du travail). Le protocole d'accord préélectoral (PAP) peut prévoir des stipulations plus favorables que celles prévues par les dispositions réglementaires et conventionnelles.",
+        "articles": [
+          "LEGIARTI000036481896"
+        ]
+      },
+      "sha256_texte": "51fc9d7964fc6099f496e980f83d7a088eaa560181397ba37ac1b8836f0106a1"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article377588-0020",
+        "titre_fiche": "Loi Pacte et Epargne salariale : Questions-Réponses",
+        "section_titre": "Loi Pacte et Epargne salariale : Questions-Réponses",
+        "chemin": [
+          "Permettre au conjoint ou au partenaire du chef d’entreprise, lié par un pacte civil de solidarité (PACS), s’il a le statut de conjoint collaborateur ou de conjoint associé, de bénéficier effectivement d’un versement au titre de l’intéressement (article 155 de la loi)"
+        ],
+        "url": "https://travail-emploi.gouv.fr/loi-pacte-et-epargne-salariale-questions-reponses",
+        "url_citation": "https://travail-emploi.gouv.fr/loi-pacte-et-epargne-salariale-questions-reponses",
+        "date_maj": "2019-12-26",
+        "texte": "26. Faut-il conclure un avenant pour modifier les anciens accords ?\nNON. Lorsque les anciens accords conclus prévoyaient déjà expressément que le conjoint du chef d’entreprise bénéficiait des stipulations de ces accords, il n’est pas nécessaire d’amender ces derniers afin de prévoir explicitement que les partenaires liés par un PACS en bénéficient.",
+        "articles": []
+      },
+      "sha256_texte": "b1e5a836a383b54eea1e8436beae1aafcdca2268360b6116a4e054551678aa97"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article378348-0000",
+        "titre_fiche": "L'aide à l’embauche d’un jeune en Contrat Initiative Emploi (CIE Jeunes)",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/laide-lembauche-dun-jeune-en-contrat-initiative-emploi-cie-jeunes",
+        "url_citation": "https://travail-emploi.gouv.fr/laide-lembauche-dun-jeune-en-contrat-initiative-emploi-cie-jeunes#:~:text=Dans%20le%20cadre%20du%20plan%20%C2%AB%201%20jeune%2C1",
+        "date_maj": "2023-10-31",
+        "texte": "Dans le cadre du plan « 1 jeune,1 solution », les employeurs du secteur marchand peuvent bénéficier d’une aide financière lorsqu’ils recrutent un jeune âgé de moins de 26 ans ou un jeune reconnu travailleur handicapé (jusqu’à 30 ans inclus) en Contrat Initiative Emploi Jeunes (CIE Jeunes).",
+        "articles": []
+      },
+      "sha256_texte": "ac77375a8f4afdddfd1f7b366291b1c09b390e9208f242653de300a61adb0430"
+    }
+  ]
+}
