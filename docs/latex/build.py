@@ -92,7 +92,22 @@ for _depot, _travail in [("J2_rapport", "05_RAPPORT_J2"), ("JOURNAL_USAGE_IA", "
     BANDEAU[_depot] = BANDEAU[_travail]
     ENTETE[_depot] = ENTETE[_travail]
 
+def texte_pdf(s):
+    """Texte des métadonnées du PDF : sans balisage Markdown ni commande LaTeX, caractères spéciaux échappés."""
+    for a, b in ((r"\textbullet{}", "-"), (r"\textemdash{}", "-"), (r"\&", "&"), ("~", " ")):
+        s = s.replace(a, b)
+    s = re.sub(r"[`*{}\\^$]", "", s)
+    for c in "&%#_":
+        s = s.replace(c, "\\" + c)
+    return re.sub(r"\s+", " ", s).strip()
+
+# Titre et sujet du PDF propres au document ; le préambule n'en fixe plus (avant le 04/11, tous les PDF portaient
+# le titre de la réunion de cadrage du J2)
+_nom = os.path.splitext(os.path.basename(DOC))[0]
+_titre_pdf, _sujet_pdf, _ = BANDEAU.get(_nom, (titre_brut, "", ""))
 T = []
+T.append(r'\hypersetup{pdftitle={%s}, pdfsubject={%s}}'
+         % (texte_pdf(_titre_pdf), texte_pdf(_sujet_pdf) or "Projet NLP 2, équipe Data Tigers"))
 T.append(r'\renewcommand{\entetecourant}{%s}'
          % ENTETE.get(os.path.splitext(os.path.basename(DOC))[0], r"Projet NLP 2"))
 T.append(r'\begin{document}')
