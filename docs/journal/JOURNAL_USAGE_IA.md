@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 4 novembre 2026, précisions après revue et synchronisation avec `dev` après #122 ; sessions 1 à 54 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 7 novembre 2026 ; sessions 1 à 54, 59 et 60 (55 à 58 réservées à Vaneck DAGAR) ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1612,6 +1612,81 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Difficultés rencontrées.** Une modification documentaire après actualisation exige elle aussi une nouvelle revue. Les champs humains restent vierges malgré l'approbation du code et du support. La consolidation du journal est préparée sur une branche séparée ; sa relecture documentaire reste attendue.
 
+
+**Sessions 59 et 60, de Mahé BEGNIS.** Les numéros 55 à 58 sont réservés aux sessions de Vaneck DAGAR, transmises hors du dépôt et à intégrer : la règle du journal donne un numéro à la première PR qui le prend.
+
+### Session 59, 4 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux ; gel du protocole ; traitement des PR de Mahé et de Jibril ; décision et génération du lot d'adaptation v2 ; titre des PDF ; contrôle du travail de l'équipe.
+
+**Produit.**
+- Gel : #108 (`17e0c6e`) et #119 (`d521cfc`) fusionnées après la reprise de B0 par Jibril (0 erreur technique sur 8, Ollama 0.40.13) ; empreintes de référence du verrou publiées sur #52.
+- #125 fusionnée (`6f2f813`) après l'approbation de Jibril ; le délai de Remy pour les réglages reste le 05/11.
+- Revues : #127 approuvée sur `f854e54`, puis sur `8ad73fc` ; #126 avec modifications demandées, puis approuvée sur `55456b2` et sur `d7e7b6d` ; #124 corrigée (`69d5d53`) après la revue de Jibril.
+- Lot v2, décidé au nom de Mahé et publié sur #107 avant toute génération : réponses citées recopiées mot pour mot, contrôle `verifier_recopie`, questions relues du lot v1 et du pilote exclues. Amendement avant le lot complet : variante « passage retiré » retirée (PR #130, `4a509c8` et `d5ce008`).
+- Lot `v2-20261104` : 406 réponses, 231 exemples dont 174 cités ; grille de 30 exemples et deux copies pour une relecture séparée ; commande `accord` (kappa de Cohen).
+- PR #129 : titre et sujet propres à chaque PDF, 9 PDF régénérés.
+
+**Mesures exécutées.**
+- Gel : sur le résultat local des trois fusions, 75 tests de `scripts/rag` et 53 de `scripts/adaptation_qwen` réussis ; fichiers verrouillés identiques octet pour octet aux têtes approuvées.
+- Lot v2 : 61 tests ; cinq mutations des nouveaux contrôles, toutes détectées. Pilote de 20 contextes : 12 réponses gardées, puis 13 après la phrase ajoutée à la consigne. Lot complet en 39 minutes ; aucune question exclue présente, 174 recopies valides, 2 980 tokens au plus.
+- Contrôle de recopie appliqué aux réponses du lot v1 : 10 réponses citées gardées sur 361, et aucun des 6 faux relus.
+- PDF : texte de chaque PDF régénéré identique au précédent (`pdftotext`), même nombre de pages.
+
+**Résultats retenus.**
+- Le contrôle lexical ne séparait pas les faux des justes. La recopie mot pour mot rend la fidélité vérifiable par programme ; la pertinence reste à la relecture humaine.
+- La variante « passage retiré » faisait courir un risque de refus d'environ une chance sur deux, et apprenait à s'abstenir là où une réponse partielle existait : elle est retirée.
+
+**Ce qui a été écarté, et pourquoi.**
+- Le contrôle lexical seul : il laissait passer la moitié des faux relus.
+- Lire les réponses du lot v2 avant la relecture : les règles étant fixées, rien de ce qui y serait lu ne devait les modifier.
+- Relancer l'enseignant pour la date de J3 : Mahé a décidé le 27 octobre d'attendre sa communication.
+
+**Ce que l'équipe a validé, et par qui.**
+- Lot v2, décidé au nom de Mahé BEGNIS, révisable au Weekly 8, non révisé.
+- Approbations de Jibril (#119, #108, #125, #122, #124) et de Vaneck (#124) ; fusions de Jibril (#122, #126, #127).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- La génération du lot v2, lancée en tâche de fond de la session, s'est arrêtée avec elle sans rien écrire : elle a été relancée hors de la session.
+
+### Session 60, 7 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux depuis le 4 novembre ; relecture du verrou ; revue de Jibril sur le lot v2 ; lot v2b ; supports de J3 ; tenue des réunions.
+
+**Produit.**
+- #131, le verrou de Jibril (`490b42d`), approuvée.
+- #124 fusionnée (`32744f6`).
+- #130 corrigée (`e383df5`) après la revue de Jibril : « : » et « ; » ne coupent plus une phrase en unités ; le pilote est exigé par `reprendre` ; les réponses d'un lot de même configuration peuvent être reprises.
+- Lot `v2b-20261107` : mêmes réponses que le lot v2, filtre corrigé, 218 exemples dont 164 cités ; grille de 30 exemples et deux copies, transmises par Mahé à Maïmouna et à Vaneck. La grille du lot v2 est caduque.
+- PR #132 : diapositives 4, 7 et 8 de J3, selon le plan de Vaneck (#112).
+- Consignés : l'accord de Mahé pour le préremplissage par une IA de la grille du lot v1 (#107) ; les Weekly 7 et 8 non tenus en réunion (#14).
+- Ancienne copie `data/volet_b.icloud-20261030` supprimée après une nouvelle vérification.
+
+**Mesures exécutées.**
+- Verrou : `verifier_verrou` conforme sur la fusion de la #131 avec `dev` ; les dix empreintes égalent les références.
+- Découpage corrigé : 10 des 174 réponses citées du lot v2 n'étaient pas des phrases entières. 64 tests ; trois mutations détectées ; contrôles du lot v2b refaits (aucune question exclue, 164 recopies valides).
+- Essai d'entraînement de 2 itérations sur le lot v2 : 229 s, pic de 6,27 Gio, perte de validation de 0,531 puis 0,415.
+
+**Résultats retenus.**
+- Le défaut relevé par Jibril n'était pas théorique : le lot v2 contenait 10 fragments. La relecture humaine porte sur le lot v2b.
+- La perte de validation sur le lot v2 (0,531) dépasse celle du lot v1 (0,226) : les réponses recopiées s'éloignent du style naturel de Qwen.
+
+**Ce qui a été écarté, et pourquoi.**
+- Régénérer les réponses pour le lot v2b : la correction ne touche que le filtre ; reprendre les mêmes réponses, contrôlées par empreinte, isole son effet.
+
+**Ce que l'équipe a validé, et par qui.**
+- Préremplissage de la grille du lot v1 par une IA : accord de Mahé BEGNIS, confirmé le 7 novembre.
+- Réunions : les Weekly 7 et 8 n'ont pas eu lieu, remplacés par un point sur Discord et un point à l'oral en cours (Mahé BEGNIS).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Aucune activité sur le dépôt du 5 au 7 novembre : la relecture du lot et l'entraînement, prévus les 5 et 6 novembre, n'ont pas eu lieu.
+
 **Sessions 61 à 63, de Maïmouna SIGNATE.** Les travaux qu'elles décrivent s'étendent du 28 octobre au 8 novembre ; le travail sur la chaîne RAG avait commencé dès le 20 octobre. Elles sont rédigées à partir de l'historique de la conversation avec l'assistant, des fichiers produits et des revues et commentaires datés (#85, #105, #117, #51, #128). Les temps d'appropriation sont ceux que j'ai déclarés dans ces commentaires ou que j'ai estimés.
 
 ### Session 61, 28 et 29 octobre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
@@ -1809,6 +1884,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
 | 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
 | 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus hors fusions |
+| 28/10 | Revue de la #85 décrivant la réponse de Q036 comme recopiée « presque mot pour mot » | question de Maïmouna, nouvelle comparaison avec la trace | « mot pour mot » ; la condition omise est attribuée à `rag_51.md`, qui la notait déjà |
 | 30/10 | Même piège zsh, une troisième fois : `$b:scripts` lu comme le modificateur `:s` | erreur « bad substitution » | commande réécrite |
 | 30/10 | Reconstitution des sources de la feuille de route par rejeu du transcript, incomplète : des retouches passaient par des scripts | assertion du script de reconstitution | page modifiée depuis sa version publiée ; seules les 16 lignes visées changent, données intactes |
 | 30/10 | Remplacement sur la page sans l'espace insécable que le rendu place avant « : » | assertion du script | typographie de la page reproduite |
@@ -1830,7 +1906,14 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 02/11 | Contrôle des 15 candidats d'Agent0 contre le lot v1 lu avec de mauvaises clés : aucun trouvé, par construction | invraisemblance d'un résultat nul | clés réelles lues, contrôle refait |
 | 02/11 | Contrôle de relecture de la #125 acceptant une grille partielle, dupliquée ou d'un autre lot, et une fidélité vide | revue de Jibril | grille comparée au tirage du lot, fidélité obligatoire (`fc0a8ad`) |
 | 02/11 | `a_relire.jsonl` du lot v1 écrit deux minutes avant le commit du tirage stratifié : 2 identifiants en commun avec la grille | comparaison de la grille au tirage | tirage recalculé sur `train.jsonl` et `valid.jsonl`, `a_relire.jsonl` écarté comme référence |
-| 28/10 | Revue de la #85 décrivant la réponse de Q036 comme recopiée « presque mot pour mot » | question de Maïmouna, nouvelle comparaison avec la trace | « mot pour mot » ; la condition omise est attribuée à `rag_51.md`, qui la notait déjà |
+| 04/11 | Génération du lot v2 lancée en tâche de fond de la session, arrêtée avec elle : aucun fichier écrit | fichier de réponses absent à la reprise | relancée hors de la session (`nohup`, `caffeinate`) |
+| 04/11 | Contrôle de l'activité de l'équipe parti d'une heure postérieure à l'heure courante : résultat vide | heure de la commande comparée au seuil | contrôle refait depuis le contrôle précédent |
+| 04/11 | Recherche de secrets dans la #128 sans résultat : motif que `git grep -E` ignore, puis liste de fichiers non découpée par zsh | témoin `127.0.0.1` absent des résultats | recherche refaite avec un témoin |
+| 04/11 | Relance de l'enseignant donnée comme lançable, contre la décision du 27/10 d'attendre | relecture du #8 avant d'écrire la relance | retirée des tâches lançables |
+| 04/11 | Pilote du lot v2 : une phrase recopiée renvoyait à une phrase précédente (« À défaut… ») et ne répondait pas | lecture des 20 sorties du pilote | consigne complétée avant le lot complet |
+| 04/11 | Chiffres de J3 (#124) restés au 02/11 : lot v1 présenté comme données, B0 « à recalibrer », J4 sans réserve | revue de Jibril | réalisé, prévu et conditionnel distingués (`69d5d53`) |
+| 07/11 | Unités découpées aux « : » et « ; » : 10 fragments sans leur condition acceptés dans le lot v2 | revue de Jibril sur la #130 | découpage corrigé, lot v2b (`e383df5`) |
+| 07/11 | Reprise sans pilote acceptée sans le signaler | revue de Jibril sur la #130 | pilote exigé, ou absence déclarée |
 | 08/11 | Remarque sur la #128 attribuant au site du ministère le refus du lien « Voir dans la fiche » | nouvel essai de Maïmouna, connexion vérifiée | remarque retirée, le lien fonctionne |
 | 08/11 | Phrase de conclusion de la réponse sur les congés payés présentée comme inventée et contradictoire | question de Maïmouna, relecture des cinq passages | son contenu figure en P1, P3 et P5 ; seule l'absence de citation est retenue |
 | 08/11 | Fichier d'annotation complet, lot de test compris, ouvert par l'assistant dans l'éditeur au lieu des seules questions de calibration | relecture de la commande par l'assistant | onglet fermé sans lecture, fichier supprimé et remplacé par les 8 questions de calibration |
