@@ -28,7 +28,7 @@
 
 **Texte oral proposé.**
 
-Le volet A renvoie des passages. Le volet B ajoute une réponse rédigée à partir de ces passages. On peut le comparer à un lecteur auquel on donne cinq pages d'un dossier avant de lui poser une question. E5 choisit les pages, puis Qwen reçoit leur texte, avec des repères de P1 à P5. Toute la chaîne de recherche et de génération s'exécute sur le Legion. La consigne demande au modèle de citer ses passages et de s'abstenir quand ils ne suffisent pas. Dans l'état B2, un seuil peut aussi arrêter la demande avant la génération. Notre contrôle automatique vérifie que les références existent et respectent le format attendu. Pour savoir si elles justifient réellement la réponse, il faut relire le contenu. C'est justement ce que l'évaluation distingue.
+Le volet A renvoie des passages. Le volet B ajoute une réponse rédigée à partir de ces passages. On peut le comparer à un lecteur auquel on donne cinq pages d'un dossier avant de lui poser une question. E5 choisit les pages, puis Qwen reçoit leur texte, avec des repères de P1 à P5. Toute la chaîne de recherche et de génération s'exécute localement. La consigne demande au modèle de citer ses passages et de s'abstenir quand ils ne suffisent pas. Dans l'état B2, un seuil peut aussi arrêter la demande avant la génération. Notre contrôle automatique vérifie que les références existent et respectent le format attendu. Pour savoir si elles justifient réellement la réponse, il faut relire le contenu. C'est justement ce que l'évaluation distingue.
 
 **Repères pour les questions du jury.**
 
@@ -68,25 +68,30 @@ J'ai aussi développé Agent0 Light pour proposer des questions complémentaires
 
 **Texte oral proposé.**
 
-J'ai exécuté la mesure avant le 9 novembre sur le Legion, avec le protocole verrouillé et les 97 questions de test. Les cinq états restent sous la limite d'erreurs techniques. Le résultat à retenir est le compromis de B2 : il s'abstient sur 20 des 24 questions hors corpus, mais aussi sur 45 des 72 questions du corpus sans erreur technique. Il refuse donc souvent une question pour laquelle le corpus contient une réponse. En parallèle, 12 réponses sur ces 72 citent au moins un passage pertinent. Cela ne suffit pas à dire qu'elles sont exactes. Ces résultats constituent notre référence avant adaptation. Nous conservons le même jeu et les mêmes règles pour la mesure après, puis une relecture à l'aveugle jugera le sens des réponses.
+J'ai exécuté la mesure avant le 9 novembre sur le Legion, avec les 97 questions de test. Le verrou empêche de modifier les éléments figés avant la mesure. Mahé a vérifié les fichiers et retrouvé les mêmes métriques. B2 s'abstient sur 20 des 24 questions hors corpus. Pour comprendre ses 45 abstentions sur les questions du corpus, il faut regarder les passages fournis : 28 surviennent sans passage pertinent selon D4. Parmi les 33 questions avec un passage pertinent, 17 reçoivent encore une abstention. Ce diagnostic distingue les difficultés de récupération des refus malgré un contexte pertinent, avec les limites de la règle D4. La suite se fera sur le Mac de Mahé : le modèle adapté sera comparé au témoin T sur cette même machine. La mesure du Legion restera descriptive, sans comparaison directe avec les résultats du Mac.
 
 **Repères pour les questions du jury.**
 
 - Les 71 et 72 questions dans les dénominateurs de B1 et B2 viennent des erreurs techniques exclues. Le jeu compte toujours 73 questions du corpus et 24 hors corpus.
 - B2 change la consigne et ajoute le seuil par rapport à B1. Cette mesure ne permet pas d'attribuer tout l'écart au seul seuil.
 - « Passage pertinent » signifie pertinent selon la règle D4. Une citation pertinente ne prouve pas que chaque affirmation de la réponse est juste.
-- Les résultats avant sont descriptifs. L'analyse principale porte sur B2 après adaptation contre la référence prévue, avec des intervalles à 97,5 % sur M1 et M4.
+- M2 reste 45/72 par rapport au corpus entier. Le diagnostic conditionnel au contexte est distinct : 28 de ces abstentions sans passage pertinent selon D4, et 17/33 avec passage pertinent (16 du modèle, une du seuil). D4 ne garantit pas qu'aucune autre réponse existe dans les contextes classés sans passage pertinent.
+- Le seuil déclenche 11 abstentions sur 65, les 54 autres viennent du modèle. Parmi les questions du corpus, il déclenche deux abstentions.
+- La mesure avant du Legion reste descriptive. L'analyse principale compare B2 adapté à B2 de T sur le Mac, avec des intervalles à 97,5 % sur M1 et M4, conformément à l'amendement M1 du 10 novembre dans #52.
 - Le réglage reste celui du protocole gelé. Nous ne déplaçons pas le seuil pour améliorer les résultats du lot de test.
 
 **Sources.** Section « Diapositive 8 » de `docs/jalons/J3_diapositives_mahe.md` ; protocole 06 ; journal de mesure du 9 novembre dans la PR #142. Les fichiers bruts et l'archive restent hors dépôt.
 
-## Intégration et état des dépendances au 9 novembre
+## Intégration et état documenté au 10 novembre
 
 - Pour la diapositive 5 de la PR #134, reprendre la section correspondante ci-dessus et son texte oral.
 - Pour la diapositive 8, renvoyer à la source commune de Mahé et utiliser le texte oral proposé ici, afin de garder un seul tableau de résultats à maintenir.
-- Jibril déclare avoir reçu la grille de Maïmouna. Celle de Vaneck manque encore. Cette réception partielle ne permet pas de déclarer le lot v2b accepté ou l'entraînement réalisé.
-- Les PR #131 et #130 sont fusionnées. La mesure avant et son analyse sont exécutées, et Jibril confirme l'envoi de l'archive à Mahé. Sa réception reste à confirmer.
-- La PR #128 attend une correction du verrou du serveur. Le branchement final de la démonstration reste à valider sur le Legion.
+- Les deux grilles du lot v2b ont été reçues. Mahé a publié le 10 novembre une décision d'acceptation sans arbitrage commun, en retenant la sévérité maximale case par case (3 faux sur 30). Cette décision déroge à l'arbitrage initialement prévu et conserve le risque déclaré sur les abstentions injustifiées. Le lancement du 10 novembre a été interrompu avant toute sauvegarde et tout manifeste, puis reporté au 11 novembre (#107).
+- Les PR #131 et #130 sont fusionnées. Mahé confirme la réception des sept fichiers de la mesure avant et les mêmes métriques après recalcul indépendant. Le ZIP avait été décompressé automatiquement : son empreinte globale n'a pas été recalculée à réception.
+- Vaneck a corrigé le verrou du serveur et mis Vite à jour dans #128, au commit 8ba4524. La contre-relecture du 10 novembre approuve ces corrections après tests automatisés et reproduction du cas HTTP, sans inférence réelle. L'essai de démonstration sur la machine de présentation reste à réaliser.
+- #141 a été fusionnée par Mahé le 10 novembre. La contre-relecture du 10 novembre ne relève pas d'incompatibilité bloquante sur le format du contexte, les sources et le budget, avec 19 tests réussis et des contrôles complémentaires sur fixtures. Le branchement à la démonstration et le contrôle complet de l'abstention restent distincts ; aucun gain de récupération n'est assimilé à un gain de qualité des réponses.
+- Les phases de mesure restantes se font sur le Mac de Mahé. T ne sera pas transféré et Jibril ne lance plus de mesure (#52, amendement M1).
+- Les travaux Agent0 #144 et #145 restent en attente de revue après le 12 novembre. Le passage de la diapositive 5 présente le socle historique livré et ses limites, sans annoncer ce lanceur préparatoire comme validé.
 - Les supports sont attendus le 13 novembre selon #112. La date officielle de J3 reste à confirmer par écrit dans #8.
 
 **Relectures attendues.** Jibril sur son texte et les formulations techniques, Mahé sur les résultats et la diapositive 8, puis Rémy et Vaneck pour l'assemblage et la mise en forme.
