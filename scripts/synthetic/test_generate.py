@@ -46,7 +46,7 @@ class PreparationTests(unittest.TestCase):
     def test_source_exacte_et_schema_communs_aux_deux_prompts(self):
         passage = passages_techniques()[0]
         avant = copy.deepcopy(passage)
-        for categorie in prompts.CATEGORIES:
+        for categorie in ("simple", "reformulation"):
             with self.subTest(categorie=categorie):
                 prompt = prompts.preparer_prompt(passage, categorie, "medium")
                 self.assertEqual(prompt["version"], prompts.VERSION_PROMPT)
@@ -177,7 +177,7 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual(sortie.read_bytes(), b"a conserver")
 
     def test_cli_exige_mode_explicite_et_categories_disponibles(self):
-        for arguments in [self.arguments()[1:], self.arguments() + ["--type", "adversarial"],
+        for arguments in [self.arguments()[1:], self.arguments() + ["--type", "inconnue"],
                           self.arguments() + ["--difficulty", "mesuree"]]:
             with self.subTest(arguments=arguments), contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit) as erreur:

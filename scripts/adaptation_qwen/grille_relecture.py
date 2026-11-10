@@ -1,7 +1,12 @@
 """Relecture humaine d'un échantillon des données d'adaptation (#107, étape 28) : grille à remplir, puis bilan.
 
-    python scripts/adaptation_qwen/grille_relecture.py grille <lot>     # écrit grille_relecture.csv à partir de a_relire.jsonl
-    python scripts/adaptation_qwen/grille_relecture.py bilan <lot>      # lit la grille remplie et applique la règle
+    python scripts/adaptation_qwen/grille_relecture.py grille <lot>     # écrit grille_relecture.csv (tirage stratifié)
+    python scripts/adaptation_qwen/grille_relecture.py bilan <lot>      # contrôle la grille remplie, applique la règle
+    python scripts/adaptation_qwen/grille_relecture.py accord <lot> <A.csv> <B.csv>   # deux relectures séparées
+
+Lot v2 (décision du 04/11, #107) : deux relecteurs remplissent chacun une copie de la grille, sans préremplissage ;
+accord compare leurs verdicts (désaccords, kappa de Cohen sur « faux »). Les désaccords sont tranchés ensemble, et la
+grille commune ainsi obtenue devient grille_relecture.csv, la seule que lisent bilan et l'entraînement.
 
 La grille s'ouvre dans un tableur (UTF-8 avec BOM, séparateur « ; »). Les relecteurs remplissent, pour chaque exemple :
 - question_naturelle : oui ou non (une vraie question d'utilisateur, autonome) ;
@@ -10,7 +15,10 @@ La grille s'ouvre dans un tableur (UTF-8 avec BOM, séparateur « ; »). Les rel
 - abstention_justifiee : oui ou non (abstentions ; aucun des cinq passages ne permet de répondre) ;
 - commentaire : libre.
 
-L'échantillon est stratifié (donnees_adaptation.tirage_relecture), tiré dans train.jsonl et valid.jsonl du lot.
+L'échantillon est stratifié (donnees_adaptation.tirage_relecture), tiré dans train.jsonl et valid.jsonl du lot ; le
+tirage est déterministe, et a_relire.jsonl n'en est pas la référence (celui du lot du 30/10 précède ce tirage). Avant le
+bilan, la grille remplie doit reprendre exactement les lignes du tirage, dans le même ordre, sans doublon, avec les mêmes
+colonnes fixes ; seules les fins de ligne écrites par un tableur sont tolérées.
 
 Règles écrites avant la relecture :
 - un exemple est « faux » si reponse_juste vaut non, si fidele_aux_passages vaut non, ou si abstention_justifiee vaut
@@ -31,6 +39,7 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[2]
 DOSSIER = RACINE / "data" / "volet_b" / "donnees_adaptation"
+COLONNES_FIXES = ("id", "variante", "question", "reponse_attendue", "passages")
 COLONNES_VERDICT = ("question_naturelle", "reponse_juste", "fidele_aux_passages", "abstention_justifiee", "commentaire")
 VALEURS = {"question_naturelle": {"oui", "non"}, "reponse_juste": {"oui", "partiel", "non", ""},
            "fidele_aux_passages": {"oui", "non", ""}, "abstention_justifiee": {"oui", "non", ""}}
@@ -61,6 +70,36 @@ def grille(exemples: list[dict]) -> str:
     return sortie.getvalue()
 
 
+def echantillon(exemples: list[dict]) -> list[dict]:
+    """Exemples tirés pour la relecture, dans l'ordre du lot (train puis valid)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from donnees_adaptation import tirage_relecture
+    ids = set(tirage_relecture(exemples))
+    return [e for e in exemples if e["id"] in ids]
+
+
+def verifier_grille(lignes: list[dict], exemples: list[dict]) -> None:
+    """La grille remplie reprend exactement le tirage du lot : mêmes lignes, même ordre, mêmes colonnes fixes."""
+    attendues = list(csv.DictReader(io.StringIO(grille(echantillon(exemples))), delimiter=";"))
+    ids = [l.get("id") for l in lignes]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Grille non conforme : identifiants en double")
+    if ids != [a["id"] for a in attendues]:
+        manquants = sorted({a["id"] for a in attendues} - set(ids))
+        raise ValueError(f"Grille non conforme au tirage du lot : {len(ids)} lignes pour {len(attendues)} attendues, "
+                         f"manquantes {manquants[:5]}, étrangères {sorted(set(ids) - {a['id'] for a in attendues})[:5]}")
+    norm = lambda t: (t or "").replace("\r\n", "\n")
+    for a, l in zip(attendues, lignes):
+        for c in COLONNES_FIXES:
+            if norm(l.get(c)) != norm(a[c]):
+                raise ValueError(f"Grille non conforme : colonne {c} modifiée pour {a['id']}")
+
+
+def lire_exemples(lot: Path) -> list[dict]:
+    return [json.loads(l) for n in ("train.jsonl", "valid.jsonl")
+            for l in (lot / n).read_text(encoding="utf-8").splitlines() if l]
+
+
 def wilson(k: int, n: int, z: float = 1.959963984540054) -> tuple[float, float]:
     if n == 0:
         return (0.0, 1.0)
@@ -77,7 +116,8 @@ def bilan(lignes: list[dict]) -> dict:
             if l.get(c, "").strip().lower() not in ok:
                 erreurs.append(f"{l['id']} : {c} = {l.get(c)!r}")
         cite = l["variante"] == "citee"
-        if cite and not l["reponse_juste"].strip() or not cite and not l["abstention_justifiee"].strip():
+        if cite and not (l["reponse_juste"].strip() and l["fidele_aux_passages"].strip()) \
+                or not cite and not l["abstention_justifiee"].strip():
             erreurs.append(f"{l['id']} : verdict manquant")
     if erreurs:
         raise ValueError("Grille incomplète ou mal remplie : " + " ; ".join(erreurs[:5]))
@@ -97,19 +137,39 @@ def bilan(lignes: list[dict]) -> dict:
             "garder_passage_retire": injustifiees <= RETIRE_INJUSTIFIEES_MAX}
 
 
+def accord(a: list[dict], b: list[dict]) -> dict:
+    """Deux relectures séparées de la même grille : désaccords et kappa de Cohen sur le verdict « faux »."""
+    ids = [l["id"] for l in a]
+    if ids != [l["id"] for l in b]:
+        raise ValueError("Les deux grilles ne portent pas sur les mêmes exemples, dans le même ordre")
+    fa, fb = set(bilan(a)["ids_faux"]), set(bilan(b)["ids_faux"])
+    n = len(ids)
+    po = sum((i in fa) == (i in fb) for i in ids) / n
+    pe = (len(fa) / n) * (len(fb) / n) + (1 - len(fa) / n) * (1 - len(fb) / n)
+    colonnes = [c for c in COLONNES_VERDICT if c != "commentaire"]
+    ecarts = {la["id"]: [c for c in colonnes if la[c].strip().lower() != lb[c].strip().lower()] for la, lb in zip(a, b)}
+    return {"relus": n, "faux_a": len(fa), "faux_b": len(fb), "accord_observe": round(po, 3),
+            "kappa": round((po - pe) / (1 - pe), 3) if pe < 1 else None,     # indéfini si un seul verdict partout
+            "desaccords_sur_faux": sorted(fa ^ fb), "desaccords_par_colonne": {i: c for i, c in ecarts.items() if c}}
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
-    if len(argv) != 2 or argv[0] not in ("grille", "bilan"):
+    if not (len(argv) == 2 and argv[0] in ("grille", "bilan") or len(argv) == 4 and argv[0] == "accord"):
         print(__doc__)
         return 2
     lot = DOSSIER / argv[1]
+    exemples = lire_exemples(lot)
+    if argv[0] == "accord":
+        grilles = []
+        for nom in argv[2:]:
+            with open(lot / Path(nom).name, encoding="utf-8-sig", newline="") as f:
+                grilles.append(list(csv.DictReader(f, delimiter=";")))
+            verifier_grille(grilles[-1], exemples)
+        print(json.dumps(accord(*grilles), ensure_ascii=False, indent=1))
+        return 0
     if argv[0] == "grille":
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        from donnees_adaptation import tirage_relecture
-        exemples = [json.loads(l) for n in ("train.jsonl", "valid.jsonl")
-                    for l in (lot / n).read_text(encoding="utf-8").splitlines() if l]
-        ids = set(tirage_relecture(exemples))
-        choisis = [e for e in exemples if e["id"] in ids]
+        choisis = echantillon(exemples)
         with open(lot / "grille_relecture.csv", "x", encoding="utf-8-sig", newline="") as f:
             f.write(grille(choisis))
         print(f"{len(choisis)} exemples dans {lot / 'grille_relecture.csv'} : "
@@ -117,6 +177,7 @@ def main(argv=None) -> int:
         return 0
     with open(lot / "grille_relecture.csv", encoding="utf-8-sig", newline="") as f:
         lignes = list(csv.DictReader(f, delimiter=";"))
+    verifier_grille(lignes, exemples)
     resultat = bilan(lignes)
     print(json.dumps(resultat, ensure_ascii=False, indent=1))
     return 0 if resultat["utilisable"] else 1
