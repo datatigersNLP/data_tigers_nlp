@@ -19,12 +19,14 @@
 - Quantification q8 : elle coûte une question sur 73, sans écart significatif.
 - Abstention : le seuil de 0,8560 a été fixé le 10 octobre, avant la mesure, au 5e centile des scores de 479 variantes du CDTN. Il rejette 9 questions hors corpus sur 24 et garde 72 questions du corpus sur 73. L'AUC du score maximal vaut 0,841 (IC 95 % de 0,747 à 0,921).
 - Coût côté utilisateur : 18,3 ms par requête dans le navigateur, avec le modèle élagué de 65,7 Mio que sert le site.
+- Pourquoi pas de précision@k : chaque question n'a qu'un extrait de référence, et les autres passages pertinents ne sont pas connus. La précision serait sous-estimée de façon arbitraire ; pour la même raison, le Recall au niveau du passage sous-estime les deux systèmes, d'où le Recall au niveau de la fiche, qui le complète.
+- Suite pour le volet B : la même récupération, enrichie d'une fusion avec BM25 et d'un reclasseur, fait passer de 45,2 % à 72,6 % les questions dont les passages fournis au modèle contiennent un passage pertinent (#138, confirmé une fois sur le lot de test le 9 novembre).
 
-**Notes pour l'oral.** La mesure répond à une question posée avant de la faire : le site est-il au moins aussi bon que BM25 ? Oui, à la marge fixée au J2. Dire « non démontré meilleur », c'est respecter ce que la mesure permet de conclure. La limite principale est l'abstention : 15 questions hors corpus sur 24 reçoivent encore des résultats.
+**Notes pour l'oral.** La mesure répond à une question posée avant de la faire : le site est-il au moins aussi bon que BM25 ? Oui, à la marge fixée au J2. Dire « non démontré meilleur », c'est respecter ce que la mesure permet de conclure. La limite principale est l'abstention : 15 questions hors corpus sur 24 reçoivent encore des résultats. Sur la précision, montrer que nous connaissons les limites de notre jeu : un seul extrait par question rend la précision@k non interprétable, et c'est pourquoi le Recall est donné à deux niveaux. Les 45,2 % de la suite concernent la chaîne Python du volet B (E5 en fp32), et non le site (43,8 %, encodeur q8).
 
-**À ne pas dire.** « Supériorité prouvée » ; « +26,8 points » ; « abstention active validée » ; « seuil de 0,8165 fixé par courbe ROC ».
+**À ne pas dire.** « Supériorité prouvée » ; « +26,8 points » ; « abstention active validée » ; « seuil de 0,8165 fixé par courbe ROC » ; « le site trouve 72,6 % » : la récupération v2 n'est pas servie par le site.
 
-**Sources.** `docs/etudes/evaluation/03_evaluation.md` ; `front/src/recherche/moteur.js` ; `scripts/allegement/README.md`.
+**Sources.** `docs/etudes/evaluation/03_evaluation.md` ; `front/src/recherche/moteur.js` ; `scripts/allegement/README.md` ; `docs/etudes/recuperation/02_confirmation_test.md` (PR #141).
 
 ## Diapositive 7 : Volet B, l'adaptation (avec Remy)
 
@@ -35,14 +37,15 @@
 - Méthode : LoRA de rang 8 sur les 16 dernières couches du modèle en 4 bits, perte calculée sur la seule réponse, deux époques (PR #125).
 - Lot v1 : 298 exemples, refusé à la relecture humaine le 2 novembre, avec 8 exemples faux sur 30, au-delà de la règle de 10 % écrite d'avance. Sur les 15 exemples cités, 6 sont faux : la réponse prête au passage ce qu'il ne dit pas.
 - Correctif, publié avant la génération (#107) : les réponses sont recopiées mot pour mot des passages, chaque phrase est contrôlée contre le passage qu'elle cite, et la variante « passage retiré » est abandonnée.
-- Lot v2b : 218 exemples, dont 164 cités et 54 abstentions hors corpus, en relecture humaine indépendante par Maïmouna et Vaneck. À compléter le 13/11 : accepté ou refusé, entraînement fait ou non.
-- Service : Ollama refuse les adaptateurs LoRA. L'adaptateur sera fusionné, converti en GGUF et quantifié en Q4_K_M ; le modèle de base suivra la même chaîne, pour servir de témoin T.
+- Ce que l'adaptation apprend : un comportement, pas des connaissances. Le modèle apprend à recopier les passages fournis, à les citer et à s'abstenir hors corpus ; les faits restent dans les passages, et la récupération reste indispensable. Les 61 fiches du lot de test sont exclues des données d'entraînement.
+- Lot v2b : 218 exemples, dont 164 cités et 54 abstentions hors corpus, relus séparément par Maïmouna et Vaneck. Accepté le 10 novembre avec la grille la plus sévère des deux : 3 exemples faux sur 30, soit 10,0 %, à la limite de la règle. Risque déclaré : environ 11 des 54 abstentions pourraient être injustifiées (#107). À compléter le 13/11 : entraînement et mesure après.
+- Service : Ollama refuse les adaptateurs LoRA. L'adaptateur est fusionné dans les poids bf16 officiels, converti en GGUF et quantifié en Q4_K_M ; le modèle de base suit la même chaîne, pour servir de témoin T (produit et vérifié le 9 novembre, #140). Depuis le 10 novembre, entraînement, export et mesures se font sur le seul Mac (amendement M1, #52).
 
-**Notes pour l'oral.** Le refus du lot v1 est un résultat, pas un échec : la règle d'acceptation était écrite avant la relecture, et elle a empêché d'entraîner le modèle sur des réponses infidèles. Le correctif a été choisi sans lire le nouveau lot.
+**Notes pour l'oral.** Le refus du lot v1 est un résultat, pas un échec : la règle d'acceptation était écrite avant la relecture, et elle a empêché d'entraîner le modèle sur des réponses infidèles. Le correctif a été choisi sans lire le nouveau lot. Si l'on demande pourquoi adapter un modèle qui a déjà un RAG : injecter le corpus dans les poids remplacerait la récupération, et la littérature la juge moins fiable que le RAG pour apporter des connaissances (Ovadia et al., 2023). Nous adaptons au contraire la manière d'utiliser les passages, dans l'esprit de RAFT (Zhang et al., 2024) : c'est la récupération qui apporte les faits, et l'adaptation qui apprend à les citer fidèlement ou à s'abstenir.
 
-**À ne pas dire.** « Volet B adapté », tant que l'adaptateur n'est pas entraîné et mesuré ; « 16,86 Gio de mémoire libre » ; « exécution intégrale en VRAM » : le Mac a une mémoire unifiée.
+**À ne pas dire.** « Volet B adapté », tant que l'adaptateur n'est pas entraîné et mesuré ; « 16,86 Gio de mémoire libre » ; « exécution intégrale en VRAM » : le Mac a une mémoire unifiée ; « le modèle connaît le droit du travail » : il apprend un comportement, pas le contenu des fiches.
 
-**Sources.** PR #109 et #118 ; `docs/etudes/faisabilite_legion_20261026.md` ; #107 (commentaires du 4 et du 7 novembre) ; PR #130.
+**Sources.** PR #109 et #118 ; `docs/etudes/faisabilite_legion_20261026.md` ; #107 (commentaires du 4, du 7 et du 10 novembre) ; PR #130 ; #52 (amendement M1) ; #140 et PR #147.
 
 ## Diapositive 8 : Volet B, protocole 06 et mesure avant (avec Jibril)
 
