@@ -1,205 +1,184 @@
-# Support de presentation - Jalon J3 (15 points)
-**Module** NLP 2 . Master 2 Data & IA . FGES - Universite Catholique de Lille  
-**Equipe** Data Tigers : Mahe BEGNIS, Remy RAYANE, Jibril BENSALEM, Vaneck DAGAR, Maimouna SIGNATE  
-**Statut** Version consolidee selon le plan de Vaneck du 4 novembre (Ticket #112, 10 diapositives)  
-**Chiffres de reference** `docs/jalons/J3_chiffres_verifies.md` (PR #124) et Protocole 06 gele (PR #108, #131)  
-**Responsables des supports** : Vaneck DAGAR (plan et contenu) & Remy RAYANE (assemblage et coordination)
+# Support de présentation - Jalon J3 (15 points)
+
+**Module** NLP 2 · Master 2 Data & IA · FGES - Université Catholique de Lille  
+**Équipe** Data Tigers : Mahé BEGNIS, Remy RAYANE, Jibril BENSALEM, Vaneck DAGAR, Maïmouna SIGNATE  
+**Statut** Version consolidée selon le plan de Vaneck du 4 novembre (Ticket #112, 10 diapositives), corrigée le 10 novembre après revue de la PR #134  
+**Chiffres et sources de référence** `docs/jalons/J3_chiffres_verifies.md` (PR #124), Protocole 06 gelé (PR #108, #119 ; verrou fusionné le 9 novembre en PR #131), `docs/jalons/J3_diapositives_mahe.md` (PR #132 ; compléments PR #143 et #148 à fusionner) et `docs/jalons/J3_diapositives_jibril.md` (PR #143 à fusionner)  
+**Responsables des supports** Vaneck DAGAR (plan et mise en forme), Remy RAYANE (assemblage et coordination) ; diapositives relues par leurs auteurs respectifs (Vaneck et Maïmouna : 2, 6 ; Remy et Mahé : 1, 3, 9, 10 ; Mahé et Remy : 7 ; Jibril : 5, 8 ; Mahé : 4, 7, 8)  
+**À mettre à jour le 13 novembre** recomptage du journal et de sa section 4, état de l'entraînement LoRA sur Mac, validation des cinq outils (#14) et éventuelle mesure après adaptation
 
 ---
 
-## Diapositive 1 : Ou en est-on face aux trois exigences de J3
+## Diapositive 1 : Où en est-on face aux trois exigences de J3
 
-**Message.** Le volet A est finalise et deploye sans serveur, le volet B est engage avec son socle RAG et ses protocoles geles, et la demarche est integralement documentee.
+**Message.** Le volet A est finalisé et déployé sans serveur, le volet B est engagé avec son socle RAG, son protocole verrouillé et ses premières mesures avant adaptation, et la démarche est intégralement documentée.
 
 **Contenu.**
-- Cadrage general : deux applications complementaires sur le corpus du droit du travail (261 fiches, 4 240 passages, instantane SocialGouv du 11 septembre 2026).
-- Exigence 1 (Volet A finalise et deploye) : recherche semantique dense client-side (Transformers.js), modele elague sous les 100 Mio de quota GitHub Pages (65,7 Mio), latence d'encodage de 18,3 ms, seuil d'abstention a 0,8560 et contrastes verifies au niveau AA des WCAG 2.1.
-- Exigence 2 (Volet B engage) : assistant local sur Qwen2.5-7B sous Ollama 0.40.13, socle RAG fonctionnel avec sourcage formel des passages ([P1] a [P5]), protocoles de mesure et de separation geles, faisabilite materielle LoRA demontree sur Mac M4 Pro.
-- Exigence 3 (Rigueur methodologique & Tracabilite) : demonstration reproductible, board tenu a jour avec suivi des charges, journal d'usage IA auditable (45 sessions, 87 erreurs documentees et corrigees) et 5 fiches d'outils novateurs pour le bonus.
+- Cadrage général : deux applications complémentaires sur le corpus du droit du travail (261 fiches pratiques du ministère du Travail, 4 240 passages, instantané SocialGouv du 11 septembre 2026).
+- Exigence 1 (Volet A finalisé et déployé) : recherche sémantique dense client-side (Transformers.js), modèle élagué sans perte sous la limite de 100 Mio par fichier de GitHub (65,7 Mio), latence d'encodage de 18,3 ms, seuil d'abstention à 0,8560 et contrastes vérifiés au niveau AA des WCAG 2.1.
+- Exigence 2 (Volet B engagé) : assistant local sur `Qwen2.5-7B-Instruct` (Q4_K_M) sous Ollama 0.40.13 (version épinglée), socle RAG fonctionnel avec repères de citation (`[P1]` à `[P5]`), protocole 06 et verrou de mesure gelés (#108, #119, #131), contrôle d'étanchéité appliqué par le générateur (#115, #107), faisabilité LoRA démontrée sur Mac M4 Pro et mesure avant exécutée le 9 novembre sur Legion (sous réserve de confirmation de l'analyse).
+- Exigence 3 (Rigueur méthodologique et traçabilité) : démonstration en cours de finalisation, classeur de suivi tenu à jour avec historique des arbitrages, journal d'usage IA auditable (décompte à actualiser le 13/11, plus de 56 sessions consignées) et cinq fiches d'outils novateurs à valider sur le ticket #14 pour le bonus (jusqu'à 3 points).
 
-**Notes pour l'oral.** J3 valide la livraison operationnelle du premier volet et l'engagement methodologique du second. Rien n'a ete improvise : chaque jalon s'appuie sur des criteres ecrits d'avance et des mesures verifiees.
+**Notes pour l'oral.** J3 valide la livraison opérationnelle du premier volet et l'engagement méthodologique du second. Rien n'a été improvisé : chaque jalon s'appuie sur des critères écrits d'avance et des mesures vérifiées. Le lot d'adaptation v2b a été accepté le 10 novembre (3 exemples faux sur 30, soit 10,0 %) et l'entraînement LoRA, transféré exclusivement sur Mac (amendement M1, #52), est relancé pour le 11 novembre avant le point d'arrêt du 12 novembre.
 
-**A ne pas dire.** « Volet B termine » ; « Volet B adapte » (l'adaptation est engagee, la mesure apres est attendue).
+**À ne pas dire.** « Volet B terminé » ; « Volet B adapté » (tant que l'adaptateur n'est pas entraîné et mesuré après adaptation).
 
-**Sources.** `README.md` ; `docs/jalons/J3_chiffres_verifies.md` ; tickets #8, #52, #107, #112.
+**Sources.** `README.md` ; `docs/jalons/J3_chiffres_verifies.md` ; tickets #8, #14, #52, #107, #112 ; PR #108, #115, #119, #131.
 
 ---
 
 ## Diapositive 2 : Volet A, le site en ligne et son architecture
 
-**Message.** Une recherche dense calculee a 100 % dans le navigateur du visiteur, sans aucun serveur applicatif ni cout d'infrastructure.
+*(Relecture attendue : Vaneck DAGAR et Maïmouna SIGNATE.)*
+
+**Message.** Une recherche dense calculée à 100 % dans le navigateur du visiteur, sans aucun serveur applicatif ni coût d'infrastructure.
 
 **Contenu.**
-- Architecture statique : application web servie par GitHub Pages (Vite, React, Tailwind CSS), aucun backend Python en production.
-- Moteur d'execution : Transformers.js adosse a ONNX Runtime Web (WebAssembly / SIMD).
-- Encodeur dense : multilingual-e5-small quantifie en 8 bits (q8) pour concilier fidelite de representation et compacite.
-- Asymetrie E5 preservee : prefixes obligatoires « query: » pour la requete et « passage: » pour les documents indexes, garantissant le respect de la geometrie latente.
-- Optimisation matricielle : vecteurs normalises L2 permettant de reduire la similarite cosinus a un produit scalaire en O(d). Matrice d'embeddings chargee en memoire typee (Float32Array) depuis index_m2.f32 et metadonnees documentaires lues via JSON.parse.
-- Reactivite utilisateur : 18,3 ms pour encoder une requete dans le navigateur (Chromium WASM) avec le modele elague de 65,7 Mio.
+- Architecture statique : application web servie par GitHub Pages (`front/`, Vite, React, Tailwind CSS), aucun backend Python en production.
+- Moteur d'exécution : Transformers.js 4.3.0 adossé à ONNX Runtime Web (WebAssembly / SIMD), entièrement servi depuis le site sans requête vers un CDN tiers.
+- Encodeur dense : `multilingual-e5-small` quantifié en 8 bits (`q8`) pour concilier fidélité de représentation et compacité.
+- Asymétrie E5 préservée : préfixes obligatoires `query: ` pour la requête et `passage: ` pour les documents indexés, garantissant le respect de la géométrie latente.
+- Optimisation matricielle et intégrité : vecteurs normalisés L2 ramenant la similarité cosinus à un produit scalaire en O(d). Matrice d'embeddings chargée en mémoire typée (`Float32Array`) depuis `index_m2.f32`, métadonnées lues dans `passages_m2.json` via `JSON.parse`, et empreintes SHA-256 vérifiées au chargement (`front/src/recherche/moteur.js`).
+- Réactivité utilisateur : 18,3 ms pour encoder une requête dans le navigateur avec le modèle élagué de 65,7 Mio.
 
-**Notes pour l'oral.** L'autonomie totale du site etait une contrainte majeure. Le calcul local garantit la confidentialite des requetes : aucun texte n'est transmis a un serveur externe.
+**Notes pour l'oral.** L'autonomie totale du site était une contrainte majeure. Le calcul local garantit la confidentialité des requêtes : aucun texte n'est transmis à un serveur externe.
 
-**A ne pas dire.** « 18,6 ms sur le site » (18,6 ms mesurait le q8 d'origine non elague dans le notebook 02) ; « index.bin » (le fichier servi est index_m2.f32).
+**À ne pas dire.** « 18,6 ms sur le site » (18,6 ms mesurait le `q8` d'origine non élagué de 112,8 Mio dans Chromium au notebook 02) ; « `index.bin` » (le fichier servi est `index_m2.f32`).
 
-**Sources.** `README.md` ; `front/src/recherche/moteur.js` ; `scripts/allegement/README.md`.
+**Sources.** `README.md` ; `front/src/recherche/moteur.js` ; `front/src/index.css` ; `scripts/allegement/README.md`.
 
 ---
 
-## Diapositive 3 : Volet A, l'allegement sans perte du modele
+## Diapositive 3 : Volet A, l'allègement sans perte du modèle
 
-**Message.** L'analyse des tenseurs a permis de lever le verrou technique des 100 Mio de GitHub sans aucune perte vectorielle sur les alphabets du corpus.
+**Message.** L'analyse des tenseurs a permis de lever le verrou technique des 100 Mio par fichier de GitHub sans aucune perte vectorielle sur l'alphabet latin ou grec.
 
 **Contenu.**
-- Le verrou bloquant : GitHub interdit tout fichier superieur a 100 Mio. Le modele quantifie q8 d'origine pesait 112,8 Mio, imposant un CDN externe tiers contraire a l'audit d'autonomie.
-- Diagnostic structurel : 81,6 % des parametres du modele resident dans la table de vocabulaire (250 037 entrees de dimension 384), dimensionnee pour couvrir plus de 100 langues.
-- Recette d'elagage sans perte : suppression des sous-mots appartenant aux alphabets non utilises par le domaine (conservant l'alphabet latin et l'alphabet grec). Les couches d'attention et de feed-forward du Transformer restent strictement intactes.
-- Resultats metrologiques : poids abaisse de 112,8 Mio a 65,7 Mio (-41,8 %), permettant l'hebergement direct dans le depot (front/public/modele/).
-- Garantie de parite : identite vectorielle bit a bit verifiee sur 822 requetes de controle par rapport au q8 de reference dans le navigateur.
+- Le verrou bloquant : GitHub impose une limite de 100 Mio par fichier. Le modèle quantifié `q8` d'origine chez Xenova pesait 112,8 Mio, imposant un hébergement externe tiers contraire à l'audit d'autonomie.
+- Diagnostic structurel : 81,6 % des paramètres du modèle résident dans la table des mots (250 037 entrées de dimension 384), dimensionnée pour couvrir une centaine de langues.
+- Recette d'élagage sans perte (#50, PR #78 réalisée par Mahé) : suppression dans le tokeniseur et la table de vocabulaire des pièces contenant un caractère d'un autre alphabet que le latin ou le grec (121 271 pièces gardées sur 250 002), en recopiant les tenseurs conservés sans requantification. Les couches d'attention et de feed-forward restent intactes.
+- Résultats métrologiques : poids du modèle `q8` abaissé de 112,8 Mio à 65,7 Mio (−41,8 %), et tokeniseur réduit de 75 %, permettant l'hébergement direct dans le dépôt (`front/public/modele/`).
+- Garantie de parité : découpage identique sur les textes de contrôle et identité vectorielle bit à bit vérifiée dans le navigateur sur les 822 requêtes de contrôle par rapport au `q8` d'origine de Xenova.
 
-**Notes pour l'oral.** L'elagage ne retire pas de vocabulaire metier : il elague les alphabets inutiles. La reduction de 41,8 % leve le verrou de deploiement avec une fidelite mathematique parfaite.
+**Notes pour l'oral.** L'élagage ne retire pas de vocabulaire métier : il retire les sous-mots d'alphabets non utilisés par le corpus (cyrillique, arabe, idéogrammes), et la garantie bit à bit vaut pour tout texte écrit en alphabet latin ou grec. La réduction de 41,8 % lève le verrou d'hébergement tout en préservant l'exactitude mathématique des sorties du modèle `q8`.
 
-**A ne pas dire.** « Elagage base sur les mots du corpus » (la recette retire les alphabets non latins/grecs) ; « reduction avec perte ».
+**À ne pas dire.** « Élagage basé sur les mots du corpus » (la recette retire les alphabets hors latin/grec) ; « identique bit à bit sur toutes les langues » (la parité exacte porte sur l'alphabet latin ou grec) ; « réduction avec perte ».
 
-**Sources.** `scripts/allegement/README.md` ; `README.md` ; ticket #50.
+**Sources.** `scripts/allegement/README.md` ; `README.md` ; `docs/jalons/J3_chiffres_verifies.md` ; ticket #50, PR #78.
 
 ---
 
 ## Diapositive 4 : Volet A, mesures et limites
 
-**Message.** Le site trouve aussi bien que la reference lexicale, sans faire mieux ; son abstention reste a regler.
+**Source commune.** Voir directement `docs/jalons/J3_diapositives_mahe.md`, section « Diapositive 4 : Volet A, mesures et limites » (ne pas dupliquer le contenu ici afin d'éviter toute divergence lors des mises à jour du 13/11).
 
-**Contenu.**
-- Jeu de test : 73 questions du corpus, issues de 61 fiches, et 24 questions hors corpus (jeu-questions-v1).
-- Recall@5 au niveau du passage : 43,8 % pour l'encodeur servi, contre 42,5 % pour la reference BM25. L'ecart vaut +1,4 point, avec un IC 95 % de -11,5 a +14,3.
-- Critere du J2 satisfait : non-inferiorite a la marge de 15 points (score de Tango : z = 2,45, p unilateral 0,007). Aucun des deux systemes n'est demontre meilleur (McNemar, p = 1,000).
-- Au niveau de la fiche : 83,6 % contre 79,5 %.
-- Quantification q8 : elle coute une question sur 73, sans ecart significatif.
-- Abstention : le seuil de 0,8560 a ete fixe le 10 octobre, avant la mesure, au 5e centile des scores de 479 variantes du CDTN. Il rejette 9 questions hors corpus sur 24 et garde 72 questions du corpus sur 73. L'AUC du score maximal vaut 0,841 (IC 95 % de 0,747 a 0,921).
-- Cout cote utilisateur : 18,3 ms par requete dans le navigateur, avec le modele elague de 65,7 Mio que sert le site.
+**Rôle dans l'assemblage (rappel de synthèse).** Présente le bilan officiel du notebook 03 sur `jeu-questions-v1` (73 questions du corpus issues de 61 fiches, 24 hors corpus) : non-infériorité satisfaite au seuil du J2 (43,8 % contre 42,5 % pour BM25 V3 au passage, +1,4 pt [−11,5 ; +14,3], Tango z = 2,45, p = 0,007 ; 83,6 % contre 79,5 % à la fiche ; aucun des deux systèmes démontré meilleur, McNemar p = 1,000), coût de `q8` (1/73), limite de l'abstention au seuil 0,8560 (9/24 hors corpus rejetées, 72/73 du corpus gardées, AUC = 0,841) et 18,3 ms in-browser.
 
-**Notes pour l'oral.** La mesure repond a une question posee avant de la faire : le site est-il au moins aussi bon que BM25 ? Oui, a la marge fixee au J2. Dire « non demontre meilleur », c'est respecter ce que la mesure permet de conclure. La limite principale est l'abstention : 15 questions hors corpus sur 24 recoivent encore des resultats.
-
-**A ne pas dire.** « Superiorite prouvee » ; « +26,8 points » ; « abstention active validee » ; « seuil de 0,8165 fixe par courbe ROC ».
-
-**Sources.** `docs/etudes/evaluation/03_evaluation.md` ; `front/src/recherche/moteur.js` ; `scripts/allegement/README.md`.
+**Complément en cours d'intégration (PR #148, à relire/fusionner).** Ajoute l'explication sur l'absence de `précision@k` (un seul extrait annoté par question) et mentionne l'ouverture côté Volet B vers la récupération v2 (#138, PR #141, confirmée le 9 novembre de 45,2 % à 72,6 % en récupération seule — non servie par le site web).
 
 ---
 
-## Diapositive 5 : Volet B, la chaine RAG locale
+## Diapositive 5 : Volet B, la chaîne RAG locale
 
-**Message.** Une generation locale open-weights sobre et tracee, contrainte par une injection contextuelle stricte et un sourcage formel.
+*(Relecture et texte oral : Jibril BENSALEM ; voir le support dédié `docs/jalons/J3_diapositives_jibril.md` en PR #143.)*
+
+**Message.** Le système récupère cinq passages du corpus M2 et les fournit à `Qwen2.5-7B-Instruct` pour rédiger une réponse sourcée avec des références vérifiables.
 
 **Contenu.**
-- Modele generatif local : Qwen2.5-7B-Instruct quantifie en 4 bits (GGUF Q4_K_M, 4,36 Gio sur disque) servi localement sous Ollama 0.40.13.
-- Index documentaire commun : reutilisation directe des 4 240 passages du corpus M2 (passages_m2.json), assurant l'alignement strict entre volet A et volet B.
-- Contexte certifie (rag-b1-v1) : recuperation des 5 passages les plus proches par E5 en fp32, fenetre de contexte de 8 192 tokens et reponse bornee a 512 tokens.
-- Contrat de generation : consigne systeme interdisant d'extrapoler et imposant le sourcage explicite de chaque affirmation par des reperes de citation [P1] a [P5].
-- Controle de conformite : validation outillee des citations via la fonction valider_citations (PR #85).
-- Debit interactif : 47 a 67 tokens/s observes lors d'essais sur prompt court sous Ollama 0.34.4 (ordre de grandeur indicatif, non benchmarke).
+- Modèle génératif local : `Qwen2.5-7B-Instruct` quantifié en 4 bits (GGUF `Q4_K_M`, 4,36 Gio sur disque) servi localement via Ollama 0.40.13 (version épinglée ; les 47 à 67 tokens/s mesurés sur deux prompts courts en 0.34.4 ne constituent pas un benchmark du RAG complet).
+- Index documentaire commun : réutilisation des 4 240 passages du corpus M2 (`passages_m2.json`), garantissant le même corpus fermé que le volet A.
+- Chaîne `rag-b1-v1` (#85) : récupération par E5 (`fp32`, Python) des 5 passages les plus proches, fenêtre de contexte de 8 192 tokens, sortie bornée à 512 tokens avec marge de 64 tokens (plafond prompt de 7 616 tokens ; refus en cas de dépassement sans troncature silencieuse).
+- Contrat de génération et abstention : consigne système imposant de s'appuyer uniquement sur les passages balisés `[P1]` à `[P5]` et de s'abstenir hors périmètre ; en B2, filtrage préalable sous le seuil S = 0,8565.
+- Contrôle outillé de forme (`valider_citations` dans `scripts/rag/generation.py`, PR #85) : vérifie automatiquement le format des citations et l'appartenance des repères `[P1]` à `[P5]` au contexte fourni, tout en renvoyant explicitement `justification_semantique_verifiee: False`.
+- Complément exploratoire en fin de diapositive (Agent0 Light, `docs/jalons/J3_diapositives_jibril.md`) : générateur de cas de test exploratoires et support de relecture ; sur 18 essais historiques, 15 candidats et 3 rejets automatiques ; relecture humaine à faire, candidats séparés du jeu humain et exclus de l'entraînement (y compris du lot v2b).
 
-**Notes pour l'oral.** Le RAG s'appuie sur le meme index que le volet A. Le sourcage [Pn] permet de controler algorithmiquement l'absence d'hallucination dans les reponses du modele.
+**Notes pour l'oral.** Une citation syntaxiquement valide indique quel passage vérifier, mais ne prouve ni l'absence d'hallucination ni l'exactitude juridique de l'énoncé (le lot d'adaptation v1 passait le contrôle formel avec 6 réponses citées fausses sur 15). L'exactitude sémantique et le respect des conditions/exceptions relèvent de l'évaluation humaine à l'aveugle prévue au protocole 06. Pour le texte oral complet et les réponses aux questions du jury (dont Agent0 Light, 30 à 45 s à chronométrer), suivre `docs/jalons/J3_diapositives_jibril.md`.
 
-**A ne pas dire.** « 4,36 Gio en VRAM » (taille du fichier GGUF, pas occupation memoire) ; « latence premier token < 2 s » (non mesuree).
+**À ne pas dire.** « Le sourçage `[Pn]` empêche algorithmiquement les hallucinations » ; « 4,36 Gio en VRAM » (taille du fichier GGUF sur disque) ; « latence premier token < 2 s » (non mesurée) ; « Agent0 validé à 83 % » ou inclus dans l'entraînement.
 
-**Sources.** `docs/etudes/inference_locale_qwen.md` ; `scripts/rag/rag.py` ; PR #85.
+**Sources.** `docs/etudes/inference_locale_qwen.md` ; `scripts/rag/rag.py` ; `scripts/rag/generation.py` (`preparer_entree`, `valider_citations`) ; `docs/jalons/J3_chiffres_verifies.md` ; `docs/jalons/J3_diapositives_jibril.md` (PR #143) ; `docs/etudes/agent0_bilan_rapport_oral.md`.
 
 ---
 
-## Diapositive 6 : Volet B, la demonstration en preparation
+## Diapositive 6 : Volet B, la démonstration en préparation
 
-**Message.** Un contrat d'interface formalise et une maquette validee pour illustrer l'assistant local et sa politique d'abstention.
+*(Relecture attendue : Vaneck DAGAR et Maïmouna SIGNATE.)*
+
+**Message.** Le contrat d'interface est verrouillé (#121), tandis que la maquette (#128) est en cours de finalisation pour illustrer l'assistant local et sa politique d'abstention.
 
 **Contenu.**
-- Cadrage fonctionnel : demonstration interactive de l'assistant reglementaire local du cas B1 avec affichage des passages sources et du niveau de confiance.
-- Contrat d'interface verrouille (PR #121, Ticket #111) : specification formalisee des echanges entre l'interface utilisateur et le backend RAG local (requetes, contextes, citations, reponses).
-- Maquette validee (PR #128) : ecran d'accueil, fil de discussion avec rendu des sources [P1]-[P5] et mise en evidence pedagogique du refus de repondre hors perimetre.
-- Integration technique : raccordement direct a l'instance locale d'Ollama 0.40.13 sur la machine de demonstration (Legion).
-- Scenario de test de la soutenance : jeu d'exemples balisant questions directes, cas multi-sources et declenchement de l'abstention.
+- Cadrage fonctionnel : démonstration interactive de l'assistant réglementaire local du cas B1 avec affichage des passages sources `[P1]`–`[P5]` et du **score de similarité** (le contrat #121 précise que ce score « n'est ni une probabilité ni une preuve »).
+- Contrat d'interface verrouillé (PR #121, ticket #111) : spécification formalisée des échanges entre l'interface utilisateur et le backend RAG local (requêtes, contextes, citations, réponses, refus d'abstention).
+- Maquette en cours de relecture (PR #128, non encore validée) : écran d'accueil, fil de discussion avec rendu des sources et mise en évidence pédagogique du refus de répondre hors périmètre ; des modifications restent demandées (notamment sur le verrou du serveur) avant fusion.
+- Intégration technique prévue (#111) : le raccordement direct à l'instance locale d'Ollama 0.40.13 sur la machine de démonstration (Legion) interviendra après validation et fusion de la PR #128 ; l'opportunité d'intégrer la récupération v2 (`bge-m3`, ~2 s sur CPU Mac d'après #138) fera l'objet d'un essai préalable sur le Legion.
+- Scénario de test de la soutenance : un jeu d'exemples balisant questions directes, cas multi-sources et déclenchement de l'abstention sera préparé pour la soutenance (prévu le 12 novembre selon #111).
 
-**Notes pour l'oral.** L'interface du volet B rend visible la politique d'abstention. En cas de doute ou de question hors perimetre, l'utilisateur voit explicitement pourquoi le systeme refuse d'inventer.
+**Notes pour l'oral.** L'interface du volet B rend visible la politique d'abstention. En cas de doute ou de question hors périmètre, l'utilisateur voit pourquoi le système refuse d'inventer et peut lire les passages sources ou constater le seuil de similarité. Présenter l'état réel de la maquette (#128 en finalisation) sans anticiper son intégration avant fusion.
 
-**A ne pas dire.** « Interface de production web » (il s'agit d'une demonstration locale pour la soutenance).
+**À ne pas dire.** « Interface de production web » (c'est une démonstration locale pour la soutenance) ; « niveau de confiance » ; « maquette validée et branchée » tant que #128 n'est pas fusionnée.
 
-**Sources.** PR #121 ; PR #128 ; Tickets #111 et #114.
+**Sources.** `docs/etudes/demonstration/contrat_interface_111.md` (PR #121) ; PR #128 (en relecture) ; `docs/etudes/recuperation/02_confirmation_test.md` ; tickets #111 et #114.
 
 ---
 
 ## Diapositive 7 : Volet B, l'adaptation LoRA
 
-**Message.** L'adaptation est engagee : la machine a ete choisie par la mesure, et un lot de donnees refuse a la relecture a ete corrige avant tout entrainement.
+**Source commune.** Voir directement `docs/jalons/J3_diapositives_mahe.md`, section « Diapositive 7 : Volet B, l'adaptation (avec Remy) » (ne pas recopier ici pour garder une source unique maintenue jusqu'au 13/11).
 
-**Contenu.**
-- Machine : le Legion (RTX 5070 Laptop, 8 Gio) alloue 9,17 Gio pour 7,96 Gio et met 274 s par pas, ce qui est insuffisant. Le Mac (M4 Pro, 24 Gio) atteint un pic de 7,14 Gio sous un plafond Metal de 17,76 Gio, a 8,8 s par iteration : il est retenu le 30 octobre.
-- Methode : LoRA de rang 8 sur les 16 dernieres couches du modele en 4 bits, perte calculee sur la seule reponse, deux epoques (PR #125).
-- Lot v1 : 298 exemples, refuse a la relecture humaine le 2 novembre, avec 8 exemples faux sur 30, au-dela de la regle de 10 % ecrite d'avance. Sur les 15 exemples cites, 6 sont faux : la reponse prete au passage ce qu'il ne dit pas.
-- Correctif, publie avant la generation (#107) : les reponses sont recopiees mot pour mot des passages, chaque phrase est controlee contre le passage qu'elle cite, et la variante « passage retire » est abandonnee.
-- Lot v2b : 218 exemples, dont 164 cites et 54 abstentions hors corpus, en relecture humaine independante par Maimouna et Vaneck. A completer le 13/11 : accepte ou refuse, entrainement fait ou non.
-- Service : Ollama refuse les adaptateurs LoRA. L'adaptateur sera fusionne, converti en GGUF et quantifie en Q4_K_M ; le modele de base suivra la meme chaine, pour servir de temoin T.
-
-**Notes pour l'oral.** Le refus du lot v1 est un resultat, pas un echec : la regle d'acceptation etait ecrite avant la relecture, et elle a empeche d'entrainer le modele sur des reponses infideles. Le correctif a ete choisi sans lire le nouveau lot.
-
-**A ne pas dire.** « Volet B adapte », tant que l'adaptateur n'est pas entraine et mesure ; « 16,86 Gio de memoire libre » ; « execution integrale en VRAM » : le Mac a une memoire unifiee.
-
-**Sources.** PR #109 et #118 ; `docs/etudes/faisabilite_legion_20261026.md` ; #107 (commentaires du 4 et du 7 novembre) ; PR #130.
+**État d'assemblage au 10 novembre (PR #132 complétée par PR #148 en relecture).**
+- Couvre la sélection du Mac M4 Pro face au Legion, la méthode LoRA (rang 8, 16 dernières couches en 4 bits, 2 époques, PR #125), le refus humain du lot v1 (298 exemples, 8/30 faux), le correctif (#107) et le caractère comportemental de l'adaptation (type RAFT : copier, citer, s'abstenir ; 61 fiches du lot de test exclues par `separation.py`).
+- Actes du 9–10 novembre intégrés en PR #148 : acceptation du **lot v2b** le 10 novembre sur la grille la plus sévère (3 faux sur 30, soit 10,0 %, à la limite de la règle, avec risque déclaré d'environ 11/54 abstentions injustifiées), production et vérification du **témoin T** le 9 novembre (#140, PR #147), et **amendement M1 (#52)** plaçant l'entraînement, l'export et les mesures exclusivement sur Mac. L'entraînement réel est relancé pour le 11 novembre et l'état final sera complété le **13 novembre**.
 
 ---
 
 ## Diapositive 8 : Volet B, protocole 06 et mesure avant
 
-**Message.** La mesure est verrouillee avant d'etre faite : aucun reglage ne peut etre ajuste d'apres ses resultats.
+**Source commune.** Voir directement `docs/jalons/J3_diapositives_mahe.md`, section « Diapositive 8 : Volet B, protocole 06 et mesure avant (avec Jibril) » et `docs/jalons/J3_diapositives_jibril.md` pour le texte oral de Jibril (ne pas recopier les tableaux ici afin d'éviter une double source).
 
-**Contenu.**
-- Memes 97 questions que le volet A (73 du corpus, 24 hors corpus), avant et apres adaptation.
-- Cinq etats : B0, le modele nu, sans passage ; B1, la recuperation de 5 passages sans consigne d'abstention ; B2, la chaine complete, avec abstention sous le seuil S = 0,8565 ; R+ et R-, deux references degenerees, l'une qui repond toujours et l'autre qui s'abstient toujours.
-- Sur les 24 questions hors corpus : M1, abstention correcte, et M5, reponse affirmative.
-- Sur les 73 questions du corpus : M2, abstention a tort, M3, citation valide, et M4, citation pertinente.
-- Exactitude jugee a l'aveugle, a titre descriptif, par Maimouna et Vaneck : 20 reponses citees de B2 tirees au hasard, avant puis apres.
-- Analyse principale, ecrite d'avance : apres contre avant, en B2, sur M1 et sur M4. L'intervalle est bilateral a 97,5 % (correction de Bonferroni). Une amelioration n'est declaree que si la borne basse depasse 0.
-- Gel : le protocole et le script ont ete fusionnes le 4 novembre (#108, #119). Ollama 0.40.13 est epingle, et B0 a ete recalibre sans erreur technique sur 8 questions. Les empreintes du verrou sont approuvees le 7 novembre (#131).
-- Mesure avant : a completer le 13/11 avec M1 a M5 par etat, leurs intervalles et la part d'erreurs techniques.
-
-**Notes pour l'oral.** Le verrou consigne l'empreinte du protocole, des scripts, du jeu de questions, du seuil et de l'index. La mesure refuse de tourner si l'un d'eux a change. Les 8 questions de calibration ont servi a mettre le script au point, et aucun taux n'en est tire.
-
-**A ne pas dire.** Un taux de qualite tire de la calibration ; « Ollama 0.40.11 » ; des metriques sans rapport avec M1 a M5.
-
-**Sources.** `docs/etudes/evaluation/06_protocole_volet_b.md` ; `scripts/rag/mesure.py` ; PR #119 et #131 ; #52.
+**État d'assemblage au 10 novembre (PR #132 complétée par PR #143 en relecture).**
+- Protocole 06 gelé (#108, #119) avec Ollama 0.40.13 épinglé, calibration technique B0 sans erreur sur 8 questions et verrou fusionné le 9 novembre (#131).
+- Mesure **avant** exécutée le 9 novembre sur le Legion (sous réserve de confirmation de réception et d'analyse finale par Mahé) : sur les 97 questions (erreurs techniques exclues des dénominateurs : 2 en B1, 1 en B2), B1 obtient 0/24 (0 %) en M1 et 30/71 (42,3 %) en M4, tandis que B2 obtient 20/24 (83,3 %) en M1 mais s'abstient à tort sur 45/72 (62,5 %, M2) avec 12/72 (16,7 %) en M4.
+- L'analyse confirmatoire principale prévue reste B2 après adaptation contre la référence prévue (ou témoin T), sur M1 et M4, avec intervalles bilatéraux à 97,5 % (Bonferroni).
 
 ---
 
-## Diapositive 9 : Blocages et corrections a engager avant J4
+## Diapositive 9 : Blocages, risques et arbitrages jusqu'à J4
 
-**Message.** Quatre points de vigilance clairs, suivis au classeur de bord, balisent la trajectoire jusqu'a la soutenance finale.
+**Message.** Les blocages techniques et organisationnels sont suivis au fil de l'eau avec des règles de repli écrites d'avance jusqu'au terme fixé au 20 novembre.
 
 **Contenu.**
-- Calendrier officiel : confirmation ecrite formelle des jalons attendue de l'enseignant (#8). Date de soutenance avancee au 30/11 actee par l'equipe, fin des livrables fixee au 20/11.
-- Point d'arret operationnel de l'adaptation : date limite fixee au 12/11. Si la mesure apres n'est pas finalisee a cette date, la soutenance presentera la mesure avant, la chaine de fabrication du lot v2b et la feuille de route.
-- Chaine de deploiement Ollama : contournement de l'incompatibilite LoRA par export FP16, conversion GGUF et requantification Q4_K_M avec modele temoin T pour isoler les artefacts de quantification.
-- Cloture des etudes explorees : cloture actee de l'ajustement contrastif de l'encodeur (#49), dont les enseignements et limites sont reverses au rapport final.
+- Calendrier officiel (#8) : la confirmation écrite des dates officielles de **J3 (16/11 en GitHub) et J4 (30/11)** reste attendue de l'enseignant — à ne pas présenter comme actée collectivement ; seule la **fin des livrables** a été fixée par l'équipe au **20 novembre** (#114).
+- Entraînement LoRA et point d'arrêt du 12/11 (#52, #107) : après le blocage du verrou avant le 09/11 (#131 fusionné ce 09/11) et la relecture humaine du lot v2b (accepté le 10/11 à 3/30 = 10,0 % avec risque déclaré ~11/54 abstentions injustifiées), l'entraînement sur Mac seul (amendement M1 du 10/11) a été interrompu le 10/11 et est relancé pour le 11/11. Si la mesure comparative `après` n'est pas finalisée au **point d'arrêt du 12 novembre**, la règle de repli présente la mesure `avant`, la chaîne d'entraînement/export et la feuille de route.
+- Service Ollama et export (#140, PR #147) : Ollama 0.40.13 rejette la directive `ADAPTER` avec l'erreur `errAdaptersUnsupported` et exige de bloquer ses mises à jour automatiques (dérive constatée vers 0.40.15 sur un poste Windows non épinglé). Le contournement fusionne les poids en bf16 puis convertit en GGUF Q4_K_M avec contrôle de requantification et comparaison au témoin T (produit et vérifié le 09/11).
+- Démonstration (#111, PR #128) : la maquette attend la correction du verrou serveur demandée en revue avant le branchement sur le Legion et la rédaction du scénario de soutenance.
+- Étude contrastive d'encodeur (#49) : **le ticket #49 reste ouvert**. En application de la règle de repli du protocole 05 (16/10), le site sert l'encodeur de base élagué ; le 30/10, la poursuite de sa mesure officielle n'a pas été maintenue dans le calendrier resserré afin de prioriser le volet B, et ses enseignements sont versés au rapport final.
 
-**Notes pour l'oral.** Nous ne cachons aucune difficulte technique : le jury apprecie la lucidite des arbitrages, la mise en place de regles de repli objectives et la tracabilite des ecarts de planning.
+**Notes pour l'oral.** Nous assumons nos échecs et nos garde-fous : un lot v1 refusé, un lot v2b accepté à la borne exacte de 10 % avec un biais d'abstention déclaré, une règle de repli écrite d'avance sur #49 comme sur #107, et une traçabilité honnête des dépendances encore ouvertes (#128, #8).
 
-**A ne pas dire.** Pretendre que LoRA fonctionne nativement sous Ollama sans etape de fusion/quantification.
+**À ne pas dire.** « La #49 est close » ; « J4 est confirmé officiellement au 30/11 par l'équipe » ; « LoRA tourne nativement sous Ollama ».
 
-**Sources.** `docs/suivi/SUIVI.md` ; Tickets #8, #49, #107, #114.
+**Sources.** `docs/suivi/SUIVI.md` ; `docs/jalons/J3_chiffres_verifies.md` ; tickets #8, #49, #52, #107, #111, #114, #140 ; PR #128, #147, #148.
 
 ---
 
-## Diapositive 10 : Calendrier jusqu'a J4 et cinq outils novateurs
+## Diapositive 10 : Calendrier jusqu'à J4 et cinq outils novateurs
 
-**Message.** Un calendrier de fin de projet resserre et cinq retours d'experience outilles pour valoriser la pratique de l'IA et des standards NLP.
+**Message.** Un calendrier de fin de projet resserré au 20 novembre et une évaluation critique de cinq outils novateurs issus de l'usage réel.
 
 **Contenu.**
-- 10 novembre : construction du modele temoin T et deploiement du modele adapte sous Ollama.
-- 12 novembre : mesure comparative apres adaptation (point d'arret operationnel strict).
-- 13 novembre : jugement aveugle qualitatif, fiches des 5 outils novateurs et assemblage final des supports de J3.
-- 16 novembre : Jalon officiel J3 (revue de 20 a 30 minutes, volet A fonctionnel et volet B engage).
-- 19 novembre : livraison de la V1 du rapport final (#113).
-- 20 novembre : fin officielle du projet, gel definitif des supports et du site web.
-- 30 novembre : Jalon J4 (soutenance finale du projet).
-- Cinq outils novateurs documentes (Bonus +3 points) : Transformers.js (inference in-browser), ONNX Runtime (interoperabilite des tenseurs), Playwright (tests de non-regression et accessibilite), GitHub CLI (tracabilite Git) et Assistants IA (Antigravity, Claude Code, Codex avec journal de 45 sessions et 87 erreurs documentees).
+- **9 novembre (réalisé)** : fusion du verrou `#131` ; exécution de la mesure `avant` sur Legion (réception/analyse finale à confirmer par Mahé, PR `#142`/`#143`) ; construction et vérification du témoin T (`#140`, PR `#147`) ; confirmation de la récupération v2 sur le lot de test en récupération seule (`45,2 % -> 72,6 %`, `#138`, PR `#141`).
+- **10 novembre (réalisé / en cours)** : acceptation du lot v2b (`3/30 = 10,0 %`) ; amendement M1 concentrant entraînement, export et mesures sur Mac (`#52`) ; préparation de la chaîne d'export `#140` et révision des supports J3 et fiches d'outils.
+- **11 novembre (prévu)** : relance de l'entraînement LoRA et export GGUF de l'adaptateur sur Mac (`#107`, `#140`).
+- **12 novembre (point d'arrêt strict)** : mesure comparative `après` sur Mac (`#52`, `#107`), scénario de démonstration si `#128` fusionnée.
+- **13 novembre (échéance supports `#112` & axes `#113`)** : jugement aveugle des 20 réponses B2 (Maïmouna et Vaneck), finalisation collective des 5 fiches d'outils (#14), recomptage du journal et assemblage final des supports de J3 (`docs/jalons/J3_diapositives_mahe.md`, `J3_diapositives_jibril.md`, ce fichier).
+- **16 novembre (à confirmer par écrit, #8)** : Jalon officiel J3 (revue de 20 à 30 minutes : volet A livré, volet B engagé).
+- **19 novembre** : livraison de la V1 du rapport final (`#113`).
+- **20 novembre** : fin des livrables fixée par l'équipe (supports, site et suivi figés, `#114`).
+- **30 novembre (à confirmer par écrit, #8)** : Jalon J4 (soutenance finale).
+- **Cinq outils novateurs (bonus jusqu'à 3 points, sélection à valider par l'équipe sur `#14`)** : fiches documentées dans `docs/suivi/outils/` avec retours d'échec, versions et preuves — présélection de la V0 du rapport : Transformers.js (inférence navigateur), ONNX Runtime (Python et Web), Playwright (tests navigateur et accessibilité), GitHub CLI (API REST et droits) et Assistants de développement IA (avec journal de sessions : décompte des sessions et erreurs **à actualiser le 13 novembre**, aux côtés des autres fiches tenues à jour dont Ollama, Sentence Transformers et `uv`).
 
-**Notes pour l'oral.** La rigueur documentaire de l'equipe et les fiches d'outils critiques fournissent un retour concret sur les defis reels du NLP embarque et de l'assistance par IA.
+**Notes pour l'oral.** La rigueur documentaire et les fiches d'outils apportent des retours concrets issus de blocages réels (parité q8 en WASM, rejet `ADAPTER` sous Ollama, interception réseau WebKit, permissions `gh api`, hallucinations ou décalages factuels détectés en revue sur les livrables assistés par IA).
 
-**A ne pas dire.** « 20/11 : V1 du rapport » (la V1 est livree le 19/11 avant la cloture du projet le 20/11) ; inventer des dates non actees dans le suivi.
+**À ne pas dire.** « 20/11 : V1 du rapport » (la V1 est prévue le 19/11 avant le gel du 20/11) ; « 45 sessions et 87 erreurs » (chiffre périmé, à recompter le 13/11) ; « sélection déjà actée » tant que l'équipe n'a pas validé les 5 outils sur `#14`.
 
-**Sources.** `docs/suivi/SUIVI.md` ; `docs/suivi/OUTILS_NOVATEURS.md` ; `docs/journal/JOURNAL_USAGE_IA.md` ; Ticket #113, #114.
+**Sources.** `SUIVI.md` et `OUTILS_NOVATEURS.md` (`docs/suivi/`) ; `J3_chiffres_verifies.md` (`docs/jalons/`) ; `RAPPORT_FINAL.md` (section 5) ; `JOURNAL_USAGE_IA.md` ; tickets #8, #14, #112, #113, #114.
