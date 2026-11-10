@@ -15,7 +15,7 @@ Chaque membre tient sa propre ligne à jour.
 |---|---|---|---|
 | Mahé | 0.11.0 | macOS (Apple Silicon) | fichiers figés des notebooks 01 à 03 |
 | Vaneck | 0.12.19 | Windows | relance du notebook 01 (relecture de la PR #39), Python 3.12.14 |
-| Rémy | 0.4.29 | Windows 11 | exécution des environnements de test de séparation et RAG (Python 3.12.10) |
+| Rémy | non installé | Windows 11 | outil non utilisé directement par Rémy au 10/11 (prévu initialement sur #46, #47 ; environnement Python 3.12.10 géré directement) |
 
 ## Mise en place
 - Temps avant le premier résultat utile :

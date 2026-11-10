@@ -16,7 +16,7 @@ Chaque membre tient sa propre ligne à jour.
 |---|---|---|---|
 | Vaneck | 2.101.0 | Windows | |
 | Mahé | 2.92.0 | macOS 27.0.1, arm64 | version relevée le 26/10 ; PR, revues, tickets et lectures de l'API sous l'identité `mahebegnis`, vérifiée par `gh api user` |
-| Rémy | non installé | Windows 11 | non installé au 02/11 : requêtes d'audit et lectures de l'API REST via scripts Python et PowerShell (`Invoke-RestMethod`), client `git` standard pour les branches et commits |
+| Rémy | non installé | Windows 11 | outil non utilisé par Rémy au 10/11 : lectures de l'API REST GitHub réalisées en Python (`urllib`) et gestion des branches par `git` |
 | Jibril | à compléter | à compléter | |
 | Maïmouna | à compléter | à compléter | |
 
@@ -31,7 +31,7 @@ Chaque membre tient sa propre ligne à jour.
 - Ticket #29 : activation de GitHub Pages en mode « GitHub Actions » par l'API
   (`gh api -X POST repos/<dépôt>/pages -f build_type=workflow`), vérification de l'état du site et des
   exécutions de l'action (`gh run list`).
-- (Remy) Audit des statuts de PRs, extraction des commentaires de relecture et suivi des assignations de tickets via requêtes REST JSON directes.
+- (Remy) Consultation des statuts de PR et extraction des revues/commentaires via scripts Python sur l'API REST GitHub (limite rencontrée le 10/11 : quota non authentifié HTTP 403 dès enchaînement de requêtes).
 
 ## Qualités observées
 - Toutes les opérations courantes tiennent en une commande, réutilisable et traçable.
