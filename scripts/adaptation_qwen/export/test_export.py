@@ -1,6 +1,7 @@
 """Tests de la chaîne d'export (#140), sur des tenseurs et des exemples factices, sans modèle réel."""
 
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -39,6 +40,22 @@ def ecrire_adaptateur(dossier: Path, torch, save_file, cles=("a", "b"), rang=2, 
     return t
 
 
+def liens_symboliques_permis() -> bool:
+    """Vrai si le système accepte os.symlink, dont fusionner.py a besoin pour lier les fragments d'origine.
+
+    Windows le refuse sans mode développeur ni droits d'administrateur (WinError 1314) : on essaie, plutôt que
+    de supposer d'après le nom du système.
+    """
+    with tempfile.TemporaryDirectory() as d:
+        cible = Path(d) / "cible"
+        cible.write_text("")
+        try:
+            os.symlink(cible, Path(d) / "lien")
+        except (OSError, NotImplementedError):
+            return False
+    return True
+
+
 class FusionTests(unittest.TestCase):
     def setUp(self):
         import torch
@@ -52,12 +69,20 @@ class FusionTests(unittest.TestCase):
         self.adapt.mkdir()
         self.q = ecrire_base(self.base, torch, save_file)
 
+    @unittest.skipIf(sys.platform == "win32", "seul Windows peut refuser les liens sans droits particuliers")
+    def test_liens_permis_hors_windows(self):
+        # sans ce test, un défaut de liens_symboliques_permis() ferait sauter en silence le test de la fusion
+        self.assertTrue(liens_symboliques_permis())
+
     def test_formule_identique_a_mlx_lm(self):
         torch = self.torch
         a, b = torch.randn(6, 2), torch.randn(2, 4)
         # mlx_lm/tuner/lora.py, fuse : (scale * lora_b.T) @ lora_a.T
         self.assertTrue(torch.allclose(fu.delta(a, b, 20.0), (20.0 * b.T) @ a.T, atol=1e-5))
 
+    @unittest.skipUnless(liens_symboliques_permis(),
+                         "liens symboliques refusés par le système (WinError 1314 sous Windows sans mode "
+                         "développeur) : la fusion ne peut pas tourner ici")
     def test_fusion_valeurs_index_liens(self):
         from safetensors import safe_open
         torch = self.torch
