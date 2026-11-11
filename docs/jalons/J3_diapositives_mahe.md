@@ -3,7 +3,11 @@
 **Équipe** Data Tigers  
 **Ticket** #112, plan de Vaneck du 4 novembre (10 diapositives)  
 **Établi le** 7 novembre 2026 par Mahé BEGNIS ; chiffres repris de `docs/jalons/J3_chiffres_verifies.md`  
-**À mettre à jour le** 13 novembre : résultats de la mesure avant, issue de la relecture du lot v2b, état de l'entraînement
+**Complété le** 9 novembre par Jibril BENSALEM avec Codex : contenu de la diapositive 8 et résultats avant, d'après les sorties du Legion
+
+**Actualisé le** 10 novembre avec les confirmations de #52 et l'amendement M1 sur la machine de mesure
+
+**À mettre à jour le** 13 novembre : état de l'entraînement et éventuels résultats après
 
 ---
 
@@ -49,20 +53,52 @@
 
 ## Diapositive 8 : Volet B, protocole 06 et mesure avant (avec Jibril)
 
-**Message.** La mesure est verrouillée avant d'être faite : aucun réglage ne peut être ajusté d'après ses résultats.
+**Message.** B2 s'abstient sur 20 des 24 questions hors corpus. Sur les 33 questions dont le contexte contient un passage pertinent selon D4, 17 reçoivent aussi une abstention.
 
-**Contenu.**
-- Mêmes 97 questions que le volet A (73 du corpus, 24 hors corpus), avant et après adaptation.
-- Cinq états : B0, le modèle nu, sans passage ; B1, la récupération de 5 passages sans consigne d'abstention ; B2, la chaîne complète, avec abstention sous le seuil S = 0,8565 ; R+ et R-, deux références dégénérées, l'une qui répond toujours et l'autre qui s'abstient toujours.
-- Sur les 24 questions hors corpus : M1, abstention correcte, et M5, réponse affirmative.
-- Sur les 73 questions du corpus : M2, abstention à tort, M3, citation valide, et M4, citation pertinente.
-- Exactitude jugée à l'aveugle, à titre descriptif, par Maïmouna et Vaneck : 20 réponses citées de B2 tirées au hasard, avant puis après.
-- Analyse principale, écrite d'avance : après contre avant, en B2, sur M1 et sur M4. L'intervalle est bilatéral à 97,5 % (correction de Bonferroni). Une amélioration n'est déclarée que si la borne basse dépasse 0.
-- Gel : le protocole et le script ont été fusionnés le 4 novembre (#108, #119). Ollama 0.40.13 est épinglé, et B0 a été recalibré sans erreur technique sur 8 questions. Les empreintes du verrou sont approuvées le 7 novembre (#131).
-- Mesure avant : à compléter le 13/11 avec M1 à M5 par état, leurs intervalles et la part d'erreurs techniques.
+**Contenu à afficher.**
 
-**Notes pour l'oral.** Le verrou consigne l'empreinte du protocole, des scripts, du jeu de questions, du seuil et de l'index. La mesure refuse de tourner si l'un d'eux a changé. Les 8 questions de calibration ont servi à mettre le script au point, et aucun taux n'en est tiré.
+- Mesure avant du 9 novembre sur le Legion, sous Ollama 0.40.13. Protocole, scripts et données verrouillés avant l'exécution.
+- 97 questions de test : 73 du corpus et 24 hors corpus.
+- B1 : cinq passages, sans consigne d'abstention. B2 : consigne d'abstention et seuil de similarité S = 0,8565.
 
-**À ne pas dire.** Un taux de qualité tiré de la calibration ; « Ollama 0.40.11 » ; des métriques sans rapport avec M1 à M5.
+| Indicateur | B1 | B2 |
+|---|---:|---:|
+| Abstention correcte hors corpus (M1) | 0/24 (0 %) | 20/24 (83,3 %) |
+| Abstention à tort dans le corpus (M2) | 0/71 (0 %) | 45/72 (62,5 %) |
+| Réponse citant un passage pertinent (M4) | 30/71 (42,3 %) | 12/72 (16,7 %) |
 
-**Sources.** `docs/etudes/evaluation/06_protocole_volet_b.md` (sections 3, 5, 6 et 8) ; `scripts/rag/mesure.py` ; PR #119 et #131 ; #52.
+Les dénominateurs excluent les erreurs techniques : deux en B1, une en B2. Les cinq états restent valides selon le seuil de 5 %.
+
+M2 classe l'abstention par rapport au corpus entier. L'analyse complémentaire du contexte distingue 28 des 45 abstentions sans passage pertinent fourni selon D4, et 17 abstentions sur 33 questions avec passage pertinent fourni. Ce diagnostic reste distinct de M2.
+
+**Notes pour l'oral, protocole et limites.**
+
+Le verrou consigne l'empreinte du protocole, des scripts, du jeu de questions, du seuil et de l'index. La mesure refuse de tourner si l'une des dix empreintes a changé. L'amendement M1 publié dans #52 complète le protocole sur le choix de machine sans modifier le fichier gelé ni le verrou.
+
+La décomposition publiée par Mahé le 9 novembre est descriptive, hors protocole 06. Sur les 45 abstentions de M2, 28 surviennent sans passage pertinent fourni selon D4 (27 du modèle, une du seuil). Parmi les 33 questions avec passage pertinent fourni, 17 conduisent à une abstention (16 du modèle, une du seuil), soit 51,5 %. On distingue donc un défaut de récupération et des abstentions malgré un contexte pertinent selon cette règle. D4 ne connaît qu'un extrait par question : un contexte classé sans passage pertinent peut contenir une autre réponse. Ce croisement ne remplace pas une vérification humaine du sens.
+
+Sur les 65 abstentions de B2, le seuil en déclenche 11 (deux dans le corpus, neuf hors corpus). Les 54 autres viennent du modèle. Le constat ne permet pas d'attribuer les abstentions au seul seuil.
+
+Les cinq états sont B0 (modèle nu), B1, B2, R+ (réponse fixe citant le premier passage) et R- (abstention systématique). B0, R+ et R- n'ont aucune erreur technique. R+ atteint par construction 100 % de citations valides, ce qui montre qu'une référence bien formée suffit peu à juger une réponse. M4 exige qu'au moins un passage cité soit pertinent selon la règle D4. Ce contrôle ne juge pas la justesse de chaque affirmation.
+
+Les différences entre B1 et B2 restent descriptives. B2 change à la fois la consigne et le filtrage par seuil : on ne peut pas attribuer tout l'écart au seul seuil. Les erreurs techniques retirées ne sont pas des abstentions. M3 mesure les citations valides, M5 les réponses affirmatives hors corpus. Les résultats détaillés des cinq états restent dans `metriques.json`, transmis hors dépôt à Mahé.
+
+| Indicateur | IC 95 % de B1 | IC 95 % de B2 |
+|---|---:|---:|
+| M1 | 0,0 à 13,8 % | 64,1 à 93,3 % |
+| M2 | 0,0 à 5,1 % | 52,0 à 72,0 % |
+| M4 | 30,5 à 55,0 % | 9,9 à 26,8 % |
+
+Ces intervalles sont ceux de l'analyse avant transmise par Jibril, arrondis à un chiffre après la virgule. Le protocole emploie Wilson, avec correction de l'effet de plan des fiches pour les questions du corpus. Les effectifs sans erreur sont propres à chaque état. Une comparaison appariée utilise la population commune sans erreur dans les deux états.
+
+L'analyse principale compare B2 du modèle adapté à B2 du témoin T, tous deux mesurés sur le Mac de Mahé, sur M1 et M4, avec intervalles bilatéraux à 97,5 % et correction de Bonferroni. Le protocole conclut à une amélioration démontrée lorsque la borne basse de l'intervalle de l'écart dépasse zéro. Le témoin T diffère structurellement du modèle de #31 (#140), ce qui en fait la référence principale prévue par la section 3. Aucune amélioration de l'adaptation n'est encore mesurée.
+
+L'amendement M1 du 10 novembre confie toutes les mesures restantes à Mahé sur son Mac, sous Ollama 0.40.13. La mesure avant du Legion reste une référence descriptive archivée, sans comparaison directe avec une phase sur le Mac. Jibril n'a plus de mesure à lancer et T ne sera pas transféré sur le Legion. Une phase avant sur le Mac n'est envisagée que si l'import du modèle de #31 y donne le digest exigé par le script.
+
+Les huit questions de calibration ont servi à mettre le script au point. Les taux affichés ici viennent exclusivement des 97 questions du lot de test, dont les questions avec erreur technique sont exclues des dénominateurs.
+
+Maïmouna et Vaneck jugeront à l'aveugle l'exactitude, les conditions et exceptions, et la justification par les passages, selon l'échantillonnage de 20 réponses citées de B2 par phase prévu au protocole. L'organisation de cet échantillon doit être alignée avec Mahé sur la référence T du Mac. Le jeu et le seuil restent figés.
+
+**Texte oral de Jibril.** Voir `docs/jalons/J3_diapositives_jibril.md`, partie « Diapositive 8 ». Cette section reste la source commune du contenu de la diapositive 8, pour éviter une seconde copie des chiffres dans le support assemblé.
+
+**Sources.** `docs/etudes/evaluation/06_protocole_volet_b.md` (sections 3 à 8) ; `scripts/rag/mesure.py` ; mesure avant du 9 novembre rapportée par Jibril, `metriques.json` SHA-256 `f28682a1418c6a97bad4c26ceb120c5149ccfb66962525e658d63540651b8c2b` ; journal de séance `docs/journal/2026-11-09_fusion_131_relectures_130_128.md` (PR #142, contenant les empreintes). Mahé a confirmé la réception des sept fichiers et un recalcul indépendant identique de l'analyse. Sources complémentaires : #52, commentaires https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6740066115 (réception et diagnostic) et https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6767903548 (amendement M1).
