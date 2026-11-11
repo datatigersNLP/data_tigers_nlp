@@ -15,7 +15,11 @@ Dans les deux cas, la requantification ajoute un bruit d'arrondi plus grand que 
 * `fusionner.py` : W + 20·(`lora_a`·`lora_b`)ᵀ, calculé en fp32 et écrit en f16, dans des fragments `model-zz-lora-*` lus après les fragments d'origine. Le script rend aussi ρ = ‖ΔW‖ / ‖W‖, matrice par matrice.
 * `verifier_gguf.py` : égalité exacte de chaque tenseur du GGUF avec sa source. Sans dossier fusionné, il sert de contrôle négatif.
 * `controle_requantification.py` : la règle écrite sur le #140 avant l'exécution, appliquée aux 20 exemples de validation.
-* `test_export.py` : 9 tests sur des tenseurs et des exemples factices. Cinq erreurs introduites une à une dans une copie (formule, échelle, seuil, abstention, lecture de la sortie) font chacune échouer au moins un test.
+* `test_export.py` : 10 tests sur des tenseurs et des exemples factices. Cinq erreurs introduites une à une dans une copie (formule, échelle, seuil, abstention, lecture de la sortie) font chacune échouer au moins un test.
+
+**Liens symboliques** : `fusionner.py` lie les fragments d'origine au lieu de les copier. Windows refuse ces liens sans mode développeur ni droits d'administrateur (`WinError 1314`, relevé par Remy sur la #147). La fusion ne peut donc pas tourner sur un tel poste, et elle n'y est pas prévue : elle se fait sur le Mac (amendement M1, #52).
+* Sur un tel poste, `test_export.py` saute le test de la fusion et le test de garde, et les 8 autres tests tournent normalement.
+* Ailleurs, le test de garde échoue si les liens sont refusés. Le test de la fusion ne peut donc jamais être sauté sans bruit là où la fusion tourne : une aide qui répondrait toujours « refusé » est détectée.
 
 ## Outils, vérifiés le 9 novembre
 
@@ -43,6 +47,8 @@ shasum -a 256 $E/lora-v2b-q4_k_m.gguf $E/temoin-q4_k_m.gguf
 ```
 
 Le GGUF f16 et le dossier fusionné sont supprimés dès que la vérification et la quantification sont faites. Au pic, ils occupent environ 21 Gio.
+* **Avant de supprimer le dossier fusionné, copier son `rapport_fusion.json`** : c'est le ρ par matrice que la règle du #140 fait rapporter. Le 11/11, il a été supprimé avec le dossier, puis régénéré par la même fusion, qui est déterministe.
+* Le dossier fusionné ne sert qu'à la vérification. Le supprimer avant la quantification libère environ 7 Gio : c'est ce qui a été fait le 11/11, faute de place.
 
 ## Import dans Ollama
 
