@@ -49,7 +49,7 @@ Chaque membre tient sa propre ligne à jour.
 - Méthode précédente : interface web de GitHub.
 - L'interface reste préférable pour les réglages ponctuels réservés aux administrateurs, et pour relire une
   pull request ligne à ligne.
-- (Remy) Par rapport à l'installation d'un binaire CLI dédié, l'utilisation de l'API REST standard (via Python ou `curl`) évite une dépendance logicielle sur machine locale tout en offrant les mêmes garanties d'automatisation.
+- (Remy) Par rapport à `gh`, l'appel direct à l'API REST (via Python `urllib` ou `curl`) évite d'installer un binaire local, mais reste en retrait pour l'automatisation : `gh` range le jeton dans le gestionnaire d'identifiants du système et pagine (`--paginate`), alors que l'API brute impose de gérer soi-même le jeton et la pagination, et les appels non authentifiés se heurtent au quota horaire (HTTP 403 constaté le 10/11 dès l'enchaînement de requêtes).
 
 ## Décision
 Adopté.
