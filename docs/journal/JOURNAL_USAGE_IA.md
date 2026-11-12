@@ -1816,14 +1816,14 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 **Difficultés rencontrées.**
 - Aucune activité sur le dépôt du 5 au 7 novembre : la relecture du lot et l'entraînement, prévus les 5 et 6 novembre, n'ont pas eu lieu.
 
-**Sessions 61 à 63, de Maïmouna SIGNATE.** Les travaux qu'elles décrivent s'étendent du 28 octobre au 8 novembre ; le travail sur la chaîne RAG avait commencé dès le 20 octobre. Elles sont rédigées à partir de l'historique de la conversation avec l'assistant, des fichiers produits et des revues et commentaires datés (#85, #105, #117, #51, #128). Les temps d'appropriation sont ceux que j'ai déclarés dans ces commentaires ou que j'ai estimés.
+**Sessions 61 à 63, de Maïmouna SIGNATE.** Les travaux qu'elles décrivent s'étendent du 28 octobre au 8 novembre ; le travail sur la chaîne RAG avait commencé dès le 20 octobre. Elles sont rédigées à partir de l'historique de la conversation avec l'assistant, des fichiers produits et des revues et commentaires datés (#85, #105, #117, #51, #128). Les temps indiqués sont des charges réelles : déclarées sur la #51 pour la chaîne RAG, estimées pour la grille et la relecture de la #128.
 
 ### Session 61, 28 et 29 octobre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
 
 **Objet.** Prise en main des tâches du volet B ; relecture de la chaîne RAG (#85) ; relectures des #105 et #117 ; charge sur la #51 ; lecture de la #111.
 
 **Produit.**
-- Revue de la #85, approuvée le 28/10, après sa fusion du 27/10.
+- Revue de la #85, approuvée le 29/10, après sa fusion du 27/10.
 - #105 et #117 approuvées.
 - Commentaire sur la #51 : accord sur l'estimation de 6 h, charge réelle de la relecture de la #85.
 
@@ -1837,7 +1837,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Ce que l'équipe a validé, et par qui.** Estimation de 6 h pour notre part de la #51, avec Vaneck.
 
-**Temps d'appropriation constaté.** 2 h 30 pour comprendre la chaîne, sur laquelle je travaillais depuis le 20 octobre, et relire la #85, déclarées sur la #51.
+**Temps d'appropriation constaté.** 2 h 30 pour comprendre la chaîne, sur laquelle je travaillais depuis le 20 octobre, et relire la #85 : charge déclarée sur la #51.
 
 **Difficultés rencontrées.** La première version de la revue proposée par l'assistant était trop technique pour que je puisse la défendre : elle a été réexpliquée, puis réécrite. « Presque mot pour mot » a été corrigé en « mot pour mot » après une nouvelle vérification sur les traces, faite à ma demande.
 
@@ -1853,11 +1853,11 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Résultats retenus.** Tous les verdicts sont les miens. L'assistant n'a proposé aucun verdict : il m'a expliqué le sens des colonnes et des niveaux (oui, partiel, non), et a remis en français correct un commentaire que j'avais rédigé (A0068), sans en changer le sens.
 
-**Ce qui a été écarté, et pourquoi.** Le fichier `grille_relecture_preremplie.csv`, non ouvert : la consigne excluait tout préremplissage par une IA.
+**Ce qui a été écarté, et pourquoi.** Le fichier `grille_relecture_preremplie.csv` du lot v1, refusé le 02/11, téléchargé par erreur avec ma grille : non ouvert, la consigne excluait tout préremplissage par une IA.
 
 **Ce que l'équipe a validé, et par qui.** En attente : la grille est à comparer avec celle de Vaneck.
 
-**Temps d'appropriation constaté.** 2 h 30.
+**Temps d'appropriation constaté.** 2 h 30, charge estimée.
 
 **Difficultés rencontrées.** Excel affichait mal le CSV (colonnes et accents), d'où la page de lecture. Pour un exemple dont la réponse ne reprenait que le début d'une liste, la question était de savoir s'il fallait l'excuser parce qu'elle venait du programme de génération : j'ai jugé la réponse telle qu'elle est, conformément à la consigne.
 
@@ -1885,7 +1885,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Ce que l'équipe a validé, et par qui.** En attente des lectures de Jibril et de Vaneck.
 
-**Temps d'appropriation constaté.** Reproduction : 1 h 30. Exemples commentés : 1 h 30. Relecture de la #128 : environ 2 h.
+**Temps d'appropriation constaté.** Reproduction : 1 h 30 et exemples commentés : 1 h 30, charges déclarées sur la #51. Relecture de la #128 : environ 2 h, estimée.
 
 **Difficultés rencontrées.**
 - Sans carte graphique, Q036 prend 3 min 45 sur une limite de 5 min.
