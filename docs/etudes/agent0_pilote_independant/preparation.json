@@ -1,0 +1,340 @@
+{
+  "format": "agent0-pilot-preparation-v2",
+  "date_preparation": "2026-11-09",
+  "statut": "preparation_non_figee",
+  "pilote_fige": false,
+  "generation_effectuee": false,
+  "nb_candidats_generes": 0,
+  "lot_evaluable": false,
+  "nombre_maximal_candidats_vises": 25,
+  "sources_preparees_pour_slots": 25,
+  "fiches_distinctes_preparees": 25,
+  "reference_lanceur": {
+    "pr": 144,
+    "commit_revu": "a62c9b23e5a54944e686fab13fe86f3c52ac007b",
+    "contrat_propose": "agent0-challenge-v1",
+    "acceptation_humaine_contrat": null,
+    "point_revalidation_automatic_passed": "correctif_publie_a62c9b2_relecture_humaine_attendue"
+  },
+  "selection": {
+    "graine_texte": "20261109",
+    "algorithme": "sha256-fiches-reservees-puis-passages-v2",
+    "cle_fiche": "UTF8(graine + '|fiche|' + URL_sans_ancre_sans_barre_finale)",
+    "cle_passage": "UTF8(graine + '|passage|' + passage_id)",
+    "tri": "SHA256 hexadecimal croissant, identifiant croissant en cas degalite",
+    "affectation": "5 simple, 5 reformulation, 5 multi_passage, 5 adversarial, 5 hors_corpus ; chaque fiche retiree apres choix",
+    "lecture_questions_humaines": false,
+    "choix_semantique_manuel_sources": false,
+    "portee_independance": "Separation des viviers autorises verifiee sur les regles versionnees ; lots prives non controles. Fiches communes avec le test humain, questions synthetiques distinctes, aucune mesure officielle ni representativite revendiquee.",
+    "vivier": "Intersection des fiches exclues de ladaptation Qwen et encodeur, moins les trois fiches historiques",
+    "nb_fiches_vivier": 60,
+    "filtre_passages": "len(texte) >= 200 caracteres Unicode ; critere technique, sans jugement de suffisance",
+    "lecture_metadonnees_url_lot_type": true
+  },
+  "a_confirmer_avant_generation": {
+    "autorisation_reprise_pilote": null,
+    "generateur_commit_fige": null,
+    "versions_prompts_figees": null,
+    "ollama_version_constatee_legion": null,
+    "relecteur_semantique_independant": null,
+    "methode_hors_corpus": {
+      "reference": "methode_hors_corpus.md",
+      "version": "agent0-hors-corpus-pilote-v1",
+      "statut": "procedure_preparee_soumise_a_relecture",
+      "validation_humaine": null
+    },
+    "calendrier_et_charge_reelle": null,
+    "controle_lots_adaptation_reels": "non_effectue_fichiers_prives_non_recus"
+  },
+  "slots": [
+    {
+      "slot": "PILOTE_PREP_001",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+      "titre_fiche": "Questions-réponses | Le versement du salaire",
+      "source_ids_provisoires": [
+        "m2-article376095-0004"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_002",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+      "titre_fiche": "La modification du contrat de travail",
+      "source_ids_provisoires": [
+        "m2-article100988-0003"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_003",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+      "titre_fiche": "Les documents remis aux salariés lors de la rupture du contrat de travail",
+      "source_ids_provisoires": [
+        "m2-article374502-0007"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_004",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation",
+      "titre_fiche": "Le contrat de professionnalisation",
+      "source_ids_provisoires": [
+        "m2-article374459-0003"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_005",
+      "categorie_visee": "simple",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-conges-payes",
+      "titre_fiche": "Les congés payés",
+      "source_ids_provisoires": [
+        "m2-article374530-0010"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_006",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts",
+      "titre_fiche": "Les jours fériés et les ponts",
+      "source_ids_provisoires": [
+        "m2-article107747-0013"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_007",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee",
+      "titre_fiche": "La rupture conventionnelle du contrat de travail à durée indéterminée",
+      "source_ids_provisoires": [
+        "m2-article108383-0018"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_008",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-conventions-de-forfait",
+      "titre_fiche": "Les conventions de forfait",
+      "source_ids_provisoires": [
+        "m2-article374523-0002"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_009",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail",
+      "titre_fiche": "Les missions et les prérogatives de l’inspection du travail",
+      "source_ids_provisoires": [
+        "m2-article375384-0016"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_010",
+      "categorie_visee": "reformulation",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-priorite-de-reembauche",
+      "titre_fiche": "La priorité de réembauche",
+      "source_ids_provisoires": [
+        "m2-article101105-0000"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_011",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+      "titre_fiche": "La prévention des chutes de hauteur",
+      "source_ids_provisoires": [
+        "m2-article200862-0004",
+        "m2-article200862-0010"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_012",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+      "titre_fiche": "La définition du licenciement pour motif économique",
+      "source_ids_provisoires": [
+        "m2-article101099-0004",
+        "m2-article101099-0001"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_013",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+      "titre_fiche": "La définition du CSE et le cadre de sa mise en place",
+      "source_ids_provisoires": [
+        "m2-article376804-0000",
+        "m2-article376804-0008"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_014",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+      "titre_fiche": "Le contrat d'apprentissage",
+      "source_ids_provisoires": [
+        "m2-article374463-0001",
+        "m2-article374463-0012"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_015",
+      "categorie_visee": "multi_passage",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+      "titre_fiche": "Le contrat à durée déterminée (CDD)",
+      "source_ids_provisoires": [
+        "m2-article108282-0054",
+        "m2-article108282-0049"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_016",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+      "titre_fiche": "Les obligations de l'employeur lors de l'embauche",
+      "source_ids_provisoires": [
+        "m2-article374930-0019"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_017",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations",
+      "titre_fiche": "Le job d'été : les formalités et les obligations",
+      "source_ids_provisoires": [
+        "m2-article374843-0006"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_018",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf",
+      "titre_fiche": "Le compte personnel de formation (CPF)",
+      "source_ids_provisoires": [
+        "m2-article374451-0023"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_019",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire",
+      "titre_fiche": "Le contrat de travail temporaire",
+      "source_ids_provisoires": [
+        "m2-article100982-0028"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_020",
+      "categorie_visee": "adversarial",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+      "titre_fiche": "Le fonctionnement et les moyens d'actions du CSE",
+      "source_ids_provisoires": [
+        "m2-article376807-0027"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "sources_generation_et_preuves_a_verifier"
+    },
+    {
+      "slot": "PILOTE_PREP_021",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil",
+      "titre_fiche": "Les congés pour événements familiaux et le congé de deuil",
+      "source_ids_provisoires": [
+        "m2-article375531-0000"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "ancrage_generation_sans_preuve_positive"
+    },
+    {
+      "slot": "PILOTE_PREP_022",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail",
+      "titre_fiche": "L'interdiction de fumer et de vapoter dans les lieux de travail",
+      "source_ids_provisoires": [
+        "m2-article375123-0009"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "ancrage_generation_sans_preuve_positive"
+    },
+    {
+      "slot": "PILOTE_PREP_023",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-travail-saisonnier",
+      "titre_fiche": "Le travail saisonnier",
+      "source_ids_provisoires": [
+        "m2-article100986-0005"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "ancrage_generation_sans_preuve_positive"
+    },
+    {
+      "slot": "PILOTE_PREP_024",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs",
+      "titre_fiche": "La protection de la santé des jeunes travailleurs",
+      "source_ids_provisoires": [
+        "m2-article200418-0006"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "ancrage_generation_sans_preuve_positive"
+    },
+    {
+      "slot": "PILOTE_PREP_025",
+      "categorie_visee": "hors_corpus",
+      "fiche_url": "https://travail-emploi.gouv.fr/le-harcelement-moral",
+      "titre_fiche": "Le harcèlement moral",
+      "source_ids_provisoires": [
+        "m2-article375154-0009"
+      ],
+      "statut": "sources_preparees_generation_non_effectuee",
+      "role_sources": "ancrage_generation_sans_preuve_positive"
+    }
+  ],
+  "revision_preparation": 2,
+  "revision_precedente_commit": "377717f477abd8d85eb80b1f2ee9157692c3a6c7",
+  "nb_passages_sources": 30,
+  "audit_separation": {
+    "rapport": "audit_separation.json",
+    "procedure": "separation_adaptation.md",
+    "regles_versionnees_controlees": true,
+    "lots_prives_controles": false
+  }
+}
