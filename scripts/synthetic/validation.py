@@ -6,9 +6,9 @@ import re
 import unicodedata
 
 if __package__:
-    from .schema import CasSynthetique, creer_candidat, lire_proposition
+    from .schema import CasSynthetique, Proposition, creer_candidat, lire_proposition
 else:
-    from schema import CasSynthetique, creer_candidat, lire_proposition
+    from schema import CasSynthetique, Proposition, creer_candidat, lire_proposition
 
 
 LONGUEUR_MIN_EXTRAIT = 20
@@ -69,18 +69,35 @@ def _sources_preparation(preparation: dict) -> list[dict]:
     return sources
 
 
+def verifier_contraintes_generation(proposition: Proposition, source_ids: list[str]) -> None:
+    """Règles techniques communes à la génération et à l'entrée du lanceur.
+
+    Le modèle structurel doit être validé avant cet appel. Le corpus, la demande
+    d'origine et la suffisance sémantique des preuves ne sont pas vérifiés ici.
+    Aucun texte ni verdict n'est modifié.
+    """
+    if proposition.type == "adversarial" and not proposition.answerable_proposed:
+        raise ValueError("Cet incrément adversarial exige une correction proposée comme sourçable")
+    if proposition.type == "adversarial" and not proposition.question.rstrip().endswith("?"):
+        raise ValueError("Une question adversarial doit être terminée par '?'")
+    nombre_attendu = 2 if proposition.type == "multi_passage" else 1
+    if len(source_ids) != nombre_attendu or len(set(source_ids)) != nombre_attendu:
+        raise ValueError(f"Nombre de sources de génération incompatible avec {proposition.type} : "
+                         f"{nombre_attendu} source(s) distincte(s) requise(s)")
+    if (proposition.type == "multi_passage"
+            and {p.passage_id for p in proposition.evidence} != set(source_ids)):
+        raise ValueError("Chaque source multi-passage doit être couverte par une preuve")
+
+
 def valider_proposition(texte: str, preparation: dict, run_id: str,
                        questions_vues: set[str]) -> CasSynthetique:
     proposition = lire_proposition(texte)
     if (proposition.type != preparation["type"]
             or proposition.difficulty_target != preparation["difficulty_target"]):
         raise ValueError("Catégorie ou difficulté différente de la demande")
-    if proposition.type == "adversarial" and not proposition.answerable_proposed:
-        raise ValueError("Cet incrément adversarial exige une correction proposée comme sourçable")
-    if proposition.type == "adversarial" and not proposition.question.rstrip().endswith("?"):
-        raise ValueError("Une question adversarial doit être terminée par '?'")
     sources = _sources_preparation(preparation)
     par_id = {source["passage_id"]: source for source in sources}
+    verifier_contraintes_generation(proposition, list(par_id))
     for preuve in proposition.evidence:
         if preuve.passage_id not in par_id:
             raise ValueError("Preuve provenant d'une source non fournie")
@@ -88,9 +105,6 @@ def valider_proposition(texte: str, preparation: dict, run_id: str,
             raise ValueError(f"Extrait invalide : au moins {LONGUEUR_MIN_EXTRAIT} caractères, "
                              "sans espaces de bord, retrouvé mot pour mot sur des limites "
                              "de mots dans le passage fourni")
-    if (proposition.type == "multi_passage"
-            and {p.passage_id for p in proposition.evidence} != set(par_id)):
-        raise ValueError("Chaque source multi-passage doit être couverte par une preuve")
     normalisee = normaliser_question(proposition.question)
     if not normalisee or normalisee in questions_vues:
         raise ValueError("Question vide après normalisation ou doublon normalisé")

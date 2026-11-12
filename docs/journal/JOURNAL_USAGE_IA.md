@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 7 novembre 2026 ; sessions 1 à 54, 59 et 60 (55 à 58 réservées à Vaneck DAGAR) ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 10 novembre 2026 ; sessions 1 à 60 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55 et 56 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1613,7 +1613,136 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 **Difficultés rencontrées.** Une modification documentaire après actualisation exige elle aussi une nouvelle revue. Les champs humains restent vierges malgré l'approbation du code et du support. La consolidation du journal est préparée sur une branche séparée ; sa relecture documentaire reste attendue.
 
 
-**Sessions 59 et 60, de Mahé BEGNIS.** Les numéros 55 à 58 sont réservés aux sessions de Vaneck DAGAR, transmises hors du dépôt et à intégrer : la règle du journal donne un numéro à la première PR qui le prend.
+**Sessions 55 à 58, de Vaneck DAGAR.** Transmises par Vaneck le 10 novembre, hors du dépôt, et reportées ici sans changement de fond, aux numéros réservés par la #133 (48 à 51 dans sa fiche d'usage). Les sessions 57 et 58 ont été écrites le jour même ; les sessions 55 et 56 ont été consignées a posteriori le 28 octobre, à partir des commits, des pull requests, des tickets et de l'historique de la conversation avec l'assistant. Les mentions de la grille du lot v1 ont été ajoutées à la session 58 le 7 novembre, à la demande de Mahé (#107).
+
+### Session 55, 18 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Fin du volet A : relecture de la PR #83 (focus du menu sur téléphone, périmètre du corpus), relecture de la PR #81 après sa fusion, fiche d'usage de l'IA complétée pour Mahé.
+
+**Produit.**
+- Revue de la #83, approuvée sur `c69042e`, puis fusion de la #83 dans `dev`, qui ferme #53.
+- Commentaire de relecture sur la #81 (ONNX Runtime servi par le site), avec une remarque non bloquante : `onnxruntime-web` importé sans être déclaré dans `package.json`.
+- Sessions 20 à 27, 33 et 34 de ce fichier complétées et transmises à Mahé.
+
+**Mesures exécutées.**
+- #83, dans Chromium à 375 px, toutes les requêtes hors du site bloquées, focus relevé après chaque frappe : 28 frappes sans chat et 33 avec un chat, le focus ne sort jamais du panneau ; scénario de Jibril (dernier bouton, Tab, Échap) conforme ; menu fermé au passage à 1 280 px ; 261 fiches et 4 240 passages recomptés dans `passages_m2.json` ; build et tests du moteur sans échec.
+- #81 : les 4 fichiers d'ONNX Runtime publiés sont identiques octet pour octet à ceux du paquet ; sur le site en ligne, jsDelivr et Hugging Face bloqués, cache vide : moteur prêt en 8 s, 5 passages, aucune requête externe.
+
+**Résultats retenus.**
+- Le focus reste dans le menu sur téléphone, et le site ne dépend plus d'aucun CDN.
+
+**Ce qui a été écarté, et pourquoi.**
+- Bloquer la #81 pour la déclaration de `onnxruntime-web` : le test vérifie déjà les versions ; remarque laissée à Mahé.
+
+**Ce que l'équipe a validé, et par qui.**
+- #80 approuvée par Mahé, #83 approuvée par Jibril et moi ; volet A clos par le tag `volet-a-v1` (Mahé).
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Aucune.
+
+### Session 56, 27 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Reprise après le volet A : bilan du dépôt, mise à jour de ma copie locale, vérification de la liste de tâches reçue de Mahé pour le volet B, relecture de la V0 du rapport (PR #105).
+
+**Produit.**
+- Copie locale alignée sur GitHub (`dev` et `main`), branches locales déjà fusionnées supprimées.
+- Liste de mes tâches du volet B, du 27/10 au 20/11, recoupée ligne par ligne avec les tickets #13, #51, #52, #107, #111, #112, #113 et #114.
+- Commentaire de relecture sur la #105.
+
+**Mesures exécutées.**
+- Faits du rapport qui me concernent vérifiés dans le classeur de suivi et sur GitHub : domaines D1 et D3, charges de #27 (8 h estimées, 10 h réelles) et de #29 (3 h, 1 h 30), relectures de #76 et #78, partie Playwright cohérente avec ma fiche.
+
+**Résultats retenus.**
+- La liste de Mahé correspond aux tickets. Deux compléments relevés : la #105 attend aussi ma relecture, et le Weekly 7 demande la charge réelle des tâches terminées.
+- Ma section 4.4 du rapport est attendue le 13/11 (#113).
+
+**Ce qui a été écarté, et pourquoi.**
+- Approuver la #105 : #113 confie l'approbation de la V0 à Maïmouna ; commentaire de relecture seulement.
+
+**Ce que l'équipe a validé, et par qui.**
+- Répartition du volet B : commentaire de Mahé sur #51 (25/10), ordres du jour des Weekly 7 et suivants.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Le tag `jalon-j2` local différait de celui de GitHub : la récupération l'a refusé ; tag local aligné sur GitHub.
+
+### Session 57, 28 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Volet B : relecture de la chaîne RAG (PR #85), relectures des PR #108, #116 et #117, contrat d'interface de la démonstration (#111, étape 1), charges de #111 et #51.
+
+**Produit.**
+- Revue de la #85 (commentaire, la PR étant déjà fusionnée) : limites de Q036 jugées acceptables pour une première baseline, puisque c'est le point de départ que #52 doit comparer ; `rag_51.md` à mettre à jour après la fusion.
+- Approbations de la #108 (protocole 06), de la #116 (fiches d'outils de Mahé) et de la #117 (journal, sessions 42 et 44).
+- PR #121 : `docs/etudes/demonstration/contrat_interface_111.md`, routes `GET /api/etat` et `POST /api/question`, format de la réponse construit avec les sorties de `generer_reponse`, statut `erreur_preparation`, affichage par statut, code de la démonstration dans `demo_b/` ; relecture demandée à Jibril.
+- #111 : estimation de 24 h cumulées pour Maïmouna et moi. #51 : 6 h ajoutées pour Maïmouna et moi ; relecture de la #85, charge réelle de 2 h.
+
+**Mesures exécutées.**
+- #85, sur `dev` (`6a95085`), Python 3.12.14 et NumPy 2.5.3 : 45 tests réussis ; `--check-index` sur l'index du site : `index_verifie`, 4 240 passages, empreintes `2ec45586…` et `aee5bbdb…` ; une question du lot de test (Q004) refusée, Q036 lue mot pour mot dans le jeu figé.
+- #108 : section 2 vérifiée sur le jeu figé : empreinte `807498…`, 97 questions de test (73 du corpus issues de 61 fiches, 24 hors corpus), 8 de calibration.
+- #116 : 8 sessions de Mahé sous Opus 5 et 14 sous Opus 5.5, comptées dans le journal.
+- #117 : #76 fusionnée par moi, mes 10 sessions dans le journal, fusions du 27/10 et fermeture de #12 vérifiées par l'API.
+- Contrat : les quatre exemples JSON validés par script ; valeurs de l'exemple reprises de l'essai Q036 et de `passages_m2.json`.
+
+**Résultats retenus.**
+- La chaîne de la #85 se vérifie sur ma machine sans Ollama ; la reproduction complète (#51, 04/11) se fera sur le Legion avec Jibril.
+- Jibril n'avait pas commencé le contrat d'interface : aucun commentaire sur #111, aucune branche ni PR sur la démonstration.
+- Le déploiement du site ne se déclenche que sur `front/**` : un dossier `demo_b/` ne peut pas modifier le site du volet A.
+
+**Ce qui a été écarté, et pourquoi.**
+- Trois questions sur le jugement à l'aveugle (nombre de réponses, échelle de notation, préparation du fichier anonymisé) : non publiées dans la revue de la #108, message court retenu ; à régler avant le jugement du 13/11.
+- Refaire la récupération de Q036 avec E5 sur ma machine : environ 700 Mio à télécharger ; reporté à la reproduction sur le Legion.
+- Modifier l'estimation d'origine de #51 (16 h, validée le 12/10) : conservée, l'estimation de notre part est ajoutée à côté.
+
+**Ce que l'équipe a validé, et par qui.**
+- #108 approuvée par Jibril (27/10), puis par moi ; contrat d'interface en attente de la relecture de Jibril.
+
+**Temps d'appropriation constaté.**
+- Chaîne RAG (`rag.py`, `generation.py`) : lecture guidée du code avec l'assistant pendant la relecture ; non relevé séparément des 2 h de la relecture.
+
+**Difficultés rencontrées.**
+- Ollama et Qwen absents de ma machine : seules les parties sans modèle génératif ont pu être exécutées.
+
+### Session 58, 2 novembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Relectures avant le gel du protocole et le Weekly 8 : PR #108 (après les arbitrages de Mahé), #121 (après les commits de Jibril), #122, #123 et #124 ; fusion du contrat d'interface ; grille de relecture du lot v1 (#107).
+
+**Produit.**
+- Approbation de la #108 sur `e87b9ff` : la précédente, du 28/10, avait été annulée par les nouveaux commits.
+- PR #121 relue après les deux commits de Jibril, puis fusionnée dans `dev` (`4e781cd`) : étape 1 de #111 terminée.
+- Approbations de la #122 (journal, sessions 46 et 47 de Mahé, et suivi), de la #123 (ligne de Mahé dans la fiche Playwright) et de la #124 (chiffres vérifiés des supports de J3), avec une remarque sur la source des 822 requêtes.
+- Copie locale de `dev` mise à jour, branche locale de la #121 supprimée.
+- Grille de relecture du lot v1 (#107, 30 exemples) préremplie par l'IA (Claude Opus 5.5 via Claude Code), hors du dépôt, à ma demande et avec vérification par moi même par la suite ; grille et bilan transmis à Mahé sur Discord.
+
+**Mesures exécutées.**
+- #108 : différences relues depuis `c8eb115` (consigne de B0, Ollama 0.40.13, machines, erreurs techniques reproductibles, verrou indépendant des fins de ligne) ; section 2 inchangée.
+- #121 : quatre exemples JSON du contrat toujours valides après les commits de Jibril.
+- #122 : charges de #51 et #111 et approbations des #108, #116 et #117 conformes à GitHub.
+- #124 : chiffres retrouvés dans leurs sources sur `dev` (`03_evaluation.md`, `02_indexation.md`, `moteur.js`, `README.md`, `inference_locale_qwen.md`, `faisabilite_legion_20261026.md`) ; les 822 requêtes figurent dans `scripts/allegement/README.md`, et non dans le `README.md` racine cité.
+- Grille du lot v1 : grille préremplie passée dans `grille_relecture.py bilan` : valide, 8 exemples faux sur 30 (26,7 %, IC 95 % de 14,2 à 44,4 %), dont 6 sur 15 parmi les cités et 2 sur 8 en « passage retiré ».
+- Verdicts préremplis de la grille du lot v1 vérifiés par moi.
+
+**Résultats retenus.**
+- Les précisions de Jibril sur la #121 ne changent aucun choix du contrat : état prêt plus strict, structure fixe des réponses, erreurs 400 et 409, modèle fixé côté serveur.
+
+**Ce qui a été écarté, et pourquoi.**
+- Corriger deux mentions restées en retard dans le contrat (« à valider par Jibril », « configuration cible du 30/10 ») : un nouveau commit aurait annulé l'approbation de Jibril ; reporté à la PR de la maquette.
+
+**Ce que l'équipe a validé, et par qui.**
+- #121 approuvée par Jibril sur `2a5dd1a`, puis fusionnée par moi.
+- Lot v1 refusé par la règle écrite avant la relecture (10 % de faux au plus) ; Mahé a relu seul les 30 exemples et abouti au même résultat (#107, 07/11).
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Numérotation : mes sessions, numérotées d'abord 46 à 48, puis 48 à 51, deviennent 55 à 58, Jibril ayant pris 48 à 54 (#126).
+
+**Sessions 59 et 60, de Mahé BEGNIS.** Numérotées le 7 novembre à la suite des numéros 55 à 58, alors réservés aux sessions de Vaneck DAGAR.
 
 ### Session 59, 4 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
 
@@ -1884,6 +2013,9 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
 | 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
 | 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus hors fusions |
+| 27/10 | Bilan du dépôt affirmant que `dev` n'avait pas bougé, à partir d'une copie non mise à jour | nouvelle récupération depuis GitHub | bilan corrigé avant de le donner |
+| 28/10 | Exemple JSON du contrat d'interface réduit à un fragment, donc invalide | validation des blocs JSON par script | réécrit en objet complet avant le commit |
+| 28/10 | Corps du ticket #111 renvoyé avec des fins de ligne Windows (CRLF) en mettant à jour l'estimation | comparaison avant/après | renvoyé avec les fins de ligne d'origine, vérifié par l'API |
 | 28/10 | Revue de la #85 décrivant la réponse de Q036 comme recopiée « presque mot pour mot » | question de Maïmouna, nouvelle comparaison avec la trace | « mot pour mot » ; la condition omise est attribuée à `rag_51.md`, qui la notait déjà |
 | 30/10 | Même piège zsh, une troisième fois : `$b:scripts` lu comme le modificateur `:s` | erreur « bad substitution » | commande réécrite |
 | 30/10 | Reconstitution des sources de la feuille de route par rejeu du transcript, incomplète : des retouches passaient par des scripts | assertion du script de reconstitution | page modifiée depuis sa version publiée ; seules les 16 lignes visées changent, données intactes |
