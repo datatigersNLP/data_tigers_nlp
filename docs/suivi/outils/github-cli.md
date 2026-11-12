@@ -18,7 +18,7 @@ Chaque membre tient sa propre ligne à jour.
 | Mahé | 2.92.0 | macOS 27.0.1, arm64 | version relevée le 26/10 ; PR, revues, tickets et lectures de l'API sous l'identité `mahebegnis`, vérifiée par `gh api user` |
 | Rémy | à compléter | à compléter | |
 | Jibril | à compléter | à compléter | |
-| Maïmouna | 2.102.0 | Windows 11, ARM (Snapdragon X Plus) | lecture des pull requests, des tickets et des notifications sous l'identité `msignate` |
+| Maïmouna | 2.102.0 | Windows 11, ARM (Snapdragon X Plus), binaire arm64 natif | version relevée le 12/11 ; lecture des pull requests, des tickets et des notifications sous l'identité `msignate` |
 
 ## Mise en place
 - Installation puis `gh auth login`.
