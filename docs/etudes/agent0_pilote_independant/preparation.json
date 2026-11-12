@@ -36,7 +36,7 @@
     "generateur_commit_fige": null,
     "versions_prompts_figees": null,
     "ollama_version_constatee_legion": null,
-    "relecteur_semantique_independant": null,
+    "relecteur_semantique_independant": "Mahé BEGNIS (mahebegnis) ou Remy RAYANE (Remynou) ; une relecture effective de lun des deux suffit, décisions à consigner après examen.",
     "methode_hors_corpus": {
       "reference": "methode_hors_corpus.md",
       "version": "agent0-hors-corpus-pilote-v1",
@@ -350,5 +350,17 @@
       "reference": "https://github.com/datatigersNLP/data_tigers_nlp/pull/145#pullrequestreview-5860312884",
       "octets_prives_non_relus_ici": true
     }
+  },
+  "regle_relecture_agent0": {
+    "decision_jibril_date": "2026-11-12",
+    "relecteurs_possibles": [
+      "mahebegnis",
+      "Remynou"
+    ],
+    "nombre_validations_requises": 1,
+    "portee": "Cette contribution et les prochaines tâches Agent0, sur la version finale du livrable",
+    "relecteur_distinct_de_lauteur": true,
+    "validation_code_ne_vaut_pas_validation_candidats": true,
+    "verdict_humain_attribue": false
   }
 }

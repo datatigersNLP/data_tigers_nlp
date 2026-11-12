@@ -2,6 +2,12 @@
 
 Révision 2 du 9 novembre 2026, #95/#96, préparée à la demande de Jibril. **25 emplacements, aucune question générée, aucun verdict humain, aucun gel ni essai RAG.** Le dossier est prêt pour examiner les sources, la méthode et le contrat ; la validation humaine reste à effectuer.
 
+## Relecteurs et règle de validation Agent0
+
+Décision de Jibril du 12 novembre 2026 : **Mahé BEGNIS (`mahebegnis`) et Remy RAYANE (`Remynou`) sont les relecteurs désignés de cette contribution et des prochaines tâches Agent0. Une seule validation explicite de l'un des deux suffit** pour le livrable concerné, sur sa version finale ; leurs deux approbations ne sont pas cumulativement requises. Le relecteur doit être distinct de l'auteur de la contribution.
+
+Les prochaines PR Agent0 demandent la relecture aux deux personnes ; la validation effective peut venir de Mahé ou de Remy. Pour les futurs candidats, l'un des deux peut effectuer la relecture sémantique et consigner les décisions dans la grille. Une approbation du code ou de la procédure ne vaut pas acceptation des candidats : leurs questions, preuves, catégories et répondabilité doivent être effectivement examinées. Cette règle ne change pas le protocole ni les doubles annotations du jeu humain officiel.
+
 ## Contenu à relire
 
 | Fichier | Contenu |
@@ -76,7 +82,8 @@ Après revue du code, du lot et autorisation de l'essai réel borné, utiliser u
 - [x] Correctif technique de #144 référencé.
 - [x] Contrat, sources et méthode approuvés dans #144/#145 ; ce complément conserve sa propre relecture à effectuer.
 - [x] Contrôle technique du fichier encodeur conforme et contrôle Qwen rapporté par Mahé, avec sources et limites distinctes.
-- [ ] Relecture indépendante du complément encodeur et relecteur des futurs candidats confirmé.
+- [x] Mahé et Remy désignés comme relecteurs ; une validation de l'un des deux suffit pour chaque livrable examiné.
+- [ ] Relecture effective du complément encodeur, puis des futurs candidats une fois générés.
 - [ ] Configuration du générateur et environnement arrêtés avant génération.
 - [ ] Candidats produits, relus, puis lot figé avant RAG.
 
