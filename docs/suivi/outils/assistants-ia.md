@@ -37,6 +37,8 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 
 ## Défauts et limites observés
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
+- (Maïmouna, Claude Code) Il affirme parfois avec assurance des choses fausses, qu'il ne corrige qu'après une question de ma part : une phrase de réponse de Qwen présentée comme inventée alors que son contenu figurait dans trois passages, et le refus d'un lien attribué au site du ministère alors que la coupure venait de ma connexion (journal, section 4, 08/11).
+- (Maïmouna, Claude Code) Il a ouvert dans l'éditeur le fichier d'annotation complet, lot de test compris, au lieu des seules questions de calibration. J'ai fermé l'onglet sans le lire (journal, section 4, 08/11) : il faut lui indiquer à l'avance les fichiers à ne pas ouvrir.
 
 ## Comparaison
 - Méthode ou outil utilisé auparavant :
