@@ -234,7 +234,13 @@ Le sujet recommande une rédaction individuelle. Chaque membre complète son enc
 
 ### 4.5 Maïmouna SIGNATE
 
-> À rédiger par Maïmouna.
+**Compétences techniques acquises.** Au volet A, avec Vaneck, j'ai travaillé sur la préparation du corpus (#27) : téléchargement d'une version figée, règles de filtrage, contrôle manuel d'un échantillon. J'ai aussi travaillé sur la mise en ligne du site (#29) et l'annotation de questions pour l'évaluation (#44, Q036 à Q070). Au volet B, j'ai appris à lire une chaîne RAG de bout en bout : la récupération des passages par E5, la génération par Qwen et le contrôle des citations. J'ai reproduit cette chaîne sur ma propre machine (#51). Mahé l'a retenue comme la reproduction indépendante du ticket, avec ses écarts déclarés : version d'Ollama et digest différents, calcul sans carte graphique. J'ai surtout appris à juger une réponse en la comparant aux passages : une réponse citée peut être incomplète (Q036), et une abstention peut être injustifiée alors que le bon passage a été trouvé (Q001). Enfin, je me suis familiarisée avec Git et GitHub : branches, commits, résolution de conflits, relectures de pull requests.
+
+**Lacunes et points à approfondir.** Au début du projet, j'avais du mal à voir comment les différentes parties s'articulaient, du corpus jusqu'à la démonstration. Pour y remédier, j'ai refait moi-même, dans des notebooks, la préparation du corpus et la recherche du site. La lecture du code Python et JavaScript reste un point à approfondir. J'ai aussi appris à ne pas prendre pour acquis ce que me dit l'assistant d'IA : plusieurs de ses affirmations se sont révélées fausses, et je ne les ai corrigées qu'en lui demandant de vérifier. Ces erreurs sont consignées dans le journal.
+
+**Positionnement dans l'équipe et délais.** J'ai travaillé en binôme avec Vaneck sur le volet A (le corpus, la mise en ligne du site et l'évaluation), puis sur la vérification de la chaîne RAG et la démonstration du volet B. Sur les délais, mon journal a été rattrapé avec retard, et une de mes sessions est déclarée comme consignée a posteriori. Je retiens qu'il faut consigner le travail le jour même, tant que les difficultés sont encore en mémoire.
+
+**Et après le projet.** C'est l'un des projets les plus intéressants auxquels j'ai participé, et il a déjà une suite pour moi. Dans mon entreprise, presque tous les membres de l'équipe refont régulièrement les mêmes recherches, chacun de son côté. J'envisage d'y mettre en place une recherche par le sens sur nos documents, sur le modèle du volet A, pour centraliser ces recherches.
 
 ## 5. Cinq outils novateurs
 
