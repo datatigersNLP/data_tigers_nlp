@@ -11,6 +11,7 @@ Révision 2 du 9 novembre 2026, #95/#96, préparée à la demande de Jibril. **2
 | [grille_relecture.json](grille_relecture.json) | 25 lignes vierges, dont la trace de recherche hors corpus |
 | [separation_adaptation.md](separation_adaptation.md) | Contrôle des exclusions, limites des lots privés et vérifications restantes |
 | [audit_separation.json](audit_separation.json) | Références, ensembles d'URLs, rapprochement initial et tirage révisé |
+| [verification_encodeur_20261112.md](verification_encodeur_20261112.md) et [JSON](verification_encodeur_20261112.json) | Contrôle du fichier réel de 109 paires, empreinte conforme et intersections vides |
 | [methode_hors_corpus.md](methode_hors_corpus.md) | Procédure opérationnelle soumise à relecture, sans question préécrite |
 | [revue_lanceur_144.md](revue_lanceur_144.md) | Constat historique sur bb80096 et suivi du correctif a62c9b2 |
 
@@ -31,7 +32,9 @@ Algorithme `sha256-fiches-reservees-puis-passages-v2`, graine textuelle `2026110
 
 Résultat : **25 fiches distinctes, 30 passages, aucune fiche du vivier autorisé par les règles d'adaptation examinées**. Les cinq sources hors corpus sont des ancrages de génération, jamais des preuves positives d'absence ou de réponse. Une paire ne prouve pas la nécessité sémantique de ses deux passages.
 
-Les lots privés effectivement utilisés n'ont pas été reçus : l'audit ne certifie pas leur contenu. Les 25 fiches appartiennent aussi au test humain ; ce pilote partage donc ses fiches et n'est pas un nouveau benchmark humain indépendant. Ses futures questions resteront synthétiques, séparées et non représentatives ; leurs résultats ne seront pas combinés à la mesure officielle. Aucune question humaine ni sortie RAG n'a guidé le tirage. Les futurs candidats sont exclus de l'entraînement.
+**Suivi du 12 novembre.** Les 109 paires réelles de l'encodeur ont été reçues avec l'empreinte publiée ; leur contrôle ne trouve aucun identifiant, fiche ou texte source intégral du pilote dans les passages d'entraînement, même après normalisation NFC/casse/espaces. Le rapport distingue ce résultat technique de la relecture de Mahé sur #145, qui rapporte le contrôle des cinq lots privés Qwen le 11 novembre. L'audit initial daté du 9 novembre reste inchangé comme référence historique. La relecture indépendante du nouveau complément encodeur est attendue ; les limites sur les recopies partielles, paraphrases et la future déduplication des questions sont explicites.
+
+Les 25 fiches appartiennent aussi au test humain ; ce pilote partage donc ses fiches et n'est pas un nouveau benchmark humain indépendant. Ses futures questions resteront synthétiques, séparées et non représentatives ; leurs résultats ne seront pas combinés à la mesure officielle. Aucune question humaine ni sortie RAG n'a guidé le tirage. Les futurs candidats sont exclus de l'entraînement.
 
 Le README d'adaptation annonce 67 fiches exclues alors que les octets vérifiés en donnent 66. Cet écart est consigné dans l'audit ; aucun fichier d'adaptation n'est corrigé ici.
 
@@ -39,13 +42,13 @@ Le README d'adaptation annonce 67 fiches exclues alors que les octets vérifiés
 
 ### 1. Examiner la préparation et la séparation
 
-Faire relire le code et le format de la [PR #144](https://github.com/datatigersNLP/data_tigers_nlp/pull/144), ainsi que cette préparation. Le correctif `a62c9b2` partage les contrôles techniques avec le générateur ; sa publication ne vaut pas approbation humaine. L'indépendance sémantique ne se déduit pas de ces contrôles.
+Le code et le format de la [PR #144](https://github.com/datatigersNLP/data_tigers_nlp/pull/144), ainsi que la préparation #145, ont été approuvés par Mahé le 11 novembre sur `a62c9b2` et `56f9cbf`, puis fusionnés le 12 novembre. Le nouveau rapport de contrôle des paires encodeur reste à relire. L'indépendance sémantique ne se déduit pas des seuls contrôles techniques.
 
-Compléter le contrôle des lots privés décrit dans `separation_adaptation.md`, puis consigner le responsable de la relecture indépendante. La décision du 30/10 conserve la priorité de l'adaptation et de la mesure officielle. La demande présente autorise la préparation, sans déclarer une reprise complète ou un lancement réel.
+Examiner les preuves de séparation actualisées, puis consigner le responsable de la relecture indépendante des futurs candidats. La décision du 30/10 conserve la priorité de l'adaptation et de la mesure officielle. La préparation ne déclare pas un lancement réel.
 
 ### 2. Consigner la configuration avant génération
 
-Épingler le commit retenu après revue, les versions exactes des cinq prompts, les paramètres et la graine des appels, le digest du modèle et la version d'Ollama constatée sur le Legion. La graine des sources ne remplace pas celle de génération. Conserver l'environnement de mesure officielle et préparer un environnement distinct. Les versions disponibles lors des derniers tests de #144 diffèrent du verrou annoncé ; cette compatibilité reste à vérifier sur la machine d'exécution.
+Épingler le commit retenu après revue, les versions exactes des cinq prompts, les paramètres et la graine des appels, le digest du modèle et la version d'Ollama constatée sur le Legion. La graine des sources ne remplace pas celle de génération. Conserver l'environnement de mesure officielle et préparer un environnement distinct. Mahé rapporte 184 tests réussis sur Mac avec les versions verrouillées ; la préparation de l'environnement sur le Legion reste à effectuer, sans transposer cette mesure à Windows.
 
 Préparer les sélections dans le format attendu par `generate.py` à partir des identifiants du plan et du corpus vérifié. Les présents JSON sont des documents préparatoires, pas des sélections de génération ni un lot d'évaluation. Aucun gel ou acceptation n'est fabriqué pour contourner les contrôles.
 
@@ -71,9 +74,10 @@ Après revue du code, du lot et autorisation de l'essai réel borné, utiliser u
 - [x] Tirage révisé, ancrages hors corpus, textes et empreintes préparés.
 - [x] Méthode hors corpus écrite et grille de recherche prête, sans question ni verdict.
 - [x] Correctif technique de #144 référencé.
-- [ ] Relecture humaine du contrat, des sources et de la méthode ; relecteur disponible confirmé.
-- [ ] Lots privés contrôlés et provenance des données d'adaptation rapprochée.
+- [x] Contrat, sources et méthode approuvés dans #144/#145 ; ce complément conserve sa propre relecture à effectuer.
+- [x] Contrôle technique du fichier encodeur conforme et contrôle Qwen rapporté par Mahé, avec sources et limites distinctes.
+- [ ] Relecture indépendante du complément encodeur et relecteur des futurs candidats confirmé.
 - [ ] Configuration du générateur et environnement arrêtés avant génération.
 - [ ] Candidats produits, relus, puis lot figé avant RAG.
 
-**Traçabilité IA :** [note du 9 novembre](../../journal/2026-11-09_agent0_pilote_preparation_revue.md). Aucun temps réel, verdict humain ni résultat de benchmark n'est déclaré.
+**Traçabilité IA :** [note du 9 novembre](../../journal/2026-11-09_agent0_pilote_preparation_revue.md) et [contrôle du 12 novembre](../../journal/2026-11-12_agent0_controle_encodeur.md). Aucun temps réel, verdict sur les candidats ni résultat de benchmark n'est déclaré.

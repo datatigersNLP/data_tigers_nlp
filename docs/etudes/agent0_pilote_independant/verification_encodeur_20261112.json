@@ -1,0 +1,69 @@
+{
+  "format": "agent0-pilot-encoder-pairs-audit-v1",
+  "date": "2026-11-12",
+  "nature": "controle_technique_assiste_sur_octets_recus",
+  "statut": "absence_de_chevauchement_constatee_sur_les_criteres_controles",
+  "git_reference": "6334581dbfcae9e2189e04c7aa06b01dea7908b7",
+  "artefact_recu": {
+    "nom": "train_paires.jsonl",
+    "octets": 174552,
+    "nb_paires": 109,
+    "sha256": "2d377eb66e7f4ca0e8e4cf34b089e5da7c46e47ddceab9f964764df468c21698",
+    "conforme_reference_etude_49": true,
+    "reference": "docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md",
+    "original_modifie": false,
+    "fichier_entier_publie": false
+  },
+  "entrees_pilote": {
+    "revision_preparation": 2,
+    "sha256_plan_avant_suivi": "ad6868df358c9fbb6110ce6919e438ea24c6739da6f42575f432aa6359480cc2",
+    "sha256_sources": "29d4f2d2e5311bfb09c33f20f63ea5e6a35c1039a08084bdd58468186b332986",
+    "sha256_passages": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d",
+    "nb_fiches_pilote": 25,
+    "nb_passages_pilote": 30
+  },
+  "methode": {
+    "lecture": "UTF8 et JSON strict ; refus des cles dupliquees et constantes non finies",
+    "fiche": "URL sans ancre ni barre finale",
+    "texte_exact": "Recherche du texte integral de chacune des 30 sources dans chaque champ passage des 109 paires, sans decoupage",
+    "texte_normalise": "Meme recherche apres NFC, casefold et fusion des espaces",
+    "negatifs": "04_ajuster_encodeur.py utilise les autres passages du lot comme negatifs ; tous les 109 passages sont compares",
+    "generation_ou_inference": false
+  },
+  "controles": {
+    "passages_ids_distincts": 109,
+    "fiches_entrainement_distinctes": 109,
+    "ids_resolus_dans_M2": 109,
+    "urls_et_titres_coherents": 109,
+    "queries_conformes_au_prefixe_et_question": 109,
+    "positifs_prefixes_et_termines_par_texte_M2_exact": 109,
+    "sources_pilote_et_sha256_textes_verifies": 30,
+    "passages_communs_pilote": [],
+    "fiches_communes_pilote": [],
+    "sources_pilote_presentes_en_texte_integral": [],
+    "sources_pilote_presentes_apres_normalisation": [],
+    "fiches_entrainement_dans_liste_exclusion_encodeur": []
+  },
+  "controle_qwen_distinct": {
+    "origine": "relecture_de_Mahe_Begnis_sur_PR145",
+    "reference": "https://github.com/datatigersNLP/data_tigers_nlp/pull/145#pullrequestreview-5860312884",
+    "date": "2026-11-11",
+    "resultat_rapporte": "Aucune des 25 fiches, aucun des 30 passages, aucun des textes intégraux dans train/valid des lots examinés",
+    "octets_prives_qwen_relus_dans_ce_controle": false
+  },
+  "limites": [
+    "Le SHA256 relie les octets recus a la reference publiee ; il ne prouve pas independamment lexecution historique de lentrainement.",
+    "Absence de recherche de toutes les recopies partielles ou paraphrases ; aucune independance semantique absolue revendiquee.",
+    "Aucun candidat pilote nest genere : sa future question ne peut pas encore etre dedupliquee contre les questions dentrainement.",
+    "Pas de verdict humain, de validation de categorie ou de suffisance juridique des preuves.",
+    "Les 25 fiches sont aussi des fiches du test humain ; les mesures synthetiques restent distinctes."
+  ],
+  "relecture_humaine_du_present_controle": {
+    "relecteur": null,
+    "date": null,
+    "decision": null
+  },
+  "candidats_generes": 0,
+  "lot_fige": false,
+  "modele_appele": false
+}
