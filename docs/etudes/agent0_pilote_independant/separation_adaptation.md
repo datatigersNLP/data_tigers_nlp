@@ -2,6 +2,8 @@
 
 Contrôle du 9 novembre 2026, `dev/a294d25`, révision initiale du pilote `377717f`. Résultats détaillés et ensembles d'URLs dans [audit_separation.json](audit_separation.json).
 
+**Mise à jour du 12 novembre :** le [contrôle du fichier réel des paires encodeur](verification_encodeur_20261112.md) est désormais disponible. Les mentions de données non reçues ci-dessous décrivent l'état historique du 9 novembre ; le rapport et le suivi du plan distinguent ce nouveau contrôle technique de celui des lots Qwen rapporté par Mahé en revue de #145.
+
 ## Ce qui a été vérifié
 
 | Chaîne | Sources examinées | Règle constatée |
