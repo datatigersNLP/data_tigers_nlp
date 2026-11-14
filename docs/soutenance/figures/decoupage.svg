@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 300" role="img" aria-label="Part du texte rattaché à une autre section que celle citée, par méthode" font-family="IBM Plex Sans, Helvetica Neue, Arial, sans-serif">
+<title>Part du texte rattaché à une autre section que celle citée, par méthode</title>
+<defs><marker id="decoupage-n" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6472"/></marker><marker id="decoupage-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2c5d8a"/></marker><marker id="decoupage-b" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2e6a4f"/></marker><marker id="decoupage-u" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f3b73"/></marker></defs>
+<line x1="460.0" y1="20" x2="460.0" y2="236" stroke="#cfd5dc" stroke-width="1"/><text x="460.0" y="258" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">0 %</text>
+<line x1="572.0" y1="20" x2="572.0" y2="236" stroke="#cfd5dc" stroke-width="1"/><text x="572.0" y="258" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">5 %</text>
+<line x1="684.0" y1="20" x2="684.0" y2="236" stroke="#cfd5dc" stroke-width="1"/><text x="684.0" y="258" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">10 %</text>
+<line x1="796.0" y1="20" x2="796.0" y2="236" stroke="#cfd5dc" stroke-width="1"/><text x="796.0" y="258" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">15 %</text>
+<line x1="908.0" y1="20" x2="908.0" y2="236" stroke="#cfd5dc" stroke-width="1"/><text x="908.0" y="258" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">20 %</text>
+<line x1="1020.0" y1="20" x2="1020.0" y2="236" stroke="#cfd5dc" stroke-width="1"/><text x="1020.0" y="258" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">25 %</text>
+<text class="b" style="--i:0" x="20" y="54" font-size="18" font-weight="700" fill="#111827">M0</text><text class="b" style="--i:0" x="64" y="54" font-size="16" fill="#5b6472">découpage de l'éditeur</text>
+<rect class="barre" style="--i:0" x="460" y="38" width="524.2" height="24" rx="3" fill="#9aa3ad"/>
+<text class="b" style="--i:0" x="994.2" y="56" font-size="17" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#111827">23,4 %</text>
+<text class="b" style="--i:1" x="20" y="106" font-size="18" font-weight="700" fill="#111827">M1</text><text class="b" style="--i:1" x="64" y="106" font-size="16" fill="#5b6472">fenêtre glissante, 20 % de chevauchement</text>
+<rect class="barre" style="--i:1" x="460" y="90" width="401.0" height="24" rx="3" fill="#9aa3ad"/>
+<text class="b" style="--i:1" x="871.0" y="108" font-size="17" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#111827">17,9 %</text>
+<text class="b" style="--i:2" x="20" y="158" font-size="18" font-weight="700" fill="#111827">M3</text><text class="b" style="--i:2" x="64" y="158" font-size="16" fill="#5b6472">coupure sémantique</text>
+<rect class="barre" style="--i:2" x="460" y="142" width="318.1" height="24" rx="3" fill="#9aa3ad"/>
+<text class="b" style="--i:2" x="788.1" y="160" font-size="17" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#111827">14,2 %</text>
+<text class="b" style="--i:3" x="20" y="210" font-size="18" font-weight="700" fill="#1f3b73">M2</text><text class="b" style="--i:3" x="64" y="210" font-size="16" fill="#111827">découpage structurel, retenu</text>
+<rect class="barre" style="--i:3" x="460" y="194" width="3" height="24" fill="#1f3b73"/>
+<text class="b" style="--i:3" x="470.0" y="212" font-size="17" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#1f3b73">0,0 %</text>
+<text x="460" y="290" font-size="14" fill="#5b6472">part du texte des passages rattachée à une autre section que celle citée</text>
+</svg>
