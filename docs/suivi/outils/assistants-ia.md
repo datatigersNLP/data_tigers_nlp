@@ -14,7 +14,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 
 | Membre | Assistant | Modèle ou version | Formule (gratuite, payante…) | Usages principaux |
 |---|---|---|---|---|
-| Vaneck | à compléter | à compléter | à compléter | à compléter |
+| Vaneck | Claude Code dans VS Code (2.1.322 au 14/11) | Claude Opus 5.5 | payante | préparation et contrôle du corpus (#27), interface du site du volet A et tests Playwright (#48, #53), démonstration du volet B (#111), relectures de pull requests |
 | Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
 | Rémy | Google Antigravity | Gemini 3.8 Flash (High) | formule gratuite | métriques et références lexicales (#45, #47), étude d'ajustement contrastif (#49), revues et audits (#109, #115, #120, #124), cadrage des supports J3 (#112) et rapport (#113) |
 | Jibril | à compléter | à compléter | à compléter | à compléter |
