@@ -2,10 +2,10 @@
 
 **Module** NLP 2 · Master 2 Data & IA · FGES - Université Catholique de Lille  
 **Équipe** Data Tigers : Mahé BEGNIS, Remy RAYANE, Jibril BENSALEM, Vaneck DAGAR, Maïmouna SIGNATE  
-**Statut** Version consolidée selon le plan de Vaneck du 4 novembre (Ticket #112, 10 diapositives), corrigée les 10 et 11 novembre après revues de la PR #134 et publication des résultats sur #52  
-**Chiffres et sources de référence** `docs/jalons/J3_chiffres_verifies.md` (PR #124), Protocole 06 gelé (PR #108, #119 ; verrou fusionné le 9 novembre en PR #131), `docs/jalons/J3_diapositives_mahe.md` (PR #132 et #148 fusionnées) et `docs/jalons/J3_diapositives_jibril.md` (PR #143 à fusionner)  
+**Statut** Version consolidée selon le plan de Vaneck du 4 novembre (Ticket #112, 10 diapositives), actualisée le 13 novembre après retours de Maïmouna (#134) et résultats #52  
+**Chiffres et sources de référence** `docs/jalons/J3_chiffres_verifies.md` (PR #124), Protocole 06 gelé (PR #108, #119 ; verrou fusionné le 9 novembre en PR #131), `docs/jalons/J3_diapositives_mahe.md` (PR #132 et #148 fusionnées, PR #152) et `docs/jalons/J3_diapositives_jibril.md` (PR #143 fusionnée, PR #152)  
 **Responsables des supports** Vaneck DAGAR (plan et mise en forme), Remy RAYANE (assemblage et coordination) ; diapositives relues par leurs auteurs respectifs (Vaneck et Maïmouna : 2, 6 ; Remy et Mahé : 1, 3, 9, 10 ; Mahé et Remy : 7 ; Jibril : 5, 8 ; Mahé : 4, 7, 8)  
-**À mettre à jour le 13 novembre** recomptage du journal et de sa section 4, consolidation finale du jugement à l'aveugle (#52), état du raccordement de la démonstration (#111) et validation des cinq outils (#14)
+**À mettre à jour d'ici le 14-15 novembre** recomptage du journal et de sa section 4, retour du jugement à l'aveugle attendu le 14/11 (#52), état du raccordement de la démonstration (#111) et validation des cinq outils (#14)
 
 ---
 
@@ -19,7 +19,7 @@
 - Exigence 2 (Volet B engagé) : assistant local sur `Qwen2.5-7B-Instruct` (Q4_K_M) sous Ollama 0.40.13 (version épinglée), socle RAG fonctionnel avec repères de citation (`[P1]` à `[P5]`), protocole 06 et verrou de mesure gelés (#108, #119, #131), contrôle d'étanchéité appliqué par le générateur (#115, #107), faisabilité LoRA démontrée sur Mac M4 Pro, mesure avant exécutée le 9 novembre sur Legion et vérifiée à l'identique (#52), puis entraînement v2b, export GGUF et mesures témoin T et après adaptation exécutés le 11 novembre sur Mac (#52, #140 ; jugement humain à l'aveugle en attente).
 - Exigence 3 (Rigueur méthodologique et traçabilité) : maquette de démonstration fusionnée (#128, raccordement final sur Mac à terminer), classeur de suivi tenu à jour avec historique des arbitrages, journal d'usage IA auditable (décompte à actualiser le 13/11, plus de 56 sessions consignées) et cinq fiches d'outils novateurs à valider sur le ticket #14 pour le bonus (jusqu'à 3 points).
 
-**Notes pour l'oral.** J3 valide la livraison opérationnelle du premier volet et l'engagement méthodologique du second. Rien n'a été improvisé : chaque jalon s'appuie sur des critères écrits d'avance et des mesures vérifiées. Le lot d'adaptation v2b a été accepté le 10 novembre (3 exemples faux sur 30, soit 10,0 %) ; transféré exclusivement sur Mac (amendement M1, #52), l'entraînement LoRA, l'export GGUF et la mesure comparative après adaptation face au témoin T ont été menés le 11 novembre (+11,1 points sur M4 en B2, p = 0,0078), avant le jugement humain à l'aveugle prévu pour le 13 novembre.
+**Notes pour l'oral.** J3 valide la livraison opérationnelle du premier volet et l'engagement méthodologique du second. Rien n'a été improvisé : chaque jalon s'appuie sur des critères écrits d'avance et des mesures vérifiées. Le lot d'adaptation v2b a été accepté le 10 novembre (3 exemples faux sur 30, soit 10,0 %) ; transféré exclusivement sur Mac (amendement M1, #52), l'entraînement LoRA, l'export GGUF et la mesure comparative après adaptation face au témoin T ont été menés le 11 novembre (+11,1 points sur M4 en B2, p = 0,0078), avant le jugement humain à l'aveugle attendu le 14 novembre (#52).
 
 **À ne pas dire.** « Volet B terminé » ; « exactitude juridique validée » (le jugement humain à l'aveugle de 20 réponses B2 par camp reste à faire) ; « amélioration démontrée sur M1 hors corpus » (M1 reste à 20/24 de part et d'autre, p = 1).
 
@@ -29,23 +29,24 @@
 
 ## Diapositive 2 : Volet A, le site en ligne et son architecture
 
-*(Relecture attendue : Vaneck DAGAR et Maïmouna SIGNATE.)*
+*(Relecture : Vaneck DAGAR et Maïmouna SIGNATE ; remarques de Maïmouna du 12/11 intégrées.)*
 
 **Message.** Une recherche dense calculée à 100 % dans le navigateur du visiteur, sans aucun serveur applicatif ni coût d'infrastructure.
 
 **Contenu.**
 - Architecture statique : application web servie par GitHub Pages (`front/`, Vite, React, Tailwind CSS), aucun backend Python en production.
-- Moteur d'exécution : Transformers.js 4.3.0 adossé à ONNX Runtime Web (WebAssembly / SIMD), entièrement servi depuis le site sans requête vers un CDN tiers.
+- Mise en ligne automatique (#29) : à chaque modification de `front/` sur `dev`, GitHub Actions construit le site et le publie sur GitHub Pages (`.github/workflows/deploiement-volet-a.yml`) ; le chemin de base `/data_tigers_nlp/` (`front/vite.config.js`) évite la page blanche.
+- Moteur d'exécution : Transformers.js 4.3.0 adossé à ONNX Runtime Web (exécution locale dans le navigateur via WebAssembly), entièrement servi depuis le site sans requête vers un CDN tiers.
 - Encodeur dense : `multilingual-e5-small` quantifié en 8 bits (`q8`) pour concilier fidélité de représentation et compacité.
-- Asymétrie E5 préservée : préfixes obligatoires `query: ` pour la requête et `passage: ` pour les documents indexés, garantissant le respect de la géométrie latente.
-- Optimisation matricielle et intégrité : vecteurs normalisés L2 ramenant la similarité cosinus à un produit scalaire en O(d). Matrice d'embeddings chargée en mémoire typée (`Float32Array`) depuis `index_m2.f32`, métadonnées lues dans `passages_m2.json` via `JSON.parse`, et empreintes SHA-256 vérifiées au chargement (`front/src/recherche/moteur.js`).
+- Asymétrie E5 préservée : préfixes obligatoires `query: ` pour la requête et `passage: ` pour les documents indexés, indispensables pour projeter questions et passages dans le même espace vectoriel.
+- Optimisation matricielle et intégrité : les vecteurs ont une longueur de 1 (normalisés L2), où un simple produit scalaire donne la similarité avec chacun des 4 240 passages. Matrice d'embeddings chargée en mémoire typée (`Float32Array`) depuis `index_m2.f32`, métadonnées lues dans `passages_m2.json` via `JSON.parse`, et empreintes SHA-256 vérifiées au chargement (`front/src/recherche/moteur.js`).
 - Réactivité utilisateur : 18,3 ms pour encoder une requête dans le navigateur avec le modèle élagué de 65,7 Mio.
 
-**Notes pour l'oral.** L'autonomie totale du site était une contrainte majeure. Le calcul local garantit la confidentialité des requêtes : aucun texte n'est transmis à un serveur externe.
+**Notes pour l'oral.** L'autonomie totale du site était une contrainte majeure. Le calcul local garantit la confidentialité des requêtes : aucun texte n'est transmis à un serveur externe. Pour l'oral, expliquer simplement l'optimisation : les vecteurs étant de norme 1, la similarité cosinus se réduit au produit scalaire direct, calculable en quelques millisecondes dans le navigateur sans composant serveur.
 
 **À ne pas dire.** « 18,6 ms sur le site » (18,6 ms mesurait le `q8` d'origine non élagué de 112,8 Mio dans Chromium au notebook 02) ; « `index.bin` » (le fichier servi est `index_m2.f32`).
 
-**Sources.** `README.md` ; `front/src/recherche/moteur.js` ; `front/src/index.css` ; `scripts/allegement/README.md`.
+**Sources.** `README.md` ; `front/src/recherche/moteur.js` ; `front/src/index.css` ; `scripts/allegement/README.md` ; ticket #29 ; `.github/workflows/deploiement-volet-a.yml` ; `front/vite.config.js`.
 
 ---
 
@@ -102,14 +103,14 @@
 
 ## Diapositive 6 : Volet B, la démonstration en préparation
 
-*(Relecture attendue : Vaneck DAGAR et Maïmouna SIGNATE.)*
+*(Relecture : Vaneck DAGAR et Maïmouna SIGNATE ; remarques de Maïmouna du 12/11 intégrées.)*
 
 **Message.** Le contrat d'interface (#121) et la maquette applicative (#128, fusionnée le 11 novembre) posent la démonstration de l'assistant local et de sa politique d'abstention.
 
 **Contenu.**
-- Cadrage fonctionnel : démonstration interactive de l'assistant réglementaire local du cas B1 avec affichage des passages sources `[P1]`–`[P5]` et du **score de similarité** (le contrat #121 précise que ce score « n'est ni une probabilité ni une preuve »).
-- Contrat d'interface verrouillé (PR #121, ticket #111) : spécification formalisée des échanges entre l'interface utilisateur et le backend RAG local (requêtes, contextes, citations, réponses, refus d'abstention).
-- Maquette intégrée (PR #128, fusionnée le 11 novembre) : écran d'accueil, fil de discussion avec rendu des sources et mise en évidence pédagogique du refus de répondre hors périmètre, avec verrou du serveur et mise à niveau Vite 8.3.5 validés en contre-relecture.
+- Cadrage fonctionnel : démonstration interactive de l'assistant réglementaire local du cas B1 avec affichage des passages sources `[P1]` à `[P5]` et du **score de similarité** (le contrat #121 précise que ce score « n'est ni une probabilité ni une preuve »).
+- Contrat d'interface verrouillé (PR #121, ticket #111) : spécification formalisée des échanges entre l'interface utilisateur et le backend RAG local (requêtes, contextes, citations, réponses, abstentions).
+- Maquette intégrée (PR #128, fusionnée le 11 novembre) : écran d'accueil, fil de discussion avec rendu des sources et mise en évidence pédagogique du refus de répondre hors périmètre, avec verrou du serveur et mise à niveau Vite 8.3.5 validée en contre-relecture (npm audit propre, 0 vulnérabilité).
 - Intégration technique prévue (#111) : depuis l'amendement M1 (#52), la démonstration tourne sur le Mac de Mahé avec Ollama 0.40.13 en local (raccordement final à terminer après la fusion de la PR #128) ; l'opportunité d'intégrer la récupération v2 (`bge-m3`, ~2 s sur CPU Mac d'après #138) fera également l'objet d'un essai sur le Mac de Mahé.
 - Scénario de test de la soutenance : un jeu d'exemples balisant questions directes, cas multi-sources et déclenchement de l'abstention sera préparé pour la soutenance (prévu le 12 novembre selon #111).
 
@@ -131,14 +132,14 @@
 
 ---
 
-## Diapositive 8 : Volet B, protocole 06 et mesure avant
+## Diapositive 8 : Volet B, résultats de l'adaptation (avec Jibril)
 
-**Source commune.** Voir directement `docs/jalons/J3_diapositives_mahe.md`, section « Diapositive 8 : Volet B, protocole 06 et mesure avant (avec Jibril) » et `docs/jalons/J3_diapositives_jibril.md` pour le texte oral de Jibril (ne pas recopier les tableaux ici afin d'éviter une double source).
+**Source commune.** Voir directement `docs/jalons/J3_diapositives_mahe.md`, section « Diapositive 8 : Volet B, résultats de l'adaptation (avec Jibril) » (PR #152) et `docs/jalons/J3_diapositives_jibril.md` pour le texte oral de Jibril (ne pas recopier les tableaux ici afin d'éviter une double source).
 
-**État d'assemblage au 11 novembre (PR #132 et #148 fusionnées, PR #143 en relecture, résultats du #52).**
+**État d'assemblage au 13 novembre (PR #132, #143, #148 fusionnées, PR #152, résultats du #52).**
 - Protocole 06 gelé (#108, #119) avec Ollama 0.40.13 épinglé, calibration technique B0 sans erreur sur 8 questions et verrou fusionné le 9 novembre (#131).
 - Mesure **avant** exécutée le 9 novembre sur le Legion (archive reçue, vérifiée fichier par fichier et analyse reproduite à l'identique par Mahé le 9 novembre sur #52 ; référence descriptive non comparée directement au Mac selon l'amendement M1) : sur les 97 questions (erreurs techniques exclues des dénominateurs : 2 en B1, 1 en B2), B1 obtient 0/24 (0 %) en M1 et 30/71 (42,3 %) en M4, tandis que B2 obtient 20/24 (83,3 %) en M1 mais s'abstient à tort sur 45/72 (62,5 %, M2) avec 12/72 (16,7 %) en M4.
-- Mesures **témoin T** et **après** exécutées le 11 novembre sur le Mac de Mahé (amendement M1, #52, Ollama 0.40.13, une seule exécution par état, au plus 2,1 % d'erreurs techniques, Q088 en erreur dans les quatre états avec récupération). Sur l'analyse confirmatoire principale (**B2 adapté contre B2 du témoin T**, intervalles bilatéraux à 97,5 %) : **M4** (citation pertinente sur 72 questions) progresse de **10/72 (13,9 %) à 18/72 (25,0 %)**, soit **+11,1 points** ([+2,1 ; +23,8], McNemar exact `p = 0,0078`, **amélioration démontrée**) ; **M1** (abstention correcte hors corpus) reste à **20/24 (83,3 %) contre 20/24 (83,3 %)** (0,0 pt [−20,5 ; +20,5], `p = 1`, amélioration non démontrée). En descriptif (IC 95 %), l'abstention à tort en B2 (M2) recule de 70,8 % à 55,6 % (−15,3 pts [−26,3 ; −5,4]) et les citations valides (M3) montent de 25,0 % à 44,4 % (+19,4 pts [+9,8 ; +30,8], sorties invalides de 3 à 0), avec M5 inchangé à 4/24. L'échantillon aveugle de 20 réponses citées de B2 par camp (`temoin` contre `apres`, graine 20261018) reste à juger par Maïmouna et Vaneck.
+- Mesures **témoin T** et **après** exécutées le 11 novembre sur le Mac de Mahé (amendement M1, #52, Ollama 0.40.13, une seule exécution par état, au plus 2,1 % d'erreurs techniques, Q088 en erreur dans les quatre états avec récupération). Sur l'analyse confirmatoire principale (**B2 adapté contre B2 du témoin T**, intervalles bilatéraux à 97,5 %) : **M4** (citation pertinente sur 72 questions) progresse de **10/72 (13,9 %) à 18/72 (25,0 %)**, soit **+11,1 points** ([+2,1 ; +23,8], McNemar exact `p = 0,0078`, **amélioration démontrée**) ; **M1** (abstention correcte hors corpus) reste à **20/24 (83,3 %) contre 20/24 (83,3 %)** (0,0 pt [−20,5 ; +20,5], `p = 1`, amélioration non démontrée). En descriptif (IC 95 %), l'abstention à tort en B2 (M2) recule de 70,8 % à 55,6 % (−15,3 pts [−26,3 ; −5,4]) et les citations valides (M3) montent de 25,0 % à 44,4 % (+19,4 pts [+9,8 ; +30,8], sorties invalides de 3 à 0), avec M5 inchangé à 4/24. Le retour du jugement humain à l'aveugle de 20 réponses citées de B2 par camp (`temoin` contre `apres`, graine 20261018, par Maïmouna et Vaneck) est attendu le 14 novembre (#52).
 
 ---
 
@@ -148,7 +149,7 @@
 
 **Contenu.**
 - Calendrier officiel (#8) : la confirmation écrite des dates officielles de **J3 (16/11 en GitHub) et J4 (30/11)** reste attendue de l'enseignant, à ne pas présenter comme actée collectivement ; seule la **fin des livrables** a été fixée par l'équipe au **20 novembre** (#114).
-- Entraînement LoRA et mesure après adaptation (#52, #107) : après le verrou du 09/11 (#131), l'acceptation du lot v2b le 10/11 (3/30 = 10,0 % avec risque déclaré ~11/54 abstentions injustifiées) et une interruption le 10/11 sous l'amendement M1, l'entraînement sur Mac, l'export GGUF (#140) et les mesures `temoin` et `apres` ont été menés le 11/11 (+11,1 pts en B2 M4 contre T, `p = 0,0078` ; M1 inchangé à 20/24). Reste le jugement humain à l'aveugle de 20 réponses B2 par camp.
+- Entraînement LoRA et mesure après adaptation (#52, #107) : après le verrou du 09/11 (#131), l'acceptation du lot v2b le 10/11 (3/30 = 10,0 % avec risque déclaré ~11/54 abstentions injustifiées) et une interruption le 10/11 sous l'amendement M1, l'entraînement sur Mac, l'export GGUF (#140) et les mesures `temoin` et `apres` ont été menés le 11/11 (+11,1 pts en B2 M4 contre T, `p = 0,0078` ; M1 inchangé à 20/24). Le retour du jugement humain à l'aveugle de 20 réponses B2 par camp est attendu le 14 novembre (#52).
 - Service Ollama et export (#140, PR #147 et #151) : Ollama 0.40.13 rejette la directive `ADAPTER` avec l'erreur `errAdaptersUnsupported` et exige de bloquer ses mises à jour automatiques (dérive constatée vers 0.40.15 sur un poste Windows non épinglé). Le contournement fusionne les poids en bf16 puis convertit en GGUF Q4_K_M avec contrôle de requantification et comparaison au témoin T (produit et vérifié le 09/11 ; PR #151 adapte `test_export.py` au refus de liens symboliques `WinError 1314` sous Windows 11).
 - Démonstration (#111, PR #128 fusionnée le 11 novembre) : depuis l'amendement M1 (#52), la démonstration tourne sur le Mac de Mahé avec Ollama 0.40.13 en local ; restent le raccordement local final, l'essai de `bge-m3` sur ce Mac et la rédaction du scénario de soutenance.
 - Étude contrastive d'encodeur (#49) : **le ticket #49 reste ouvert**. En application de la règle de repli du protocole 05 (16/10), le site sert l'encodeur de base élagué ; le 30/10, la poursuite de sa mesure officielle n'a pas été maintenue dans le calendrier resserré afin de prioriser le volet B, et ses enseignements sont versés au rapport final.
@@ -170,7 +171,9 @@
 - **10 novembre (réalisé)** : acceptation du lot v2b (`3/30 = 10,0 %`) ; amendement M1 concentrant entraînement, export et mesures sur Mac (`#52`) ; fusions de la chaîne d'export (`#140`, PR `#147`) et des compléments de diapositives (PR `#148`), et révision des supports J3 et fiches d'outils.
 - **11 novembre (réalisé)** : fusions de la maquette de démonstration (`#128`) et de la section rapport (`#150`) ; entraînement LoRA, export GGUF et mesures `temoin` et `apres` sur le Mac de Mahé (`#52`, B2 M4 +11,1 pts contre T à `p = 0,0078`).
 - **12 novembre (point d'arrêt strict)** : finalisation du raccordement local de la démonstration, essai `bge-m3` et scénario de soutenance sur le Mac de Mahé (`#111`), et suite des relectures ouvertes (`#143`, `#145`, `#146`, `#151`).
-- **13 novembre (échéance supports `#112` & axes `#113`)** : jugement aveugle de 20 réponses citées de B2 par camp (`temoin` contre `apres`, Maïmouna et Vaneck), finalisation collective des 5 fiches d'outils (#14), recomptage du journal et assemblage final des supports de J3 (`docs/jalons/J3_diapositives_mahe.md`, `J3_diapositives_jibril.md`, ce fichier).
+- **13 novembre** : finalisation collective des 5 fiches d'outils (#14), recomptage du journal d'usage IA et de sa section 4.
+- **14 novembre** : retour attendu du jugement humain à l'aveugle de 20 réponses citées de B2 par camp (`temoin` contre `apres`, Maïmouna et Vaneck, #52).
+- **15-16 novembre (échéance supports `#112`)** : assemblage final des supports de J3 avec Vaneck (`docs/jalons/J3_diapositives_mahe.md`, `J3_diapositives_jibril.md`, ce fichier).
 - **16 novembre (à confirmer par écrit, #8)** : Jalon officiel J3 (revue de 20 à 30 minutes : volet A livré, volet B engagé).
 - **19 novembre** : livraison de la V1 du rapport final (`#113`).
 - **20 novembre** : fin des livrables fixée par l'équipe (supports, site et suivi figés, `#114`).
