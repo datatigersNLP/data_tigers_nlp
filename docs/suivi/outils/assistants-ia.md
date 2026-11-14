@@ -18,7 +18,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 | Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
 | Rémy | Google Antigravity | Gemini 3.8 Flash (High) | formule gratuite | métriques et références lexicales (#45, #47), étude d'ajustement contrastif (#49), revues et audits (#109, #115, #120, #124), cadrage des supports J3 (#112) et rapport (#113) |
 | Jibril | à compléter | à compléter | à compléter | à compléter |
-| Maïmouna | à compléter | à compléter | à compléter | à compléter |
+| Maïmouna | Claude Code dans VS Code (2.1.322 au 12/11) | Claude Opus 5.5 | payante | compréhension des tâches et du code, relectures de pull requests, vérification de la chaîne RAG, rédaction du journal et des fiches |
 
 ## Mise en place
 - Temps avant le premier résultat utile : (Remy, Antigravity) moins d'une heure lors de la première session sur PIAF et le journal (#30, #34, session 9).
@@ -40,6 +40,8 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
   - (Remy, Antigravity) Propension à produire des informations plausibles mais fausses dès lors qu'elles ne sont pas vérifiées par une commande locale ou la lecture des commits/issues (exemple critique lors des fiches de la PR #135 : mention de `uv 0.4.29` alors qu'`uv` est absent du poste, confusion de paternité sur #50/PR #78, ou perte silencieuse des caractères accentués lors d'une réécriture complète sous #134).
   - (Remy, Antigravity) Scripts shell proposés initialement en syntaxe POSIX/Bash (pipes ou `latexmk`) inutilisables tels quels dans un environnement PowerShell Windows sans adaptation.
+  - (Maïmouna, Claude Code) Il affirme parfois avec assurance des choses fausses, qu'il ne corrige qu'après une question de ma part : une phrase de réponse de Qwen présentée comme inventée alors que son contenu figurait dans trois passages, et le refus d'un lien attribué au site du ministère alors que la coupure venait de ma connexion (journal, section 4, 08/11).
+  - (Maïmouna, Claude Code) Il a ouvert dans l'éditeur le fichier d'annotation complet, lot de test compris, au lieu des seules questions de calibration. J'ai fermé l'onglet sans le lire (journal, section 4, 08/11) : il faut lui indiquer à l'avance les fichiers à ne pas ouvrir.
 
 ## Comparaison
 - Méthode ou outil utilisé auparavant : (Remy) interface web conversationnelle (copier-coller manuel vers VS Code).
