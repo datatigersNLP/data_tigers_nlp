@@ -105,20 +105,21 @@
 
 *(Relecture : Vaneck DAGAR et Maïmouna SIGNATE ; remarques de Maïmouna du 12/11 intégrées.)*
 
-**Message.** Le contrat d'interface (#121) et la maquette applicative (#128, fusionnée le 11 novembre) posent la démonstration de l'assistant local et de sa politique d'abstention.
+**Message.** L'interface et la couche locale de l'assistant sont livrées et ont tourné avec le vrai Qwen ; restent l'essai sur le Mac avec le témoin T et le modèle adapté, le scénario et la vidéo.
 
 **Contenu.**
-- Cadrage fonctionnel : démonstration interactive de l'assistant réglementaire local du cas B1 avec affichage des passages sources `[P1]` à `[P5]` et du **score de similarité** (le contrat #121 précise que ce score « n'est ni une probabilité ni une preuve »).
-- Contrat d'interface verrouillé (PR #121, ticket #111) : spécification formalisée des échanges entre l'interface utilisateur et le backend RAG local (requêtes, contextes, citations, réponses, abstentions).
-- Maquette intégrée (PR #128, fusionnée le 11 novembre) : écran d'accueil, fil de discussion avec rendu des sources et mise en évidence pédagogique du refus de répondre hors périmètre, avec verrou du serveur et mise à niveau Vite 8.3.5 validée en contre-relecture (npm audit propre, 0 vulnérabilité).
-- Intégration technique prévue (#111) : depuis l'amendement M1 (#52), la démonstration tourne sur le Mac de Mahé avec Ollama 0.40.13 en local (raccordement final à terminer après la fusion de la PR #128) ; l'opportunité d'intégrer la récupération v2 (`bge-m3`, ~2 s sur CPU Mac d'après #138) fera également l'objet d'un essai sur le Mac de Mahé.
-- Scénario de test de la soutenance : un jeu d'exemples balisant questions directes, cas multi-sources et déclenchement de l'abstention sera préparé pour la soutenance (prévu le 12 novembre selon #111).
+- Ce que voit l'utilisateur : la réponse rédigée, chaque référence `[P1]` à `[P5]` ouvrant la carte de son passage (fiche, section, lien, score de similarité), un encadré distinct quand le modèle s'abstient, et le nom du modèle qui a rédigé la réponse.
+- Contrat d'interface validé (PR #121) : deux routes d'API, l'état de la chaîne et la question ; réponse citée, abstention, réponse non conforme et erreurs sont signalées chacune à sa façon.
+- Interface et couche locale livrées (PR #128, fusionnée le 11 novembre) : la couche relie l'interface à la chaîne de la #85 sans en changer la logique, sur 127.0.0.1 uniquement, une question à la fois. Le modèle servi se choisit au lancement de la couche, jamais depuis le navigateur.
+- Premier essai avec le vrai Qwen (Maïmouna, 8 novembre), sur sa machine Windows avec le modèle de base : abstention et réponses citées s'affichent, et les citations ouvrent leurs passages. Une abstention a pris 88 s.
+- Machine de la démonstration : le Mac de Mahé, avec Ollama 0.40.13 (amendement M1, #52), le témoin T (`temoin-q4_k_m-local`) et le modèle adapté (`lora-v2b-q4_k_m-local`). Essai à faire avec Mahé ce week-end.
+- Scénario de 3 à 4 minutes (#111), en cours : une question directe, une question qui croise deux passages, une question hors corpus (abstention), et la même question posée à T puis au modèle adapté. Vidéo de secours le 18 novembre.
 
-**Notes pour l'oral.** L'interface du volet B rend visible la politique d'abstention. En cas de doute ou de question hors périmètre, l'utilisateur voit pourquoi le système refuse d'inventer et peut lire les passages sources ou constater le seuil de similarité. Présenter l'état réel de la démonstration (#128 fusionnée, raccordement local et scénario en cours sur le Mac de Mahé) sans anticiper le branchement de `bge-m3` avant son essai.
+**Notes pour l'oral.** L'abstention est rendue visible, mais l'interface ne prétend pas en connaître la raison : elle indique que le modèle s'est abstenu à partir des passages fournis, et que la question sort peut-être du périmètre. L'utilisateur peut ouvrir les passages consultés pour vérifier. La démonstration n'applique pas le seuil S de la mesure : c'est le modèle seul qui décide de s'abstenir. Pour comparer T et le modèle adapté, la couche est relancée avec l'autre modèle, et la réponse indique lequel l'a rédigée. Une réponse peut prendre plus d'une minute : la vidéo est plus sûre qu'une démonstration en direct.
 
-**À ne pas dire.** « Interface de production web » (c'est une démonstration locale pour la soutenance) ; « niveau de confiance » ; « démonstration déjà branchée sur `bge-m3` » tant que l'essai sur le Mac n'est pas validé.
+**À ne pas dire.** « Interface de production web » (c'est une démonstration locale pour la soutenance) ; « niveau de confiance » ; « l'utilisateur voit pourquoi le système refuse » ; « seuil de similarité » à propos de la démonstration ; « démonstration testée sur le Mac » ou « avec le modèle adapté » tant que l'essai n'est pas fait ; « démonstration branchée sur `bge-m3` ».
 
-**Sources.** `docs/etudes/demonstration/contrat_interface_111.md` (PR #121) ; PR #128 (fusionnée le 11 novembre) ; `docs/etudes/recuperation/02_confirmation_test.md` ; tickets #52, #111 et #114.
+**Sources.** `docs/etudes/demonstration/contrat_interface_111.md` (PR #121) ; PR #128 (fusionnée le 11 novembre) et revue de Maïmouna du 8 novembre ; `demo_b/src/composants/Reponse.jsx` et `Passage.jsx` ; `scripts/rag/serveur_demo.py` ; #52 (amendement M1, modèles et digests du 11 novembre) ; #111 ; #134.
 
 ---
 
