@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 4 novembre 2026, précisions après revue et synchronisation avec `dev` après #122 ; sessions 1 à 54 ; sessions 22 à 25, 28 à 31, 33, 34 et 36 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 12 novembre 2026 ; sessions 1 à 63 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56 et 61 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -34,7 +34,7 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 | Outil | Nature | Membres | Usage |
 |---|---|---|---|
-| Claude Opus 5, puis Claude Opus 5.5 (à partir de la session 12) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS, Vaneck DAGAR | architecture, décisions, recherches, critique, rédaction assistée |
+| Claude Opus 5, puis Claude Opus 5.5 (à partir de la session 12) | modèle de langage, fenêtre de contexte de 1 million de tokens | Mahé BEGNIS, Vaneck DAGAR, Maïmouna SIGNATE | architecture, décisions, recherches, critique, rédaction assistée |
 | Claude Code | environnement de développement augmenté, exécute le modèle ci-dessus | membres disposant d'un abonnement | exécution de commandes, lecture de fichiers, mesures |
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
@@ -1612,6 +1612,290 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Difficultés rencontrées.** Une modification documentaire après actualisation exige elle aussi une nouvelle revue. Les champs humains restent vierges malgré l'approbation du code et du support. La consolidation du journal est préparée sur une branche séparée ; sa relecture documentaire reste attendue.
 
+
+**Sessions 55 à 58, de Vaneck DAGAR.** Transmises par Vaneck le 10 novembre, hors du dépôt, et reportées ici sans changement de fond, aux numéros réservés par la #133 (48 à 51 dans sa fiche d'usage). Les sessions 57 et 58 ont été écrites le jour même ; les sessions 55 et 56 ont été consignées a posteriori le 28 octobre, à partir des commits, des pull requests, des tickets et de l'historique de la conversation avec l'assistant. Les mentions de la grille du lot v1 ont été ajoutées à la session 58 le 7 novembre, à la demande de Mahé (#107).
+
+### Session 55, 18 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Fin du volet A : relecture de la PR #83 (focus du menu sur téléphone, périmètre du corpus), relecture de la PR #81 après sa fusion, fiche d'usage de l'IA complétée pour Mahé.
+
+**Produit.**
+- Revue de la #83, approuvée sur `c69042e`, puis fusion de la #83 dans `dev`, qui ferme #53.
+- Commentaire de relecture sur la #81 (ONNX Runtime servi par le site), avec une remarque non bloquante : `onnxruntime-web` importé sans être déclaré dans `package.json`.
+- Sessions 20 à 27, 33 et 34 de ce fichier complétées et transmises à Mahé.
+
+**Mesures exécutées.**
+- #83, dans Chromium à 375 px, toutes les requêtes hors du site bloquées, focus relevé après chaque frappe : 28 frappes sans chat et 33 avec un chat, le focus ne sort jamais du panneau ; scénario de Jibril (dernier bouton, Tab, Échap) conforme ; menu fermé au passage à 1 280 px ; 261 fiches et 4 240 passages recomptés dans `passages_m2.json` ; build et tests du moteur sans échec.
+- #81 : les 4 fichiers d'ONNX Runtime publiés sont identiques octet pour octet à ceux du paquet ; sur le site en ligne, jsDelivr et Hugging Face bloqués, cache vide : moteur prêt en 8 s, 5 passages, aucune requête externe.
+
+**Résultats retenus.**
+- Le focus reste dans le menu sur téléphone, et le site ne dépend plus d'aucun CDN.
+
+**Ce qui a été écarté, et pourquoi.**
+- Bloquer la #81 pour la déclaration de `onnxruntime-web` : le test vérifie déjà les versions ; remarque laissée à Mahé.
+
+**Ce que l'équipe a validé, et par qui.**
+- #80 approuvée par Mahé, #83 approuvée par Jibril et moi ; volet A clos par le tag `volet-a-v1` (Mahé).
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Aucune.
+
+### Session 56, 27 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Reprise après le volet A : bilan du dépôt, mise à jour de ma copie locale, vérification de la liste de tâches reçue de Mahé pour le volet B, relecture de la V0 du rapport (PR #105).
+
+**Produit.**
+- Copie locale alignée sur GitHub (`dev` et `main`), branches locales déjà fusionnées supprimées.
+- Liste de mes tâches du volet B, du 27/10 au 20/11, recoupée ligne par ligne avec les tickets #13, #51, #52, #107, #111, #112, #113 et #114.
+- Commentaire de relecture sur la #105.
+
+**Mesures exécutées.**
+- Faits du rapport qui me concernent vérifiés dans le classeur de suivi et sur GitHub : domaines D1 et D3, charges de #27 (8 h estimées, 10 h réelles) et de #29 (3 h, 1 h 30), relectures de #76 et #78, partie Playwright cohérente avec ma fiche.
+
+**Résultats retenus.**
+- La liste de Mahé correspond aux tickets. Deux compléments relevés : la #105 attend aussi ma relecture, et le Weekly 7 demande la charge réelle des tâches terminées.
+- Ma section 4.4 du rapport est attendue le 13/11 (#113).
+
+**Ce qui a été écarté, et pourquoi.**
+- Approuver la #105 : #113 confie l'approbation de la V0 à Maïmouna ; commentaire de relecture seulement.
+
+**Ce que l'équipe a validé, et par qui.**
+- Répartition du volet B : commentaire de Mahé sur #51 (25/10), ordres du jour des Weekly 7 et suivants.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Le tag `jalon-j2` local différait de celui de GitHub : la récupération l'a refusé ; tag local aligné sur GitHub.
+
+### Session 57, 28 octobre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Volet B : relecture de la chaîne RAG (PR #85), relectures des PR #108, #116 et #117, contrat d'interface de la démonstration (#111, étape 1), charges de #111 et #51.
+
+**Produit.**
+- Revue de la #85 (commentaire, la PR étant déjà fusionnée) : limites de Q036 jugées acceptables pour une première baseline, puisque c'est le point de départ que #52 doit comparer ; `rag_51.md` à mettre à jour après la fusion.
+- Approbations de la #108 (protocole 06), de la #116 (fiches d'outils de Mahé) et de la #117 (journal, sessions 42 et 44).
+- PR #121 : `docs/etudes/demonstration/contrat_interface_111.md`, routes `GET /api/etat` et `POST /api/question`, format de la réponse construit avec les sorties de `generer_reponse`, statut `erreur_preparation`, affichage par statut, code de la démonstration dans `demo_b/` ; relecture demandée à Jibril.
+- #111 : estimation de 24 h cumulées pour Maïmouna et moi. #51 : 6 h ajoutées pour Maïmouna et moi ; relecture de la #85, charge réelle de 2 h.
+
+**Mesures exécutées.**
+- #85, sur `dev` (`6a95085`), Python 3.12.14 et NumPy 2.5.3 : 45 tests réussis ; `--check-index` sur l'index du site : `index_verifie`, 4 240 passages, empreintes `2ec45586…` et `aee5bbdb…` ; une question du lot de test (Q004) refusée, Q036 lue mot pour mot dans le jeu figé.
+- #108 : section 2 vérifiée sur le jeu figé : empreinte `807498…`, 97 questions de test (73 du corpus issues de 61 fiches, 24 hors corpus), 8 de calibration.
+- #116 : 8 sessions de Mahé sous Opus 5 et 14 sous Opus 5.5, comptées dans le journal.
+- #117 : #76 fusionnée par moi, mes 10 sessions dans le journal, fusions du 27/10 et fermeture de #12 vérifiées par l'API.
+- Contrat : les quatre exemples JSON validés par script ; valeurs de l'exemple reprises de l'essai Q036 et de `passages_m2.json`.
+
+**Résultats retenus.**
+- La chaîne de la #85 se vérifie sur ma machine sans Ollama ; la reproduction complète (#51, 04/11) se fera sur le Legion avec Jibril.
+- Jibril n'avait pas commencé le contrat d'interface : aucun commentaire sur #111, aucune branche ni PR sur la démonstration.
+- Le déploiement du site ne se déclenche que sur `front/**` : un dossier `demo_b/` ne peut pas modifier le site du volet A.
+
+**Ce qui a été écarté, et pourquoi.**
+- Trois questions sur le jugement à l'aveugle (nombre de réponses, échelle de notation, préparation du fichier anonymisé) : non publiées dans la revue de la #108, message court retenu ; à régler avant le jugement du 13/11.
+- Refaire la récupération de Q036 avec E5 sur ma machine : environ 700 Mio à télécharger ; reporté à la reproduction sur le Legion.
+- Modifier l'estimation d'origine de #51 (16 h, validée le 12/10) : conservée, l'estimation de notre part est ajoutée à côté.
+
+**Ce que l'équipe a validé, et par qui.**
+- #108 approuvée par Jibril (27/10), puis par moi ; contrat d'interface en attente de la relecture de Jibril.
+
+**Temps d'appropriation constaté.**
+- Chaîne RAG (`rag.py`, `generation.py`) : lecture guidée du code avec l'assistant pendant la relecture ; non relevé séparément des 2 h de la relecture.
+
+**Difficultés rencontrées.**
+- Ollama et Qwen absents de ma machine : seules les parties sans modèle génératif ont pu être exécutées.
+
+### Session 58, 2 novembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Relectures avant le gel du protocole et le Weekly 8 : PR #108 (après les arbitrages de Mahé), #121 (après les commits de Jibril), #122, #123 et #124 ; fusion du contrat d'interface ; grille de relecture du lot v1 (#107).
+
+**Produit.**
+- Approbation de la #108 sur `e87b9ff` : la précédente, du 28/10, avait été annulée par les nouveaux commits.
+- PR #121 relue après les deux commits de Jibril, puis fusionnée dans `dev` (`4e781cd`) : étape 1 de #111 terminée.
+- Approbations de la #122 (journal, sessions 46 et 47 de Mahé, et suivi), de la #123 (ligne de Mahé dans la fiche Playwright) et de la #124 (chiffres vérifiés des supports de J3), avec une remarque sur la source des 822 requêtes.
+- Copie locale de `dev` mise à jour, branche locale de la #121 supprimée.
+- Grille de relecture du lot v1 (#107, 30 exemples) préremplie par l'IA (Claude Opus 5.5 via Claude Code), hors du dépôt, à ma demande et avec vérification par moi même par la suite ; grille et bilan transmis à Mahé sur Discord.
+
+**Mesures exécutées.**
+- #108 : différences relues depuis `c8eb115` (consigne de B0, Ollama 0.40.13, machines, erreurs techniques reproductibles, verrou indépendant des fins de ligne) ; section 2 inchangée.
+- #121 : quatre exemples JSON du contrat toujours valides après les commits de Jibril.
+- #122 : charges de #51 et #111 et approbations des #108, #116 et #117 conformes à GitHub.
+- #124 : chiffres retrouvés dans leurs sources sur `dev` (`03_evaluation.md`, `02_indexation.md`, `moteur.js`, `README.md`, `inference_locale_qwen.md`, `faisabilite_legion_20261026.md`) ; les 822 requêtes figurent dans `scripts/allegement/README.md`, et non dans le `README.md` racine cité.
+- Grille du lot v1 : grille préremplie passée dans `grille_relecture.py bilan` : valide, 8 exemples faux sur 30 (26,7 %, IC 95 % de 14,2 à 44,4 %), dont 6 sur 15 parmi les cités et 2 sur 8 en « passage retiré ».
+- Verdicts préremplis de la grille du lot v1 vérifiés par moi.
+
+**Résultats retenus.**
+- Les précisions de Jibril sur la #121 ne changent aucun choix du contrat : état prêt plus strict, structure fixe des réponses, erreurs 400 et 409, modèle fixé côté serveur.
+
+**Ce qui a été écarté, et pourquoi.**
+- Corriger deux mentions restées en retard dans le contrat (« à valider par Jibril », « configuration cible du 30/10 ») : un nouveau commit aurait annulé l'approbation de Jibril ; reporté à la PR de la maquette.
+
+**Ce que l'équipe a validé, et par qui.**
+- #121 approuvée par Jibril sur `2a5dd1a`, puis fusionnée par moi.
+- Lot v1 refusé par la règle écrite avant la relecture (10 % de faux au plus) ; Mahé a relu seul les 30 exemples et abouti au même résultat (#107, 07/11).
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Numérotation : mes sessions, numérotées d'abord 46 à 48, puis 48 à 51, deviennent 55 à 58, Jibril ayant pris 48 à 54 (#126).
+
+**Sessions 59 et 60, de Mahé BEGNIS.** Numérotées le 7 novembre à la suite des numéros 55 à 58, alors réservés aux sessions de Vaneck DAGAR.
+
+### Session 59, 4 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux ; gel du protocole ; traitement des PR de Mahé et de Jibril ; décision et génération du lot d'adaptation v2 ; titre des PDF ; contrôle du travail de l'équipe.
+
+**Produit.**
+- Gel : #108 (`17e0c6e`) et #119 (`d521cfc`) fusionnées après la reprise de B0 par Jibril (0 erreur technique sur 8, Ollama 0.40.13) ; empreintes de référence du verrou publiées sur #52.
+- #125 fusionnée (`6f2f813`) après l'approbation de Jibril ; le délai de Remy pour les réglages reste le 05/11.
+- Revues : #127 approuvée sur `f854e54`, puis sur `8ad73fc` ; #126 avec modifications demandées, puis approuvée sur `55456b2` et sur `d7e7b6d` ; #124 corrigée (`69d5d53`) après la revue de Jibril.
+- Lot v2, décidé au nom de Mahé et publié sur #107 avant toute génération : réponses citées recopiées mot pour mot, contrôle `verifier_recopie`, questions relues du lot v1 et du pilote exclues. Amendement avant le lot complet : variante « passage retiré » retirée (PR #130, `4a509c8` et `d5ce008`).
+- Lot `v2-20261104` : 406 réponses, 231 exemples dont 174 cités ; grille de 30 exemples et deux copies pour une relecture séparée ; commande `accord` (kappa de Cohen).
+- PR #129 : titre et sujet propres à chaque PDF, 9 PDF régénérés.
+
+**Mesures exécutées.**
+- Gel : sur le résultat local des trois fusions, 75 tests de `scripts/rag` et 53 de `scripts/adaptation_qwen` réussis ; fichiers verrouillés identiques octet pour octet aux têtes approuvées.
+- Lot v2 : 61 tests ; cinq mutations des nouveaux contrôles, toutes détectées. Pilote de 20 contextes : 12 réponses gardées, puis 13 après la phrase ajoutée à la consigne. Lot complet en 39 minutes ; aucune question exclue présente, 174 recopies valides, 2 980 tokens au plus.
+- Contrôle de recopie appliqué aux réponses du lot v1 : 10 réponses citées gardées sur 361, et aucun des 6 faux relus.
+- PDF : texte de chaque PDF régénéré identique au précédent (`pdftotext`), même nombre de pages.
+
+**Résultats retenus.**
+- Le contrôle lexical ne séparait pas les faux des justes. La recopie mot pour mot rend la fidélité vérifiable par programme ; la pertinence reste à la relecture humaine.
+- La variante « passage retiré » faisait courir un risque de refus d'environ une chance sur deux, et apprenait à s'abstenir là où une réponse partielle existait : elle est retirée.
+
+**Ce qui a été écarté, et pourquoi.**
+- Le contrôle lexical seul : il laissait passer la moitié des faux relus.
+- Lire les réponses du lot v2 avant la relecture : les règles étant fixées, rien de ce qui y serait lu ne devait les modifier.
+- Relancer l'enseignant pour la date de J3 : Mahé a décidé le 27 octobre d'attendre sa communication.
+
+**Ce que l'équipe a validé, et par qui.**
+- Lot v2, décidé au nom de Mahé BEGNIS, révisable au Weekly 8, non révisé.
+- Approbations de Jibril (#119, #108, #125, #122, #124) et de Vaneck (#124) ; fusions de Jibril (#122, #126, #127).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- La génération du lot v2, lancée en tâche de fond de la session, s'est arrêtée avec elle sans rien écrire : elle a été relancée hors de la session.
+
+### Session 60, 7 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** État des lieux depuis le 4 novembre ; relecture du verrou ; revue de Jibril sur le lot v2 ; lot v2b ; supports de J3 ; tenue des réunions.
+
+**Produit.**
+- #131, le verrou de Jibril (`490b42d`), approuvée.
+- #124 fusionnée (`32744f6`).
+- #130 corrigée (`e383df5`) après la revue de Jibril : « : » et « ; » ne coupent plus une phrase en unités ; le pilote est exigé par `reprendre` ; les réponses d'un lot de même configuration peuvent être reprises.
+- Lot `v2b-20261107` : mêmes réponses que le lot v2, filtre corrigé, 218 exemples dont 164 cités ; grille de 30 exemples et deux copies, transmises par Mahé à Maïmouna et à Vaneck. La grille du lot v2 est caduque.
+- PR #132 : diapositives 4, 7 et 8 de J3, selon le plan de Vaneck (#112).
+- Consignés : l'accord de Mahé pour le préremplissage par une IA de la grille du lot v1 (#107) ; les Weekly 7 et 8 non tenus en réunion (#14).
+- Ancienne copie `data/volet_b.icloud-20261030` supprimée après une nouvelle vérification.
+
+**Mesures exécutées.**
+- Verrou : `verifier_verrou` conforme sur la fusion de la #131 avec `dev` ; les dix empreintes égalent les références.
+- Découpage corrigé : 10 des 174 réponses citées du lot v2 n'étaient pas des phrases entières. 64 tests ; trois mutations détectées ; contrôles du lot v2b refaits (aucune question exclue, 164 recopies valides).
+- Essai d'entraînement de 2 itérations sur le lot v2 : 229 s, pic de 6,27 Gio, perte de validation de 0,531 puis 0,415.
+
+**Résultats retenus.**
+- Le défaut relevé par Jibril n'était pas théorique : le lot v2 contenait 10 fragments. La relecture humaine porte sur le lot v2b.
+- La perte de validation sur le lot v2 (0,531) dépasse celle du lot v1 (0,226) : les réponses recopiées s'éloignent du style naturel de Qwen.
+
+**Ce qui a été écarté, et pourquoi.**
+- Régénérer les réponses pour le lot v2b : la correction ne touche que le filtre ; reprendre les mêmes réponses, contrôlées par empreinte, isole son effet.
+
+**Ce que l'équipe a validé, et par qui.**
+- Préremplissage de la grille du lot v1 par une IA : accord de Mahé BEGNIS, confirmé le 7 novembre.
+- Réunions : les Weekly 7 et 8 n'ont pas eu lieu, remplacés par un point sur Discord et un point à l'oral en cours (Mahé BEGNIS).
+
+**Temps d'appropriation constaté.**
+- Non relevé.
+
+**Difficultés rencontrées.**
+- Aucune activité sur le dépôt du 5 au 7 novembre : la relecture du lot et l'entraînement, prévus les 5 et 6 novembre, n'ont pas eu lieu.
+
+**Sessions 61 à 63, de Maïmouna SIGNATE.** Les travaux qu'elles décrivent s'étendent du 28 octobre au 8 novembre ; le travail sur la chaîne RAG avait commencé dès le 20 octobre. Elles sont rédigées à partir de l'historique de la conversation avec l'assistant, des fichiers produits et des revues et commentaires datés (#85, #105, #117, #51, #128). Les temps indiqués sont des charges réelles : déclarées sur la #51 pour la chaîne RAG, estimées pour la grille et la relecture de la #128.
+
+### Session 61, 28 et 29 octobre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Prise en main des tâches du volet B ; relecture de la chaîne RAG (#85) ; relectures des #105 et #117 ; charge sur la #51 ; lecture de la #111.
+
+**Produit.**
+- Revue de la #85, approuvée le 29/10, après sa fusion du 27/10.
+- #105 et #117 approuvées.
+- Commentaire sur la #51 : accord sur l'estimation de 6 h, charge réelle de la relecture de la #85.
+
+**Mesures exécutées.** Traces Q036 et Q003 de Jibril relues et comparées aux passages de l'index M2 (indices 1084 et 1085). Recherche de « fonctionnaire », « fonction publique » et « cumul » dans les cinq passages de Q003. Tests de la #85 non rejoués à cette date ; la reproduction est faite en session 63.
+
+**Résultats retenus.**
+- Q036 : les 8 puces de la réponse sont recopiées mot pour mot de P1 ; [P5] est cité sans que son contenu soit repris ; la condition sur l'évaluation des risques est omise, comme le notait déjà `rag_51.md` ; le découpage sépare la liste (P1, `m2-article115181-0002`) de son introduction (P5, `-0001`).
+- Q003 : abstention justifiée, aucun passage ne traite du sujet.
+
+**Ce qui a été écarté, et pourquoi.** Les formulations reprises d'une autre revue de la #85 : la revue devait être écrite avec mes propres mots.
+
+**Ce que l'équipe a validé, et par qui.** Estimation de 6 h pour notre part de la #51, avec Vaneck.
+
+**Temps d'appropriation constaté.** 2 h 30 pour comprendre la chaîne, sur laquelle je travaillais depuis le 20 octobre, et relire la #85 : charge déclarée sur la #51.
+
+**Difficultés rencontrées.** La première version de la revue proposée par l'assistant était trop technique pour que je puisse la défendre : elle a été réexpliquée, puis réécrite. « Presque mot pour mot » a été corrigé en « mot pour mot » après une nouvelle vérification sur les traces, faite à ma demande.
+
+### Session 62, 7 et 8 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Relecture des 30 exemples du lot d'adaptation v2b (#107), seule et sans préremplissage par une IA, comme demandé par Mahé.
+
+**Produit.**
+- Page HTML locale de lecture de la grille, hors dépôt : un exemple par écran, toutes les cases de verdict vides au départ, export au format de la grille reçue (même en-tête, séparateur `;`).
+- `grille_relecture_maimouna_remplie.csv`, que j'ai remplie seule.
+
+**Mesures exécutées.** Empreinte SHA-256 de la grille reçue comparée à ses deux copies : identiques ; 30 lignes, 15 réponses citées et 15 hors corpus. Contrôle de forme du fichier rempli, sans lecture des verdicts : 30 lignes, en-tête et séparateur identiques, un commentaire pour chaque « non ».
+
+**Résultats retenus.** Tous les verdicts sont les miens. L'assistant n'a proposé aucun verdict : il m'a expliqué le sens des colonnes et des niveaux (oui, partiel, non), et a remis en français correct un commentaire que j'avais rédigé (A0068), sans en changer le sens.
+
+**Ce qui a été écarté, et pourquoi.** Le fichier `grille_relecture_preremplie.csv` du lot v1, refusé le 02/11, téléchargé par erreur avec ma grille : non ouvert, la consigne excluait tout préremplissage par une IA.
+
+**Ce que l'équipe a validé, et par qui.** En attente : la grille est à comparer avec celle de Vaneck.
+
+**Temps d'appropriation constaté.** 2 h 30, charge estimée.
+
+**Difficultés rencontrées.** Excel affichait mal le CSV (colonnes et accents), d'où la page de lecture. Pour un exemple dont la réponse ne reprenait que le début d'une liste, la question était de savoir s'il fallait l'excuser parce qu'elle venait du programme de génération : j'ai jugé la réponse telle qu'elle est, conformément à la consigne.
+
+### Session 63, 8 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Reproduction de la chaîne (#51) sur ma machine ; exemples commentés sur la calibration ; relecture de la maquette et de la couche locale de la démonstration (#128).
+
+**Produit.**
+- Commentaire sur la #51 : reproduction, exemples commentés Q001, Q002, Q003 et Q036, charge.
+- Revue de la #128, en commentaire.
+- Outils locaux, hors dépôt : un lanceur qui remplace seulement l'empreinte attendue du modèle, et un script d'affichage lisible des traces.
+
+**Mesures exécutées.**
+- Chaîne : 75 tests réussis, 1 ignoré ; `--check-index` conforme ; SHA-256 des fragments GGUF conformes ; Q036 lancée deux fois, Q003 deux fois, Q001 et Q002 une fois.
+- #128 : 17 tests JavaScript et 95 tests Python réussis ; maquette testée à la souris, au clavier et en fenêtre étroite ; couche locale branchée sur Qwen, avec Q003 et trois questions libres (congés payés, période d'essai d'un CDI, congé pour mariage) ; requêtes invalides refusées.
+
+**Résultats retenus.**
+- Q036 : mêmes passages, même entrée de 2 317 tokens ; le second essai donne une réponse identique au caractère près à la trace de Jibril, le premier une réponse au même contenu, mais citée autrement.
+- Q001 : abstention injustifiée, le passage annoté étant récupéré en P1. Q002 et Q003 : abstentions justifiées. Q036 : réponse juste mais incomplète.
+- #128 : deux remarques (Vite 8.3.0, description de la PR) et une observation sur une phrase de conclusion sans citation.
+
+**Ce qui a été écarté, et pourquoi.**
+- La remarque sur le lien « Voir dans la fiche » : l'erreur venait de ma connexion, et le lien fonctionne.
+- Les questions libres dans les exemples de la #51, réservés à la calibration.
+
+**Ce que l'équipe a validé, et par qui.** En attente des lectures de Jibril et de Vaneck.
+
+**Temps d'appropriation constaté.** Reproduction : 1 h 30 et exemples commentés : 1 h 30, charges déclarées sur la #51. Relecture de la #128 : environ 2 h, estimée.
+
+**Difficultés rencontrées.**
+- Sans carte graphique, Q036 prend 3 min 45 sur une limite de 5 min.
+- Le digest du modèle importé diffère, alors que les fragments sont identiques.
+- Python s'exécute en x86 émulé sur processeur ARM.
+- Le chemin du dossier temporaire dépasse la longueur admise sous Windows : la copie de travail a été déplacée.
+- La connexion a coupé pendant le téléchargement de Qwen et lors d'un clic sur un lien de fiche.
+- Un rechargement de la page pendant un calcul a bloqué les questions suivantes jusqu'à sa fin.
+- Une question tapée avec des apostrophes droites ne récupère pas les mêmes passages que le texte officiel.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1729,6 +2013,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/10 | Commande `timeout` appelée, absente de macOS | erreur « command not found » | relancée sans |
 | 27/10 | Hypothèse de chargement direct de l'adaptateur LoRA via la directive `ADAPTER` d'Ollama | lecture du code source d'Ollama au tag `v0.40.5` (`errAdaptersUnsupported`) | chaîne confirmée par fusion FP16 puis conversion GGUF Q4_K_M avec modèle témoin T |
 | 27/10 | Présomption d'une non-reconnaissance par GitHub de l'adresse universitaire | recalcul indépendant des lignes modifiées (1 551 + 1 482 = 3 033 ++ ; 1 011 + 26 = 1 037 --) | adresse vérifiée déjà intégrée dans les 12 commits reconnus hors fusions |
+| 27/10 | Bilan du dépôt affirmant que `dev` n'avait pas bougé, à partir d'une copie non mise à jour | nouvelle récupération depuis GitHub | bilan corrigé avant de le donner |
+| 28/10 | Exemple JSON du contrat d'interface réduit à un fragment, donc invalide | validation des blocs JSON par script | réécrit en objet complet avant le commit |
+| 28/10 | Corps du ticket #111 renvoyé avec des fins de ligne Windows (CRLF) en mettant à jour l'estimation | comparaison avant/après | renvoyé avec les fins de ligne d'origine, vérifié par l'API |
+| 28/10 | Revue de la #85 décrivant la réponse de Q036 comme recopiée « presque mot pour mot » | question de Maïmouna, nouvelle comparaison avec la trace | « mot pour mot » ; la condition omise est attribuée à `rag_51.md`, qui la notait déjà |
 | 30/10 | Même piège zsh, une troisième fois : `$b:scripts` lu comme le modificateur `:s` | erreur « bad substitution » | commande réécrite |
 | 30/10 | Reconstitution des sources de la feuille de route par rejeu du transcript, incomplète : des retouches passaient par des scripts | assertion du script de reconstitution | page modifiée depuis sa version publiée ; seules les 16 lignes visées changent, données intactes |
 | 30/10 | Remplacement sur la page sans l'espace insécable que le rendu place avant « : » | assertion du script | typographie de la page reproduite |
@@ -1750,6 +2038,17 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 02/11 | Contrôle des 15 candidats d'Agent0 contre le lot v1 lu avec de mauvaises clés : aucun trouvé, par construction | invraisemblance d'un résultat nul | clés réelles lues, contrôle refait |
 | 02/11 | Contrôle de relecture de la #125 acceptant une grille partielle, dupliquée ou d'un autre lot, et une fidélité vide | revue de Jibril | grille comparée au tirage du lot, fidélité obligatoire (`fc0a8ad`) |
 | 02/11 | `a_relire.jsonl` du lot v1 écrit deux minutes avant le commit du tirage stratifié : 2 identifiants en commun avec la grille | comparaison de la grille au tirage | tirage recalculé sur `train.jsonl` et `valid.jsonl`, `a_relire.jsonl` écarté comme référence |
+| 04/11 | Génération du lot v2 lancée en tâche de fond de la session, arrêtée avec elle : aucun fichier écrit | fichier de réponses absent à la reprise | relancée hors de la session (`nohup`, `caffeinate`) |
+| 04/11 | Contrôle de l'activité de l'équipe parti d'une heure postérieure à l'heure courante : résultat vide | heure de la commande comparée au seuil | contrôle refait depuis le contrôle précédent |
+| 04/11 | Recherche de secrets dans la #128 sans résultat : motif que `git grep -E` ignore, puis liste de fichiers non découpée par zsh | témoin `127.0.0.1` absent des résultats | recherche refaite avec un témoin |
+| 04/11 | Relance de l'enseignant donnée comme lançable, contre la décision du 27/10 d'attendre | relecture du #8 avant d'écrire la relance | retirée des tâches lançables |
+| 04/11 | Pilote du lot v2 : une phrase recopiée renvoyait à une phrase précédente (« À défaut… ») et ne répondait pas | lecture des 20 sorties du pilote | consigne complétée avant le lot complet |
+| 04/11 | Chiffres de J3 (#124) restés au 02/11 : lot v1 présenté comme données, B0 « à recalibrer », J4 sans réserve | revue de Jibril | réalisé, prévu et conditionnel distingués (`69d5d53`) |
+| 07/11 | Unités découpées aux « : » et « ; » : 10 fragments sans leur condition acceptés dans le lot v2 | revue de Jibril sur la #130 | découpage corrigé, lot v2b (`e383df5`) |
+| 07/11 | Reprise sans pilote acceptée sans le signaler | revue de Jibril sur la #130 | pilote exigé, ou absence déclarée |
+| 08/11 | Remarque sur la #128 attribuant au site du ministère le refus du lien « Voir dans la fiche » | nouvel essai de Maïmouna, connexion vérifiée | remarque retirée, le lien fonctionne |
+| 08/11 | Phrase de conclusion de la réponse sur les congés payés présentée comme inventée et contradictoire | question de Maïmouna, relecture des cinq passages | son contenu figure en P5, ainsi qu'en P1 et P3 ; seule l'absence de citation est retenue |
+| 08/11 | Fichier d'annotation complet, lot de test compris, ouvert par l'assistant dans l'éditeur au lieu des seules questions de calibration | relecture de la commande par l'assistant | onglet fermé sans lecture, copie locale supprimée et remplacée par les 8 questions de calibration |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

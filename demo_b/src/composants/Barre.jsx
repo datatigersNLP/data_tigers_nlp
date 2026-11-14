@@ -1,0 +1,166 @@
+// Panneau latéral, repris du volet A (maquette B, #53) : nouveau chat, chats de la session, exemples, confidentialité.
+// Colonne fixe sur ordinateur ; sur téléphone, menu ouvert par-dessus la conversation, fermé par Échap ou par un
+// toucher à côté. Au volet B (#111), un exemple peut porter un libellé (trace enregistrée ou cas simulé de la maquette)
+// et l'encart de confidentialité décrit l'exécution sur cet ordinateur.
+
+import { useEffect, useRef } from "react";
+
+export function Logo({ className = "h-[30px] w-[30px]" }) {
+  return (
+    <svg viewBox="0 0 32 32" className={`${className} shrink-0`} aria-hidden="true">
+      <rect width="32" height="32" rx="9" className="fill-accent" />
+      <path d="M10 11h12M10 16h12M10 21h7" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// éléments activables et visibles d'un conteneur, dans l'ordre de tabulation du document
+const ACTIVABLES = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const activables = (conteneur) =>
+  [...conteneur.querySelectorAll(ACTIVABLES)].filter((el) => el.getClientRects().length > 0);
+
+const titreRubrique = "mb-2 px-1.5 text-xs font-semibold uppercase tracking-wide text-gris";
+const elementListe =
+  "w-full rounded-[9px] px-2.5 py-[9px] text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent";
+
+export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauChat, exemples, utiliserExemple, occupe }) {
+  const premier = useRef(null);
+  const panneau = useRef(null);
+  // chats de la session qui ont au moins une question, le plus récent en haut ; titre : leur première question
+  const session = chats.filter((c) => c.echanges.length > 0).reverse();
+
+  // à l'ouverture du menu sur téléphone, le focus y entre : un visiteur au clavier n'a pas à le chercher
+  useEffect(() => {
+    if (ouvert) premier.current?.focus();
+  }, [ouvert]);
+
+  // menu ouvert sur téléphone : la tabulation boucle dans le panneau, et Échap le ferme où que soit le focus. inert
+  // retire bien le reste de la page, mais au-delà du dernier élément le focus tomberait sur le document, d'où
+  // l'écouteur au niveau du document plutôt que sur le panneau
+  useEffect(() => {
+    if (!ouvert) return;
+    function clavier(ev) {
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        fermer();
+        return;
+      }
+      if (ev.key !== "Tab" || !panneau.current) return;
+      const liste = activables(panneau.current);
+      if (liste.length === 0) return;
+      // la tabulation est entièrement gérée ici, et non laissée au navigateur hors des bords : avec ses réglages
+      // par défaut, Safari ne passe pas par les boutons, et le focus quittait le panneau pour le document
+      ev.preventDefault();
+      const i = liste.indexOf(document.activeElement);
+      const n = liste.length;
+      // focus hors de la liste (document, panneau lui-même) : premier élément avec Tab, dernier avec Maj+Tab
+      const suivant = i === -1 ? (ev.shiftKey ? n - 1 : 0) : (i + (ev.shiftKey ? n - 1 : 1)) % n;
+      liste[suivant].focus();
+    }
+    document.addEventListener("keydown", clavier);
+    return () => document.removeEventListener("keydown", clavier);
+  }, [ouvert, fermer]);
+
+  return (
+    <>
+      {ouvert && <div className="fixed inset-0 z-30 bg-encre/40 md:hidden" onClick={fermer} aria-hidden="true" />}
+      <aside
+        ref={panneau}
+        id="menu-lateral"
+        aria-label="Menu"
+        // ouvert par-dessus la conversation sur téléphone : une boîte de dialogue modale, le reste de la page étant inerte
+        role={ouvert ? "dialog" : undefined}
+        aria-modal={ouvert ? "true" : undefined}
+        className={`${ouvert ? "flex" : "hidden"} fixed inset-y-0 left-0 z-40 w-[280px] max-w-[85vw] flex-col gap-5 overflow-y-auto border-r border-filet bg-panneau p-4 md:static md:z-auto md:flex md:w-[280px] md:max-w-none md:shrink-0`}
+      >
+        <div className="flex items-center gap-2.5 px-1 pt-1">
+          <Logo />
+          <span className="flex-1 text-[15px] font-bold leading-tight">
+            Code du travail, en clair
+            <span className="block text-xs font-medium text-gris">Assistant local</span>
+          </span>
+          <button
+            type="button"
+            onClick={fermer}
+            aria-label="Fermer le menu"
+            className="flex h-11 w-11 items-center justify-center rounded-[10px] text-encre focus-visible:outline-2 focus-visible:outline-accent md:hidden"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <button
+          ref={premier}
+          type="button"
+          onClick={nouveauChat}
+          className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-bordure bg-white text-sm font-semibold text-encre hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Nouveau chat
+        </button>
+
+        {session.length > 0 && (
+          <nav aria-labelledby="titre-session">
+            <h2 id="titre-session" className={titreRubrique}>
+              Cette session
+            </h2>
+            <ul className="flex flex-col gap-0.5">
+              {session.map((c) => (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    onClick={() => choisir(c.id)}
+                    aria-current={c.id === actuel ? "true" : undefined}
+                    className={`${elementListe} ${c.id === actuel ? "bg-actif font-medium text-encre" : "text-texte2 hover:bg-actif/60"}`}
+                  >
+                    {/* line-clamp sur le texte et non sur le bouton : sinon son padding laisse voir le haut d'une
+                        troisième ligne */}
+                    <span className="line-clamp-2">{c.echanges[0].question}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
+        <div>
+          <h2 className={titreRubrique}>Exemples</h2>
+          <ul className="flex flex-col gap-0.5">
+            {exemples.map(({ question, libelle }) => (
+              <li key={question}>
+                <button
+                  type="button"
+                  disabled={occupe}
+                  onClick={() => utiliserExemple(question)}
+                  className={`${elementListe} text-texte2 hover:bg-actif/60 disabled:cursor-not-allowed disabled:text-[#6b665f] disabled:hover:bg-transparent`}
+                >
+                  {libelle && <span className="block text-xs font-semibold text-accent-texte">{libelle}</span>}
+                  {question}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-auto space-y-3">
+          <p className="flex gap-2.5 rounded-xl bg-accent-clair p-3 text-[13px] leading-normal text-accent-texte">
+            <svg viewBox="0 0 24 24" className="mt-px h-[18px] w-[18px] shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V8a4 4 0 018 0v3" />
+            </svg>
+            {/* contrat de la #121 : la couche écoute sur 127.0.0.1, E5 et Qwen s'exécutent sur la machine */}
+            Vos questions restent sur cet ordinateur : la recherche et le modèle qui rédige la réponse s'y exécutent,
+            aucune n'est envoyée à un service en ligne.
+          </p>
+          <p className="px-1 font-mono text-[11px] text-gris">
+            version {__VERSION__} · construite le {__DATE_CONSTRUCTION__}
+          </p>
+        </div>
+      </aside>
+    </>
+  );
+}

@@ -1,0 +1,109 @@
+{
+  "version_contrat": "b1-demo-v1",
+  "question": "Un fonctionnaire peut-il avoir une autre activité à coté de son travail ?",
+  "statut": "abstention_modele",
+  "reponse": "Je ne peux pas répondre à cette question à partir des passages fournis.",
+  "citations": [],
+  "citations_invalides": [],
+  "verifications": {
+    "justification_semantique_verifiee": false,
+    "couverture_des_affirmations_verifiee": false
+  },
+  "sources": [
+    {
+      "reference": "[P1]",
+      "citee": false,
+      "rang": 1,
+      "score": 0.8584688901901245,
+      "passage_id": "m2-article101113-0001",
+      "titre_fiche": "Le conseiller du salarié",
+      "section_titre": "Le conseiller du salarié",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/le-conseiller-du-salarie",
+      "url_citation": "https://travail-emploi.gouv.fr/le-conseiller-du-salarie#:~:text=%C3%80%20savoir%20%21",
+      "date_maj": "2025-04-16",
+      "texte": "À savoir !\nLes conseillers prud'homaux en activité ne peuvent pas exercer les fonctions de conseiller du salarié."
+    },
+    {
+      "reference": "[P2]",
+      "citee": false,
+      "rang": 2,
+      "score": 0.8544212579727173,
+      "passage_id": "m2-article115944-0006",
+      "titre_fiche": "Les organismes de services à la personne",
+      "section_titre": "Quelles sont les activités de services à la personne soumises à déclaration ?",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/les-organismes-de-services-la-personne",
+      "url_citation": "https://travail-emploi.gouv.fr/les-organismes-de-services-la-personne#:~:text=Rel%C3%A8vent%20de%20cette%20d%C3%A9claration%2C%20les%20activit%C3%A9s%20suivantes%20%28pour",
+      "date_maj": "2026-01-09",
+      "texte": "Relèvent de cette déclaration, les activités suivantes (pour le détail de chacune de ces activités, on pourra se reporter à la circulaire du 11 avril 2019 citée en référence) :\n- l’assistance aux personnes (autres que les personnes âgées, personnes handicapées ou personnes atteintes de pathologies chroniques), qui ont besoin temporairement d'une aide personnelle à leur domicile, à l'exclusion des soins relevant d'actes médicaux ;\n- les activités qui concourent directement et exclusivement à coordonner et délivrer les services mentionnés ci-dessus.\nCertaines des activités mentionnées ci-dessus (leur liste est précisée par l’article D. 7231-1 du Code du travail) n'ouvrent toutefois droit au bénéfice des avantages fiscaux et sociaux (taux réduit de TVA, exonération ou déduction de cotisations patronales) qu'à la condition que la prestation soit comprise dans une offre de services incluant un ensemble d'activités réalisées à domicile.\nOutre la réglementation relative aux services à la personne, l’exercice de certaines activités peut être soumis à des réglementations spécifiques hors champ des services à la personne qu’il incombe à l’organisme de services à la personne de respecter (ex. la possession du diplôme d’esthétique pour la dispensation des prestations de soins esthétiques)."
+    },
+    {
+      "reference": "[P3]",
+      "citee": false,
+      "rang": 3,
+      "score": 0.8535135984420776,
+      "passage_id": "m2-article376807-0030",
+      "titre_fiche": "Le fonctionnement et les moyens d'actions du CSE",
+      "section_titre": "Comment, et avec quels moyens, le CSE fonctionne-t-il dans les entreprises d'au moins 50 salariés ?",
+      "chemin": [
+        "Mise en place d'autres commissions"
+      ],
+      "url": "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+      "url_citation": "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse#:~:text=Un%20accord%20d%27entreprise%20majoritaire%20au%20sens%20du%201er",
+      "date_maj": "2025-09-19",
+      "texte": "Un accord d'entreprise majoritaire au sens du 1er alinéa de l'article L. 2232-12 du Code du travail (donc, sans possibilité de validation d'un accord minoritaire par référendum) peut prévoir la création de commissions supplémentaires pour l'examen de problèmes particuliers. Le cas échéant, l'employeur peut adjoindre à ces commissions avec voix consultative des experts et des techniciens appartenant à l'entreprise et choisis en dehors du comité. Les dispositions de l'article L. 2315-3 du Code du travail relatives au secret professionnel et à l'obligation de discrétion leur sont applicables.\nLes rapports des commissions sont soumis à la délibération du comité."
+    },
+    {
+      "reference": "[P4]",
+      "citee": false,
+      "rang": 4,
+      "score": 0.8534690141677856,
+      "passage_id": "m2-article376115-0001",
+      "titre_fiche": "Questions-Réponses | Le suivi de l’état de santé des salariés",
+      "section_titre": "Compétences des professionnels de santé au travail en matière de suivi individuel de l’état de santé des travailleurs",
+      "chemin": [
+        "Le collaborateur médecin peut-il exercer les mêmes fonctions que le médecin du travail ?"
+      ],
+      "url": "https://travail-emploi.gouv.fr/reforme-de-la-medecine-du-travail-et-des-services-de-sante-au-travail-questions-les-plus-frequentes",
+      "url_citation": "https://travail-emploi.gouv.fr/reforme-de-la-medecine-du-travail-et-des-services-de-sante-au-travail-questions-les-plus-frequentes#:~:text=Le%20collaborateur%20m%C3%A9decin%20peut%2Dil%20exercer%20les%20m%C3%AAmes%20fonctions",
+      "date_maj": "2024-10-08",
+      "texte": "Le collaborateur médecin peut procéder à l’ensemble des examens prévus dans le cadre du suivi individuel de l’état de santé du travailleur, dans le cadre d’un protocole entre le médecin du travail et le médecin collaborateur (article R. 4623-25-1 du Code du travail.\nIl peut ainsi délivrer des avis d’aptitude ou d’inaptitude ou des préconisations relatives à l’aménagement du poste de travail dans les mêmes conditions que le médecin du travail.\nS’il réalise une visite d’information et de prévention, il remet une attestation de suivi, et non pas un avis, tout comme le ferait le médecin du travail.\nAinsi, à chaque occurrence du Code du travail de « le médecin du travail », il convient d’entendre « le médecin du travail et le collaborateur médecin ».\nLe collaborateur médecin exerce sous l’autorité du médecin du travail et dans le cadre d’un protocole écrit et validé par ce dernier, les fonctions dévolues aux médecins du travail. Il signe lui-même ses avis."
+    },
+    {
+      "reference": "[P5]",
+      "citee": false,
+      "rang": 5,
+      "score": 0.8525987863540649,
+      "passage_id": "m2-article115944-0003",
+      "titre_fiche": "Les organismes de services à la personne",
+      "section_titre": "Quelles sont les activités concernées ?",
+      "chemin": [],
+      "url": "https://travail-emploi.gouv.fr/les-organismes-de-services-la-personne",
+      "url_citation": "https://travail-emploi.gouv.fr/les-organismes-de-services-la-personne#:~:text=Les%20activit%C3%A9s%20de%20services%20%C3%A0%20la%20personne%20relevant",
+      "date_maj": "2026-01-09",
+      "texte": "- Les activités de services à la personne relevant du champ de l’article L. 7231-1 du Code du travail sont définies à l’article D. 7231-1 de ce même code ;\n- Les activités de services à la personne, qu’elles soient soumises à agrément et/ou déclaration (voir ci-dessous), peuvent comprendre à titre accessoire des prestations de conseil, à condition que celles-ci soient en lien avec les activités fournies ; dans ce cas, le conseil est inclus dans la prestation et ne peut faire l’objet d’une facturation distincte. Ainsi, par exemple, à l’occasion d’une prestation de petit jardinage, le prestataire peut apporter son conseil sur la fréquence de l’arrosage, de la taille, … ;\n- Pour être éligibles au bénéfice de la déclaration, les personnes morales ou les entrepreneurs individuels doivent se consacrer exclusivement à l’exercice de l’une ou de plusieurs des activités de services à la personne énumérées ci-dessus. Ces activités doivent être exercées au profit de particuliers, à leur domicile ou, pour certaines activités de livraison ou d’aide aux déplacements, à partir ou à destination du domicile ou dans son environnement immédiat. Il peut être dérogé à cette condition d’activité exclusive dans les conditions fixées par l’article L. 7232-1-2 du Code du travail et explicitées dans la circulaire du 11 avril 2019 précitée, à laquelle on se reportera. À noter que depuis le 1er janvier 2025, dans les conditions fixées par le décret n° 2024-851 du 25 juillet 2024, un nouveau cas de dispense à la condition d’activité exclusive des services à la personne est ouvert aux entrepreneurs individuels soumis au régime de la micro-entreprise et aux entreprises de moins de 11 salariés."
+    }
+  ],
+  "modele": {
+    "nom": "qwen2.5-7b-instruct:q4_k_m-local",
+    "digest": "6ec54444a8511aae6c2116b172eb3685d1416c523bfee0252ca33c7e55c481e4"
+  },
+  "mesures": {
+    "duree_totale_s": null,
+    "ollama": {
+      "total_duration": 1160239400,
+      "load_duration": 4182900,
+      "prompt_eval_duration": 724377000,
+      "eval_duration": 286860000,
+      "prompt_eval_count": 1822,
+      "eval_count": 17
+    }
+  },
+  "erreur": null,
+  "trace": {
+    "fichier": "Q003_rag(1).json",
+    "id_question": "Q003",
+    "ollama": "0.40.5"
+  }
+}
