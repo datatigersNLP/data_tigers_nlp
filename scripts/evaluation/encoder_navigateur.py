@@ -27,14 +27,21 @@ from urllib.parse import parse_qs, urlparse
 
 RACINE = Path(__file__).resolve().parents[2]
 SORTIE = RACINE / "data" / "adaptation" / "navigateur" / "vecteurs"
-PAGE = "scripts/evaluation/encodage_navigateur.html"
-# Seuls fichiers lisibles : la page, l'en-tête de l'index de mesure, les lots de questions et les modèles locaux.
+PAGES = {"encodage": "scripts/evaluation/encodage_navigateur.html", "controle": "scripts/allegement/controle_navigateur.html"}
+# Seuls fichiers lisibles : les deux pages, les en-têtes d'index, les lots de questions, la référence de contrôle de
+# l'ajusté, les modèles locaux et les modèles servis par le site.
 AUTORISES = re.compile(r"^/(scripts/evaluation/encodage_navigateur\.html"
+                       r"|scripts/allegement/controle_navigateur\.html"
                        r"|data/indexation/site/index_m2\.json"
+                       r"|data/indexation/controle/(fidelite_navigateur|requetes_controle)\.json"
                        r"|data/evaluation/notebook03/questions_navigateur\.json"
                        r"|data/evaluation/cdtn/(questions_cdtn|formulations_mesure)\.json"
-                       r"|data/adaptation/navigateur/(base|ajuste)/[A-Za-z0-9_./-]+)$")
-NOM_SORTIE = re.compile(r"^vecteurs_(navigateur|cdtn|cdtn_mesure)(_(base|ajuste))?\.json$")
+                       r"|data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste\.json"
+                       r"|data/adaptation/navigateur/(base|ajuste)/[A-Za-z0-9_./-]+"
+                       r"|front/public/(index|index_ajuste)/index_m2\.json"
+                       r"|front/public/modele/multilingual-e5-small-[a-z0-9-]+/[A-Za-z0-9_./-]+)$")
+NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle)(_(base|ajuste))?"
+                        r"|controle_navigateur(_ajuste)?)\.json$")
 
 
 class Gestionnaire(SimpleHTTPRequestHandler):
@@ -68,20 +75,23 @@ class Gestionnaire(SimpleHTTPRequestHandler):
         SORTIE.mkdir(parents=True, exist_ok=True)
         with open(SORTIE / nom, "x", encoding="utf-8") as f:
             json.dump(donnees, f, ensure_ascii=False)
-        Gestionnaire.recu = {"nom": nom, "erreur": donnees.get("erreur"), "n": len(donnees.get("vecteurs", []))}
+        Gestionnaire.recu = {"nom": nom, "erreur": donnees.get("erreur"), "n": len(donnees.get("vecteurs", [])),
+                             **{k: donnees[k] for k in ("identiques", "requetes", "ecart_max", "ms_par_requete") if k in donnees}}
         self.send_response(204)
         self.end_headers()
 
 
-def encoder(modele: str | None, lot: str | None, delai: int = 900) -> dict:
+def encoder(modele: str | None, lot: str | None, delai: int = 900, page: str = "encodage",
+            index: str | None = None, reference: str | None = None) -> dict:
     chrome = os.environ.get("CHROME_PATH")
     if not chrome or not Path(chrome).exists():
         raise SystemExit("CHROME_PATH absent")
     Gestionnaire.recu = {}
     serveur = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Gestionnaire, directory=str(RACINE)))
     threading.Thread(target=serveur.serve_forever, daemon=True).start()
-    parametres = "&".join(p for p in (f"modele={modele}" if modele else "", f"lot={lot}" if lot else "", "envoi=1") if p)
-    url = f"http://127.0.0.1:{serveur.server_address[1]}/{PAGE}?{parametres}"
+    valeurs = {"modele": modele, "lot": lot, "index": index, "reference": reference, "envoi": "1"}
+    parametres = "&".join(f"{k}={v}" for k, v in valeurs.items() if v)
+    url = f"http://127.0.0.1:{serveur.server_address[1]}/{PAGES[page]}?{parametres}"
     profil = tempfile.mkdtemp(prefix="chrome_encodage_")
     navigateur = subprocess.Popen([chrome, "--headless=new", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
                                    "--disable-extensions", f"--user-data-dir={profil}", url],
@@ -109,10 +119,13 @@ def encoder(modele: str | None, lot: str | None, delai: int = 900) -> dict:
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    p.add_argument("--page", choices=tuple(PAGES), default="encodage")
     p.add_argument("--modele", choices=("base", "ajuste"))
-    p.add_argument("--lot", choices=("cdtn", "cdtn_mesure"))
+    p.add_argument("--lot", choices=("cdtn", "cdtn_mesure", "controle"))
+    p.add_argument("--index", choices=("index", "index_ajuste"))
+    p.add_argument("--reference", choices=("ajuste",))
     a = p.parse_args(argv)
-    encoder(a.modele, a.lot)
+    encoder(a.modele, a.lot, page=a.page, index=a.index, reference=a.reference)
     return 0
 
 

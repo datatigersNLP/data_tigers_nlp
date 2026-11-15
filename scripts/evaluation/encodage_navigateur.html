@@ -41,10 +41,12 @@ const sha256 = async (texte) => Array.from(new Uint8Array(await crypto.subtle.di
   new TextEncoder().encode(texte))), (octet) => octet.toString(16).padStart(2, "0")).join("");
 env.allowLocalModels = false;
 // lot à encoder : celui du notebook 03 par défaut, celui du seuil du CDTN avec ?lot=cdtn, les 494 formulations de la
-// mesure du CDTN (protocole 05, section 3) avec ?lot=cdtn_mesure
+// mesure du CDTN (protocole 05, section 3) avec ?lot=cdtn_mesure, les 822 requêtes de contrôle du notebook 02 avec
+// ?lot=controle (référence du contrôle d'élagage dans le navigateur, protocole 05, section 5)
 const parametres = new URLSearchParams(location.search);
 const lotCdtn = parametres.get("lot") === "cdtn";
 const lotCdtnMesure = parametres.get("lot") === "cdtn_mesure";
+const lotControle = parametres.get("lot") === "controle";
 // Protocole 05 (#49, #164) : ?modele=base ou ?modele=ajuste charge un q8 local, servi depuis data/adaptation/navigateur/,
 // avec le tokeniseur de l'encodeur de base ; sans ce paramètre, la page garde son comportement d'origine (le Hub).
 const MODELES_LOCAUX = {
@@ -54,9 +56,10 @@ const MODELES_LOCAUX = {
 const modeleLocal = parametres.get("modele");
 const fichierQuestions = lotCdtn ? "../../data/evaluation/cdtn/questions_cdtn.json"
   : lotCdtnMesure ? "../../data/evaluation/cdtn/formulations_mesure.json"
+  : lotControle ? "../../data/indexation/controle/requetes_controle.json"
   : "../../data/evaluation/notebook03/questions_navigateur.json";
-const nomSortie = (lotCdtn ? "vecteurs_cdtn" : lotCdtnMesure ? "vecteurs_cdtn_mesure" : "vecteurs_navigateur")
-  + (modeleLocal ? "_" + modeleLocal : "") + ".json";
+const nomSortie = (lotCdtn ? "vecteurs_cdtn" : lotCdtnMesure ? "vecteurs_cdtn_mesure" : lotControle ? "vecteurs_controle"
+  : "vecteurs_navigateur") + (modeleLocal ? "_" + modeleLocal : "") + ".json";
 
 try {
   if (modeleLocal !== null && !Object.hasOwn(MODELES_LOCAUX, modeleLocal)) throw new Error("modèle local inconnu : " + modeleLocal);

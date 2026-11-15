@@ -1,0 +1,44 @@
+{
+ "format": "index-e5-v1",
+ "modele": {
+  "emplacement": "site",
+  "depot": "multilingual-e5-small-ajuste-q8-elague-13ed78c9",
+  "revision": null,
+  "dtype": "q8",
+  "fichier": "onnx/model_quantized.onnx",
+  "sha256": "13ed78c9bf0c4e4ba2d36d0f715568edfb341a44051225f0b0a0e0214bf991d4",
+  "origine": {
+   "depot": "multilingual-e5-small-finetuned (#49, PR #63)",
+   "revision": null,
+   "sha256": "934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047",
+   "tokeniseur": "Xenova/multilingual-e5-small, révision 761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+   "transformation": "élagage sans perte du vocabulaire (#50, scripts/allegement/elaguer_vocabulaire.py)"
+  }
+ },
+ "requete": {
+  "prefixe": "query: ",
+  "pooling": "mean",
+  "normalize": true
+ },
+ "index": {
+  "fichier": "index_m2.f32",
+  "type": "float32",
+  "ordre_octets": "little-endian",
+  "disposition": "ligne par ligne",
+  "nb_vecteurs": 4240,
+  "dimension": 384,
+  "sha256": "dc8daa7243bec30c28ea4830daeb10970bcd3de8d819f71a602b5d0b306ea8f1",
+  "moteur": "PyTorch fp32 (encodeur ajusté #49, tokeniseur de intfloat/multilingual-e5-small)"
+ },
+ "metadonnees": {
+  "fichier": "passages_m2.json",
+  "nb_passages": 4240,
+  "sha256": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d"
+ },
+ "source": {
+  "decoupage": "m2",
+  "empreinte_contenu_notebook_01": "c41868ec369fb5f810119bfa996b5a1b22643d00452cde151901e3f26cf432b0",
+  "mesure": "protocole 05 et amendement A1 (#164)"
+ },
+ "produit_le": "2026-11-15T14:30:46+00:00"
+}

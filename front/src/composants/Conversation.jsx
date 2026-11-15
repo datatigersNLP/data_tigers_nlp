@@ -2,11 +2,14 @@
 // exemples), fil de la conversation qui défile seul, champ de saisie fixé en bas. Comportement repris de #48 et #53 :
 // une question posée pendant le chargement est gardée puis envoyée dès que le moteur est prêt ; une question hors du
 // périmètre (seuil d'abstention, #76) est signalée, ses passages restant consultables ; chaque passage porte son score.
+// Depuis #164 : dix passages regroupés par fiche (A2), et un avertissement quand le meilleur passage n'est qu'assez
+// proche de la question (zone grise, A3), sans rien masquer.
 
 import { useEffect, useRef, useState } from "react";
 import Barre from "./Barre.jsx";
-import Passage from "./Passage.jsx";
+import Fiche from "./Fiche.jsx";
 import { messageErreur } from "../recherche/useMoteur.js";
+import { regrouperParFiche } from "../recherche/moteur.js";
 
 // revue de #42 : formulée avec « CDI », la question sur la période d'essai ne gardait la bonne fiche en tête qu'avec
 // 0,0002 d'avance (notebook 02, section 11) ; sans le sigle, l'avance est de 0,022
@@ -15,13 +18,16 @@ const EXEMPLES = [
   "Quelle est la durée maximale de la période d'essai ?",
   "Mon employeur peut-il refuser une rupture conventionnelle ?",
 ];
-const NB_RESULTATS = 5;
+// A2 (#164) : dix passages, présentés par fiche ; jusqu'au 15/11/2026, cinq passages présentés un par un
+const NB_RESULTATS = 10;
 // premier chargement : modèle élagué servi par le site (65,7 Mio, #78), taille demandée par le compte rendu du Weekly,
 // et vocabulaire du tokeniseur (4,1 Mio). Mesuré le 14/10/2026 sur le site en ligne, profil vierge : prêt en 23 à 30 s
-// (le serveur compresse le modèle : 45,9 Mio transférés). Avant la #78 : 113 Mio depuis le Hub, 52 à 56 s
+// (le serveur compresse le modèle : 45,9 Mio transférés). Avant la #78 : 113 Mio depuis le Hub, 52 à 56 s. L'encodeur
+// ajusté servi depuis #164 pèse le même poids : 68 925 256 octets, soit 65,7 Mio
 const POIDS_MODELE = "65,7 Mio";
 // périmètre du corpus, affiché comme l'exige le sujet pour A3 : fiches (adresses distinctes) et passages comptés le
-// 17/10/2026 dans front/public/index/passages_m2.json ; instantané daté dans front/public/index/SOURCES.md
+// 17/10/2026 dans front/public/index/passages_m2.json ; instantané daté dans front/public/index/SOURCES.md. Le site
+// lit depuis #164 front/public/index_ajuste/passages_m2.json, copie octet pour octet du même fichier
 const PERIMETRE = { fiches: "261", passages: "4\u00a0240", instantane: "11 sept. 2026" };
 
 // tailles en Mio (2^20 octets), l'unité de l'équipe ; une décimale, pour que la progression reste lisible
@@ -99,6 +105,7 @@ function Reponse({ echange, basculer }) {
   // seuil d'abstention (#76) : il repère surtout les saisies sans rapport avec le droit du travail, pas les questions
   // juridiques absentes des fiches ; le message n'en promet pas plus, et les passages restent consultables
   const visibles = !echange.horsPerimetre || echange.afficher;
+  const fiches = regrouperParFiche(echange.resultats);
   return (
     <BulleAssistant>
       {echange.horsPerimetre ? (
@@ -120,17 +127,31 @@ function Reponse({ echange, basculer }) {
           </button>
         </div>
       ) : (
-        <p className="text-[15px] leading-relaxed">
-          J'ai trouvé <strong>{echange.resultats.length} passages</strong> des fiches pratiques qui parlent de votre
-          question. Les voici, du plus proche au moins proche.
-        </p>
+        <>
+          <p className="text-[15px] leading-relaxed">
+            J'ai trouvé <strong>{echange.resultats.length} passages</strong> dans{" "}
+            <strong>
+              {fiches.length} {fiches.length > 1 ? "fiches pratiques" : "fiche pratique"}
+            </strong>{" "}
+            qui parlent de votre question. Les voici par fiche, de la plus proche à la moins proche.
+          </p>
+          {/* zone grise (A3, #164) : meilleur score au-dessus du seuil, mais sous le 25e centile des questions du
+              CDTN ; 96 de leurs 479 formulations, toutes légitimes, y tombent (20 %), d'où un conseil de vérification
+              et non un refus (data/evaluation/notebook03/zone_grise_ajuste.json) */}
+          {echange.zoneGrise && (
+            <p className="rounded-[14px] bg-panneau px-4 py-3 text-sm leading-relaxed text-texte">
+              <span className="font-semibold text-encre">Correspondance moins nette que d'habitude.</span> Vérifiez que
+              ces passages répondent bien à votre question, ou précisez-la en décrivant votre situation.
+            </p>
+          )}
+        </>
       )}
       {visibles && (
         <>
           <ol className="flex flex-col gap-3">
-            {echange.resultats.map((p) => (
-              <li key={p.passage_id}>
-                <Passage passage={p} />
+            {fiches.map((f) => (
+              <li key={f.url ?? f.titre_fiche}>
+                <Fiche fiche={f} />
               </li>
             ))}
           </ol>
@@ -229,7 +250,9 @@ function annonce(echanges, pret) {
   if (e.resultats.length === 0) return "Aucun passage trouvé.";
   if (e.horsPerimetre && !e.afficher)
     return "Votre question semble sortir du périmètre des fiches pratiques. Les passages les plus proches restent consultables.";
-  return `${e.resultats.length} passages trouvés. Premier résultat : ${e.resultats[0].titre_fiche}.`;
+  const n = regrouperParFiche(e.resultats).length;
+  const prudence = e.zoneGrise && !e.horsPerimetre ? " Correspondance moins nette que d'habitude : vérifiez les passages." : "";
+  return `${e.resultats.length} passages trouvés dans ${n} ${n > 1 ? "fiches" : "fiche"}. Première fiche : ${e.resultats[0].titre_fiche}.${prudence}`;
 }
 
 export default function Conversation({ moteur }) {
@@ -272,8 +295,8 @@ export default function Conversation({ moteur }) {
 
   async function lancer(id, q) {
     try {
-      const { resultats, duree, horsPerimetre } = await moteur.rechercher(q, NB_RESULTATS);
-      majEchange(id, () => ({ statut: "resultats", resultats, duree, horsPerimetre, afficher: false }));
+      const { resultats, duree, horsPerimetre, zoneGrise } = await moteur.rechercher(q, NB_RESULTATS);
+      majEchange(id, () => ({ statut: "resultats", resultats, duree, horsPerimetre, zoneGrise, afficher: false }));
     } catch {
       majEchange(id, () => ({ statut: "erreur" }));
     }
@@ -397,7 +420,7 @@ export default function Conversation({ moteur }) {
           </button>
         </header>
 
-        {/* annonce courte pour les lecteurs d'écran ; un aria-live sur toute la conversation ferait relire les cinq
+        {/* annonce courte pour les lecteurs d'écran ; un aria-live sur toute la conversation ferait relire les dix
             passages en entier à chaque réponse */}
         <p className="sr-only" role="status">
           {annonce(echanges, pret)}

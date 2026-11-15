@@ -10,6 +10,8 @@ Commandes, depuis la racine du dépôt, environnement de `scripts/evaluation/req
     python scripts/evaluation/ajustement_05.py controle     # reproduction du notebook 03 (amendement A1, section 4)
     python scripts/evaluation/ajustement_05.py mesurer --mode developpement   # lot de calibration seulement
     python scripts/evaluation/ajustement_05.py mesurer --mode mesure          # deux exécutions identiques exigées
+    python scripts/evaluation/ajustement_05.py site --modele <dossier élagué>   # front/public/index_ajuste/ (section 5)
+Mesures descriptives du site qui sert l'ajusté (A2, A3) : scripts/evaluation/mesures_site_164.py.
 Comme tout fichier de `data/`, les sorties ne sont pas versionnées ; leurs empreintes sont publiées sur le #164.
 """
 
@@ -352,17 +354,66 @@ def mesurer(mode: str) -> dict:
     return contenu
 
 
+# Hébergement (protocole 05, section 5) : dossier d'index du site pour l'encodeur ajusté
+
+SITE = RACINE / "front/public"
+DOSSIER_SITE_AJUSTE = SITE / "index_ajuste"
+
+
+def construire_site(dossier_modele: str) -> dict:
+    """Écrit front/public/index_ajuste/ : l'index fp32 de l'ajusté, les passages du site recopiés tels quels, et un
+    en-tête qui ne diffère de celui de front/public/index/ que par le modèle et l'index. front/public/index/, que lit la
+    chaîne du volet B et dont l'empreinte est dans son verrou (#131), n'est pas modifié."""
+    modele = SITE / "modele" / dossier_modele
+    onnx = modele / "onnx/model_quantized.onnx"
+    if not onnx.is_file() or not dossier_modele.startswith("multilingual-e5-small-ajuste-q8-elague-"):
+        raise ErreurMesure05("Dossier du modèle ajusté élagué introuvable")
+    sha_onnx = sha256_fichier(onnx)
+    if not dossier_modele.endswith(sha_onnx[:8]):
+        raise ErreurMesure05("Le nom du dossier ne correspond pas à l'empreinte du modèle")
+    entete = json.loads((SITE / "index/index_m2.json").read_text(encoding="utf-8"))
+    meta = json.loads(INDEX_AJUSTE.with_suffix(".json").read_text(encoding="utf-8"))
+    if sha256_fichier(INDEX_AJUSTE) != meta["sha256"]:
+        raise ErreurMesure05("Index ajusté différent de celui construit")
+    if sha256_fichier(SITE / "index/passages_m2.json") != entete["metadonnees"]["sha256"]:
+        raise ErreurMesure05("Passages du site différents de leur en-tête")
+    DOSSIER_SITE_AJUSTE.mkdir(parents=True, exist_ok=False)
+    import shutil
+    shutil.copyfile(INDEX_AJUSTE, DOSSIER_SITE_AJUSTE / "index_m2.f32")
+    shutil.copyfile(SITE / "index/passages_m2.json", DOSSIER_SITE_AJUSTE / "passages_m2.json")
+    entete["modele"] = {
+        "emplacement": "site", "depot": dossier_modele, "revision": None, "dtype": "q8",
+        "fichier": "onnx/model_quantized.onnx", "sha256": sha_onnx,
+        "origine": {"depot": "multilingual-e5-small-finetuned (#49, PR #63)", "revision": None,
+                    "sha256": EMPREINTES["q8_ajuste"][1],
+                    "tokeniseur": "Xenova/multilingual-e5-small, révision 761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+                    "transformation": "élagage sans perte du vocabulaire (#50, scripts/allegement/elaguer_vocabulaire.py)"}}
+    entete["index"] = {**entete["index"], "sha256": meta["sha256"],
+                       "moteur": "PyTorch fp32 (encodeur ajusté #49, tokeniseur de intfloat/multilingual-e5-small)"}
+    entete["source"] = {**entete["source"], "mesure": "protocole 05 et amendement A1 (#164)"}
+    entete["produit_le"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    texte = json.dumps(entete, ensure_ascii=False, indent=1) + "\n"
+    (DOSSIER_SITE_AJUSTE / "index_m2.json").write_text(texte, encoding="utf-8")
+    resultat = {"dossier": str(DOSSIER_SITE_AJUSTE.relative_to(RACINE)), "modele": dossier_modele, "sha256_modele": sha_onnx,
+                "fichiers": {f.name: sha256_fichier(f) for f in sorted(DOSSIER_SITE_AJUSTE.iterdir())}}
+    print(json.dumps(resultat, ensure_ascii=False, indent=1))
+    return resultat
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sp = p.add_subparsers(dest="commande", required=True)
     sp.add_parser("index")
     sp.add_parser("controle")
     pm = sp.add_parser("mesurer"); pm.add_argument("--mode", choices=("developpement", "mesure"), required=True)
+    ps = sp.add_parser("site"); ps.add_argument("--modele", required=True, help="dossier du modèle élagué dans front/public/modele/")
     a = p.parse_args(argv)
     if a.commande == "index":
         construire_index()
     elif a.commande == "controle":
         controle_reproduction()
+    elif a.commande == "site":
+        construire_site(a.modele)
     else:
         mesurer(a.mode)
     return 0
