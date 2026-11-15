@@ -102,7 +102,8 @@ Tout est descriptif, avec des intervalles à 95 % :
 
 ## 8. Valeurs inscrites au gel
 
-* **τ** : à inscrire après le calcul, avec l'empreinte SHA-256 de `data/evaluation/volet_b/chaine_v2/seuil_reclasseur.json`.
+* **τ = 0,1689** (valeur complète 0,16890393942594534), calculé le 15 novembre 2026 par `chaine_v2.py seuil` sur les 479 variantes du CDTN, sur processeur. 24 variantes sont sous τ. Les scores maximaux de bge-m3 vont de 0,0081 à 0,9999, médiane 0,9565 : la distribution est concentrée près de 1, avec une longue traîne basse. Le 5e centile a été recalculé hors du script, à partir des 479 scores enregistrés, avec la même valeur.
+* **Fichier de τ** : `data/evaluation/volet_b/chaine_v2/seuil_reclasseur.json`, SHA-256 `3f7670f1bd40cf43d8f7a1b42fc716a754c1ce1a732ae80a762a4ad085061788`. Comme pour S, la mesure lit la valeur complète du champ `seuil`, après contrôle de cette empreinte, sans arrondi.
 * **Code** : `scripts/recuperation/chaine_v2.py` et `recuperation.py` au commit de gel, publié sur le #163 avec leurs empreintes.
 
 ---
@@ -110,3 +111,4 @@ Tout est descriptif, avec des intervalles à 95 % :
 ## 9. Historique
 
 * **15 novembre 2026** : protocole proposé, à partir du diagnostic publié sur le #163.
+* **15 novembre 2026** : τ calculé et inscrit à la section 8 ; protocole figé au commit publié sur le #163.

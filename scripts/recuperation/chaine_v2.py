@@ -53,10 +53,10 @@ SORTIES = RACINE / "data" / "evaluation" / "volet_b" / "chaine_v2"
 FICHIER_TAU = SORTIES / "seuil_reclasseur.json"
 CONFIRMATION = RACINE / "data" / "evaluation" / "recuperation" / "confirmation" / "questions.csv"
 PROTOCOLE_08 = RACINE / "docs" / "etudes" / "evaluation" / "08_protocole_chaine_v2.md"
-# Empreintes inscrites au gel du protocole 08 (section 6) ; None tant qu'il n'est pas figé : seul le lot de
+# Empreintes inscrites au gel du protocole 08 (section 8) ; None tant qu'il n'est pas figé : seul le lot de
 # calibration peut alors être lu.
-SHA256_PROTOCOLE_08: str | None = None
-SHA256_TAU: str | None = None
+SHA256_PROTOCOLE_08: str | None = "9168a3c970530399b7df62faf93ee4eb5e8c180eb3511809885ca65bfaaa44c9"   # figé le 15/11 (#163)
+SHA256_TAU: str | None = "3f7670f1bd40cf43d8f7a1b42fc716a754c1ce1a732ae80a762a4ad085061788"   # τ = 0,1689
 
 # Consigne v2 (protocole 08, section 3), rédigée avant toute mesure à partir du diagnostic du 15 novembre. Par rapport à
 # la consigne v1, seules changent la phrase de brièveté et la règle d'abstention ; la phrase d'abstention est la même.
