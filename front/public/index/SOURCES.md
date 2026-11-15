@@ -23,5 +23,5 @@
 ## Règles
 
 - **Ne pas régénérer ces fichiers à la main.** C'est cet index, d'empreinte `2ec45586`, que mesure le notebook 03 sous le nom « E5 servi » : un index reconstruit sur une autre machine peut différer (relecture de la PR #39), et le site ne servirait plus le système mesuré.
-- **Remplacer seulement par une version validée**, par exemple celle de l'encodeur ajusté (#49) ou du modèle allégé (#50), avec un nouvel en-tête et ses empreintes.
+- **Ne plus remplacer ces fichiers.** Depuis le 15 novembre 2026 (#164), le site lit l'index de l'encodeur ajusté, dans `front/public/index_ajuste/`. Cet index-ci reste celui de l'encodeur de base : la chaîne du volet B le lit (`scripts/rag/rag.py`), et son empreinte figure dans le verrou de la #131.
 - **Historique de l'en-tête.** Le 14 octobre 2026, seul son bloc `modele` a changé : il désigne le modèle élagué servi par le site, au lieu du q8 de Xenova sur le Hub, et garde ce dernier comme origine (empreinte précédente de l'en-tête : `4a0d1462…`). L'index et les passages sont inchangés.
