@@ -113,7 +113,7 @@ export function classer(matrice, N, D, q, k = 5) {
 // (#56, data/evaluation/notebook03/seuil_cdtn.json, SHA-256 3432fb16…). Sur le lot de test, il garde 72 des 73
 // questions du corpus et rejette 9 des 24 questions hors corpus. Il ne vaut que pour les vecteurs avec lesquels il a
 // été calculé : le modèle est reconnu à l'empreinte de son fichier ONNX, l'index à la sienne. Pour un autre modèle,
-// l'encodeur ajusté par exemple, aucun seuil n'est appliqué tant qu'il n'a pas été recalculé.
+// aucun seuil n'est appliqué tant qu'il n'a pas été recalculé : c'est ce qui a été fait pour l'encodeur ajusté (#164).
 export const ABSTENTION = Object.freeze({
   seuil: 0.8559679388999939,
   dtype: "q8",
@@ -126,12 +126,40 @@ export const ABSTENTION = Object.freeze({
   indexSha256: "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
 });
 
-// Seuil applicable à cet en-tête, ou null s'il a été calculé pour un autre modèle ou un autre index.
-export function seuilAbstention(entete, reference = ABSTENTION) {
+// Encodeur ajusté (#49), servi depuis le 15 novembre 2026 selon la règle du protocole 05 et son amendement A1 (#164).
+// Seuil recalculé par la même règle (data/evaluation/notebook03/seuil_cdtn_ajuste.json, SHA-256 b3fca637…), avec les
+// 479 variantes encodées dans le navigateur par l'ajusté et son index (front/public/index_ajuste/). Zone grise (A3) :
+// avertissement doux, passages affichés, si le meilleur score est au-dessus du seuil mais sous le 25e centile de la
+// même population (zone_grise_ajuste.json, SHA-256 c6ae7ac0…). Borne calculée sur le CDTN seul, après la mesure de A1,
+// sans qu'aucun score maximal du lot de test ait été regardé : la mesure de A1 n'en publie que l'AUC.
+export const ABSTENTION_AJUSTE = Object.freeze({
+  seuil: 0.7682965993881226,
+  zoneGrise: 0.8140405416488647,
+  dtype: "q8",
+  // q8 ajusté livré le 14 octobre, et sa version élaguée sans perte : 822 vecteurs identiques bit à bit dans le navigateur
+  modeles: Object.freeze([
+    "934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047",
+    "13ed78c9bf0c4e4ba2d36d0f715568edfb341a44051225f0b0a0e0214bf991d4",
+  ]),
+  indexSha256: "dc8daa7243bec30c28ea4830daeb10970bcd3de8d819f71a602b5d0b306ea8f1",
+});
+export const ABSTENTIONS = Object.freeze([ABSTENTION, ABSTENTION_AJUSTE]);
+
+// Référence de seuil applicable à cet en-tête (même fichier de modèle, même précision, même index), ou null.
+export function referenceAbstention(entete, references = ABSTENTIONS) {
   const m = entete?.modele ?? {};
-  const meme = reference.modeles.includes(m.sha256) && m.dtype === reference.dtype
-    && entete?.index?.sha256 === reference.indexSha256;
-  return meme ? reference.seuil : null;
+  return [references].flat().find((r) => r.modeles.includes(m.sha256) && m.dtype === r.dtype
+    && entete?.index?.sha256 === r.indexSha256) ?? null;
+}
+
+// Seuil applicable à cet en-tête, ou null s'il a été calculé pour un autre modèle ou un autre index.
+export function seuilAbstention(entete, references = ABSTENTIONS) {
+  return referenceAbstention(entete, references)?.seuil ?? null;
+}
+
+// Borne haute de la zone grise applicable à cet en-tête, ou null (l'encodeur de base n'en a pas).
+export function borneZoneGrise(entete, references = ABSTENTIONS) {
+  return referenceAbstention(entete, references)?.zoneGrise ?? null;
 }
 
 // Vrai si le meilleur passage reste strictement sous le seuil ; faux sans seuil applicable ou sans résultat.
@@ -139,6 +167,24 @@ export function seuilAbstention(entete, reference = ABSTENTION) {
 export function horsPerimetre(resultats, seuil) {
   if (seuil === null || seuil === undefined || resultats.length === 0) return false;
   return resultats[0].score < seuil;
+}
+
+// Vrai si le meilleur passage est au-dessus du seuil mais strictement sous la borne de la zone grise.
+export function zoneGrise(resultats, seuil, borne) {
+  if (borne === null || borne === undefined || resultats.length === 0) return false;
+  return !horsPerimetre(resultats, seuil) && resultats[0].score < borne;
+}
+
+// Passages regroupés par fiche (A2, #164) : une fiche par adresse, dans l'ordre de son meilleur passage ; dans une
+// fiche, les passages gardent leur ordre et leur rang. Aucun passage n'est retiré ni réordonné entre fiches.
+export function regrouperParFiche(resultats) {
+  const fiches = new Map();
+  for (const p of resultats) {
+    const cle = (p.url ?? p.titre_fiche ?? "").replace(/\/+$/, "");
+    if (!fiches.has(cle)) fiches.set(cle, { rang: fiches.size + 1, titre_fiche: p.titre_fiche, url: p.url, passages: [] });
+    fiches.get(cle).passages.push(p);
+  }
+  return [...fiches.values()];
 }
 
 // Moteur complet : index vérifié, modèle chargé, puis rechercher(question, k) renvoie les k meilleurs passages.
@@ -150,6 +196,7 @@ export async function creerMoteur(pipeline, base, options = {}) {
     entete: index.entete,
     nbPassages: index.N,
     seuilAbstention: seuilAbstention(index.entete),
+    borneZoneGrise: borneZoneGrise(index.entete),
     async rechercher(question, k = 5) {
       const q = await encoder(extracteur, index.entete, question);
       return classer(index.matrice, index.N, index.D, q, k)

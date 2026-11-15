@@ -3,7 +3,7 @@
 // la fonction de recherche.
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { creerMoteur, horsPerimetre, servirOrtDepuisLeSite } from "./moteur.js";
+import { creerMoteur, horsPerimetre, servirOrtDepuisLeSite, zoneGrise } from "./moteur.js";
 // fichiers d'exécution d'ONNX Runtime Web, publiés par Vite avec le site : la version est celle qu'épingle
 // Transformers.js, installée par le package-lock.json ; deux variantes, Transformers.js choisissant selon le navigateur
 import ortMjs from "onnxruntime-web/ort-wasm-simd-threaded.mjs?url";
@@ -18,8 +18,9 @@ const ORT_DANS_LE_SITE = {
   "ort-wasm-simd-threaded.asyncify.wasm": ortWasmAsyncify,
 };
 
-// dossiers de l'index et du modèle dans le site : sous le chemin de base de GitHub Pages en ligne, à la racine en local
-const DOSSIER_INDEX = import.meta.env.BASE_URL + "index/";
+// dossiers de l'index et du modèle dans le site : sous le chemin de base de GitHub Pages en ligne, à la racine en local.
+// Depuis le 15/11/2026 (#164), l'index de l'encodeur ajusté ; front/public/index/ reste celui de la chaîne du volet B.
+const DOSSIER_INDEX = import.meta.env.BASE_URL + "index_ajuste/";
 const DOSSIER_MODELES = import.meta.env.BASE_URL + "modele/";
 
 // message lisible par un visiteur, selon l'origine de l'erreur ; le détail technique reste affichable
@@ -79,12 +80,15 @@ export function useMoteur() {
     return () => { abandonne = true; };
   }, [essai]);
 
-  // horsPerimetre : le meilleur passage reste sous le seuil d'abstention du modèle servi (moteur.js, ABSTENTION)
+  // horsPerimetre : le meilleur passage reste sous le seuil d'abstention du modèle servi (moteur.js, ABSTENTIONS) ;
+  // zoneGrise : au-dessus du seuil, mais sous la borne de la zone grise de ce modèle (A3, #164)
   const rechercher = useCallback(async (question, k = 5) => {
     const debut = performance.now();
     const resultats = await moteur.current.rechercher(question, k);
+    const { seuilAbstention, borneZoneGrise } = moteur.current;
     return { resultats, duree: performance.now() - debut,
-      horsPerimetre: horsPerimetre(resultats, moteur.current.seuilAbstention) };
+      horsPerimetre: horsPerimetre(resultats, seuilAbstention),
+      zoneGrise: zoneGrise(resultats, seuilAbstention, borneZoneGrise) };
   }, []);
 
   const reessayer = useCallback(() => setEssai((n) => n + 1), []);

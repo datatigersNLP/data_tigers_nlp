@@ -11,15 +11,15 @@ Année universitaire 2026-2027. Enseignant : Adrian ROSARI.
 
 - **Ce qu'il fait.** Une recherche sémantique (cas A3) dans les 261 fiches pratiques du ministère du Travail
   (travail-emploi.gouv.fr), découpées en 4 240 passages, instantané SocialGouv du 11 septembre 2026. Il ne
-  génère aucun texte : pour une question, il renvoie les 5 passages les plus proches, chacun avec son score de
-  similarité, la section de la fiche dont il vient et un lien vers la fiche complète.
-- **Où il calcule.** Entièrement dans le navigateur du visiteur : aucune question n'est envoyée à un serveur. Le
-  modèle `multilingual-e5-small`, quantifié en q8 et élagué sans perte de son vocabulaire (65,7 Mio, mêmes vecteurs
-  bit à bit que le q8 d'origine pour tout texte en alphabet latin ou grec), est servi par le site lui-même et exécuté
-  par Transformers.js 4.3.0.
+  génère aucun texte : pour une question, il renvoie les 10 passages les plus proches, regroupés par fiche, chacun
+  avec son score de similarité, la section de la fiche dont il vient et un lien vers la fiche complète.
+- **Où il calcule.** Entièrement dans le navigateur du visiteur : aucune question n'est envoyée à un serveur.
+  Depuis le 15 novembre 2026 (#164), le modèle est l'encodeur `multilingual-e5-small` ajusté sur nos fiches (#49),
+  quantifié en q8 et élagué sans perte de son vocabulaire (65,7 Mio, mêmes vecteurs bit à bit que le q8 complet pour
+  tout texte en alphabet latin ou grec). Il est servi par le site lui-même et exécuté par Transformers.js 4.3.0.
 - **Ses limites.** Un seuil de similarité, fixé sur un jeu externe, repère les saisies sans rapport avec le droit
-  du travail ; il ne détecte pas toutes les questions sans réponse dans les fiches. Les passages ne sont pas un
-  conseil juridique.
+  du travail ; il ne détecte pas toutes les questions sans réponse dans les fiches. Juste au-dessus du seuil, un
+  avertissement invite à vérifier les passages, sans les masquer. Les passages ne sont pas un conseil juridique.
 - **Son code.** Dans `front/`, qui explique comment le lancer en local et comment il est déployé :
   [front/README.md](front/README.md). Chaque fusion dans `dev` qui modifie `front/` redéploie le site.
 
@@ -41,7 +41,7 @@ A3 constitue la couche de récupération de B1 : corpus, découpage, encodage et
 | 2. Encodage et index du site | `scripts/indexation/02_indexation.ipynb` | `docs/etudes/indexation/02_indexation.md`, et les supports `01_encodeur_e5_small` et `03_apprentissage_contrastif` |
 | 3. Évaluation sur le jeu de questions | `scripts/evaluation/03_evaluation.ipynb` | `docs/etudes/evaluation/03_evaluation.md`, avec son protocole, son audit statistique et le jeu du CDTN (`04_cdtn.md`) |
 | 4. Allègement du modèle servi | `scripts/allegement/` | `scripts/allegement/README.md` |
-| 5. Ajustement de l'encodeur (étude) | `scripts/adaptation/` | `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md`, protocole `docs/etudes/evaluation/05_protocole_ajustement.md` |
+| 5. Ajustement de l'encodeur, servi depuis le 15 novembre (#164) | `scripts/adaptation/`, mesure `scripts/evaluation/ajustement_05.py` | `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md`, protocole `docs/etudes/evaluation/05_protocole_ajustement.md`, résultats `docs/etudes/evaluation/05_resultats_ajustement.md` |
 | 6. Volet B : première inférence locale (Qwen2.5-7B-Instruct, Q4_K_M), réussie le 27 septembre (#31) | `scripts/inference/` | `docs/etudes/inference_locale_qwen.md` |
 | 7. Volet B : chaîne RAG complète (#51) | à intégrer | en cours |
 
@@ -60,6 +60,19 @@ n'est jamais versionné : les notebooks et les scripts les reconstruisent.
   73 questions du corpus et ne rejette que 9 des 24 questions hors corpus.
 - **Encodeur ajusté (#49).** La mesure prévue par le protocole 05 n'a pas été faite avant le 16 octobre ; la règle
   de repli écrite d'avance s'applique : le site sert l'encodeur de base pour la fin du volet A.
+
+## Résultats au 15 novembre 2026 (#164)
+
+- **Encodeur ajusté servi** (protocole 05 et son amendement A1, mesure faite deux fois avec un résultat identique) :
+  sur le lot de test, un passage pertinent figure dans les 5 premiers résultats pour 63,0 % des questions du
+  corpus, contre 43,8 % pour l'encodeur de base, soit +19,2 points [+9,7 ; +30,4] ; sur le CDTN, +4,9 points
+  [+0,6 ; +9,3]. La règle écrite d'avance, un écart positif ou nul sur les deux jeux, est satisfaite.
+- **Ce que voit le visiteur** (10 passages regroupés par fiche) : une fiche pertinente est affichée pour 93,2 % des
+  questions du corpus, contre 83,6 % pour le site précédent (+9,6 points [+4,1 ; +18,5], aucune question perdue),
+  pour 4,0 fiches affichées en moyenne au lieu de 3,0.
+- **Abstention** : avec le seuil recalculé pour l'encodeur ajusté, 70 des 73 questions du corpus sont conservées
+  et 10 des 24 questions hors corpus rejetées ; 13 autres reçoivent l'avertissement de la zone grise.
+- Détail, contrôles et limites : `docs/etudes/evaluation/05_resultats_ajustement.md`.
 
 ## Organisation du dépôt
 
