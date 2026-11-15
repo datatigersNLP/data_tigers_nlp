@@ -40,22 +40,49 @@ const proposer = (nom) => {
 const sha256 = async (texte) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",
   new TextEncoder().encode(texte))), (octet) => octet.toString(16).padStart(2, "0")).join("");
 env.allowLocalModels = false;
-// lot à encoder : celui du notebook 03 par défaut, celui du seuil du CDTN avec ?lot=cdtn
-const lotCdtn = new URLSearchParams(location.search).get("lot") === "cdtn";
+// lot à encoder : celui du notebook 03 par défaut, celui du seuil du CDTN avec ?lot=cdtn, les 494 formulations de la
+// mesure du CDTN (protocole 05, section 3) avec ?lot=cdtn_mesure
+const parametres = new URLSearchParams(location.search);
+const lotCdtn = parametres.get("lot") === "cdtn";
+const lotCdtnMesure = parametres.get("lot") === "cdtn_mesure";
+// Protocole 05 (#49, #164) : ?modele=base ou ?modele=ajuste charge un q8 local, servi depuis data/adaptation/navigateur/,
+// avec le tokeniseur de l'encodeur de base ; sans ce paramètre, la page garde son comportement d'origine (le Hub).
+const MODELES_LOCAUX = {
+  base: "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",    // q8 de Xenova, révision 761b726d
+  ajuste: "934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047",  // q8 ajusté livré le 14 octobre
+};
+const modeleLocal = parametres.get("modele");
 const fichierQuestions = lotCdtn ? "../../data/evaluation/cdtn/questions_cdtn.json"
+  : lotCdtnMesure ? "../../data/evaluation/cdtn/formulations_mesure.json"
   : "../../data/evaluation/notebook03/questions_navigateur.json";
-const nomSortie = lotCdtn ? "vecteurs_cdtn.json" : "vecteurs_navigateur.json";
+const nomSortie = (lotCdtn ? "vecteurs_cdtn" : lotCdtnMesure ? "vecteurs_cdtn_mesure" : "vecteurs_navigateur")
+  + (modeleLocal ? "_" + modeleLocal : "") + ".json";
 
 try {
+  if (modeleLocal !== null && !Object.hasOwn(MODELES_LOCAUX, modeleLocal)) throw new Error("modèle local inconnu : " + modeleLocal);
   const entete = await (await fetch("../../data/indexation/site/index_m2.json")).json();
   const lot = await (await fetch(fichierQuestions)).json();
   // la liste des questions est contrôlée par son empreinte, calculée par le notebook sur le même texte JSON
   const empreinte = await sha256(JSON.stringify(lot.questions));
   if (empreinte !== lot.empreinte) throw new Error("empreinte des questions différente de celle écrite par le notebook");
   if (entete.requete.prefixe !== lot.prefixe) throw new Error("préfixe différent de celui de l'en-tête du site");
-  const extracteur = await pipeline("feature-extraction", entete.modele.depot,
-    { revision: entete.modele.revision, dtype: entete.modele.dtype, device: "wasm" });
-  noter(`modèle chargé : ${entete.modele.depot}, ${entete.modele.revision.slice(0, 8)}, ${entete.modele.dtype}`);
+  let extracteur, empreinteModele = null;
+  if (modeleLocal) {
+    // même méthode que le site (moteur.js, chargerModele) : le dossier local est déclaré comme hôte
+    env.allowRemoteModels = true;
+    env.remoteHost = new URL("../../data/adaptation/navigateur/", location.href).href;
+    env.remotePathTemplate = "{model}/";
+    const onnx = await (await fetch(env.remoteHost + modeleLocal + "/onnx/model_quantized.onnx")).arrayBuffer();
+    empreinteModele = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", onnx)),
+      (octet) => octet.toString(16).padStart(2, "0")).join("");
+    if (empreinteModele !== MODELES_LOCAUX[modeleLocal]) throw new Error("empreinte du q8 local inattendue : " + empreinteModele);
+    extracteur = await pipeline("feature-extraction", modeleLocal, { dtype: "q8", device: "wasm" });
+    noter(`modèle local chargé : ${modeleLocal}, q8 ${empreinteModele.slice(0, 8)}`);
+  } else {
+    extracteur = await pipeline("feature-extraction", entete.modele.depot,
+      { revision: entete.modele.revision, dtype: entete.modele.dtype, device: "wasm" });
+    noter(`modèle chargé : ${entete.modele.depot}, ${entete.modele.revision.slice(0, 8)}, ${entete.modele.dtype}`);
+  }
   const vecteurs = [];
   const debut = performance.now();
   for (const q of lot.questions) {
@@ -64,14 +91,21 @@ try {
     vecteurs.push(Array.from(sortie.data));
   }
   const encodage_ms = performance.now() - debut;
-  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, depot: entete.modele.depot,
-    revision: entete.modele.revision, dtype: entete.modele.dtype, prefixe: lot.prefixe, empreinte_questions: empreinte,
-    identifiants: lot.questions.map((q) => q.id), vecteurs, encodage_ms };
+  window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent,
+    depot: modeleLocal ? "local:" + modeleLocal : entete.modele.depot, revision: modeleLocal ? null : entete.modele.revision,
+    dtype: modeleLocal ? "q8" : entete.modele.dtype, prefixe: lot.prefixe, empreinte_questions: empreinte,
+    identifiants: lot.questions.map((q) => q.id), vecteurs, encodage_ms,
+    ...(modeleLocal ? { modele_local: modeleLocal, sha256_q8: empreinteModele } : {}) };
   noter(`terminé : ${vecteurs.length} questions en ${Math.round(encodage_ms)} ms`);
   proposer(nomSortie);
 } catch (erreur) {
   window.RESULTATS = { erreur: String(erreur) };
   noter("ERREUR : " + erreur);
+}
+// Avec ?envoi=1 (pilote encoder_navigateur.py, sur 127.0.0.1), les résultats ou l'erreur sont renvoyés au serveur local.
+if (parametres.get("envoi") === "1") {
+  await fetch("/resultats?nom=" + encodeURIComponent(nomSortie),
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(window.RESULTATS) });
 }
 </script>
 </body>
