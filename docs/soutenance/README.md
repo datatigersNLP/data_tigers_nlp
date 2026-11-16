@@ -2,7 +2,7 @@
 
 **Équipe** Data Tigers  
 **Ticket** #114 (préparer la soutenance J4 : pitch, présentation, vidéo de secours, répétition et envoi)  
-**Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date  
+**Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date ; **mis à jour le** 16 novembre 2026 : encodeur ajusté servi (#164), chaîne v2 du volet B (#163), mesure corrigée par le jugement mutualisé (#139, annexe 14)  
 **Usage** une seule source pour deux formats : les fichiers Marp donnent les PDF, et le même texte donne la version HTML animée.
 
 ---
@@ -12,20 +12,20 @@
 | Fichier | Rôle |
 |---|---|
 | `pitch.md` | pitch, 5 diapositives, 3 min 45 visées |
-| `presentation.md` | démonstration (1 diapositive, 3 min 50), présentation (10 diapositives, 7 min 57), annexes (13 diapositives, pour les questions) |
+| `presentation.md` | démonstration (1 diapositive, 3 min 50), présentation (10 diapositives, 7 min 57), annexes (14 diapositives, pour les questions) |
 | `pitch.pdf`, `presentation.pdf` | rendus Marp de ces deux fichiers |
-| `soutenance.html` | les 29 diapositives en une page animée, sans aucune ressource externe |
+| `soutenance.html` | les 30 diapositives en une page animée, sans aucune ressource externe |
 | `figures/*.svg` | les 8 figures, générées par `outils/figures.py` ; ne pas les modifier à la main |
 | `outils/figures.py` | génère les figures ; échelles exactes et contrôle de la largeur des textes |
 | `outils/construire_html.py` | construit `soutenance.html` à partir des deux fichiers Marp |
 | `outils/controler_debordements.py` | vérifie qu'aucun contenu ne dépasse de sa diapositive, dans les PDF et dans la page HTML |
 
-Chaque diapositive porte ses notes d'orateur dans un commentaire HTML : durée visée, texte à dire, questions probables et réponses. Le texte à dire est calibré à 130 mots par minute.
+Chaque diapositive porte ses notes d'orateur dans un commentaire HTML : durée visée, texte à dire, questions probables et réponses. Le texte à dire est calibré à 130 mots par minute ; la mise à jour du 16/11 ne l'allonge pas (470 mots au lieu de 475 pour le pitch, 1 052 au lieu de 1 054 pour la présentation, au même décompte).
 
 ## Règles de rédaction
 
 - Chaque terme technique est défini sur la diapositive où il apparaît (bandeau du bas) ou dans le glossaire (annexe 13).
-- Chaque chiffre vient d'une source du dépôt : `docs/rapport/RAPPORT_FINAL.md` et son annexe des sources, `docs/jalons/J3_chiffres_verifies.md`, ou les sorties de mesure citées dans les notes.
+- Chaque chiffre vient d'une source du dépôt : `docs/rapport/RAPPORT_FINAL.md` et son annexe des sources, `docs/jalons/J3_chiffres_verifies.md`, les documents de résultats de `docs/etudes/evaluation/` (05 pour l'encodeur ajusté, 08 pour la chaîne v2, PR #166, et 09 pour le jugement mutualisé, branche `feat/139-mesure-multi-passages`), ou les sorties de mesure citées dans les notes.
 - Aucun émoji ni tiret cadratin ou demi-cadratin ; `construire_html.py` refuse de construire la page s'il en trouve.
 - Typographie française : espace insécable dans les nombres (4 240) et devant « % : ; ? ! » ; jamais dans les attributs SVG.
 - Le jugement à l'aveugle de l'exactitude (diapositive des résultats et annexe 5) reprend l'analyse des grilles de Maïmouna et Vaneck rendues le 14/11, selon un plan figé avant de croiser la grille de Vaneck avec la clé. Les précisions demandées à Maïmouna peuvent modifier un chiffre : l'analyse sera alors refaite et les diapositives mises à jour.
@@ -59,10 +59,10 @@ marp-cli est installé hors du dépôt, dans un dossier local, avec `npm install
 - **Animations** : apparition progressive des éléments, tracé des flèches et croissance des barres. Elles ne jouent qu'à l'arrivée sur une diapositive par la navigation, et jamais si le système demande de réduire les animations.
 - **Polices** : aucune police n'est téléchargée. La page utilise la même pile que les PDF (IBM Plex Sans si elle est installée, sinon Helvetica Neue ou Arial). Les retours à la ligne restent proches de ceux des PDF sans être identiques, car Chrome ne compose pas tout à fait de la même façon à l'écran et à l'impression : chaque format est donc contrôlé séparément. Aucune adresse IP de spectateur ne part chez un tiers.
 
-Contrôles faits le 14/11 sur la page construite, dans Chrome sans interface :
+Contrôles faits le 14/11 sur la page construite, dans Chrome sans interface, et refaits le 16/11 pour les deux premiers après la mise à jour :
 
-- aucun débordement, d'après `controler_debordements.py`, sur les 29 diapositives de la page et sur les 5 et 24 pages des PDF. Pour les PDF, le script lit la position de chaque mot, car le HTML exporté par Marp ne compose pas comme son PDF. Contrôle négatif : sur une copie qui reprend une version fautive de la diapositive des résultats, il signale bien le débordement ;
-- aucune erreur de console ;
+- aucun débordement, d'après `controler_debordements.py`, sur les 30 diapositives de la page et sur les 5 et 25 pages des PDF (16/11). Pour les PDF, le script lit la position de chaque mot, car le HTML exporté par Marp ne compose pas comme son PDF. Contrôle négatif : sur une copie qui reprend une version fautive de la diapositive des résultats, il signale bien le débordement ;
+- aucune erreur de console venant de la page (16/11 : la seule erreur est la requête automatique de `favicon.ico` vers le serveur de test local) ;
 - navigation, sommaire, notes et bornes vérifiés par un script qui simule les touches ;
 - affichage vérifié à 400 et à 900 pixels de large.
 

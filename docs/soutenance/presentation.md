@@ -56,7 +56,7 @@ style: |
 
 <!--
 Durée visée : 3 min 50 (volet A 1 min 10, volet B 2 min 40). Vidéo de secours du volet B (#111), à lancer si le direct échoue.
-Volet A : taper la question des 10 heures ; montrer les 5 passages, la section, le score et le lien profond vers la fiche. Puis la question sur la mutation d'un fonctionnaire : la fonction publique n'est pas couverte par les fiches ; son score maximal (0,832 en fp32) est sous le seuil 0,8560, le site doit le signaler comme hors périmètre. Vérifier ce comportement en répétition : le site encode en q8, la mesure en fp32.
+Volet A : taper la question des 10 heures ; montrer les 10 passages regroupés par fiche, la section, le score et le lien profond vers la fiche. Puis la question sur la mutation d'un fonctionnaire : la fonction publique n'est pas couverte par les fiches ; le site doit la refuser (score sous 0,7683) ou afficher l'avertissement « correspondance moins nette » (sous 0,8140). Le score de cette question avec l'encodeur ajusté, servi depuis le 15/11, n'a pas été mesuré : vérifier ce comportement en répétition.
 Volet B : scénario de la #158 (Vaneck), resserré pour tenir dans le temps imparti. Les questions ont été écrites pour la démonstration, hors du jeu de test ; leurs réponses sont à confirmer lors de l'essai sur le Mac. La démonstration n'applique pas le seuil S : c'est le modèle qui décide de s'abstenir. Période d'essai : le passage P1 de la fiche « La période d'essai » donne quatre mois pour les cadres ; cliquer sur [P1] pour ouvrir la carte du passage. Retraite d'un fonctionnaire : hors corpus ; montrer l'encadré d'abstention, puis les passages consultés, qui ne répondent pas. Enfin la même question posée à T puis au modèle adapté, retenue à l'essai parmi les candidates de la #158 (par exemple le repos minimal entre deux journées de travail) : c'est une illustration choisie après essai, la preuve reste la mesure du protocole 06.
 Question de réserve s'il reste du temps : « Je suis en arrêt maladie : mon employeur peut-il me licencier, et suis-je payé pendant l'arrêt ? » (réponse attendue sur deux passages).
 Questions probables :
@@ -112,19 +112,20 @@ Questions probables :
 ![w:1060](figures/chaine_a.svg)
 
 - **Allègement** : de 112,8 à **65,7 Mio** en retirant le vocabulaire des alphabets non latins, sans changer un seul résultat (822 requêtes vérifiées).
-- **Mesure du 13/10**, 73 questions : le bon passage est dans les 5 premiers pour **43,8 %**, contre 42,5 % pour BM25 ; la bonne fiche pour **83,6 %**.
-- **Limite** : le seuil « hors périmètre » ne rejette que **9 questions hors corpus sur 24**.
+- **Encodeur ajusté, servi depuis le 15/11** : bon passage dans les 5 premiers pour **63,0 %** des 73 questions (base : 43,8 %) ; fiche pertinente affichée pour **93,2 %**.
+- **Mesure prudente**, un seul passage annoté par question : jugés à l'aveugle, les autres passages montrés portent ce chiffre à **74,0 %** (annexe 14). Hors corpus : 10 rejetées sur 24, 13 signalées.
 
-<div class="def"><b>Encodeur E5</b> : modèle qui résume un texte en un <b>vecteur</b> de 384 nombres ; deux textes de sens proche ont des vecteurs proches. <b>Produit scalaire</b> : mesure de proximité de deux vecteurs (ici égal au cosinus). <b>Recall@5</b> : part des questions dont un passage pertinent est dans les 5 premiers résultats.</div>
+<div class="def"><b>Encodeur E5</b> : modèle qui résume un texte en un <b>vecteur</b> de 384 nombres ; deux textes de sens proche ont des vecteurs proches. <b>Produit scalaire</b> : proximité de deux vecteurs. <b>Recall@5</b> : part des questions dont un passage pertinent est dans les 5 premiers résultats.</div>
 
 <!--
 Durée visée : 60 s
-À dire : Le volet A tourne entièrement dans le navigateur. Une fois, à la construction du site, nous encodons les 4 240 passages avec E5 : chacun devient un vecteur de 384 nombres. À chaque question, le navigateur encode la question de la même façon, puis compare son vecteur à ceux des passages par un produit scalaire, et affiche les cinq plus proches. Pour que le modèle tienne sous la limite de 100 mégaoctets par fichier de GitHub, nous avons retiré de son vocabulaire les pièces des alphabets non latins : il passe de 112,8 à 65,7 mébioctets, sans changer un seul résultat. La mesure officielle, sur 73 questions, donne le bon passage dans les cinq premiers pour 43,8 % des questions, la bonne fiche pour 83,6 %. Limite assumée : le seuil hors périmètre ne rejette que 9 questions hors corpus sur 24.
+À dire : Le volet A tourne entièrement dans le navigateur. Une fois, à la construction du site, nous encodons les 4 240 passages : chacun devient un vecteur de 384 nombres. À chaque question, le navigateur encode la question de la même façon, la compare aux passages par un produit scalaire, et affiche les dix plus proches, regroupés par fiche. Allégé de son vocabulaire non latin, le modèle pèse 65,7 mébioctets, sans changer un seul résultat. Depuis le 15 novembre, le site sert notre encodeur ajusté sur nos fiches : le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 % pour la base, et une fiche pertinente est affichée pour 93 %. Ce chiffre est prudent : notre règle ne connaît qu'un passage par question ; en jugeant aussi les autres passages montrés, on atteint 74 %.
 Questions probables :
 - Pourquoi l'élagage ne change-t-il rien ? Une pièce retirée contient un caractère absent de tout texte français ; le découpage du texte en pièces est donc identique, et les vecteurs aussi, bit à bit.
-- Pourquoi q8 ? Les poids sur 8 bits divisent la taille par 4 environ ; 91,8 % des premiers résultats sont identiques au calcul exact dans le navigateur.
-- Pourquoi le seuil rejette si peu ? Il a été fixé avant la mesure, sur un jeu externe, pour garder 95 % des questions couvertes ; il repère surtout les questions sans rapport avec le travail.
-- 18,3 ms ou 21 ms ? 18,3 ms : encodage de la question par le modèle élagué dans le navigateur (mesure des 822 requêtes de contrôle) ; 21 ms : recherche complète, encodage et comparaison compris, en médiane sur 10 questions posées au site en ligne le 19/10.
+- Pourquoi q8 ? Les poids sur 8 bits divisent la taille par 4 environ ; avec l'encodeur ajusté, le premier résultat est identique au calcul exact pour 769 des 822 requêtes de contrôle (93,6 %).
+- Pourquoi le seuil rejette si peu ? Il est fixé sur un jeu externe pour garder 95 % des questions couvertes ; recalculé pour l'ajusté (0,7683), il rejette 10 questions hors corpus sur 24, et 13 autres reçoivent l'avertissement « correspondance moins nette ».
+- 74 %, d'où vient ce chiffre ? Deux modèles d'IA, déclarés comme tels, ont jugé à l'aveugle les 617 passages montrés et non annotés ; ils reconnaissent les 40 contrôles positifs et rejettent les 40 négatifs, avec un kappa de 0,86 entre eux. Chiffre provisoire : un étalonnage humain sur 100 paires est en attente (annexe 14).
+- 19,7 ms ou 21 ms ? 19,7 ms : encodage de la question par l'ajusté élagué dans le navigateur (822 requêtes de contrôle) ; 21 ms : recherche complète, en médiane sur 10 questions posées au site le 19/10, avec la base, de même architecture et de même taille.
 -->
 
 ---
@@ -144,7 +145,7 @@ Durée visée : 55 s
 Questions probables :
 - Pourquoi 72 et non 73 ? La question Q088 est en erreur technique dans tous les états : Ollama compte 2 119 tokens d'entrée, le tokeniseur de référence 2 105 ; le protocole classe tout écart de ce type en erreur technique, pour ne jamais noter une réponse produite à partir d'une entrée différente de celle prévue. Elle est exclue des deux côtés.
 - Les 5 configurations ? B0 modèle seul, B1 RAG sans consigne d'abstention, B2 RAG complet, R+ et R− deux références qui répondent ou s'abstiennent toujours.
-- Comment sait-on que le bon passage était fourni ? Par la règle D4 : un passage est pertinent s'il reprend au moins la moitié de l'extrait annoté comme réponse.
+- Comment sait-on que le bon passage était fourni ? Par la règle D4 : un passage est pertinent s'il reprend au moins la moitié de l'extrait annoté comme réponse. C'est un minorant : jugés à l'aveugle, les passages fournis en B2 en contiennent un pertinent pour 45 questions sur 72, et non 33 (annexe 14).
 -->
 
 ---
@@ -200,7 +201,7 @@ Questions probables :
 
 - **Exactitude**, jugée à l'aveugle : réponses mieux **appuyées** sur leurs passages, **pas plus exactes**, souvent **incomplètes** (annexe 5).
 
-<div class="def"><b>M4</b> : la réponse cite au moins un passage pertinent. <b>M1</b> : abstention correcte sur une question hors corpus. <b>IC à 97,5 %</b> : plage plausible de l'écart réel ; 97,5 % et non 95 % car il y a deux critères principaux (correction de Bonferroni).</div>
+<div class="def"><b>M4</b> : la réponse cite au moins un passage pertinent ; il mesure la traçabilité, pas l'exactitude. <b>M1</b> : abstention correcte sur une question hors corpus. <b>IC à 97,5 %</b> : plage plausible de l'écart réel ; 97,5 % et non 95 % car il y a deux critères principaux (correction de Bonferroni).</div>
 
 <!--
 Durée visée : 60 s
@@ -212,6 +213,7 @@ Questions probables :
 - Les chiffres du jugement ? Entièrement appuyées sur leurs passages : 95 % des réponses du modèle adapté pour les deux juges, contre 45 et 60 % pour le témoin. Entièrement exactes : 35 contre 60 % selon Maïmouna, 25 contre 40 % selon Vaneck ; ces écarts sont descriptifs, leurs intervalles contiennent zéro.
 - Pourquoi pas plus exactes ? Le modèle adapté répond à 14 questions de plus, dont des questions où le témoin s'abstenait : ce sont ses réponses les moins exactes. Sur les questions auxquelles les deux répondent, l'exactitude est comparable. Et l'entraînement lui a appris à recopier un passage : réponses deux fois plus courtes, 1,1 passage cité contre 2,4.
 - Les juges sont-ils d'accord ? Modérément : kappa de 0,27 sur l'exactitude, Vaneck étant plus sévère sur la complétude. Le critère des conditions et exceptions n'est pas exploitable : les juges ont compris « sans objet » différemment.
+- M4 avec le jugement mutualisé ? Pour le modèle adapté en B2, 30,6 % au lieu de 25,0 %. L'écart avec le témoin n'est pas recalculé : les citations du témoin n'ont pas été jugées (annexe 14).
 -->
 
 ---
@@ -224,7 +226,7 @@ Questions probables :
 |---|---|---|
 | **Coût** | aucun serveur ; 61,3 Mio transférés à la première visite (fichiers compressés), puis en cache | aucun service payant, mais une machine dédiée ; modèle de 4,36 Gio |
 | **Latence** | 21 ms par recherche (médiane) | 4,8 s par réponse générée (médiane, Mac M4 Pro) |
-| **Qualité** | bon passage dans les 5 premiers : 43,8 % | réponse citant un passage pertinent : 25,0 % |
+| **Qualité** | bon passage dans les 5 premiers : 63,0 %, 74,0 % jugé à l'aveugle ; fiche pertinente affichée : 93,2 % | réponse citant un passage pertinent : 25,0 %, 30,6 % jugé à l'aveugle |
 | **Contrôle** | tout est figé et vérifiable par empreinte | poids figés, mais comportement appris sur des données inconnues |
 | **Explicabilité** | des passages réels, rien n'est généré | la réponse cite ses passages ; une citation ne prouve pas l'exactitude |
 | **Dépendance** | aucune à l'exécution | Ollama et poids ouverts de Qwen (Apache 2.0) ; aucune API distante |
@@ -239,6 +241,7 @@ Durée visée : 40 s
 Questions probables :
 - La latence du volet B ? Durée totale rapportée par Ollama, modèle déjà chargé ; le premier appel ajoute le chargement du modèle.
 - Le coût du volet A pour le visiteur ? 61,3 Mio transférés au premier chargement (mesure du 19/10, Chromium, profil neuf), puis tout est en cache.
+- Pourquoi deux chiffres de qualité ? Le premier suit notre règle D4, un seul passage annoté par question ; le second ajoute les passages qu'un jugement à l'aveugle reconnaît (annexe 14).
 - Pourquoi 61,3 Mio transférés pour un modèle de 65,7 Mio ? Le serveur compresse les fichiers à l'envoi : le modèle voyage en 45,8 Mio (vérifié le 14/11) ; le reste est le tokeniseur, l'index et les passages.
 -->
 
@@ -250,7 +253,7 @@ Questions probables :
 <div>
 
 **Arbitrages assumés**
-- Encodeur réentraîné (#49) **non servi** : gain seulement exploratoire ; règle de repli écrite d'avance.
+- Encodeur ajusté (#49) **servi depuis le 15/11**, seulement après une mesure unique écrite d'avance : +19,2 points.
 - Exemples « passage retiré » **retirés** : ils apprenaient à s'abstenir là où une réponse partielle existait.
 - Mesures finales sur **une seule machine**, le Mac : l'entraînement ne tient pas dans les 8 Gio de la carte graphique du PC Legion.
 
@@ -260,12 +263,12 @@ Questions probables :
 **Limites**
 - B2 s'abstient encore à tort sur **55,6 %** des questions couvertes.
 - Réponses fidèles aux passages mais **souvent incomplètes** : l'exactitude ne progresse pas.
-- 24 questions hors corpus, c'est peu.
+- Mesure au passage **prudente** (un passage annoté par question) ; 24 questions hors corpus, c'est peu.
 
 **Suite**
-- Brancher la **récupération v2** : un passage pertinent dans le contexte pour **72,6 %** des questions, contre 45,2 % (démontré).
-- Entraîner aussi sur des réponses qui **combinent plusieurs passages**.
-- Mieux régler le seuil, agrandir le jeu de test.
+- **Récupération v2** branchée et mesurée (#163) : M4 de 25,0 à 37,0 %, mais 2 abstentions correctes perdues hors corpus : **B2 reste la référence**.
+- Apprendre au modèle à **exploiter le passage fourni** : c'est lui qui limite désormais.
+- Agrandir le jeu de test, faire étalonner le jugement par des humains.
 
 </div>
 </div>
@@ -274,9 +277,10 @@ Questions probables :
 
 <!--
 Durée visée : 50 s
-À dire : Le projet a demandé des arbitrages, que nous assumons. L'encodeur réentraîné n'est pas servi : son gain n'était qu'exploratoire, et notre règle de repli était écrite d'avance. Les exemples qui apprenaient à s'abstenir à tort ont été retirés. Toutes les mesures finales sont faites sur le Mac, car l'entraînement ne tient pas dans la mémoire du Legion. Côté limites, le système s'abstient encore à tort sur plus de la moitié des questions couvertes, et ses réponses, fidèles aux passages, sont souvent incomplètes. La suite : notre récupération v2 fait passer de 45 à 73 % les questions dont le contexte contient un passage pertinent, et l'entraînement doit apprendre à combiner plusieurs passages.
+À dire : Le projet a demandé des arbitrages, que nous assumons. L'encodeur ajusté n'est servi, depuis le 15 novembre, qu'après une mesure unique écrite d'avance. Les exemples qui apprenaient à s'abstenir à tort ont été retirés, et toutes les mesures finales sont faites sur le Mac. Côté limites, le système s'abstient encore à tort sur plus de la moitié des questions couvertes, et ses réponses, fidèles aux passages, sont souvent incomplètes. Branchée sur la génération, la récupération v2 fait monter M4 de 25 à 37 %, mais perd deux abstentions correctes hors corpus : nous gardons B2. La suite : apprendre au modèle à exploiter le passage qu'il reçoit, désormais le facteur limitant.
 Questions probables :
-- La récupération v2 est-elle mesurée avec la génération ? Non, seulement la récupération ; la brancher sur la génération est la prochaine étape.
+- La récupération v2 est-elle mesurée avec la génération ? Oui (#163, protocole 08) : M4 de 37,0 % contre 25,0 %, mais M1 de 18 sur 24 contre 20 sur 24 ; la règle écrite d'avance tolérait une question de moins, pas deux : B2 reste la référence.
+- Pourquoi le modèle limite-t-il ? Avec la récupération v2 et le jugement à l'aveugle, sur 35 échecs, 21 viennent du modèle (11 abstentions, 10 citations d'un autre passage alors qu'un passage pertinent est fourni), 6 du seuil et 8 seulement de la récupération.
 - Pourquoi ne pas avoir réglé le seuil ? Il est figé par le protocole ; le régler sur le test fausserait la mesure.
 -->
 
@@ -308,7 +312,7 @@ Durée visée : 17 s
 - **E5-small** : un encodeur de type BERT, 12 couches, largeur 384, **117,7 M** de paramètres, dont **81,6 %** dans la table de vocabulaire (250 037 entrées).
 - Entraînement contrastif : rapprocher une question de son passage, éloigner les autres passages du lot (perte InfoNCE). Préfixes obligatoires « query: » et « passage: ».
 - **Élagage sans perte** : on garde les pièces de vocabulaire sans lettre, ou en lettres latines ou grecques (121 271 pièces). Pour un texte français, le découpage en pièces est inchangé, donc les vecteurs aussi : **822 requêtes sur 822** identiques bit à bit.
-- **q8** : poids sur 8 bits ; 112,8 puis **65,7 Mio** (−41,8 %), sous la limite de 100 Mio par fichier de GitHub ; 91,8 % de premiers résultats identiques au calcul exact dans le navigateur.
+- **q8** : poids sur 8 bits ; 112,8 puis **65,7 Mio** (−41,8 %), sous la limite de 100 Mio par fichier de GitHub ; premier résultat identique au calcul exact dans le navigateur pour 91,8 % des requêtes avec la base, 93,6 % avec l'ajusté servi.
 
 <div class="def"><b>Tokeniseur</b> : outil qui découpe un texte en pièces de vocabulaire ; celui d'E5 en compte 250 002, la plupart pour d'autres alphabets. <b>Bit à bit</b> : nombres strictement identiques, sans aucun arrondi différent.</div>
 
@@ -319,6 +323,7 @@ Durée visée : 17 s
 - **Volet A, 0,8560** : 5e centile des scores maximaux de **479 variantes** de requêtes du jeu CDTN, externe à notre jeu de test ; fixé le 10/10, **avant** la mesure. Par construction, 95 % de ces questions dépassent le seuil.
 - **Volet B, S = 0,8565** : même méthode, calcul en fp32 côté Python ; intervalle à 95 % de **0,8464 à 0,8653** par rééchantillonnage des 103 requêtes.
 - **Ce que donne le seuil du volet A** : AUC de **0,841** [0,747 ; 0,921] ; 9 questions hors corpus rejetées sur 24, 72 questions couvertes gardées sur 73.
+- **Depuis le 15/11, encodeur ajusté** : seuil recalculé par la même règle, **0,7683**, et avertissement jusqu'à 0,8140 (25e centile) ; AUC de 0,865 ; 10 questions hors corpus rejetées sur 24 et 13 signalées, 70 questions couvertes gardées sur 73.
 
 <div class="def"><b>Score maximal</b> : similarité entre la question et le passage le plus proche. <b>5e centile</b> : valeur sous laquelle tombent 5 % des scores. <b>AUC</b> : probabilité qu'une question couverte obtienne un score plus élevé qu'une question hors corpus (0,5 = hasard, 1 = parfait). <b>CDTN</b> : jeu de requêtes du Code du travail numérique, indépendant de notre jeu de test.</div>
 
@@ -419,7 +424,7 @@ Durée visée : 17 s
 - **Fusion RRF** d'E5 et de BM25 : chaque passage reçoit la somme de 1 / (60 + rang) sur les deux classements.
 - **Reclassement** des 20 meilleurs candidats par **bge-reranker-v2-m3** (568 M de paramètres, sur CPU, environ 2 s par question), puis 10 passages donnés au modèle.
 - **Réglée** sur le jeu CDTN (112 configurations comparées), puis **confirmée une seule fois** sur le test, protocole 07 figé avant : 45,2 % → **72,6 %** des questions ont un passage pertinent dans le contexte, **+27,4 points** [+16,3 ; +38,5], p = 5,1 × 10⁻⁵.
-- Récupération seule : la génération n'a pas encore été mesurée avec elle.
+- **Branchée sur la génération** (#163, protocole 08) : M4 de 25,0 à 37,0 %, mais M1 de 20 à 18 sur 24 ; la règle d'adoption n'est pas satisfaite, B2 reste la référence.
 
 <div class="def"><b>BM25</b> : score par mots-clés, sans apprentissage (rareté du mot, fréquence, longueur du passage). <b>RRF</b> : fusion qui ne compare que des rangs, pas des scores d'échelles différentes. <b>Reclasseur</b> : modèle qui lit la question et un passage ensemble, plus précis mais plus lent.</div>
 
@@ -514,6 +519,8 @@ Durée visée : 17 s
 
 **McNemar** : test pour deux systèmes évalués sur les mêmes questions.
 
+**Minorant, majorant** : bornes basse et haute d'une valeur qu'on ne peut mesurer exactement.
+
 **Non-infériorité** : démontrer qu'on n'est pas moins bon qu'une marge donnée.
 
 **Ollama** : logiciel qui sert un modèle de langage en local.
@@ -530,6 +537,8 @@ Durée visée : 17 s
 
 **Reclasseur** : modèle qui réordonne les candidats d'une recherche.
 
+**Règle D4** : un passage est pertinent s'il reprend au moins la moitié de l'extrait annoté.
+
 **RRF** : fusion de classements par leurs rangs.
 
 **Seuil S** : score sous lequel on s'abstient sans appeler le modèle.
@@ -539,3 +548,32 @@ Durée visée : 17 s
 **Token** : morceau de mot traité par un modèle.
 
 </div>
+
+---
+
+# Annexe 14. Une mesure prudente, corrigée à l'aveugle
+
+<div class="petit">
+
+| Lot de test, questions couvertes | Règle D4 | Jugé à l'aveugle |
+|---|---|---|
+| Volet A, ajusté : bon passage dans les 5 premiers | 63,0 % | **74,0 %** |
+| Volet A, ajusté : dans les 10 passages du site | 74,0 % | **84,9 %** |
+| Volet A : gain de l'ajusté sur la base, à 5 | +19,2 points | +13,7 points [+3,2 ; +25,0] |
+| Volet B : passage pertinent fourni, B2 et récupération v2 | 45,8 et 72,6 % | **62,5 et 89,0 %** |
+| Volet B : M4, B2 et V2 | 25,0 et 37,0 % | **30,6 et 52,1 %** |
+
+</div>
+
+- **Protocole 09**, figé avant tout jugement : les 617 passages montrés par nos systèmes et non reconnus par D4, mêlés à 80 contrôles, jugés sans système ni rang par deux modèles d'IA, déclarés comme tels.
+- **Fiabilité** : 40 contrôles positifs sur 40 reconnus, aucun négatif accepté, kappa de **0,86** entre les juges. **Provisoire** : étalonnage humain sur 100 paires en attente.
+- **CDTN**, 5 passages pertinents par requête en médiane : nDCG@10 de 41,5 % pour l'ajusté, 35,9 % pour la base, 35,0 % pour BM25.
+
+<div class="def"><b>Jugé à l'aveugle</b> : pertinent selon D4, ou jugé « répond » par les deux juges. <b>nDCG@10</b> : qualité du classement des 10 premiers, qui compte tous les passages pertinents et leur rang.</div>
+
+<!--
+Questions probables :
+- Pourquoi des juges d'IA ? Juger deux fois 617 paires à la main n'était pas possible avant le rapport. Les deux juges sont d'une autre famille que Qwen, voient les paires mélangées sans savoir d'où elles viennent, et sont contrôlés par 80 paires dont la réponse est connue. Deux membres de l'équipe jugent 100 paires pour l'étalonnage : si l'accord avec eux est faible (kappa sous 0,6), ces chiffres seront déclarés non étayés.
+- Le gain de l'ajusté disparaît-il ? Non : il passe de +19,2 à +13,7 points, intervalle au-dessus de 0. Si l'on compte aussi les passages qui répondent en partie, les deux encodeurs montrent presque toujours un élément de réponse, et l'écart n'est plus que de +1,4 point : l'ajusté se distingue surtout en trouvant le passage qui répond entièrement.
+- Cela change-t-il une décision ? Non : toutes ces mesures sont descriptives ; l'ajusté reste servi et B2 reste la référence du volet B.
+-->

@@ -116,7 +116,7 @@ def frise():
             ("30/09", ["site du volet A", "en ligne"]), ("13/10", ["mesure officielle", "du volet A"]),
             ("27/10", ["chaîne RAG", "du volet B"]), ("04/11", ["protocole 06", "gelé"]),
             ("09/11", ["mesure avant", "(PC Legion)"]), ("11/11", ["adaptation,", "mesure après"]),
-            ("16/11", ["J3, revue", "d'avancement"]), ("30/11", ["soutenance"])]
+            ("15/11", ["encodeur ajusté", "servi"]), ("16/11", ["J3, revue", "d'avancement"]), ("30/11", ["soutenance"])]
     f = Figure("frise", 1200, 220, "Frise du projet, du J2 à la soutenance")
     y = 110
     f.ajoute(f'<line class="f" style="--i:0" x1="90" y1="{y}" x2="1110" y2="{y}" stroke="{FILET}" stroke-width="3"/>')
@@ -168,12 +168,12 @@ def decoupage():
 def chaine_a():
     f = Figure("chaine_a", 1200, 250, "Chaîne du volet A : index calculé une fois, question encodée dans le navigateur")
     etiquette(f, 20, 22, "UNE FOIS, À LA CONSTRUCTION DU SITE", GRIS, 14)
-    haut = rangee(f, 32, 62, 20, 760, [(["4 240 passages"], "découpage M2"), (["E5-small"], "« passage: »"),
+    haut = rangee(f, 32, 62, 20, 760, [(["4 240 passages"], "découpage M2"), (["E5-small ajusté"], "« passage: »"),
                                         (["Index"], f"4{NB}240 × 384 nombres")], "n", 0)
     etiquette(f, 20, 132, "À CHAQUE QUESTION, DANS LE NAVIGATEUR", A, 14, i=6)
-    bas = rangee(f, 142, 74, 20, 1180, [(["Question"], "« query: »"), (["E5 q8 élagué"], [f"65,7{NB}Mio,", f"18,3{NB}ms"]),
+    bas = rangee(f, 142, 74, 20, 1180, [(["Question"], "« query: »"), (["E5 ajusté q8 élagué"], [f"65,7{NB}Mio,", f"19,7{NB}ms"]),
                                           (["Vecteur"], "384 nombres"), (["Produit scalaire"], f"4{NB}240 scores"),
-                                          (["5 passages + liens"], ["sous 0,8560 :", "hors périmètre"])], "a", 7)
+                                          (["10 passages par fiche"], ["refus sous 0,7683,", "alerte sous 0,8140"])], "a", 7)
     xi, wi = haut[2]
     xp, wp = bas[3]
     fleche(f, f"M{xi + wi / 2:.1f},94 V112 H{xp + wp / 2:.1f} V138", "a", 16)

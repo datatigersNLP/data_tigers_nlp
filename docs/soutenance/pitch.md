@@ -99,7 +99,7 @@ Questions probables :
 ### Volet A : chercher
 
 - On pose sa question sur un **site web**.
-- Le site affiche les **5 passages les plus proches**, avec leur section et un lien vers la fiche.
+- Le site affiche les **10 passages les plus proches**, regroupés par fiche, avec leur section et un lien vers la fiche.
 - Tout se calcule **dans le navigateur** : la question ne quitte pas l'ordinateur. Gratuit, sans serveur.
 
 </div>
@@ -118,7 +118,7 @@ Questions probables :
 
 <!--
 Durée visée : 75 s
-À dire : Nous livrons deux outils complémentaires, construits sur le même corpus. Le volet A sert à chercher : on pose sa question sur un site web, et le site affiche les cinq passages des fiches les plus proches du sens de la question, avec leur section et un lien vers la fiche complète. Tout le calcul se fait dans le navigateur : la question ne quitte pas l'ordinateur, il n'y a aucun serveur, et c'est gratuit. Le volet B sert à répondre : un modèle de langage installé sur la machine lit les passages trouvés, rédige une réponse courte, et cite chaque passage qu'il utilise, comme P1 ou P2. Si les passages ne permettent pas de répondre, il s'abstient. Le premier outil ne génère rien, il montre les textes ; le second génère, mais il doit justifier chaque phrase.
+À dire : Nous livrons deux outils complémentaires, construits sur le même corpus. Le volet A sert à chercher : on pose sa question sur un site web, et le site affiche les dix passages les plus proches du sens de la question, regroupés par fiche, avec leur section et un lien vers la fiche complète. Tout le calcul se fait dans le navigateur : la question ne quitte pas l'ordinateur, il n'y a aucun serveur, et c'est gratuit. Le volet B sert à répondre : un modèle de langage installé sur la machine lit les passages trouvés, rédige une réponse courte, et cite chaque passage qu'il utilise, comme P1 ou P2. Si les passages ne permettent pas de répondre, il s'abstient. Le premier outil ne génère rien, il montre les textes ; le second génère, mais il doit justifier chaque phrase.
 Questions probables :
 - Pourquoi deux volets ? C'est le sujet : un modèle léger et maîtrisé dans le navigateur, et un modèle plus puissant en local. Nous avons choisi deux cas qui partagent le même corpus et la même recherche.
 - Le volet B envoie-t-il des données ? Non : Qwen tourne sous Ollama sur la machine, sans aucune API distante.
@@ -128,17 +128,17 @@ Questions probables :
 
 # Ce qui est démontré, mesures à l'appui
 
-- **Volet A** : aussi bon que la recherche classique par mots-clés (BM25) pour trouver le bon passage : **43,8 %** contre 42,5 %, non-infériorité démontrée. Un modèle de **65,7 Mio** chargé dans le navigateur, une recherche en **21 ms** (médiane).
+- **Volet A** : l'encodeur que nous avons ajusté sur nos fiches trouve le bon passage dans les 5 premiers pour **63,0 %** des questions, contre 43,8 % avant : **+19,2 points, démontré**. Un modèle de **65,7 Mio** chargé dans le navigateur, une recherche en **21 ms** (médiane).
 - **Volet B** : après adaptation du modèle, les réponses qui citent un passage pertinent passent de **13,9 % à 25,0 %** : amélioration démontrée, sans perte observée hors du corpus. Leur exactitude, jugée à l'aveugle, ne progresse pas.
-- **Méthode** : chaque mesure suit un protocole **écrit et figé avant** d'être exécutée.
+- **Méthode** : chaque mesure suit un protocole **écrit et figé avant** d'être exécutée, et nos chiffres sont **prudents** : en jugeant aussi les passages non annotés, ils montent (74,0 % au lieu de 63,0 %).
 
-<div class="def"><b>Non-infériorité</b> : on démontre que le site n'est pas moins bon que BM25 de 15 points ou plus ; cela ne dit pas qu'il est meilleur. <b>Démontrée</b> : l'intervalle de confiance de l'écart reste entièrement au-dessus de 0.</div>
+<div class="def"><b>Prudents</b> : notre règle ne reconnaît qu'un passage pertinent par question ; un jugement des autres passages montrés, sans savoir d'où ils viennent, relève les chiffres. <b>Démontrée</b> : l'intervalle de confiance de l'écart reste entièrement au-dessus de 0.</div>
 
 <!--
 Durée visée : 55 s
-À dire : Qu'avons-nous démontré ? Pour le volet A, la recherche par le sens est aussi bonne que la recherche classique par mots-clés, BM25 : le bon passage est dans les cinq premiers résultats pour 43,8 % des questions, contre 42,5 %. Nous démontrons la non-infériorité, pas la supériorité. Le modèle, chargé dans le navigateur, pèse 65,7 mébioctets, et une recherche prend une vingtaine de millisecondes. Pour le volet B, après adaptation du modèle, les réponses qui citent un passage pertinent passent de 13,9 à 25 % : l'amélioration est démontrée, sans perte observée sur les questions hors du corpus. En revanche, un jugement humain à l'aveugle ne trouve pas de réponses plus exactes. Et chaque mesure suit un protocole écrit avant de mesurer. Place à la démonstration.
+À dire : Qu'avons-nous démontré ? Pour le volet A, notre encodeur ajusté place le bon passage dans les cinq premiers résultats pour 63 % des questions, contre 43,8 % avant : plus 19 points, démontré. Le modèle, chargé dans le navigateur, pèse 65,7 mébioctets, et une recherche prend une vingtaine de millisecondes. Pour le volet B, après adaptation du modèle, les réponses qui citent un passage pertinent passent de 13,9 à 25 % : l'amélioration est démontrée, sans perte observée sur les questions hors du corpus. En revanche, un jugement humain à l'aveugle ne trouve pas de réponses plus exactes. Chaque mesure suit un protocole écrit d'avance, et nos chiffres sont prudents : ils sous-estiment plutôt qu'ils n'exagèrent. Place à la démonstration.
 Questions probables :
-- 25 %, c'est peu ? Oui. Le système reste prudent : sur les questions couvertes, il s'abstient encore à tort dans 55,6 % des cas. C'est notre principale limite, et notre feuille de route (récupération v2) la traite.
+- 25 %, c'est peu ? Oui. Jugé à l'aveugle, c'est 30,6 % ; avec la récupération v2, 52 %, mais deux abstentions correctes perdues hors corpus. Le système reste prudent : sur les questions couvertes, il s'abstient encore à tort dans 55,6 % des cas. C'est notre principale limite.
 - L'exactitude ? Deux membres l'ont jugée à l'aveugle : réponses mieux appuyées sur leurs passages, mais pas plus exactes, souvent incomplètes.
 - Mio ? Mébioctet, 2 puissance 20 octets, environ 1,05 mégaoctet.
 -->
