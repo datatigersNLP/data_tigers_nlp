@@ -36,7 +36,7 @@
     "generateur_commit_fige": null,
     "versions_prompts_figees": null,
     "ollama_version_constatee_legion": null,
-    "relecteur_semantique_independant": null,
+    "relecteur_semantique_independant": "Mahé BEGNIS (mahebegnis) ou Remy RAYANE (Remynou) ; une relecture effective de lun des deux suffit, décisions à consigner après examen.",
     "methode_hors_corpus": {
       "reference": "methode_hors_corpus.md",
       "version": "agent0-hors-corpus-pilote-v1",
@@ -44,7 +44,7 @@
       "validation_humaine": null
     },
     "calendrier_et_charge_reelle": null,
-    "controle_lots_adaptation_reels": "non_effectue_fichiers_prives_non_recus"
+    "controle_lots_adaptation_reels": "Encodeur controle sur original conforme ; Qwen controle rapporte en revue PR145 ; voir suivi_controles_lots et limites."
   },
   "slots": [
     {
@@ -335,6 +335,32 @@
     "rapport": "audit_separation.json",
     "procedure": "separation_adaptation.md",
     "regles_versionnees_controlees": true,
-    "lots_prives_controles": false
+    "lots_prives_controles": true,
+    "portee_controles_lots_prives": "Encodeur : octets recus verifies ; Qwen : controle rapporte par Mahe en revue, octets non relus ici. Relecture du complement encodeur attendue."
+  },
+  "suivi_controles_lots": {
+    "date": "2026-11-12",
+    "encodeur": {
+      "statut": "controle_technique_effectue_sur_fichier_conforme",
+      "rapport": "verification_encodeur_20261112.json",
+      "relecture_humaine_du_complement": null
+    },
+    "qwen": {
+      "statut": "controle_rapporte_par_Mahe_en_relecture",
+      "reference": "https://github.com/datatigersNLP/data_tigers_nlp/pull/145#pullrequestreview-5860312884",
+      "octets_prives_non_relus_ici": true
+    }
+  },
+  "regle_relecture_agent0": {
+    "decision_jibril_date": "2026-11-12",
+    "relecteurs_possibles": [
+      "mahebegnis",
+      "Remynou"
+    ],
+    "nombre_validations_requises": 1,
+    "portee": "Cette contribution et les prochaines tâches Agent0, sur la version finale du livrable",
+    "relecteur_distinct_de_lauteur": true,
+    "validation_code_ne_vaut_pas_validation_candidats": true,
+    "verdict_humain_attribue": false
   }
 }
