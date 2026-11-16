@@ -2,7 +2,7 @@
 
 **Équipe** Data Tigers  
 **Ticket** #114 (préparer la soutenance J4 : pitch, présentation, vidéo de secours, répétition et envoi)  
-**Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date ; **mis à jour le** 16 novembre 2026 : encodeur ajusté servi (#164), chaîne v2 du volet B (#163), mesure corrigée par le jugement mutualisé (#139, annexe 14)  
+**Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date ; **mis à jour le** 16 novembre 2026 : encodeur ajusté servi (#164), chaîne v2 du volet B (#163), mesure corrigée par le jugement mutualisé, présentée comme une limite corrigée (#139, annexes 14 et 15)  
 **Usage** une seule source pour deux formats : les fichiers Marp donnent les PDF, et le même texte donne la version HTML animée.
 
 ---
@@ -12,9 +12,9 @@
 | Fichier | Rôle |
 |---|---|
 | `pitch.md` | pitch, 5 diapositives, 3 min 45 visées |
-| `presentation.md` | démonstration (1 diapositive, 3 min 50), présentation (10 diapositives, 7 min 57), annexes (14 diapositives, pour les questions) |
+| `presentation.md` | démonstration (1 diapositive, 3 min 50), présentation (10 diapositives, 7 min 57), annexes (15 diapositives, pour les questions) |
 | `pitch.pdf`, `presentation.pdf` | rendus Marp de ces deux fichiers |
-| `soutenance.html` | les 30 diapositives en une page animée, sans aucune ressource externe |
+| `soutenance.html` | les 31 diapositives en une page animée, sans aucune ressource externe |
 | `figures/*.svg` | les 8 figures, générées par `outils/figures.py` ; ne pas les modifier à la main |
 | `outils/figures.py` | génère les figures ; échelles exactes et contrôle de la largeur des textes |
 | `outils/construire_html.py` | construit `soutenance.html` à partir des deux fichiers Marp |
@@ -61,7 +61,7 @@ marp-cli est installé hors du dépôt, dans un dossier local, avec `npm install
 
 Contrôles faits le 14/11 sur la page construite, dans Chrome sans interface, et refaits le 16/11 pour les deux premiers après la mise à jour :
 
-- aucun débordement, d'après `controler_debordements.py`, sur les 30 diapositives de la page et sur les 5 et 25 pages des PDF (16/11). Pour les PDF, le script lit la position de chaque mot, car le HTML exporté par Marp ne compose pas comme son PDF. Contrôle négatif : sur une copie qui reprend une version fautive de la diapositive des résultats, il signale bien le débordement ;
+- aucun débordement, d'après `controler_debordements.py`, sur les 31 diapositives de la page et sur les 5 et 26 pages des PDF (16/11). Pour les PDF, le script lit la position de chaque mot, car le HTML exporté par Marp ne compose pas comme son PDF. Contrôle négatif : sur une copie qui reprend une version fautive de la diapositive des résultats, il signale bien le débordement ;
 - aucune erreur de console venant de la page (16/11 : la seule erreur est la requête automatique de `favicon.ico` vers le serveur de test local) ;
 - navigation, sommaire, notes et bornes vérifiés par un script qui simule les touches ;
 - affichage vérifié à 400 et à 900 pixels de large.

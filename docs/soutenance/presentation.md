@@ -113,7 +113,7 @@ Questions probables :
 
 - **Allègement** : de 112,8 à **65,7 Mio** en retirant le vocabulaire des alphabets non latins, sans changer un seul résultat (822 requêtes vérifiées).
 - **Encodeur ajusté, servi depuis le 15/11** : bon passage dans les 5 premiers pour **63,0 %** des 73 questions (base : 43,8 %) ; fiche pertinente affichée pour **93,2 %**.
-- **Mesure prudente**, un seul passage annoté par question : jugés à l'aveugle, les autres passages montrés portent ce chiffre à **74,0 %** (annexe 14). Hors corpus : 10 rejetées sur 24, 13 signalées.
+- **Mesure prudente**, un seul passage annoté par question : jugés à l'aveugle, les autres passages montrés portent ce chiffre à **74,0 %** (annexes 14 et 15). Hors corpus : 10 rejetées sur 24, 13 signalées.
 
 <div class="def"><b>Encodeur E5</b> : modèle qui résume un texte en un <b>vecteur</b> de 384 nombres ; deux textes de sens proche ont des vecteurs proches. <b>Produit scalaire</b> : proximité de deux vecteurs. <b>Recall@5</b> : part des questions dont un passage pertinent est dans les 5 premiers résultats.</div>
 
@@ -124,7 +124,7 @@ Questions probables :
 - Pourquoi l'élagage ne change-t-il rien ? Une pièce retirée contient un caractère absent de tout texte français ; le découpage du texte en pièces est donc identique, et les vecteurs aussi, bit à bit.
 - Pourquoi q8 ? Les poids sur 8 bits divisent la taille par 4 environ ; avec l'encodeur ajusté, le premier résultat est identique au calcul exact pour 769 des 822 requêtes de contrôle (93,6 %).
 - Pourquoi le seuil rejette si peu ? Il est fixé sur un jeu externe pour garder 95 % des questions couvertes ; recalculé pour l'ajusté (0,7683), il rejette 10 questions hors corpus sur 24, et 13 autres reçoivent l'avertissement « correspondance moins nette ».
-- 74 %, d'où vient ce chiffre ? Deux modèles d'IA, déclarés comme tels, ont jugé à l'aveugle les 617 passages montrés et non annotés ; ils reconnaissent les 40 contrôles positifs et rejettent les 40 négatifs, avec un kappa de 0,86 entre eux. Chiffre provisoire : un étalonnage humain sur 100 paires est en attente (annexe 14).
+- 74 %, d'où vient ce chiffre ? Deux modèles d'IA, déclarés comme tels, ont jugé à l'aveugle les 617 passages montrés et non annotés ; ils reconnaissent les 40 contrôles positifs et rejettent les 40 négatifs, avec un kappa de 0,86 entre eux. Chiffre provisoire : un étalonnage humain sur 100 paires est en attente (annexes 14 et 15).
 - 19,7 ms ou 21 ms ? 19,7 ms : encodage de la question par l'ajusté élagué dans le navigateur (822 requêtes de contrôle) ; 21 ms : recherche complète, en médiane sur 10 questions posées au site le 19/10, avec la base, de même architecture et de même taille.
 -->
 
@@ -145,7 +145,7 @@ Durée visée : 55 s
 Questions probables :
 - Pourquoi 72 et non 73 ? La question Q088 est en erreur technique dans tous les états : Ollama compte 2 119 tokens d'entrée, le tokeniseur de référence 2 105 ; le protocole classe tout écart de ce type en erreur technique, pour ne jamais noter une réponse produite à partir d'une entrée différente de celle prévue. Elle est exclue des deux côtés.
 - Les 5 configurations ? B0 modèle seul, B1 RAG sans consigne d'abstention, B2 RAG complet, R+ et R− deux références qui répondent ou s'abstiennent toujours.
-- Comment sait-on que le bon passage était fourni ? Par la règle D4 : un passage est pertinent s'il reprend au moins la moitié de l'extrait annoté comme réponse. C'est un minorant : jugés à l'aveugle, les passages fournis en B2 en contiennent un pertinent pour 45 questions sur 72, et non 33 (annexe 14).
+- Comment sait-on que le bon passage était fourni ? Par la règle D4 : un passage est pertinent s'il reprend au moins la moitié de l'extrait annoté comme réponse. C'est un minorant : jugés à l'aveugle, les passages fournis en B2 en contiennent un pertinent pour 45 questions sur 72, et non 33 (annexe 15).
 -->
 
 ---
@@ -213,7 +213,7 @@ Questions probables :
 - Les chiffres du jugement ? Entièrement appuyées sur leurs passages : 95 % des réponses du modèle adapté pour les deux juges, contre 45 et 60 % pour le témoin. Entièrement exactes : 35 contre 60 % selon Maïmouna, 25 contre 40 % selon Vaneck ; ces écarts sont descriptifs, leurs intervalles contiennent zéro.
 - Pourquoi pas plus exactes ? Le modèle adapté répond à 14 questions de plus, dont des questions où le témoin s'abstenait : ce sont ses réponses les moins exactes. Sur les questions auxquelles les deux répondent, l'exactitude est comparable. Et l'entraînement lui a appris à recopier un passage : réponses deux fois plus courtes, 1,1 passage cité contre 2,4.
 - Les juges sont-ils d'accord ? Modérément : kappa de 0,27 sur l'exactitude, Vaneck étant plus sévère sur la complétude. Le critère des conditions et exceptions n'est pas exploitable : les juges ont compris « sans objet » différemment.
-- M4 avec le jugement mutualisé ? Pour le modèle adapté en B2, 30,6 % au lieu de 25,0 %. L'écart avec le témoin n'est pas recalculé : les citations du témoin n'ont pas été jugées (annexe 14).
+- M4 avec le jugement mutualisé ? Pour le modèle adapté en B2, 30,6 % au lieu de 25,0 %. L'écart avec le témoin n'est pas recalculé : les citations du témoin n'ont pas été jugées (annexe 15).
 -->
 
 ---
@@ -263,12 +263,12 @@ Questions probables :
 **Limites**
 - B2 s'abstient encore à tort sur **55,6 %** des questions couvertes.
 - Réponses fidèles aux passages mais **souvent incomplètes** : l'exactitude ne progresse pas.
-- Mesure au passage **prudente** (un passage annoté par question) ; 24 questions hors corpus, c'est peu.
+- Mesure trop sévère (un passage annoté par question) : **corrigée le 16/11** (annexe 14).
 
 **Suite**
 - **Récupération v2** branchée et mesurée (#163) : M4 de 25,0 à 37,0 %, mais 2 abstentions correctes perdues hors corpus : **B2 reste la référence**.
 - Apprendre au modèle à **exploiter le passage fourni** : c'est lui qui limite désormais.
-- Agrandir le jeu de test, faire étalonner le jugement par des humains.
+- Agrandir le jeu de test (24 questions hors corpus), étalonner le jugement par des humains.
 
 </div>
 </div>
@@ -277,11 +277,12 @@ Questions probables :
 
 <!--
 Durée visée : 50 s
-À dire : Le projet a demandé des arbitrages, que nous assumons. L'encodeur ajusté n'est servi, depuis le 15 novembre, qu'après une mesure unique écrite d'avance. Les exemples qui apprenaient à s'abstenir à tort ont été retirés, et toutes les mesures finales sont faites sur le Mac. Côté limites, le système s'abstient encore à tort sur plus de la moitié des questions couvertes, et ses réponses, fidèles aux passages, sont souvent incomplètes. Branchée sur la génération, la récupération v2 fait monter M4 de 25 à 37 %, mais perd deux abstentions correctes hors corpus : nous gardons B2. La suite : apprendre au modèle à exploiter le passage qu'il reçoit, désormais le facteur limitant.
+À dire : Nos arbitrages : l'encodeur ajusté n'est servi, depuis le 15 novembre, qu'après une mesure unique écrite d'avance, et les exemples qui apprenaient à s'abstenir à tort ont été retirés. Côté limites, le système s'abstient encore à tort sur plus de la moitié des questions couvertes, et ses réponses sont souvent incomplètes. Une limite de notre mesure est corrigée : elle ne reconnaissait qu'un passage par question ; en jugeant à l'aveugle les autres, le volet A passe de 63 à 74 %. La récupération v2 fait monter M4 de 25 à 37 %, mais perd deux abstentions correctes : nous gardons B2. La suite : apprendre au modèle à exploiter le passage reçu.
 Questions probables :
 - La récupération v2 est-elle mesurée avec la génération ? Oui (#163, protocole 08) : M4 de 37,0 % contre 25,0 %, mais M1 de 18 sur 24 contre 20 sur 24 ; la règle écrite d'avance tolérait une question de moins, pas deux : B2 reste la référence.
 - Pourquoi le modèle limite-t-il ? Avec la récupération v2 et le jugement à l'aveugle, sur 35 échecs, 21 viennent du modèle (11 abstentions, 10 citations d'un autre passage alors qu'un passage pertinent est fourni), 6 du seuil et 8 seulement de la récupération.
 - Pourquoi ne pas avoir réglé le seuil ? Il est figé par le protocole ; le régler sur le test fausserait la mesure.
+- Qu'est-ce qui a été corrigé dans la mesure ? Le bon passage était seulement celui qui reprend l'extrait annoté ; désormais, un passage jugé « répond » à l'aveugle par deux juges compte aussi, et chaque chiffre devient une fourchette (annexes 14 et 15).
 -->
 
 ---
@@ -551,7 +552,36 @@ Durée visée : 17 s
 
 ---
 
-# Annexe 14. Une mesure prudente, corrigée à l'aveugle
+# Annexe 14. Une limite corrigée : notre manière de mesurer
+
+<div class="petit">
+
+| | Avant | Après (protocole 09, 16/11) |
+|---|---|---|
+| **Bon passage** | celui qui reprend l'extrait annoté (règle D4) | D4, ou un passage jugé « répond » par deux juges |
+| **Résultat** | un seul chiffre | une fourchette : minorant D4, majorant jugé |
+| **Jugement** | aucun | à l'aveugle : ni système, ni rang, ni extrait ; 80 contrôles |
+| **CDTN** | succès à 5 | succès, rappel, nDCG@10, précision |
+| **M4** | lu comme la réussite du volet B | traçabilité ; l'exactitude est jugée à part |
+| **Échecs** | comptés | classés : récupération, seuil ou modèle |
+
+</div>
+
+- **Pourquoi** : deux annotateurs choisissent la même fiche 14 fois sur 15, mais les mêmes passages 7 fois seulement ; un passage valable non annoté était compté faux.
+- **Garde-fous** : règles figées avant de juger ; seuls les 617 passages montrés par nos systèmes sont jugés, ce qui suffit pour un succès à k ; juges d'IA déclarés, étalonnage humain en attente.
+
+<div class="def"><b>Succès à 5</b> : au moins un bon passage dans les 5 premiers. <b>Rappel</b> : part de tous les bons passages retrouvés. <b>Contrôles</b> : paires dont la réponse est connue, pour vérifier les juges.</div>
+
+<!--
+Questions probables :
+- Pourquoi cette correction ? Notre jeu de test n'a qu'un extrait de référence par question. Un système qui montre un autre passage valable était compté en échec : nos chiffres étaient des minorants, ce que le rapport J2 et le ticket #139 avaient signalé.
+- Pourquoi ne juger que les passages montrés ? Savoir si un système a un bon passage dans ses k premiers ne dépend que de ces k passages : juger tous les autres ne changerait aucune métrique.
+- Qu'est-ce qui ne change pas ? Les questions, les systèmes, leurs sorties, les tests statistiques et les décisions : l'ajusté reste servi, B2 reste la référence.
+-->
+
+---
+
+# Annexe 15. Une limite corrigée : les chiffres, avant et après
 
 <div class="petit">
 
@@ -565,7 +595,7 @@ Durée visée : 17 s
 
 </div>
 
-- **Protocole 09**, figé avant tout jugement : les 617 passages montrés par nos systèmes et non reconnus par D4, mêlés à 80 contrôles, jugés sans système ni rang par deux modèles d'IA, déclarés comme tels.
+- **Lecture** : la colonne D4 ne compte que l'extrait annoté ; la seconde ajoute les passages que les deux juges disent « répond ». Les juges peuvent se tromper : d'où l'étalonnage humain.
 - **Fiabilité** : 40 contrôles positifs sur 40 reconnus, aucun négatif accepté, kappa de **0,86** entre les juges. **Provisoire** : étalonnage humain sur 100 paires en attente.
 - **CDTN**, 5 passages pertinents par requête en médiane : nDCG@10 de 41,5 % pour l'ajusté, 35,9 % pour la base, 35,0 % pour BM25.
 
