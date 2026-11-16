@@ -57,6 +57,9 @@ fois le manque corrigé, relancer la couche si c'est l'index, E5 ou le tokeniseu
 Le modèle servi se règle sur le serveur, jamais depuis le navigateur : `--modele <nom> --digest <empreinte>` pour le modèle
 adapté (#107). Pour modifier l'interface, `npm run dev` dans `demo_b/` relaie `/api` vers cette couche.
 
+Sur le Legion, avec le modèle adapté et le témoin T transmis hors de GitHub : `docs/etudes/demonstration/demo_legion_111.md`
+(transfert et contrôle des modèles, lancement sur deux ports, résultats de l'essai du 16 novembre).
+
 ## Tests
 
 ```powershell
