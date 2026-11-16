@@ -5,6 +5,8 @@
 **Ouvert le** 19 septembre 2026
 **Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé ; 26 octobre 2026 : début du travail sur #52 daté, points opérationnels de #49, #52 et #107 ; soutenance avancée au 30/11 : jalon J4 au 30/11, #52 en J3, échéances resserrées ; revue de la #108 traitée, format des données d'adaptation proposé, PR #116, par Mahé ; 27 octobre 2026 : #85, #100, #101, #109 et #118 fusionnées, faisabilité du Legion, script de mesure, premier jet des supports de J3, par Mahé ; 30 octobre 2026 : #105, #116 et #117 fusionnées, décisions sur les machines, Agent0, #49 et le Weekly 9, protocole et script après la calibration, charges de #51 et #111, par Mahé ; 2 novembre 2026 : version d'Ollama arbitrée (0.40.13), protocole et script après la revue de Jibril, gel reporté, par Mahé ; 7 novembre 2026 : gel fait le 04/11, verrou approuvé, lot d'adaptation v2b, Weekly 7 et 8 non tenus, par Mahé)
 
+**Complément du 16 novembre 2026** : Weeklys 7 à 9 documentés puis clôturés ; états de réalisation et points de clôture des tâches rapprochés des preuves GitHub. Le relevé daté ci-dessous complète l'inventaire historique sans remplacer les estimations ou fabriquer des charges.
+
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
 **Pourquoi cette colonne compte.** Le rapport final devra traiter « les écarts entre charge estimée et charge réelle, et analyse des causes de sous-estimation ». Cette information ne se reconstitue pas en décembre. Elle se note au moment où la tâche se termine, ou elle est perdue.
@@ -24,6 +26,34 @@
 7. Les valeurs sont conservées avec leur provenance. Une fermeture GitHub n'est pas à elle seule une preuve de validation du dernier livrable.
 
 **Légende.** NR = information non renseignée dans les sources consultées, sans conclusion sur sa valeur réelle. « non estimée » = absence d'estimation initiale explicitement déclarée. P = estimation provisoire de planification, à réviser ; elle n'est pas une charge réelle. Dans la colonne Clôturé, « - » = ticket ouvert. Dans la colonne Réel, « - » = ticket ouvert sans charge réelle déclarée ; cela ne signifie pas qu'aucun travail n'a commencé. Dans la colonne Jalon, « - » = aucun milestone GitHub affecté. Un écart NR ne vaut pas zéro.
+
+## Réconciliation documentaire du 16 novembre 2026
+
+Source : corps et commentaires des tickets et PR relus le 16/11, notamment #13/#14/#15, #49/#51/#52, #91 à #95, #107 et #112. Les états ci-dessous concernent les issues GitHub ; aucun statut de colonne du Project Board n'est déduit.
+
+| Ticket | Réalisation vérifiée | État au 16/11 et point restant |
+|---|---|---|
+| #13, Weekly 7 | Suivi écrit du 29/10 complété par les décisions datées du 30/10 et leurs suites | Fermé le 16/11 comme compte rendu complété, sans réunion synchrone |
+| #14, Weekly 8 | Non-tenue confirmée, points d'étape et suites écrites reconstitués depuis les sources | Fermé le 16/11 comme suivi documenté, sans présence ni vote inventés |
+| #15, Weekly 9 | Suivi écrit prévu le 12/11 complété rétrospectivement le 16/11 ; résultat du point d'arrêt expliqué | Fermé le 16/11 comme compte rendu, sans prétendre à un échange conjoint le 12/11 |
+| #49 | Ajustement, mesures et contrôles intégrés par #165 ; Recall@5 63,0 % contre 43,8 % | Ouvert : présentation à l'équipe non attestée comme événement et charge réelle à renseigner |
+| #51 | Socle #85, reproduction de Maïmouna publiée le 08/11 et acceptée par Mahé le 10/11, exemples commentés | Ouvert : présentation et bilan de charge. Les charges partielles restent attribuées à leurs déclarants |
+| #52 | Mesure avant du 09/11 et recalcul indépendant, puis résultats T/adapté du 11/11 publiés | Ouvert : présentation attestée, jugement humain consolidé/défauts et charge |
+| #91 | Schéma #99 relu et fusionné | Ouvert uniquement pour le temps actif réel à déclarer selon sa checklist |
+| #92 | Sélection/provenance #100 relue et fusionnée | Ouvert uniquement pour le temps actif réel à déclarer selon sa checklist |
+| #93 | Génération simple/reformulation #101 relue et fusionnée | Ouvert uniquement pour le temps actif réel à déclarer selon sa checklist |
+| #94 | Périmètre technique réduit #103 relu et fusionné | Ouvert pour la charge réelle ; aucune validation sémantique des candidats déduite |
+| #95 | Support #106 livré ; préparation #145 et contrôle encodeur #153 intégrés ensuite | Ouvert pour la charge du support ; un pilote relu/figé n'est pas déclaré |
+| #107 | Entraînement, export, service et mesures du 11/11 réalisés | Ouvert : jugement consolidé, défauts, feuille de route au rapport et charges |
+| #112 | Support assemblé #134, compléments #156/#157 et résultats #152 versionnés | Critères documentaires cochés ; ouvert pour le bilan de charge collectif |
+
+Les cases techniques de #49 et #51 sont cochées seulement pour les éléments étayés. La présentation effective n'est pas assimilée à un commentaire public. Les trois critères de #112 portent sur le contenu préparé/versionné ; ils ne certifient pas une présentation à l'enseignant.
+
+**Autres tâches conservées ouvertes.** #8 attend la confirmation écrite du calendrier ; #96 à #98 ne disposent pas d'un lot synthétique relu et figé ni d'une évaluation achevée ; #111 attend le scénario corrigé, la vidéo et l'essai de démonstration sur le Legion ; #113/#114 attendent la livraison du rapport et de la soutenance. Mahé maintient #138 jusqu'à la fusion de #166 ; #140 attend le transfert/import pour la démonstration ; #163 attend les corrections de #166 ; #139 attend l'étalonnage humain ; #167 attend la décision de Mahé avant gel. Les Weeklys futurs ne sont pas complétés à l'avance.
+
+**Charges.** Les estimations et charges déjà déclarées sont conservées. Maïmouna déclare pour #51 2 h 30 de relecture, 1 h 30 de reproduction et 1 h 30 d'exemples ; Vaneck déclare 2 h de relecture. Ce sont des valeurs partielles, pas la charge totale de #51. Pour les comptes rendus clôturés, la charge réelle non déclarée reste NR. Aucune estimation historique, date de travail ou durée de modèle n'est convertie en temps actif.
+
+Les sections suivantes gardent les relevés datés et leur provenance ; les décisions anciennes remplacées sont signalées dans les tickets actuels.
 
 ## Domaines
 
@@ -70,9 +100,9 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #10 | Weekly 4 - 7 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 07/10/2026 |
 | #11 | Weekly 5 - 14 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 14/10/2026 |
 | #12 | Weekly 6 - 21 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 26/10/2026 |
-| #13 | Weekly 7 - 28 octobre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
-| #14 | Weekly 8 - 4 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
-| #15 | Weekly 9 - 11 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
+| #13 | Weekly 7 - 28 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 16/11/2026 |
+| #14 | Weekly 8 - 4 novembre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 16/11/2026 |
+| #15 | Weekly 9 - 11 novembre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 16/11/2026 |
 | #16 | Weekly 10 - 18 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
 | #17 | Weekly 11 - 25 novembre 2026 | transverse | Tous | J4 | Ouvert | 20/09/2026 | - |
 | #18 | Weekly 12 - 2 décembre 2026 | transverse | Tous | J4 | Ouvert | 20/09/2026 | - |
@@ -136,9 +166,9 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #10 | NR | NR | NR | NR | NR |
 | #11 | NR | NR | NR | - | NR |
 | #12 | NR | NR | NR | - | NR |
-| #13 | NR | NR | NR | - | NR |
-| #14 | NR | NR | NR | - | NR |
-| #15 | NR | NR | NR | - | NR |
+| #13 | NR | NR | NR | NR | NR |
+| #14 | NR | NR | NR | NR | NR |
+| #15 | NR | NR | NR | NR | NR |
 | #16 | NR | NR | NR | - | NR |
 | #17 | NR | NR | NR | - | NR |
 | #18 | NR | NR | NR | - | NR |
@@ -237,6 +267,8 @@ Les dates de tenue, les participants et les décisions proviennent des comptes r
 | 30/09 | Weekly 3, #9 | NR | NR | Issue fermée, mais le compte rendu reste au stade du modèle : décisions et récapitulatif non renseignés. |
 | 07/10 | Weekly 4, #10 | NR | NR | Décisions documentées par Mahé en commentaire : protocole de #46, traitement des mesures exploratoires de #49, seuil CDTN, mesure après relecture, approbation obligatoire, noreply, suivi des charges. Volet A attendu le 18/10. |
 | 28/10 | Weekly 7, #13 | sans objet | sans objet | Réunion remplacée par un suivi écrit, rédigé le 29/10 par Jibril dans le ticket, sans décision. Décisions prises le 30/10 par Mahé (machines, Agent0, #49, Weekly 9), révisables au Weekly 8. |
+| 04/11 | Weekly 8, #14 | sans objet | sans objet | Réunion non tenue selon Mahé le 07/11 ; deux points d'étape sans décision consignée. Relevé complété et ticket clôturé le 16/11. |
+| 11/11 | Weekly 9, #15 | sans objet | sans objet | Remplacé par un suivi écrit prévu le 12/11, rédigé le 16/11. Mesures faites le 11/11 ; condition de repli du 12/11 non réunie. |
 | 21/10 | Weekly 6, #12 | sans objet | sans objet | Réunion non tenue. Consigné le 26/10 par Jibril dans le ticket, avec un état des lieux rétrospectif au 21/10, sans présence ni décision inventée ; ticket fermé comme non planifié. |
 
 La revue de #69 demande « non estimée » pour #44 ; cette précision est retenue malgré la case vide mentionnée dans le commentaire initial du Weekly 4. Les comptes rendus de #6 et #26 ont été rétablis : aucune nouvelle réouverture ou reconstruction n'est nécessaire ici.
