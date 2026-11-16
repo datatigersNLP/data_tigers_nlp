@@ -5,9 +5,9 @@
 **Établi le** 7 novembre 2026 par Mahé BEGNIS ; chiffres repris de `docs/jalons/J3_chiffres_verifies.md`  
 **Complété le** 9 novembre par Jibril BENSALEM avec Codex : contenu de la diapositive 8 et résultats avant, d'après les sorties du Legion
 
-**Actualisé le** 10 novembre avec les confirmations de #52 et l'amendement M1 sur la machine de mesure
+**Actualisé le** 11 novembre : diapositive 8 complétée avec les résultats T et adapté publiés dans #52
 
-**À mettre à jour le** 13 novembre : état de l'entraînement et éventuels résultats après
+**À finaliser le** 13 novembre : relecture humaine, répartition orale et assemblage
 
 ---
 
@@ -51,15 +51,43 @@
 
 **Sources.** PR #109 et #118 ; `docs/etudes/faisabilite_legion_20261026.md` ; #107 (commentaires du 4, du 7 et du 10 novembre) ; PR #130 ; #52 (amendement M1) ; #140 et PR #147.
 
-## Diapositive 8 : Volet B, protocole 06 et mesure avant (avec Jibril)
+## Diapositive 8 : Volet B, résultats de l'adaptation (avec Jibril)
 
-**Message.** B2 s'abstient sur 20 des 24 questions hors corpus. Sur les 33 questions dont le contexte contient un passage pertinent selon D4, 17 reçoivent aussi une abstention.
+**Message.** L'adaptation augmente les réponses citant un passage pertinent. Le taux d'abstention hors corpus reste identique, avec une incertitude importante.
 
 **Contenu à afficher.**
 
-- Mesure avant du 9 novembre sur le Legion, sous Ollama 0.40.13. Protocole, scripts et données verrouillés avant l'exécution.
 - 97 questions de test : 73 du corpus et 24 hors corpus.
-- B1 : cinq passages, sans consigne d'abstention. B2 : consigne d'abstention et seuil de similarité S = 0,8565.
+- Comparaison principale en B2 : modèle adapté contre témoin T, tous deux mesurés le 11 novembre sur le Mac de Mahé, sous Ollama 0.40.13.
+- Même récupération E5 fp32, cinq passages et seuil S = 0,8565. La récupération v2 n'intervient pas dans cette comparaison.
+
+| Critère principal | Adapté | Témoin T | Écart en points | IC à 97,5 % |
+|---|---:|---:|---:|---:|
+| Réponse citant un passage pertinent (M4) | 18/72 (25,0 %) | 10/72 (13,9 %) | +11,1 | [+2,1 ; +23,8] |
+| Abstention correcte hors corpus (M1) | 20/24 (83,3 %) | 20/24 (83,3 %) | 0,0 | [−20,5 ; +20,5] |
+
+**Conclusion.** Amélioration démontrée sur M4 selon la règle prévue. Aucune amélioration démontrée sur M1. Une citation pertinente ne prouve pas l'exactitude de toute la réponse.
+
+**Notes pour l'oral, protocole et limites.**
+
+Le verrou consigne l'empreinte du protocole, des scripts, du jeu de questions, du seuil et de l'index. La mesure refuse de tourner si l'une des dix empreintes a changé. L'amendement M1 publié dans #52 complète le protocole sur le choix de machine sans modifier le fichier gelé ni le verrou.
+
+Mahé rapporte une seule exécution par état et par phase, sans reprise. Les cinq états exécutés restent sous la limite de 5 % d'erreurs techniques : T B1, 2/97 ; T B2, 1/97 ; adapté B0, 0/97 ; adapté B1 et B2, 1/97 chacun. Q088 est en erreur de décompte des tokens dans les quatre états avec récupération. Q039 est aussi en erreur dans B1 de T, sa réponse étant coupée à 512 tokens. La comparaison principale B2 porte donc sur les mêmes 72 questions du corpus, Q088 exclue, et sur les 24 hors corpus.
+
+Les deux critères principaux utilisent les intervalles bilatéraux à 97,5 % prévus en section 6, avec correction de Bonferroni. Pour M4, huit questions gagnent une citation pertinente et aucune n'en perd, avec McNemar exact p = 0,0078. Pour M1, une question change dans chaque sens, p = 1. L'intervalle de M1 ne permet pas d'exclure une perte ou un gain d'environ 20 points malgré les taux identiques. Mahé rapporte un recalcul indépendant des tables appariées et des valeurs p à partir des fichiers bruts. Ces calculs privés n'ont pas été réexécutés pour ce support.
+
+**Résultats descriptifs, distincts de l'analyse principale.** En B2, M2 passe de 70,8 % pour T à 55,6 % pour le modèle adapté, soit −15,3 points avec IC 95 % [−26,3 ; −5,4]. Plus de la moitié des questions du corpus reçoivent donc encore une abstention. M2 rapporte l'abstention par rapport au corpus entier, sans condition sur la présence d'un passage pertinent dans le contexte. M3 passe de 25,0 % à 44,4 %, avec un écart de +19,4 points et IC 95 % [+9,8 ; +30,8]. Les sorties invalides de B2 passent de trois à zéro. M5 reste à 4/24 dans les deux phases. Ces indicateurs sont descriptifs, avec des intervalles à 95 %, sans conclusion d'amélioration selon la règle principale. En B1, M4 vaut 38,0 % pour l'adapté contre 43,7 % pour T : le résultat de B2 ne se généralise pas à B1.
+
+**Exactitude des réponses.** M4 exige au moins une référence citée vers un passage pertinent selon D4. Il ne vérifie pas que toutes les affirmations, conditions et exceptions sont justes. Maïmouna et Vaneck doivent juger à l'aveugle 20 réponses citées de B2 tirées dans `temoin` et 20 dans `apres`, parmi respectivement 22 et 36 réponses citées. Mahé a publié ce choix avant le tirage, avec la graine 20261018, et conserve la clé. L'ajustement de l'échantillonnage remplace « avant/après » par « T/adapté » pour respecter M1 et la référence principale. Aucun verdict humain final n'est présenté ici.
+
+**Machines et traçabilité.** La mesure avant du 9 novembre sur le Legion reste descriptive et archivée. Elle n'est pas comparée directement aux mesures du Mac. Mahé ne refait pas de phase avant sur le Mac, car le modèle de #31 n'y a pas été importé. T ne sera pas transféré et Jibril n'a plus aucune mesure à lancer. Les modèles du Mac ont les digests suivants :
+
+- T : `8a077f3d3f56b636face1357eba557b21e2ba68bc72ee81e48b377272da72f27`.
+- Adapté : `18cb25f099f2ba1b21a3bc945da6be7ce4d128cb4e579325fc0f70dfccb37174`.
+
+### Repères historiques : mesure avant du Legion, 9 novembre
+
+Ces chiffres décrivent uniquement le modèle de #31 sur le Legion. Ils ne forment pas la référence de l'écart adapté contre T du tableau principal.
 
 | Indicateur | B1 | B2 |
 |---|---:|---:|
@@ -67,38 +95,8 @@
 | Abstention à tort dans le corpus (M2) | 0/71 (0 %) | 45/72 (62,5 %) |
 | Réponse citant un passage pertinent (M4) | 30/71 (42,3 %) | 12/72 (16,7 %) |
 
-Les dénominateurs excluent les erreurs techniques : deux en B1, une en B2. Les cinq états restent valides selon le seuil de 5 %.
+Le diagnostic complémentaire reste propre à cette mesure du Legion : sur les 45 abstentions M2, 28 surviennent sans passage pertinent fourni selon D4 (27 du modèle et une du seuil). Parmi les 33 questions avec passage pertinent fourni, 17 reçoivent une abstention (16 du modèle et une du seuil). D4 ne connaît qu'un extrait par question, donc un contexte classé sans passage pertinent peut contenir une autre réponse. Ce diagnostic ne remplace ni M2 ni la relecture humaine. Il n'est pas transposé aux phases T et adapté.
 
-M2 classe l'abstention par rapport au corpus entier. L'analyse complémentaire du contexte distingue 28 des 45 abstentions sans passage pertinent fourni selon D4, et 17 abstentions sur 33 questions avec passage pertinent fourni. Ce diagnostic reste distinct de M2.
+**Texte oral de Jibril.** Voir `docs/jalons/J3_diapositives_jibril.md`, partie « Diapositive 8 ». Cette section reste la source commune des chiffres pour l'assemblage.
 
-**Notes pour l'oral, protocole et limites.**
-
-Le verrou consigne l'empreinte du protocole, des scripts, du jeu de questions, du seuil et de l'index. La mesure refuse de tourner si l'une des dix empreintes a changé. L'amendement M1 publié dans #52 complète le protocole sur le choix de machine sans modifier le fichier gelé ni le verrou.
-
-La décomposition publiée par Mahé le 9 novembre est descriptive, hors protocole 06. Sur les 45 abstentions de M2, 28 surviennent sans passage pertinent fourni selon D4 (27 du modèle, une du seuil). Parmi les 33 questions avec passage pertinent fourni, 17 conduisent à une abstention (16 du modèle, une du seuil), soit 51,5 %. On distingue donc un défaut de récupération et des abstentions malgré un contexte pertinent selon cette règle. D4 ne connaît qu'un extrait par question : un contexte classé sans passage pertinent peut contenir une autre réponse. Ce croisement ne remplace pas une vérification humaine du sens.
-
-Sur les 65 abstentions de B2, le seuil en déclenche 11 (deux dans le corpus, neuf hors corpus). Les 54 autres viennent du modèle. Le constat ne permet pas d'attribuer les abstentions au seul seuil.
-
-Les cinq états sont B0 (modèle nu), B1, B2, R+ (réponse fixe citant le premier passage) et R- (abstention systématique). B0, R+ et R- n'ont aucune erreur technique. R+ atteint par construction 100 % de citations valides, ce qui montre qu'une référence bien formée suffit peu à juger une réponse. M4 exige qu'au moins un passage cité soit pertinent selon la règle D4. Ce contrôle ne juge pas la justesse de chaque affirmation.
-
-Les différences entre B1 et B2 restent descriptives. B2 change à la fois la consigne et le filtrage par seuil : on ne peut pas attribuer tout l'écart au seul seuil. Les erreurs techniques retirées ne sont pas des abstentions. M3 mesure les citations valides, M5 les réponses affirmatives hors corpus. Les résultats détaillés des cinq états restent dans `metriques.json`, transmis hors dépôt à Mahé.
-
-| Indicateur | IC 95 % de B1 | IC 95 % de B2 |
-|---|---:|---:|
-| M1 | 0,0 à 13,8 % | 64,1 à 93,3 % |
-| M2 | 0,0 à 5,1 % | 52,0 à 72,0 % |
-| M4 | 30,5 à 55,0 % | 9,9 à 26,8 % |
-
-Ces intervalles sont ceux de l'analyse avant transmise par Jibril, arrondis à un chiffre après la virgule. Le protocole emploie Wilson, avec correction de l'effet de plan des fiches pour les questions du corpus. Les effectifs sans erreur sont propres à chaque état. Une comparaison appariée utilise la population commune sans erreur dans les deux états.
-
-L'analyse principale compare B2 du modèle adapté à B2 du témoin T, tous deux mesurés sur le Mac de Mahé, sur M1 et M4, avec intervalles bilatéraux à 97,5 % et correction de Bonferroni. Le protocole conclut à une amélioration démontrée lorsque la borne basse de l'intervalle de l'écart dépasse zéro. Le témoin T diffère structurellement du modèle de #31 (#140), ce qui en fait la référence principale prévue par la section 3. Aucune amélioration de l'adaptation n'est encore mesurée.
-
-L'amendement M1 du 10 novembre confie toutes les mesures restantes à Mahé sur son Mac, sous Ollama 0.40.13. La mesure avant du Legion reste une référence descriptive archivée, sans comparaison directe avec une phase sur le Mac. Jibril n'a plus de mesure à lancer et T ne sera pas transféré sur le Legion. Une phase avant sur le Mac n'est envisagée que si l'import du modèle de #31 y donne le digest exigé par le script.
-
-Les huit questions de calibration ont servi à mettre le script au point. Les taux affichés ici viennent exclusivement des 97 questions du lot de test, dont les questions avec erreur technique sont exclues des dénominateurs.
-
-Maïmouna et Vaneck jugeront à l'aveugle l'exactitude, les conditions et exceptions, et la justification par les passages, selon l'échantillonnage de 20 réponses citées de B2 par phase prévu au protocole. L'organisation de cet échantillon doit être alignée avec Mahé sur la référence T du Mac. Le jeu et le seuil restent figés.
-
-**Texte oral de Jibril.** Voir `docs/jalons/J3_diapositives_jibril.md`, partie « Diapositive 8 ». Cette section reste la source commune du contenu de la diapositive 8, pour éviter une seconde copie des chiffres dans le support assemblé.
-
-**Sources.** `docs/etudes/evaluation/06_protocole_volet_b.md` (sections 3 à 8) ; `scripts/rag/mesure.py` ; mesure avant du 9 novembre rapportée par Jibril, `metriques.json` SHA-256 `f28682a1418c6a97bad4c26ceb120c5149ccfb66962525e658d63540651b8c2b` ; journal de séance `docs/journal/2026-11-09_fusion_131_relectures_130_128.md` (PR #142, contenant les empreintes). Mahé a confirmé la réception des sept fichiers et un recalcul indépendant identique de l'analyse. Sources complémentaires : #52, commentaires https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6740066115 (réception et diagnostic) et https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6767903548 (amendement M1).
+**Sources.** Protocole 06, sections 3 à 8 ; #52, [résultats du 11 novembre et décision sur l'échantillon](https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6797300311), [modèles et digests](https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6795652708), [amendement M1](https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6767903548), [réception et diagnostic du Legion](https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6740066115) ; journal de mesure fusionné dans #142.
