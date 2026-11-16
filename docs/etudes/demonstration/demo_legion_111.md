@@ -118,13 +118,15 @@ Les quatre questions candidates du moment 4 :
 - **Moment 4 proposé** : « Ma période d'essai peut-elle être renouvelée ? ». T s'abstient alors que la réponse est dans les passages, le défaut que l'adaptation visait, et le modèle adapté répond en citant le bon passage. C'est la même fiche qu'au moment 1. Question de rechange : celle des 48 heures.
 - **À éviter** : l'apprenti mineur (le modèle adapté y fait moins bien que T) et le repos quotidien (aucune différence).
 - **Moment 2** : il ne donne pas la réponse à deux passages qu'attend le scénario ; le garder en réserve ou le retirer.
-- **Style du modèle adapté** : des réponses très courtes, parfois réduites à un fragment (au moment 1, la réponse commence par un tiret). Le dire plutôt que le découvrir en direct.
+- **Style du modèle adapté** : des réponses très courtes, parfois réduites à un fragment. Au moment 1, la réponse brute commence par un tiret ; l'interface l'affiche comme une liste d'un élément. Le dire plutôt que le découvrir en direct.
+- **Dans le navigateur** (Chromium, mêmes jour et code) : l'état « L'assistant est prêt. », la réponse du moment 1 avec son bouton `P1` et la carte du passage « La période d'essai », l'abstention du moment 3 dans son encadré, et le nom du modèle sous chaque réponse. Les 8 requêtes de la page sont toutes allées vers `127.0.0.1:8765` ; le lien vers travail-emploi.gouv.fr ne s'ouvre que sur un clic.
 
 ## 6. À dire et à ne pas dire
 
 - La démonstration n'applique pas le seuil S de la mesure : c'est le modèle seul qui s'abstient (scénario de la #158, section 8).
 - Le moment 4 est une illustration choisie après essai, pas une mesure. La preuve est l'analyse principale du protocole 06 : le modèle adapté cite un passage pertinent pour 18 questions sur 72 (25,0 %), contre 10 sur 72 (13,9 %) pour T, soit +11,1 points, intervalle [+2,1 ; +23,8].
 - Ne pas présenter T comme « le modèle de base de la #31 » : c'est le modèle d'origine passé par la même chaîne d'export que le modèle adapté.
+- Les deux exemples du panneau latéral reprennent mot pour mot deux questions de calibration (Q036 et Q003), fautes de frappe comprises (« l'empoyeur », « à coté »), comme la maquette qui les rejoue. Le scénario ne les utilise pas : taper ses propres questions.
 
 ## 7. Solutions de repli
 
