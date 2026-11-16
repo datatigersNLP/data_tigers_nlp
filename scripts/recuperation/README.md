@@ -1,11 +1,13 @@
-# Récupération v2 du volet B (#138)
+# Récupération v2 (#138) et chaîne v2 (#163) du volet B
 
 Quatre leviers, réglés sur le jeu CDTN et jamais sur le lot de test : le nombre de passages, un reclasseur (cross-encoder), l'ajout des passages voisins de la même section, et la fusion des rangs d'E5 et de BM25 V3 (RRF).
+
+La chaîne v2 (#163) branche cette récupération sur la génération du protocole 06, avec une consigne v2 et une abstention décidée par le reclasseur. Mesurée une fois sur le lot de test le 15 novembre 2026 (protocole 08), elle n'est pas adoptée : B2 reste la chaîne de référence (`docs/etudes/evaluation/08_resultats_chaine_v2.md`).
 
 ## Ce que ce dossier ne touche pas
 
 * **Aucun des dix fichiers du verrou** de la mesure (`scripts/rag/verrou_mesure.json`, PR #131) : protocole 06, `mesure.py`, `rag.py`, `generation.py`, `metrics.py`, `pertinence.py`, jeu, seuil, index et passages. Le test `VerrouTests` recalcule leurs empreintes avec `mesure.empreintes_actuelles` et les compare au verrou.
-* **L'abstention** : le seuil S reste appliqué au cosinus maximal d'E5, avant toute autre étape.
+* **L'abstention** : le seuil S reste appliqué au cosinus maximal d'E5, avant toute autre étape. Seul l'état V2 de la chaîne v2 s'abstient autrement, sur le score maximal de bge-m3 avec le seuil τ (protocole 08, section 4).
 * **Le lot de test** : `reglage_cdtn.py` n'en lit que les URL, pour reconnaître les 61 fiches du lot, comme `scripts/adaptation_qwen/separation.py`.
 
 ## Fichiers
@@ -16,6 +18,8 @@ Quatre leviers, réglés sur le jeu CDTN et jamais sur le lot de test : le nombr
 * `reglage_cdtn.py` : préparation (population, E5, BM25 V3), scores des reclasseurs, grille des configurations.
 * `confirmer_test.py` : la confirmation unique sur le lot de test, selon le protocole 07 (`docs/etudes/evaluation/07_protocole_recuperation_v2.md`). Il refuse de tourner si le protocole, le script ou le module ne sont pas committés à l'identique, et ne calcule la v2 qu'après avoir reproduit les rangs publiés par le notebook 03.
 * `test_recuperation.py` : 19 tests sans modèle ni question d'évaluation.
+* `chaine_v2.py` : la chaîne v2 et sa mesure selon le protocole 08 (`docs/etudes/evaluation/08_protocole_chaine_v2.md`) ; commandes `seuil` (calcul de τ sur le CDTN), `preparer` (contextes, une fois par lot), `executer` (un état, un modèle) et `analyser`. Il refuse de lire le lot de test si les empreintes du protocole 08 et de τ diffèrent de celles du gel, et contrôle le verrou de la #131 avant le calcul de τ, la préparation des contextes et chaque état.
+* `test_chaine_v2.py` : 14 tests sans modèle ni question d'évaluation.
 
 ## Reclasseurs
 
@@ -37,6 +41,11 @@ python scripts/recuperation/reglage_cdtn.py reclasser camembert-mmarco
 python scripts/recuperation/reglage_cdtn.py reclasser bge-m3
 python scripts/recuperation/reglage_cdtn.py grille
 python scripts/recuperation/confirmer_test.py          # une seule fois, après le gel du protocole 07
+python scripts/recuperation/test_chaine_v2.py
+python scripts/recuperation/chaine_v2.py seuil
+python scripts/recuperation/chaine_v2.py preparer --lot test
+python scripts/recuperation/chaine_v2.py executer --lot test --phase temoin --etat V1 --modele MODELE --digest DIGEST
+python scripts/recuperation/chaine_v2.py analyser --lot test
 ```
 
-Les sorties vont dans `data/evaluation/recuperation/`, qui n'est pas versionné ; chaque cache est lié aux classements par son empreinte.
+`executer` est lancé une fois par état et par modèle, dans l'ordre du protocole 08 (section 5), avec les modèles et digests publiés sur le #52. Les sorties vont dans `data/evaluation/recuperation/` et `data/evaluation/volet_b/chaine_v2/`, qui ne sont pas versionnés ; chaque cache est lié aux classements par son empreinte.
