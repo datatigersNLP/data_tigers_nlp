@@ -1,4 +1,4 @@
-# Protocole 10 : résultats des familles A et B (récupération)
+# Protocole 10 : résultats des familles A, B et E
 
 **Date** : 17 novembre 2026. **Tickets** : #171, #172, #173. **Règles** : protocole 10 (`10_protocole_jeu_v2.md`, figé avant toute génération, commit `ffa0486`, SHA-256 `8d123613…`). **Jeu** : `evaluation/questions_v2/questions_v2.csv`, étiquette `jeu-questions-v2` (`8bfd9fb`). **Auteur** : Mahé BEGNIS.
 
@@ -6,14 +6,15 @@
 
 ## 1. Objet et état
 
-Cette page publie deux des trois familles de mesures du protocole 10, section 7, et l'effet du nombre de passages demandé par l'enseignant :
+Cette page publie les familles de mesures du protocole 10, section 7, au fur et à mesure, et l'effet du nombre de passages demandé par l'enseignant :
 
 * **Famille A** : la fusion de la recherche dense du site avec BM25 V3, candidate pour le volet A (#173).
 * **Famille B, récupération** : la récupération du volet B, R0, R1 et R2, et la règle qui décide de la chaîne de démonstration (#172).
+* **Famille E** : les encodeurs candidats pour le volet A (#167), ici le candidat v2-T (section 7 de cette page).
 
-Restent à mesurer : la famille B de bout en bout, avec Ollama, et la famille E (encodeurs v2-T et v3-C, #167). Elles seront ajoutées ici.
+Restent à mesurer : la famille B de bout en bout, avec Ollama, en cours, et le candidat v3-C, dont l'amendement A3 n'est pas encore écrit.
 
-Les mesures sont faites par `scripts/evaluation/mesures_10.py` (commandes `famille_a` et `famille_b`). Chaque fichier de résultats est écrit une seule fois dans `data/evaluation/protocole_10/`, non versionné ; ses empreintes sont en section 8.
+Les mesures sont faites par `scripts/evaluation/mesures_10.py` (commandes `famille_a`, `famille_b`, `effet_k` et `famille_e`). Chaque fichier de résultats est écrit une seule fois dans `data/evaluation/protocole_10/`, non versionné ; ses empreintes sont en section 10.
 
 ---
 
@@ -96,7 +97,25 @@ Le protocole compare, sur le jeu v2, le modèle adapté en B2 au modèle adapté
 
 ---
 
-## 7. Pourquoi 10 passages au lieu de 5
+## 7. Famille E : encodeur v2-T
+
+La v2-T reprend la recette de l'encodeur ajusté v1 avec 2 289 paires d'entraînement au lieu de 109, dont les questions sont générées par le témoin T (amendement A2 du protocole 05, #167). L'amendement a été figé le 17 novembre (commit `2008338`, SHA-256 `e522a434…`), avant toute mesure de la v2 ; à ce gel, ses jeux de décision ont été alignés sur ce protocole. Recherche dense seule, aux conditions du site : vecteurs des questions calculés dans Chrome 155 par le q8 complet, index fp32 de chaque encodeur.
+
+| Recall@5 | Questions (groupes) | v1, servie | v2-T | Écart [IC 95 %] | v2-T seule, v1 seule | McNemar exact |
+|---|---:|---:|---:|---:|---:|---:|
+| Jeu v2 | 121 (61 fiches) | 57,0 % | 62,8 % | +5,8 [−2,1 ; +14,0] | 15, 8 | p = 0,210 |
+| CDTN | 494 (131 requêtes) | 72,3 % | 72,3 % | 0,0 [−4,3 ; +4,3] | 32, 32 | p = 1,000 |
+| Lot de test du jeu v1 (descriptif) | 73 (61 fiches) | 63,0 % | 57,5 % | −5,5 [−15,9 ; +4,4] | 4, 8 | p = 0,388 |
+
+* **Contrôles** : la v1 redonne le Recall@5 du protocole 05 sur le CDTN ; `ajustement_v2.py mesurer`, exécuté deux fois avec un contenu identique, redonne les mesures du 15 novembre de la base et de la v1 (contrôle A1 conforme) ; empreintes du q8, de l'index et du garde-fou contrôlées.
+* **Règle de l'amendement A2 sur le jeu v2 et le CDTN** : les deux écarts sont positifs ou nuls et l'un est strictement positif ; la règle retient la v2-T. Elle n'est pas dite meilleure : l'intervalle sur le jeu v2 contient 0, et le CDTN donne une égalité exacte.
+* **Le jeu humain va en sens inverse** : −5,5 points sur le lot de test (4 questions contre 8). Ce lot a été lu plusieurs fois, ce résultat est descriptif ; il pèse néanmoins contre un gain réel.
+* **Lecture** : le seul écart positif vient du jeu v2, dont les questions sont générées à partir d'un passage, comme les paires d'entraînement de la v2-T. Plus de questions synthétiques de T n'ont pas amélioré la v1 sur les questions écrites par des humains.
+* **Mise en service** : selon la section 7 du protocole, la v2-T n'est servie avant J4 que si le contrôle de son hébergement dans le navigateur, le recalcul des seuils d'abstention et de la zone grise, les mesures du site et le redéploiement sont faits avant le gel du 20 novembre ; sinon après J4. La décision est en attente (#167).
+
+---
+
+## 8. Pourquoi 10 passages au lieu de 5
 
 Le volet B donnait 5 passages au modèle (B2) ; la récupération v2 lui en donne 10, et le site du volet A en affiche 10 depuis le 15 novembre (#164). Le choix a été fait par l'amendement A1 du protocole 07, le 9 novembre, avant la lecture des résultats des reclasseurs (commentaire du #138). La grille sans reclasseur venait de montrer que le nombre de passages était le levier le plus fort : sur le CDTN, l'E5 de base passait de 70,9 % à 77,6 % de 5 à 10 passages. La règle initiale, qui maximisait le rappel, aurait toujours choisi le plus grand k de la grille, 15. k = 10 a donc été fixé d'avance, pour deux raisons qui ne tiennent pas aux résultats : le budget du prompt (5 101 tokens au plus sur le CDTN, pour un plafond de 7 616) et un écart limité aux contextes de 5 passages sur lesquels l'adaptateur du volet B a été entraîné. Les mesures confirment le constat : plus de passages pertinents entrent dans le contexte avec 10 passages qu'avec 5.
 
@@ -115,7 +134,7 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 
 ---
 
-## 8. Limites
+## 9. Limites
 
 * **Le CDTN n'est pas neutre entre R1 et R2** : la configuration de R1 a été choisie sur ce jeu par le protocole 07. Seul le jeu v2 est indépendant pour cette comparaison ; il donne le même sens.
 * **Questions générées par Claude** : proches du style d'un générateur, et un peu plus proches des mots du passage que les questions humaines. Le jeu v1 et le CDTN, écrits sans IA, servent de contrôle ; sur la famille A, le jeu v1 ne confirme pas le jeu v2.
@@ -124,10 +143,11 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 
 ---
 
-## 9. Fichiers et empreintes
+## 10. Fichiers et empreintes
 
 * `data/evaluation/protocole_10/famille_a_20261117T125533Z.json` : SHA-256 `4c7d40c72d0a394c5a0fd162f6dc154886495ff74fa5bc568c27f17cc423918d`.
 * `data/evaluation/protocole_10/famille_b_20261117T131518Z.json` : SHA-256 `67c1b3ac2e7ead1b9c278e75e3646d314a43a37e0e05730f387626d13bccfba2`. Il contient, pour chaque question du jeu v2, les passages du contexte de chaque état.
 * `data/evaluation/protocole_10/reclasseur_bge-m3_famille_b.json` : cache des scores du reclasseur, qui grandit à chaque mesure ; ce n'est pas un résultat. La famille B y a calculé 5 080 paires, dont 219 pour compléter les candidats de R2 sur le CDTN ; un score n'y est jamais recalculé.
 * `data/evaluation/protocole_10/effet_k_20261117T131939Z.json` : SHA-256 `9cb00fe577f5a19bffba1b78324f1ecfb22a8a8578100b5a712a561bc2a7b517`.
+* `data/evaluation/protocole_10/famille_e_20261117T134023Z.json` : SHA-256 `13c474b82fc6d41eb200619b899cad822991106bfe78faaa824417d72a93f231`. Mesure descriptive de l'amendement A2 : `data/evaluation/ajustement_v2/mesure_20261117T134055Z.json`, SHA-256 `7d0065b711848d637ba4dc18e3d9a917729a616d18b9bad704940027cf3706fd` (seconde exécution identique).
 * Environnement : `scripts/evaluation/requirements-lock.txt`, plus onnxruntime 1.30.0, version déjà figée par `scripts/indexation/requirements-lock.txt`.
