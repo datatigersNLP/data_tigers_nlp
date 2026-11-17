@@ -47,6 +47,8 @@ const parametres = new URLSearchParams(location.search);
 const lotCdtn = parametres.get("lot") === "cdtn";
 const lotCdtnMesure = parametres.get("lot") === "cdtn_mesure";
 const lotControle = parametres.get("lot") === "controle";
+// Protocole 10 (#171) : ?lot=jeu_v2 encode les 161 questions du jeu v2, écrites par scripts/evaluation/jeu_v2.py lot_navigateur
+const lotJeuV2 = parametres.get("lot") === "jeu_v2";
 // Protocole 05 (#49, #164) : ?modele=base ou ?modele=ajuste charge un q8 local, servi depuis data/adaptation/navigateur/,
 // avec le tokeniseur de l'encodeur de base ; sans ce paramètre, la page garde son comportement d'origine (le Hub).
 const MODELES_LOCAUX = {
@@ -57,9 +59,10 @@ const modeleLocal = parametres.get("modele");
 const fichierQuestions = lotCdtn ? "../../data/evaluation/cdtn/questions_cdtn.json"
   : lotCdtnMesure ? "../../data/evaluation/cdtn/formulations_mesure.json"
   : lotControle ? "../../data/indexation/controle/requetes_controle.json"
+  : lotJeuV2 ? "../../data/evaluation/jeu_v2/questions_navigateur.json"
   : "../../data/evaluation/notebook03/questions_navigateur.json";
 const nomSortie = (lotCdtn ? "vecteurs_cdtn" : lotCdtnMesure ? "vecteurs_cdtn_mesure" : lotControle ? "vecteurs_controle"
-  : "vecteurs_navigateur") + (modeleLocal ? "_" + modeleLocal : "") + ".json";
+  : lotJeuV2 ? "vecteurs_jeu_v2" : "vecteurs_navigateur") + (modeleLocal ? "_" + modeleLocal : "") + ".json";
 
 try {
   if (modeleLocal !== null && !Object.hasOwn(MODELES_LOCAUX, modeleLocal)) throw new Error("modèle local inconnu : " + modeleLocal);
