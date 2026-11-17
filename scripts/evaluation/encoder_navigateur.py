@@ -36,11 +36,12 @@ AUTORISES = re.compile(r"^/(scripts/evaluation/encodage_navigateur\.html"
                        r"|data/indexation/controle/(fidelite_navigateur|requetes_controle)\.json"
                        r"|data/evaluation/notebook03/questions_navigateur\.json"
                        r"|data/evaluation/cdtn/(questions_cdtn|formulations_mesure)\.json"
+                       r"|data/evaluation/jeu_v2/questions_navigateur\.json"
                        r"|data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste\.json"
                        r"|data/adaptation/navigateur/(base|ajuste)/[A-Za-z0-9_./-]+"
                        r"|front/public/(index|index_ajuste)/index_m2\.json"
                        r"|front/public/modele/multilingual-e5-small-[a-z0-9-]+/[A-Za-z0-9_./-]+)$")
-NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle)(_(base|ajuste))?"
+NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle|jeu_v2)(_(base|ajuste))?"
                         r"|controle_navigateur(_ajuste)?)\.json$")
 
 
@@ -121,7 +122,7 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--page", choices=tuple(PAGES), default="encodage")
     p.add_argument("--modele", choices=("base", "ajuste"))
-    p.add_argument("--lot", choices=("cdtn", "cdtn_mesure", "controle"))
+    p.add_argument("--lot", choices=("cdtn", "cdtn_mesure", "controle", "jeu_v2"))
     p.add_argument("--index", choices=("index", "index_ajuste"))
     p.add_argument("--reference", choices=("ajuste",))
     a = p.parse_args(argv)

@@ -290,6 +290,19 @@ def recouvrement() -> dict:
     return res
 
 
+def lot_navigateur() -> dict:
+    """Lot de la page d'encodage (`?lot=jeu_v2`) : les 161 questions, préfixe de l'en-tête du site, empreinte calculée
+    comme `cdtn_seuil.empreinte_lot` (JSON compact, sans échappement des accents), que la page recalcule."""
+    entete = lire_json(RACINE / "front" / "public" / "index" / "index_m2.json")
+    lignes = list(csv.DictReader((SORTIE / "questions_v2.csv").open(encoding="utf-8")))
+    questions = [{"id": l["id"], "texte": l["question"]} for l in lignes]
+    empreinte = hashlib.sha256(json.dumps(questions, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
+    lot = {"prefixe": entete["requete"]["prefixe"], "empreinte": empreinte, "source": "evaluation/questions_v2/questions_v2.csv",
+           "sha256_source": sha256(SORTIE / "questions_v2.csv"), "questions": questions}
+    ecrire(TRAVAIL / "questions_navigateur.json", lot)
+    return {"questions": len(questions), "prefixe": lot["prefixe"], "empreinte": empreinte[:16]}
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sous = p.add_subparsers(dest="commande", required=True)
@@ -301,9 +314,11 @@ def main(argv=None) -> int:
     h.add_argument("fichier", type=Path)
     sous.add_parser("assembler")
     sous.add_parser("recouvrement")
+    sous.add_parser("lot_navigateur")
     a = p.parse_args(argv)
-    if a.commande in ("assembler", "recouvrement"):
-        print(json.dumps(assembler() if a.commande == "assembler" else recouvrement(), ensure_ascii=False, indent=1))
+    simples = {"assembler": assembler, "recouvrement": recouvrement, "lot_navigateur": lot_navigateur}
+    if a.commande in simples:
+        print(json.dumps(simples[a.commande](), ensure_ascii=False, indent=1))
         return 0
     if a.commande == "tirer":
         print(json.dumps(tirer(), ensure_ascii=False, indent=1))
