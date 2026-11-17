@@ -37,12 +37,12 @@ AUTORISES = re.compile(r"^/(scripts/evaluation/encodage_navigateur\.html"
                        r"|data/evaluation/notebook03/questions_navigateur\.json"
                        r"|data/evaluation/cdtn/(questions_cdtn|formulations_mesure)\.json"
                        r"|data/evaluation/jeu_v2/questions_navigateur\.json"
-                       r"|data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste\.json"
-                       r"|data/adaptation/navigateur/(base|ajuste)/[A-Za-z0-9_./-]+"
-                       r"|front/public/(index|index_ajuste)/index_m2\.json"
+                       r"|data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste(_v2)?\.json"
+                       r"|data/adaptation/navigateur/(base|ajuste|ajuste_v2)/[A-Za-z0-9_./-]+"
+                       r"|front/public/(index|index_ajuste|index_ajuste_v2)/index_m2\.json"
                        r"|front/public/modele/multilingual-e5-small-[a-z0-9-]+/[A-Za-z0-9_./-]+)$")
-NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle|jeu_v2)(_(base|ajuste))?"
-                        r"|controle_navigateur(_ajuste)?)\.json$")
+NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle|jeu_v2)(_(base|ajuste|ajuste_v2))?"
+                        r"|controle_navigateur(_ajuste|_ajuste_v2)?)\.json$")
 
 
 class Gestionnaire(SimpleHTTPRequestHandler):
@@ -121,7 +121,7 @@ def encoder(modele: str | None, lot: str | None, delai: int = 900, page: str = "
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--page", choices=tuple(PAGES), default="encodage")
-    p.add_argument("--modele", choices=("base", "ajuste"))
+    p.add_argument("--modele", choices=("base", "ajuste", "ajuste_v2"))
     p.add_argument("--lot", choices=("cdtn", "cdtn_mesure", "controle", "jeu_v2"))
     p.add_argument("--index", choices=("index", "index_ajuste"))
     p.add_argument("--reference", choices=("ajuste",))
