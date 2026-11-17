@@ -77,5 +77,29 @@ class TestScoresReclasseur(unittest.TestCase):
             self.assertEqual(relu.cache, {"q": {2: 3.0, 0: 1.0, 1: 2.0}})
 
 
+class TestGardeM1(unittest.TestCase):
+    @staticmethod
+    def lignes(classes):
+        return [{"id": f"H{i}", "type": "hors_corpus", "classe": c} for i, c in enumerate(classes)] + \
+               [{"id": "C0", "type": "dans_corpus", "classe": "reponse_citee"}]
+
+    def test_baisse_d_une_question_toleree_pas_deux(self):
+        b = self.lignes(["abstention", "abstention", "abstention", "reponse_citee"])
+        g = m.garde_m1(self.lignes(["abstention", "abstention", "reponse_citee", "reponse_citee"]), b)
+        self.assertEqual((g["baisse"], g["respectee"]), (1, True))
+        g = m.garde_m1(self.lignes(["abstention", "reponse_citee", "reponse_citee", "reponse_citee"]), b)
+        self.assertEqual((g["baisse"], g["respectee"]), (2, False))
+
+    def test_erreur_technique_exclue_des_deux_cotes(self):
+        a = self.lignes(["erreur_technique", "abstention"])
+        b = self.lignes(["abstention", "abstention"])
+        g = m.garde_m1(a, b)
+        self.assertEqual((g["effectif_commun"], g["abstentions_a"], g["abstentions_b"]), (1, 1, 1))
+
+    def test_questions_differentes_refusees(self):
+        with self.assertRaises(m.ErreurMesure10):
+            m.garde_m1(self.lignes(["abstention"]), self.lignes(["abstention", "abstention"]))
+
+
 if __name__ == "__main__":
     unittest.main()

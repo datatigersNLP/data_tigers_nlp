@@ -128,6 +128,6 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 
 * `data/evaluation/protocole_10/famille_a_20261117T125533Z.json` : SHA-256 `4c7d40c72d0a394c5a0fd162f6dc154886495ff74fa5bc568c27f17cc423918d`.
 * `data/evaluation/protocole_10/famille_b_20261117T131518Z.json` : SHA-256 `67c1b3ac2e7ead1b9c278e75e3646d314a43a37e0e05730f387626d13bccfba2`. Il contient, pour chaque question du jeu v2, les passages du contexte de chaque état.
-* `data/evaluation/protocole_10/reclasseur_bge-m3_famille_b.json` : cache des scores du reclasseur (5 080 paires calculées pour la famille B, dont 219 pour compléter les candidats de R2 sur le CDTN), SHA-256 `08572df0b1268385403409032d0524b37e52d5286326b5c42406c77ac9b2dcc4`.
+* `data/evaluation/protocole_10/reclasseur_bge-m3_famille_b.json` : cache des scores du reclasseur, qui grandit à chaque mesure ; ce n'est pas un résultat. La famille B y a calculé 5 080 paires, dont 219 pour compléter les candidats de R2 sur le CDTN ; un score n'y est jamais recalculé.
 * `data/evaluation/protocole_10/effet_k_20261117T131939Z.json` : SHA-256 `9cb00fe577f5a19bffba1b78324f1ecfb22a8a8578100b5a712a561bc2a7b517`.
 * Environnement : `scripts/evaluation/requirements-lock.txt`, plus onnxruntime 1.30.0, version déjà figée par `scripts/indexation/requirements-lock.txt`.

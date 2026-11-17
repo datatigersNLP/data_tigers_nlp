@@ -3,6 +3,8 @@
     python scripts/evaluation/mesures_10.py famille_a      # volet A : recherche dense servie contre fusion avec BM25 V3
     python scripts/evaluation/mesures_10.py famille_b      # volet B : récupération R0, R1, R2 (jeu v2, CDTN, jeu v1)
     python scripts/evaluation/mesures_10.py effet_k        # descriptif : 5 contre 10 passages (justification de k = 10)
+    python scripts/evaluation/mesures_10.py bout_en_bout --etat B2 --phase adapte   # puis R1 adapte, R1 temoin (Ollama)
+    python scripts/evaluation/mesures_10.py analyser_bout_en_bout
 
 Famille A : D, la recherche dense du site (encodeur ajusté v1, requête q8 encodée dans le navigateur, index fp32) ;
 F, la fusion RRF (k = 60, profondeur 100) de D et de BM25 V3. Critère principal : Recall@5 au passage selon D4.
@@ -551,6 +553,142 @@ def effet_k() -> dict:
     return res
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# Famille B de bout en bout (section 7), sur les 161 questions du jeu v2
+# ---------------------------------------------------------------------------------------------------------------
+# R2 n'étant pas maintenue (famille B, récupération), la chaîne de démonstration est R1 (10_resultats.md, section 6).
+PHASES = {"adapte": ("qwen2.5-7b-instruct:lora-v2b-q4_k_m-local",
+                     "18cb25f099f2ba1b21a3bc945da6be7ce4d128cb4e579325fc0f70dfccb37174"),
+          "temoin": ("qwen2.5-7b-instruct:temoin-q4_k_m-local",
+                     "8a077f3d3f56b636face1357eba557b21e2ba68bc72ee81e48b377272da72f27")}
+EXECUTIONS = (("B2", "adapte"), ("R1", "adapte"), ("R1", "temoin"))
+FAMILLE_B = SORTIES / "famille_b_20261117T131518Z.json"
+SHA256_FAMILLE_B = "67c1b3ac2e7ead1b9c278e75e3646d314a43a37e0e05730f387626d13bccfba2"
+
+
+def questions_bout_en_bout() -> list[dict]:
+    """Champs attendus par mesure.executer_etat ; la fiche (regroupement de M4) est l'adresse de la fiche source."""
+    return [{"id": q["id"], "type": q["type"], "fiche": q["url"], "question": q["question"], "extrait": q["extrait"]}
+            for q in lire_jeu_v2()]
+
+
+def preparer_r1(questions: list[dict], outils: dict) -> list[dict]:
+    """Contexte de R1 pour chaque question, au format de mesure.preparer_questions, sans seuil (sous_le_seuil faux).
+    Contrôle : pour les questions du corpus, le contexte est celui publié par la famille B."""
+    import rag
+    if sha256(FAMILLE_B) != SHA256_FAMILLE_B:
+        raise ErreurMesure10("Résultats de la famille B différents de ceux publiés")
+    publies = {d["id"]: d["R1"]["passages"] for d in json.loads(FAMILLE_B.read_text(encoding="utf-8"))["jeux"]["jeu_v2"]["detail"]}
+    index, ctx, rs, lexical, e5 = outils["index"], outils["ctx"], outils["rs"], outils["lexical"], outils["base"]
+    preparees = []
+    for q in questions:
+        scores = index.matrice @ rag.encoder_question(e5, q["question"])
+        dense = rc.classement(scores)[:PROFONDEUR].tolist()
+        lex = rc.classement(lexical.score_matrix([q["question"]])[0], positifs=True)[:PROFONDEUR].tolist()
+        notes = rs.noter(q["question"], rc.fusion_rrf([dense, lex])[:CONFIG_V2.candidats])
+        indices = ctx.contexte(CONFIG_V2, q["question"], dense, lex, notes)["indices"]
+        resultats = [{"rang": r, "indice": i, "score": float(scores[i]), "passage": index.passages[i]}
+                     for r, i in enumerate(indices, 1)]
+        if q["id"] in publies and [x["passage"]["passage_id"] for x in resultats] != publies[q["id"]]:
+            raise ErreurMesure10(f"Contexte de R1 différent de celui publié par la famille B : {q['id']}")
+        preparees.append({**q, "resultats": resultats, "score_max": float(scores.max()), "sous_le_seuil": False,
+                          "proche_du_seuil": False,
+                          "contexte": rc.construire_contexte_v2(q["question"], indices, index.passages)})
+    return preparees
+
+
+def bout_en_bout(etat: str, phase: str) -> Path:
+    """Une exécution par état et par modèle (section 7) : refusée si son fichier existe déjà."""
+    import generation
+    import mesure
+    import rag
+    if (etat, phase) not in EXECUTIONS:
+        raise ErreurMesure10(f"Exécution hors protocole : {etat}, {phase}")
+    if list(SORTIES.glob(f"bout_en_bout_{etat}_{phase}_*.json")):
+        raise ErreurMesure10(f"{etat}, {phase} : déjà exécuté, une seule exécution par état")
+    modele, digest = PHASES[phase]
+    infos = generation.verifier_ollama(modele, digest)
+    if infos["version"] != mesure.VERSION_OLLAMA:
+        raise ErreurMesure10(f"Ollama {infos['version']}, attendu {mesure.VERSION_OLLAMA}")
+    questions = questions_bout_en_bout()
+    index = rag.charger_index()
+    e5 = rag.charger_encodeur()
+    if etat == "B2":
+        seuil = mesure.charger_seuil()
+        preparees = mesure.preparer_questions(questions, index, lambda t: rag.encoder_question(e5, t), seuil)
+    else:
+        table, _ = a5.table_et_index_site()
+        rs = ScoresReclasseur(rc.textes_lexicaux(table))
+        try:
+            preparees = preparer_r1(questions, {"index": index, "ctx": Contextes(index, table), "rs": rs,
+                                                "lexical": bm25(table), "base": e5})
+        finally:
+            rs.ecrire()
+    debut = dt.datetime.now(dt.timezone.utc)
+    lignes = mesure.executer_etat(etat, preparees, generation.generer_reponse, modele, digest)
+    res = {"protocole": "10, section 7, famille B de bout en bout", "etat": etat, "phase": phase, "modele": modele,
+           "digest": digest, "version_ollama": infos["version"], "sha256_jeu_v2": SHA256_JEU_V2,
+           "sha256_protocole": sha256(RACINE / "docs/etudes/evaluation/10_protocole_jeu_v2.md"),
+           "debut": debut.isoformat(timespec="seconds"),
+           "fin": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+           "contextes_tokens_max": max(l["entree"]["nb_tokens"] for l in lignes if l["entree"]) if any(l["entree"] for l in lignes) else None,
+           "lignes": lignes}
+    chemin = SORTIES / f"bout_en_bout_{etat}_{phase}_{debut.strftime('%Y%m%dT%H%M%SZ')}.json"
+    print(f"écrit {chemin.name}, SHA-256 {a5.ecrire_une_fois(chemin, res)}")
+    return chemin
+
+
+def garde_m1(lignes_a: list[dict], lignes_b: list[dict]) -> dict:
+    """Protocole 08 repris par le protocole 10 : M1 (abstention correcte hors corpus) de A ne doit pas baisser de plus
+    d'une question par rapport à B, sur les questions hors corpus sans erreur technique dans les deux états."""
+    a = {l["id"]: l for l in lignes_a if l["type"] == "hors_corpus"}
+    b = {l["id"]: l for l in lignes_b if l["type"] == "hors_corpus"}
+    if set(a) != set(b):
+        raise ErreurMesure10("Questions hors corpus différentes entre les deux états")
+    commune = [i for i in sorted(a) if "erreur_technique" not in (a[i]["classe"], b[i]["classe"])]
+    sa = sum(a[i]["classe"] == "abstention" for i in commune)
+    sb = sum(b[i]["classe"] == "abstention" for i in commune)
+    return {"effectif_commun": len(commune), "abstentions_a": sa, "abstentions_b": sb, "baisse": sb - sa,
+            "respectee": sb - sa <= 1}
+
+
+def analyser_bout_en_bout() -> dict:
+    import mesure
+    fichiers = {}
+    for etat, phase in EXECUTIONS:
+        trouves = sorted(SORTIES.glob(f"bout_en_bout_{etat}_{phase}_*.json"))
+        if len(trouves) != 1:
+            raise ErreurMesure10(f"{etat}, {phase} : {len(trouves)} exécutions, une seule attendue")
+        fichiers[(etat, phase)] = trouves[0]
+    donnees = {k: json.loads(v.read_text(encoding="utf-8")) for k, v in fichiers.items()}
+    table, _ = a5.table_et_index_site()
+    pv2 = PertinenceV2(table.texte.tolist())
+    ids = table.passage_id.tolist()
+    pertinents = {q["id"]: {ids[i] for i in pv2.pertinents(q["extrait"])}
+                  for q in questions_bout_en_bout() if q["type"] == "dans_corpus"}
+    etiquete = {k: [{**l, "etat": "comparaison"} for l in d["lignes"]] for k, d in donnees.items()}
+    res = {"protocole": "10, section 7, famille B de bout en bout",
+           "sources": {f"{e}_{p}": {"fichier": f.name, "sha256": sha256(f)} for (e, p), f in fichiers.items()},
+           "etats": {f"{e}_{p}": mesure.metriques(donnees[(e, p)]["lignes"], pertinents) for (e, p) in fichiers},
+           "comparaisons": {}}
+    for nom, a, b in (("R1_adapte_moins_B2_adapte", ("R1", "adapte"), ("B2", "adapte")),
+                      ("R1_temoin_moins_R1_adapte", ("R1", "temoin"), ("R1", "adapte"))):
+        c = mesure.comparer(etiquete[a], etiquete[b], pertinents)
+        c["garde_m1"] = garde_m1(donnees[a]["lignes"], donnees[b]["lignes"])
+        res["comparaisons"][nom] = c
+    p_holm = holm({k: c["M4"]["mcnemar_p_exacte"] for k, c in res["comparaisons"].items()})
+    for k, c in res["comparaisons"].items():
+        c["M4"]["p_holm"] = p_holm[k]
+    principale = res["comparaisons"]["R1_adapte_moins_B2_adapte"]
+    res["decision"] = {"critere": "M4, R1 contre B2 avec le modèle adapté ; M1 ne baisse pas de plus d'une question",
+                       "ecart_m4": principale["M4"]["ecart"], "intervalle_m4": principale["M4"]["intervalle"],
+                       "m4_ameliore_demontre": principale["M4"]["intervalle"][0] > 0,
+                       "garde_m1_respectee": principale["garde_m1"]["respectee"]}
+    chemin = SORTIES / f"bout_en_bout_analyse_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
+    print(f"écrit {chemin.name}, SHA-256 {a5.ecrire_une_fois(chemin, res)}")
+    return res
+
+
 def afficher_b(res: dict) -> None:
     print(json.dumps({"decision": res["decision"], "controle_07": res["jeux"]["cdtn"]["controle_reproduction_07"],
                       "lot_reclasseur": res["jeux"]["cdtn"]["controle_lot_reclasseur"]}, ensure_ascii=False, indent=1))
@@ -571,8 +709,20 @@ def afficher_b(res: dict) -> None:
 def main(argv=None) -> int:
     import argparse
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("commande", choices=("famille_a", "famille_b", "effet_k"))
+    p.add_argument("commande", choices=("famille_a", "famille_b", "effet_k", "bout_en_bout", "analyser_bout_en_bout"))
+    p.add_argument("--etat", choices=("B2", "R1"))
+    p.add_argument("--phase", choices=tuple(PHASES))
     a = p.parse_args(argv)
+    if a.commande == "bout_en_bout":
+        if not (a.etat and a.phase):
+            p.error("bout_en_bout demande --etat et --phase")
+        bout_en_bout(a.etat, a.phase)
+        return 0
+    if a.commande == "analyser_bout_en_bout":
+        res = analyser_bout_en_bout()
+        print(json.dumps({"decision": res["decision"], "etats": {k: {m: (v[m] or {}).get("proportion") for m in ("M1", "M2", "M3", "M4", "M5")}
+                                                                 for k, v in res["etats"].items()}}, ensure_ascii=False, indent=1))
+        return 0
     if a.commande == "famille_b":
         afficher_b(famille_b())
         return 0
