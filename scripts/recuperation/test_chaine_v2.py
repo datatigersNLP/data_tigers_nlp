@@ -190,9 +190,30 @@ class TestExecutionFactice(unittest.TestCase):
                 self.assertEqual(len(appels), len(questions) - len(hors))
                 self.assertTrue(all(s == cv.CONSIGNE_V2 for s in appels))
                 self.assertTrue(all(len(l["passages"]) == 3 for l in lignes))
-                with self.assertRaises(mesure.ErreurMesure):      # une seule exécution par état et par phase
+                appels_avant = len(appels)
+                with self.assertRaises(cv.ErreurChaineV2):        # une seule exécution par état et par phase
                     cv.executer("calibration", "temoin", "V2", "modele", "digest", generer=generer, sorties=sorties)
+                self.assertEqual(len(appels), appels_avant)       # refus avant tout appel au générateur (#166)
         self.assertEqual(index.matrice.shape[0], 4240)
+
+
+class TestGardesDeLAnalyse(unittest.TestCase):
+    """Revue de la #166 : l'analyse contrôle le gel et le verrou avant de lire le jeu."""
+
+    def test_gel_controle_avant_lecture(self):
+        with unittest.mock.patch.object(cv, "verifier_gel", side_effect=cv.ErreurChaineV2("gel")), \
+                unittest.mock.patch.object(mesure, "lire_jeu") as lire_jeu, tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(cv.ErreurChaineV2):
+                cv.analyser("test", sorties=Path(d))
+            lire_jeu.assert_not_called()
+
+    def test_verrou_controle_avant_lecture(self):
+        with unittest.mock.patch.object(cv, "verifier_gel", return_value={}), \
+                unittest.mock.patch.object(cv, "verifier_verrou_chaine", side_effect=cv.ErreurChaineV2("verrou")), \
+                unittest.mock.patch.object(mesure, "lire_jeu") as lire_jeu, tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(cv.ErreurChaineV2):
+                cv.analyser("test", sorties=Path(d))
+            lire_jeu.assert_not_called()
 
 
 if __name__ == "__main__":

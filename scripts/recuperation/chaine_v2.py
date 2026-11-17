@@ -287,6 +287,9 @@ def preparees_etat(etat: str, questions: list[dict], contextes: list[dict], pass
 def executer(lot: str, phase: str, etat: str, modele: str, digest: str, generer=None, sorties: Path = SORTIES) -> Path:
     if etat not in ETATS or lot not in LOTS or phase not in ("temoin", "apres"):
         raise ErreurChaineV2("Lot, phase ou état inconnu")
+    chemin = sorties / lot / phase / f"{etat}.jsonl"
+    if chemin.exists():   # revue de la #166 : refuser avant tout appel au générateur, pas seulement à l'écriture
+        raise ErreurChaineV2(f"État déjà présent, une seule exécution par état et par phase : {chemin}")
     gel = verifier_gel(lot)
     index = rag.charger_index()
     verifier_verrou_chaine(index.entete)
@@ -305,7 +308,6 @@ def executer(lot: str, phase: str, etat: str, modele: str, digest: str, generer=
         l.update({"etat": etat, "seuil_applique": q["seuil_applique"],
                   "score_e5_max": par_id[q["id"]]["score_e5_max"],
                   "score_reclasseur_max": par_id[q["id"]]["score_reclasseur_max"]})
-    chemin = sorties / lot / phase / f"{etat}.jsonl"
     mesure.ecrire_etat(chemin, lignes)       # une seule exécution par état et par phase
     part = mesure.part_erreurs(lignes)
     print(f"{etat}, phase {phase}, lot {lot} : {len(lignes)} questions, erreurs techniques {part:.1%}"
@@ -336,7 +338,9 @@ def decomposition(lignes: list[dict], pertinents: dict) -> dict:
 
 
 def analyser(lot: str = "test", sorties: Path = SORTIES, sorties_b2: Path | None = None) -> dict:
+    verifier_gel(lot)        # revue de la #166 : gel et verrou contrôlés avant toute lecture du jeu et tout calcul
     index = rag.charger_index()
+    verifier_verrou_chaine(index.entete)
     questions = mesure.lire_jeu(lot)
     pertinents = mesure.passages_pertinents(questions, index.passages)
     lire = lambda phase, etat: mesure.lire_etat(sorties / lot / phase / f"{etat}.jsonl")

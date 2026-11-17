@@ -58,7 +58,7 @@ Proportions sur les questions sans erreur technique, avec l'intervalle de Wilson
 | M4 | 10/72 (13,9 %) [7,7 ; 23,7] | 13/73 (17,8 %) [11,0 ; 27,4] | 25/72 (34,7 %) [24,9 ; 46,1] |
 | M5 | 4/24 (16,7 %) [6,7 ; 35,9] | 4/24 (16,7 %) [6,7 ; 35,9] | 10/24 (41,7 %) [24,5 ; 61,2] |
 
-Les effectifs de 72 viennent d'une erreur technique : Q093 en B2 pour les deux modèles (mesure du 11 novembre), et Q093 pour T en V2.
+Les effectifs de 72 viennent d'une erreur technique : Q088 en B2 pour les deux modèles (mesure du 11 novembre), et Q093 pour T en V2. Une comparaison appariée exclut les questions en erreur dans l'un ou l'autre état : T en V2 contre T en B2 porte donc sur 71 questions (Q088 et Q093 exclues) ; elle ne figure pas dans la section 4, dont toutes les comparaisons portent sur 72 ou 73 questions. Correction du 17 novembre, après la revue de Jibril sur la #166.
 
 ---
 
@@ -82,7 +82,7 @@ Les effectifs de 72 viennent d'une erreur technique : Q093 en B2 pour les deux m
 
 Pour M2, un écart négatif est une amélioration : moins d'abstentions à tort.
 
-**Lecture.** Aucune de ces comparaisons ne démontre une amélioration : le protocole 08 est descriptif, le lot de test a déjà servi trois fois, et une quarantaine d'écarts sont calculés. Pour M4 en V2 contre B2, l'intervalle de Tango exclut tout juste 0 alors que le test exact de McNemar ne rejette pas l'égalité (p = 0,077) : avec 16 paires discordantes, le résultat dépend de la méthode, et ne permet pas de conclure. La seule baisse nette d'abstentions à tort (M2) est attendue : la consigne v2 autorise les réponses partielles.
+**Lecture.** Aucune de ces comparaisons ne démontre une amélioration : le protocole 08 est descriptif, le lot de test avait déjà été lu par le notebook 03 et les protocoles 05, 06 et 07 (le protocole 08, figé avant la mesure A1 du 15 novembre, n'en cite que trois), et une quarantaine d'écarts sont calculés. Pour M4 en V2 contre B2, l'intervalle de Tango exclut tout juste 0 alors que le test exact de McNemar ne rejette pas l'égalité (p = 0,077) : avec 16 paires discordantes, le résultat dépend de la méthode, et ne permet pas de conclure. La seule baisse nette d'abstentions à tort (M2) est attendue : la consigne v2 autorise les réponses partielles.
 
 ---
 
