@@ -77,9 +77,10 @@ n'est jamais versionné : les notebooks et les scripts les reconstruisent.
 ## Mesure corrigée au 16 novembre 2026 (#139, provisoire)
 
 La règle D4 ne reconnaît qu'un extrait par question : elle sous-estime tous les systèmes. Le protocole 09, figé
-avant tout jugement, fait juger à l'aveugle les 617 passages montrés par les systèmes et non reconnus par D4, par
-deux modèles d'IA déclarés comme tels, en attendant un étalonnage humain sur 100 paires. Tout est descriptif :
-aucune décision passée ne change.
+avant tout jugement, fait juger à l'aveugle les 617 paires (question, passage montré par un système et non reconnu
+par D4) par deux modèles d'IA déclarés comme tels. L'étalonnage du 17 novembre, sur 100 paires, a été fait par deux
+autres modèles d'IA, pas par des humains : il confirme la règle large (kappa 0,89) mais ne permet pas de conclure sur
+la règle principale, qui n'avait qu'un positif dans l'échantillon. Tout est descriptif : aucune décision passée ne change.
 
 - **Volet A** : avec la règle principale (les deux juges jugent que le passage répond), l'encodeur ajusté place un
   passage pertinent dans les 5 premiers pour 74,0 % des questions (63,0 % selon D4), et dans les 10 passages du

@@ -4,7 +4,7 @@
 **Projet** NLP 2 · Master 2 Data & IA · FGES, Université Catholique de Lille  
 **Ticket** Issue #139  
 **Protocole** `09_protocole_jugement_mutualise.md`, figé le 16 novembre 2026 avant tout jugement (commit `4473a43`, SHA-256 `95a825e8…`)  
-**Statut** mesure du 16 novembre 2026, **provisoire** : les juges sont deux modèles d'IA, et l'étalonnage humain prévu par la section 5 du protocole n'est pas encore revenu. Toutes les mesures sont descriptives : aucune décision passée ne change  
+**Statut** mesure du 16 novembre 2026, **provisoire** : les juges sont deux modèles d'IA. L'étalonnage du 17 novembre, fait par deux autres modèles d'IA et non par des humains (protocole 10, section 6), confirme la règle large mais ne permet pas de conclure sur la règle principale (section 7). Toutes les mesures sont descriptives : aucune décision passée ne change  
 
 ---
 
@@ -130,7 +130,10 @@ Questions du corpus sans erreur technique (72 en B2, 73 en V1 et V2). Plafond : 
 
 ## 7. Limites
 
-* **Juges d'IA, étalonnage en attente** : 100 paires (80 du vivier, 20 contrôles) sont à juger par deux membres de l'équipe. Si le kappa entre le consensus humain et la règle principale est inférieur à 0,6, les majorants seront déclarés non étayés.
+* **Étalonnage par des juges d'IA, pas par des humains** (17 novembre, protocole 10, section 6, sur décision de Mahé) : les 100 paires (80 du vivier, 20 contrôles) ont été jugées par C1, Claude Fable 5.2, et C2, Claude Haiku 5.5, avec la consigne de la section 4. Accord entre C1 et C2 : kappa 0,77 [0,65 ; 0,88] ; contrôles positifs reconnus 10 sur 10 par chacun, contrôles négatifs acceptés 0 sur 10.
+* **Règle principale, non étalonnée** : parmi les 80 paires du vivier de l'échantillon, une seule est positive pour les étalonneurs comme pour J1 et J2, sans aucun désaccord. Le kappa de 1,0 que calcule le script ne porte donc que sur un positif et n'est pas informatif. Les majorants principaux publiés ici (74,0 % au volet A, 30,6 % pour M4 de B2) restent non étalonnés.
+* **Règle large, confirmée par des juges d'IA indépendants** : kappa 0,89 [0,78 ; 0,97] entre les étalonneurs et J1 et J2 (29 positifs et 47 négatifs communs, 4 désaccords, tous des positifs des seuls étalonneurs).
+* **Leçon de méthode** : un tirage au hasard dans un vivier où la règle principale est rarement positive ne pouvait pas l'étalonner. Il aurait fallu stratifier l'échantillon selon les verdicts des juges.
 * **Lot de test** : sixième exploitation ; tout est descriptif.
 * **Traçabilité, pas exactitude** : un passage pertinent cité ne garantit pas une réponse juste. L'exactitude reste jugée par le #52, sur 20 réponses.
 * **Non couverts** : le témoin T, les questions hors corpus, et le contrôle de l'ancrage des citations affirmation par affirmation.
