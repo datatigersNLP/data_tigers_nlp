@@ -45,5 +45,37 @@ class TestEvaluer(unittest.TestCase):
         self.assertAlmostEqual(s["mrr10"], (1 / 4 + 0) / 2)
 
 
+class TestHolm(unittest.TestCase):
+    def test_valeurs_connues(self):
+        h = m.holm({"a": 0.01, "b": 0.04, "c": 0.03})
+        self.assertAlmostEqual(h["a"], 0.03)
+        self.assertAlmostEqual(h["c"], 0.06)
+        self.assertAlmostEqual(h["b"], 0.06)       # monotonie : jamais sous la valeur ajustée précédente
+
+    def test_plafond(self):
+        self.assertEqual(m.holm({"a": 0.6, "b": 0.7})["a"], 1.0)
+
+
+class TestScoresReclasseur(unittest.TestCase):
+    def test_un_passage_note_ne_l_est_jamais_deux_fois(self):
+        import tempfile
+        appels = []
+
+        class Faux:
+            def scores(self, question, textes):
+                appels.append(list(textes))
+                return [float(len(t)) for t in textes]
+
+        with tempfile.TemporaryDirectory() as d:
+            rs = m.ScoresReclasseur(["a", "bb", "ccc"], Path(d) / "cache.json")
+            rs.modele = Faux()
+            self.assertEqual(rs.noter("q", [2, 0, 2]), {2: 3.0, 0: 1.0})
+            rs.noter("q", [0, 1])
+            self.assertEqual(appels, [["ccc", "a"], ["bb"]])
+            rs.ecrire()
+            relu = m.ScoresReclasseur(["a", "bb", "ccc"], Path(d) / "cache.json")
+            self.assertEqual(relu.cache, {"q": {2: 3.0, 0: 1.0, 1: 2.0}})
+
+
 if __name__ == "__main__":
     unittest.main()

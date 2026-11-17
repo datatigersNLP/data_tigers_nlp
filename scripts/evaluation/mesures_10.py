@@ -1,6 +1,8 @@
 """Mesures du protocole 10 (#171, section 7).
 
     python scripts/evaluation/mesures_10.py famille_a      # volet A : recherche dense servie contre fusion avec BM25 V3
+    python scripts/evaluation/mesures_10.py famille_b      # volet B : récupération R0, R1, R2 (jeu v2, CDTN, jeu v1)
+    python scripts/evaluation/mesures_10.py effet_k        # descriptif : 5 contre 10 passages (justification de k = 10)
 
 Famille A : D, la recherche dense du site (encodeur ajusté v1, requête q8 encodée dans le navigateur, index fp32) ;
 F, la fusion RRF (k = 60, profondeur 100) de D et de BM25 V3. Critère principal : Recall@5 au passage selon D4.
@@ -9,6 +11,11 @@ Secondaire : une fiche pertinente parmi les fiches des 10 passages affichés. R�
 
 Contrôle de reproduction préalable : D, recalculé ici sur le CDTN, doit redonner question par question le Recall@5
 de l'ajusté publié par le protocole 05 (`mesure_20261115T142537Z.json`) ; sinon rien n'est conclu.
+
+Famille B : R0 (E5 de base, 5 passages, B2), R1 (fusion RRF de l'E5 de base et de BM25 V3, bge-reranker-v2-m3 sur
+20 candidats, 10 passages dans le budget) et R2 (la même avec l'encodeur ajusté v1, requête q8 servie). Critère : rappel
+du contexte. Règle : R2 reste en production si son critère est au moins celui de R1 sur le jeu v2 et sur le CDTN.
+Contrôle préalable : R0 et R1 doivent redonner, formulation par formulation, la grille du protocole 07.
 Sorties écrites une seule fois dans `data/evaluation/protocole_10/`.
 """
 from __future__ import annotations
@@ -109,6 +116,37 @@ def comparer(nom: str, ids: list, vecteurs: np.ndarray, textes: list[str], perti
             "_r5_D": sd["r5"]}
 
 
+MODELE_SERVI = RACINE / "front" / "public" / "modele" / "multilingual-e5-small-ajuste-q8-elague-13ed78c9"
+SHA256_Q8_SERVI = "13ed78c9bf0c4e4ba2d36d0f715568edfb341a44051225f0b0a0e0214bf991d4"
+
+
+class EncodeurQ8:
+    """Requête encodée par le q8 élagué servi par le site, avec onnxruntime en Python (production du volet B, #172) :
+    préfixe `query: `, moyenne des vecteurs des tokens pondérée par le masque, normalisation. Les poids fp32 de l'ajusté
+    (470 Mo) ne peuvent pas être versionnés ; ce modèle-ci l'est (65,7 Mio) et son index est celui du site."""
+
+    def __init__(self, dossier: Path = MODELE_SERVI):
+        import onnxruntime as ort
+        from tokenizers import Tokenizer
+        onnx = dossier / "onnx" / "model_quantized.onnx"
+        if sha256(onnx) != SHA256_Q8_SERVI:
+            raise ErreurMesure10("q8 servi différent de celui du 15 novembre")
+        self.tok = Tokenizer.from_file(str(dossier / "tokenizer.json"))
+        self.session = ort.InferenceSession(str(onnx), providers=["CPUExecutionProvider"])
+        self.entrees = {i.name for i in self.session.get_inputs()}
+
+    def encoder(self, question: str) -> np.ndarray:
+        e = self.tok.encode("query: " + question)
+        if len(e.ids) > 512:
+            raise ErreurMesure10("Question de plus de 512 tokens")
+        d = {"input_ids": np.array([e.ids], dtype=np.int64), "attention_mask": np.array([e.attention_mask], dtype=np.int64),
+             "token_type_ids": np.zeros((1, len(e.ids)), dtype=np.int64)}
+        h = self.session.run(None, {k: v for k, v in d.items() if k in self.entrees})[0][0]
+        m = np.array(e.attention_mask, dtype=np.float32)[:, None]
+        v = (h * m).sum(axis=0) / m.sum()
+        return (v / np.linalg.norm(v)).astype(np.float32)
+
+
 class PertinenceV2:
     """Écart déclaré au protocole 10, décidé le 17/11 avant tout résultat : D4 (IndexPertinence) exige un extrait d'au
     moins 80 caractères normalisés, que les extraits du jeu v1 respectaient tous. Pour les extraits plus courts du jeu
@@ -206,11 +244,341 @@ def famille_a() -> dict:
     return res
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# Famille B : récupération du volet B (section 7)
+# ---------------------------------------------------------------------------------------------------------------
+CONFIG_R0 = rc.Configuration(k=5)                                                    # B2 : E5 de base, 5 passages
+CONFIG_V2 = rc.Configuration(k=10, source="rrf", reclasseur="bge-m3", candidats=20)  # R1 (V1) et R2 (démonstration)
+# Rappel du contexte publié par le protocole 07 (#138) sur la population « questions » du CDTN (resultats_grille.json)
+PUBLIE_07 = {"e5+k5": 0.708925221120343, "rrf+k10+bge-m3@20": 0.850524137109503}
+CACHE_RECLASSEUR = SORTIES / "reclasseur_bge-m3_famille_b.json"
+
+
+def holm(p: dict) -> dict:
+    """Valeurs p ajustées par la méthode de Holm (1979) : max cumulé de min(1, (m - j + 1) p_(j)), p croissants."""
+    ordre = sorted(p, key=lambda k: (p[k], k))
+    m, cumul, sortie = len(ordre), 0.0, {}
+    for j, k in enumerate(ordre):
+        cumul = max(cumul, min(1.0, (m - j) * p[k]))
+        sortie[k] = cumul
+    return sortie
+
+
+class ScoresReclasseur:
+    """Scores de bge-reranker-v2-m3 par (question, passage), sur l'entrée du protocole 07 (en-tête et texte), mis en
+    cache dans data/ (non versionné) pour qu'une reprise ne recalcule rien. Un passage déjà noté n'est jamais renoté."""
+
+    def __init__(self, textes_passages: list[str], chemin: Path = CACHE_RECLASSEUR):
+        self.textes, self.chemin, self.modele, self.calcules = textes_passages, chemin, None, 0
+        self.revision = rc.RECLASSEURS["bge-m3"][1]
+        self.cache: dict[str, dict[int, float]] = {}
+        if chemin.exists():
+            d = json.loads(chemin.read_text(encoding="utf-8"))
+            if d["revision"] != self.revision or d["entree"] != "entete+texte":
+                raise ErreurMesure10("Cache du reclasseur incompatible")
+            self.cache = {q: {int(i): v for i, v in s.items()} for q, s in d["scores"].items()}
+
+    def noter(self, question: str, indices) -> dict[int, float]:
+        connus = self.cache.setdefault(question, {})
+        manquants = [int(i) for i in dict.fromkeys(indices) if int(i) not in connus]
+        if manquants:
+            if self.modele is None:
+                self.modele = rc.Reclasseur("bge-m3")
+            s = self.modele.scores(question, [self.textes[i] for i in manquants])
+            connus.update({i: float(v) for i, v in zip(manquants, s)})
+            self.calcules += len(manquants)
+        return connus
+
+    def ecrire(self) -> None:
+        tmp = self.chemin.with_suffix(".tmp")
+        tmp.parent.mkdir(parents=True, exist_ok=True)
+        tmp.write_text(json.dumps({"modele": rc.RECLASSEURS["bge-m3"][0], "revision": self.revision, "entree": "entete+texte",
+                                   "scores": {q: {str(i): v for i, v in s.items()} for q, s in self.cache.items()}},
+                                  ensure_ascii=False), encoding="utf-8")
+        tmp.replace(self.chemin)
+
+
+class Contextes:
+    """Contexte d'une configuration : classement final, k ancres sans voisins, puis budget du prompt (tokens Qwen)."""
+
+    def __init__(self, index, table):
+        self.passages, self.cles = index.passages, rc.sections(table)
+        self.tok = rc.generation.charger_tokeniseur_qwen()
+        self._tokens: dict = {}
+
+    def tokens(self, question: str, indices) -> int:
+        cle = (question, tuple(indices))
+        if cle not in self._tokens:
+            self._tokens[cle] = rc.compter_tokens(self.tok, rc.construire_contexte_v2(question, indices, self.passages))
+        return self._tokens[cle]
+
+    def contexte(self, config, question: str, liste_e5, liste_bm25, scores=None) -> dict:
+        ordre = rc.classement_final(config, liste_e5, liste_bm25, scores, profondeur=PROFONDEUR)
+        groupes = rc.groupes_du_contexte(ordre[:config.k], self.cles, False)
+        indices, retires = rc.dans_le_budget(groupes, lambda ind: self.tokens(question, ind))
+        return {"indices": indices, "retires": retires, "tokens": self.tokens(question, indices)}
+
+
+def listes_premier_niveau(vecteur: np.ndarray, matrice: np.ndarray) -> list[int]:
+    return rc.classement(matrice @ vecteur)[:PROFONDEUR].tolist()
+
+
+def systemes_b_jeu(questions: list[str], pertinents: list[set], groupes: list, outils: dict, avec_fp32: bool) -> dict:
+    """R0, R1, R2 (et R2 à requête fp32 si demandé) pour un jeu de questions : contexte et rappel du contexte."""
+    import rag
+    index, lexical, ctx, rs = outils["index"], outils["lexical"], outils["ctx"], outils["rs"]
+    vb = [rag.encoder_question(outils["base"], q) for q in questions]
+    va = [outils["q8"].encoder(q) for q in questions]            # une question à la fois, comme le service
+    vf = [outils["fp32"].encode(["query: " + q], normalize_embeddings=True, convert_to_numpy=True,
+                                show_progress_bar=False)[0] for q in questions] if avec_fp32 else []
+    noms = ("R0", "R0_avec_S", "R1", "R2") + (("R2_requete_fp32",) if avec_fp32 else ())
+    lignes = {n: [] for n in noms}
+    for n, q in enumerate(questions):
+        bm = rc.classement(lexical.score_matrix([q])[0], positifs=True)[:PROFONDEUR].tolist()
+        scores_base = index.matrice @ vb[n]
+        e5 = rc.classement(scores_base)[:PROFONDEUR].tolist()
+        aj = listes_premier_niveau(va[n], outils["matrice_aj"])
+        listes = {"R1": e5, "R2": aj}
+        if avec_fp32:
+            listes["R2_requete_fp32"] = listes_premier_niveau(np.asarray(vf[n], dtype=np.float32), outils["matrice_aj"])
+        candidats = [i for l in listes.values() for i in rc.fusion_rrf([l, bm])[:CONFIG_V2.candidats]]
+        scores = rs.noter(q, candidats)
+        c = {"R0": ctx.contexte(CONFIG_R0, q, e5, bm)}
+        refuse = float(scores_base.max()) < outils["seuil"]
+        c["R0_avec_S"] = {"indices": [] if refuse else c["R0"]["indices"], "retires": 0,
+                          "tokens": 0 if refuse else c["R0"]["tokens"], "refus_S": refuse}
+        for nom, l in listes.items():
+            c[nom] = ctx.contexte(CONFIG_V2, q, l, bm, scores)
+        for nom in noms:
+            lignes[nom].append({**c[nom], "rappel": bool(pertinents[n] & set(c[nom]["indices"]))})
+    sortie = {"questions": len(questions), "groupes": len(set(groupes)), "systemes": {}, "comparaisons": {}}
+    for nom in noms:
+        l = lignes[nom]
+        sortie["systemes"][nom] = {"rappel_contexte": sum(x["rappel"] for x in l) / len(l),
+                                   "passages_moyen": float(np.mean([len(x["indices"]) for x in l])),
+                                   "tokens_moyen": float(np.mean([x["tokens"] for x in l])),
+                                   "tokens_max": max(x["tokens"] for x in l),
+                                   "contextes_tronques": sum(x["retires"] > 0 for x in l)}
+    sortie["systemes"]["R0_avec_S"]["refus_S"] = sum(x["refus_S"] for x in lignes["R0_avec_S"])
+    for a, b in (("R2", "R1"), ("R1", "R0"), ("R2", "R0")):
+        sortie["comparaisons"][f"{a}_moins_{b}"] = a5.ecart([x["rappel"] for x in lignes[a]], [x["rappel"] for x in lignes[b]], groupes)
+    p_holm = holm({k: v["p_mcnemar"] for k, v in sortie["comparaisons"].items()})
+    for k, v in sortie["comparaisons"].items():
+        v["p_holm"] = p_holm[k]
+    sortie["_lignes"] = lignes
+    return sortie
+
+
+def famille_b_cdtn(outils: dict) -> dict:
+    """Population « questions » du protocole 07 : rappel du contexte moyen par requête, puis sur les requêtes."""
+    import reglage_cdtn as rg
+    manifeste, classements, population = rg.charger_caches()
+    if sha256(a5.POPULATION_CDTN) != a5.EMPREINTES["population_cdtn"][1]:
+        raise ErreurMesure10("Population du CDTN différente de celle du protocole 07")
+    d = rg.lire_json(rg.SORTIE / "reclasseur_bge-m3.json")
+    if d["classements_sha256"] != manifeste["classements_sha256"] or d["revision"] != rc.RECLASSEURS["bge-m3"][1]:
+        raise ErreurMesure10("Cache du reclasseur du protocole 07 incohérent avec ses classements")
+    cache_07 = {fid: {int(i): v for i, v in s.items()} for fid, s in d["scores"].items()}
+    formulations = {fo["id"]: (r, fo) for r in population["requetes"] for fo in r["formulations"]}
+    ctx, rs, lexical = outils["ctx"], outils["rs"], outils["lexical"]
+
+    # contrôle du lot du reclasseur : les 20 candidats de R1 des 5 premières questions, renotés d'un seul appel
+    temoins = [(n, fid) for n, fid in enumerate(classements["formulations"]) if formulations[fid][1]["type"] == "question"][:5]
+    if rs.modele is None:
+        rs.modele = rc.Reclasseur("bge-m3")
+    ecart_lot = 0.0
+    for n, fid in temoins:
+        cand = rc.fusion_rrf([classements["e5"][n], classements["bm25"][n]])[:CONFIG_V2.candidats]
+        s = rs.modele.scores(formulations[fid][1]["texte"], [rs.textes[i] for i in cand])
+        ecart_lot = max(ecart_lot, float(np.max(np.abs(s - np.array([cache_07[fid][i] for i in cand])))))
+
+    lignes, completes = [], 0
+    for n, fid in enumerate(classements["formulations"]):
+        r, fo = formulations[fid]
+        if fo["type"] != "question":
+            continue
+        q, e5, bm = fo["texte"], classements["e5"][n], classements["bm25"][n]
+        if bm != rc.classement(lexical.score_matrix([q])[0], positifs=True)[:PROFONDEUR].tolist():
+            raise ErreurMesure10(f"BM25 recalculé différent du cache du protocole 07 : {fid}")
+        aj = listes_premier_niveau(outils["q8"].encoder(q), outils["matrice_aj"])
+        cand_r2 = rc.fusion_rrf([aj, bm])[:CONFIG_V2.candidats]
+        scores = dict(cache_07[fid])
+        manquants = [i for i in cand_r2 if i not in scores]
+        if manquants:
+            completes += len(manquants)
+            scores.update({i: rs.noter(q, manquants)[i] for i in manquants})
+        rel = set(r["pertinents"])
+        ligne = {"formulation": fid, "requete": r["id"], "hors_fiches_test": r["hors_fiches_test"]}
+        for nom, config, liste in (("R0", CONFIG_R0, e5), ("R1", CONFIG_V2, e5), ("R2", CONFIG_V2, aj)):
+            c = ctx.contexte(config, q, liste, bm, scores if config.reclasseur else None)
+            ligne[nom] = int(bool(rel & set(c["indices"])))
+            ligne[f"{nom}_tokens"] = c["tokens"]
+        lignes.append(ligne)
+
+    # contrôle de reproduction : R0 et R1 doivent redonner le protocole 07, formulation par formulation
+    with open(rg.SORTIE / "formulations_grille.csv", encoding="utf-8", newline="") as f:
+        grille = {(x["configuration"], x["formulation"]): int(x["rappel_contexte"]) for x in csv.DictReader(f)}
+    for nom, conf in (("R0", "e5+k5"), ("R1", "rrf+k10+bge-m3@20")):
+        diff = [l["formulation"] for l in lignes if l[nom] != grille[(conf, l["formulation"])]]
+        if diff:
+            raise ErreurMesure10(f"{nom} ne reproduit pas le protocole 07 ({conf}) : {diff[:5]}")
+
+    def par_requete(nom, filtre=None):
+        groupes: dict = {}
+        for l in lignes:
+            if filtre is None or l["hors_fiches_test"] == filtre:
+                groupes.setdefault(l["requete"], []).append(l[nom])
+        return {k: float(np.mean(v)) for k, v in groupes.items()}
+
+    sortie = {"population": "questions du protocole 07", "formulations": len(lignes),
+              "requetes": len({l["requete"] for l in lignes}), "systemes": {}, "ecarts": {}, "sous_populations": {},
+              "controle_lot_reclasseur": {"formulations": len(temoins), "ecart_max_absolu": ecart_lot},
+              "paires_reclasseur_completees_pour_R2": completes}
+    for nom in ("R0", "R1", "R2"):
+        m = par_requete(nom)
+        sortie["systemes"][nom] = rg.agreger(m, sorted(m), np.random.default_rng(rg.GRAINE))
+        sortie["systemes"][nom]["tokens_moyen"] = float(np.mean([l[f"{nom}_tokens"] for l in lignes]))
+    for nom, conf in (("R0", "e5+k5"), ("R1", "rrf+k10+bge-m3@20")):
+        if abs(sortie["systemes"][nom]["moyenne"] - PUBLIE_07[conf]) > 1e-12:
+            raise ErreurMesure10(f"{nom} : {sortie['systemes'][nom]['moyenne']} contre {PUBLIE_07[conf]} publié")
+    sortie["controle_reproduction_07"] = {"R0_e5+k5": PUBLIE_07["e5+k5"], "R1_rrf+k10+bge-m3@20": PUBLIE_07["rrf+k10+bge-m3@20"],
+                                          "identique_formulation_par_formulation": True}
+    for a, b in (("R2", "R1"), ("R1", "R0"), ("R2", "R0")):
+        ma, mb = par_requete(a), par_requete(b)
+        sortie["ecarts"][f"{a}_moins_{b}"] = rg.agreger({k: ma[k] - mb[k] for k in ma}, sorted(ma),
+                                                       np.random.default_rng(rg.GRAINE))
+    for nom_sp, filtre in (("requetes_hors_fiches_test", True), ("requetes_sur_fiches_test", False)):
+        ma, mb = par_requete("R2", filtre), par_requete("R1", filtre)
+        sortie["sous_populations"][nom_sp] = {
+            "requetes": len(ma), "R1": float(np.mean(list(mb.values()))), "R2": float(np.mean(list(ma.values()))),
+            "R2_moins_R1": rg.agreger({k: ma[k] - mb[k] for k in ma}, sorted(ma), np.random.default_rng(rg.GRAINE))}
+    return sortie
+
+
+def famille_b() -> dict:
+    import mesure
+    import rag
+    table, index = a5.table_et_index_site()
+    if table.passage_id.tolist() != [p["passage_id"] for p in index.passages]:
+        raise ErreurMesure10("Table M2 et index commun désalignés")
+    a5.verifier_empreintes({"poids_ajuste"})
+    rs = ScoresReclasseur(rc.textes_lexicaux(table))
+    outils = {"index": index, "table": table, "lexical": bm25(table), "ctx": Contextes(index, table), "rs": rs,
+              "matrice_aj": matrice_ajuste(), "q8": EncodeurQ8(), "base": rag.charger_encodeur(),
+              "fp32": a5.encodeur_ajuste(), "seuil": mesure.charger_seuil()}
+    res = {"protocole": "10, section 7, famille B", "sha256_protocole": sha256(RACINE / "docs/etudes/evaluation/10_protocole_jeu_v2.md"),
+           "configurations": {"R0": CONFIG_R0.nom, "R1": CONFIG_V2.nom + " (E5 de base)",
+                              "R2": CONFIG_V2.nom + " (E5 ajusté v1, requête q8 servie, onnxruntime)",
+                              "R2_requete_fp32": CONFIG_V2.nom + " (E5 ajusté v1, requête fp32 : la démonstration du 16/11)"},
+           "seuil_S": outils["seuil"], "jeux": {}}
+    try:
+        # jeu v2, questions du corpus (critère principal)
+        corpus = [q for q in lire_jeu_v2() if q["type"] == "dans_corpus"]
+        pv2 = PertinenceV2(table.texte.tolist())
+        jv2 = systemes_b_jeu([q["question"] for q in corpus], [pv2.pertinents(q["extrait"]) for q in corpus],
+                             [q["url"] for q in corpus], outils, avec_fp32=True)
+        jv2["detail"] = [{"id": q["id"], **{n: {"rappel": l[k]["rappel"],
+                                                "passages": [index.passages[i]["passage_id"] for i in l[k]["indices"]]}
+                                            for n, l in jv2["_lignes"].items()}} for k, q in enumerate(corpus)]
+        res["jeux"]["jeu_v2"] = jv2
+        rs.ecrire()
+        # CDTN
+        res["jeux"]["cdtn"] = famille_b_cdtn(outils)
+        rs.ecrire()
+        # jeu v1 (lot de test humain), descriptif
+        v1 = [q for q in mesure.lire_jeu("test") if q["type"] == "dans_corpus"]
+        ip = IndexPertinence(table.texte.tolist())
+        res["jeux"]["jeu_v1_test"] = systemes_b_jeu([q["question"] for q in v1], [set(ip.pertinents(q["extrait"])) for q in v1],
+                                                    [q["fiche"] for q in v1], outils, avec_fp32=False)
+    finally:
+        rs.ecrire()
+    for j in res["jeux"].values():
+        j.pop("_lignes", None)
+    res["paires_reclasseur_calculees"] = rs.calcules
+    v2, cd = res["jeux"]["jeu_v2"], res["jeux"]["cdtn"]
+    r2_v2, r1_v2 = v2["systemes"]["R2"]["rappel_contexte"], v2["systemes"]["R1"]["rappel_contexte"]
+    r2_cd, r1_cd = cd["systemes"]["R2"]["moyenne"], cd["systemes"]["R1"]["moyenne"]
+    res["decision"] = {"regle": "R2 reste en production si son rappel du contexte est au moins celui de R1 sur le jeu v2 et sur le CDTN",
+                       "jeu_v2": {"R1": r1_v2, "R2": r2_v2}, "cdtn": {"R1": r1_cd, "R2": r2_cd},
+                       "R2_maintenue": r2_v2 >= r1_v2 and r2_cd >= r1_cd}
+    SORTIES.mkdir(parents=True, exist_ok=True)
+    chemin = SORTIES / f"famille_b_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
+    print(f"écrit {chemin.name}, SHA-256 {a5.ecrire_une_fois(chemin, res)}")
+    return res
+
+
+def effet_k() -> dict:
+    """Descriptif, demandé par l'enseignant le 17/11 : effet de k seul (5 contre 10 passages) sur le rappel du contexte,
+    pour l'E5 de base, la fusion RRF sans reclasseur et R1, sur le jeu v2 et le lot de test du jeu v1. Les scores du
+    reclasseur sont ceux du cache de la famille B (aucun recalcul) ; le budget de tokens n'est jamais atteint à k = 10."""
+    import mesure
+    import rag
+    table, index = a5.table_et_index_site()
+    lexical, e5 = bm25(table), rag.charger_encodeur()
+    rs = ScoresReclasseur(rc.textes_lexicaux(table))   # cache seulement : aucun score n'est recalculé ici
+
+    def jeu(questions, pertinents, groupes):
+        succes = {}
+        for q, p in zip(questions, pertinents):
+            d = listes_premier_niveau(rag.encoder_question(e5, q), index.matrice)
+            f = rc.fusion_rrf([d, rc.classement(lexical.score_matrix([q])[0], positifs=True)[:PROFONDEUR].tolist()])[:PROFONDEUR]
+            connus = rs.cache.get(q, {})
+            if any(i not in connus for i in f[:CONFIG_V2.candidats]):
+                raise ErreurMesure10("Scores du reclasseur absents du cache : lancer famille_b d'abord")
+            r = rc.reclasser(f[:CONFIG_V2.candidats], [connus[i] for i in f[:CONFIG_V2.candidats]])
+            for nom, liste in (("E5 de base", d), ("RRF sans reclasseur", f), ("R1, RRF et bge-m3", r)):
+                for k in (5, 10):
+                    succes.setdefault(nom, {}).setdefault(k, []).append(bool(set(liste[:k]) & p))
+        return {nom: {"k5": float(np.mean(s[5])), "k10": float(np.mean(s[10])), "k10_moins_k5": a5.ecart(s[10], s[5], groupes)}
+                for nom, s in succes.items()}
+
+    corpus = [q for q in lire_jeu_v2() if q["type"] == "dans_corpus"]
+    pv2 = PertinenceV2(table.texte.tolist())
+    v1 = [q for q in mesure.lire_jeu("test") if q["type"] == "dans_corpus"]
+    ip = IndexPertinence(table.texte.tolist())
+    res = {"objet": "effet de k seul, descriptif", "sha256_cache_reclasseur": sha256(CACHE_RECLASSEUR),
+           "jeu_v2": jeu([q["question"] for q in corpus], [pv2.pertinents(q["extrait"]) for q in corpus],
+                         [q["url"] for q in corpus]),
+           "jeu_v1_test": jeu([q["question"] for q in v1], [set(ip.pertinents(q["extrait"])) for q in v1],
+                              [q["fiche"] for q in v1])}
+    chemin = SORTIES / f"effet_k_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
+    print(f"écrit {chemin.name}, SHA-256 {a5.ecrire_une_fois(chemin, res)}")
+    for j in ("jeu_v2", "jeu_v1_test"):
+        for nom, v in res[j].items():
+            e = v["k10_moins_k5"]
+            print(f"{j:12s} {nom:20s} k5 {v['k5']:.3f} k10 {v['k10']:.3f} écart {e['ecart']:+.3f} "
+                  f"[{e['ic95_tango'][0]:+.3f} ; {e['ic95_tango'][1]:+.3f}] gagnées {e['ajuste_seul']} perdues {e['base_seule']}")
+    return res
+
+
+def afficher_b(res: dict) -> None:
+    print(json.dumps({"decision": res["decision"], "controle_07": res["jeux"]["cdtn"]["controle_reproduction_07"],
+                      "lot_reclasseur": res["jeux"]["cdtn"]["controle_lot_reclasseur"]}, ensure_ascii=False, indent=1))
+    for nom in ("jeu_v2", "jeu_v1_test"):
+        j = res["jeux"][nom]
+        print(nom, j["questions"], "questions,", j["groupes"], "fiches ;",
+              " ; ".join(f"{k} {v['rappel_contexte']:.3f} ({v['tokens_moyen']:.0f} tokens)" for k, v in j["systemes"].items()))
+        for k, e in j["comparaisons"].items():
+            print(f"  {k:10s} {e['ecart']:+.3f} [{e['ic95_tango'][0]:+.3f} ; {e['ic95_tango'][1]:+.3f}] "
+                  f"{e['ajuste_seul']} contre {e['base_seule']}, p = {e['p_mcnemar']:.3f}, Holm {e['p_holm']:.3f}")
+    c = res["jeux"]["cdtn"]
+    print("cdtn", c["requetes"], "requêtes,", c["formulations"], "formulations ;",
+          " ; ".join(f"{k} {v['moyenne']:.3f} [{v['ic95'][0]:.3f} ; {v['ic95'][1]:.3f}]" for k, v in c["systemes"].items()))
+    for k, e in {**c["ecarts"], **{f"{s} R2-R1": v["R2_moins_R1"] for s, v in c["sous_populations"].items()}}.items():
+        print(f"  {k:40s} {e['moyenne']:+.3f} [{e['ic95'][0]:+.3f} ; {e['ic95'][1]:+.3f}] ({e['requetes']} requêtes)")
+
+
 def main(argv=None) -> int:
     import argparse
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("commande", choices=("famille_a",))
+    p.add_argument("commande", choices=("famille_a", "famille_b", "effet_k"))
     a = p.parse_args(argv)
+    if a.commande == "famille_b":
+        afficher_b(famille_b())
+        return 0
+    if a.commande == "effet_k":
+        effet_k()
+        return 0
     res = famille_a()
     print(json.dumps({k: res[k] for k in ("controle_reproduction_05", "decision")}, ensure_ascii=False, indent=1))
     for nom, j in res["jeux"].items():
