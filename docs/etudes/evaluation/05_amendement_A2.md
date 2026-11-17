@@ -3,7 +3,7 @@
 **Équipe** Data Tigers  
 **Ticket** #167 (suite de #49 et #164)  
 **Responsable** Mahé BEGNIS  
-**Statut** rédigé le 15 novembre 2026, avant la génération des données d'entraînement. Il sera figé, avec les empreintes du modèle et de l'index inscrites à la section 9, avant toute lecture du lot de test ou du CDTN par l'encodeur v2 ; le commit de gel sera publié sur le #167. Le protocole 05 et l'amendement A1 ne sont pas modifiés : cet amendement les complète.
+**Statut** rédigé le 15 novembre 2026, avant la génération des données d'entraînement ; figé le 17 novembre 2026, avec les empreintes inscrites à la section 9, avant toute lecture du jeu v2, du lot de test ou du CDTN par l'encodeur v2 ; le commit de gel est publié sur le #167. Le protocole 05 et l'amendement A1 ne sont pas modifiés : cet amendement les complète.
 
 ---
 
@@ -73,7 +73,8 @@ Les mêmes étapes que pour la v1 (`scripts/allegement/README.md`, section « Po
 
 ## 7. Règle de décision, écrite d'avance
 
-* **Servir la v2 à la place de la v1** si le garde-fou de la section 4 est passé, si l'hébergement de la section 5 est validé, et si l'écart observé de Recall@5 (v2 moins v1) est positif ou nul sur le CDTN et sur le lot de test, et strictement positif sur au moins l'un des deux jeux.
+* **Servir la v2 à la place de la v1** si le garde-fou de la section 4 est passé, si l'hébergement de la section 5 est validé, et si l'écart observé de Recall@5 (v2 moins v1) est positif ou nul sur le CDTN et sur le jeu v2, et strictement positif sur au moins l'un des deux jeux.
+* **Jeux de la décision** : le jeu v2 et le CDTN, comme le prévoit le protocole 10 (section 7, famille E), figé le 17 novembre avant ce gel ; la règle y est appliquée par `scripts/evaluation/mesures_10.py famille_e`. Le lot de test, rédigé ainsi le 15 novembre, devient descriptif (section 8).
 * **Sinon, la v1 reste servie.** À égalité sur les deux jeux, on ne change pas le modèle servi : un changement sans gain n'apporte que du risque.
 * **Conclusion statistique** : la v2 n'est déclarée meilleure que la v1 sur un jeu que si la borne basse de l'intervalle de Tango y dépasse 0.
 * **Si la v2 est servie** : le seuil d'abstention et la borne de la zone grise sont recalculés par les règles de la #164 (5e et 25e centiles des scores maximaux des variantes du CDTN, encodées dans le navigateur par la v2), et les mesures descriptives du site (`mesures_site_164.py`) sont refaites.
@@ -89,15 +90,33 @@ Les mêmes étapes que pour la v1 (`scripts/allegement/README.md`, section « Po
 * **Relecture faite par une IA**, et non par un humain (section 2).
 * **Faux négatifs dans le lot** : deux passages d'une même fiche peuvent se retrouver dans un même lot d'entraînement et servir de négatifs l'un pour l'autre. La part de lots concernés sera rapportée.
 * **Volet B non concerné** : son index reste celui de l'encodeur de base, verrouillé par la #131.
+* **Relecture au seuil, conclusion fragile** : la relecture du protocole compte 3 paires fausses sur 30 (567, 705, 1926), exactement le seuil ; la paire 496, jugée limite et comptée juste, aurait suffi à refuser le lot. Une seconde lecture à l'aveugle, par un agent d'IA indépendant qui ne connaissait ni ces verdicts, ni le seuil, ni l'enjeu, a été décidée et encadrée avant d'être faite : elle ne change pas les verdicts du protocole, mais si elle dépasse 3 fausses, Mahé décide avant le gel. Elle en compte 5 (les mêmes 3, plus 496 et 1855), avec un accord de 28 paires sur 30 (kappa de Cohen 0,71). Le taux de paires fausses est donc estimé entre 10 % (IC95 de Wilson 3,5 % à 25,6 %) et 17 % (7,3 % à 33,6 %). Décision de Mahé, le 17 novembre : poursuivre, en déclarant cette fragilité ; elle valide ce jour-là la mesure de la v2 dans le cadre du protocole 10.
+* **Environnement d'entraînement** : la v1 a été entraînée avec Transformers 5.18.0 et torch 2.14.0+cpu, la v2 avec Transformers 5.17.0 et torch 2.14.0 sur macOS, sur processeur. Le comportement qui compte a été vérifié identique : la configuration est alignée sur les jetons spéciaux du tokeniseur dans les deux cas, et la ligne 0 de la table des mots ne reçoit aucun gradient (elle ne bouge que par la décroissance des poids). L'échauffement de 29 pas sur 288 est appliqué : les 144 taux journalisés suivent exactement la forme linéaire attendue.
+* **Garde-fou favorable à la v2 par construction** : ses questions viennent du même générateur que les paires d'entraînement de la v2, alors que la v1 a appris sur celles d'un autre modèle. Il ne sert qu'à arrêter la mesure en cas de recul ; le gain qu'il montre ne préjuge pas de celui du lot de test et du CDTN.
+* **Géométrie de l'espace** : la v2 a presque supprimé la composante commune des vecteurs d'e5. Le cosinus moyen entre deux passages vaut 0,036, contre 0,670 pour la v1 et 0,833 pour la base. Le cosinus d'un même passage entre la v1 et la v2 vaut 0,44 en médiane, mais 0,925 après centrage, et les 10 plus proches voisins se recouvrent à 74 %. Les seuils d'abstention de la v1 ne s'appliquent donc pas à la v2 (section 7).
+* **Quantification** : le q8 de la v2 est un peu moins fidèle que celui de la v1. Sur les 822 requêtes de contrôle, le premier passage trouvé avec le q8 du navigateur est le même qu'en PyTorch fp32 pour 91,7 % des requêtes, contre 93,6 % pour la v1. La mesure, faite avec le q8 du navigateur, en tient compte.
+* **Jeux de la décision, écart du gel** : la rédaction du 15 novembre décidait sur le lot de test et le CDTN. Le protocole 10, figé le 17 novembre, applique cette règle au jeu v2 et au CDTN ; le gel s'y aligne, avant toute mesure de la v2. Le lot de test, déjà lu cinq fois, reste mesuré par `ajustement_v2.py mesurer`, avec le contrôle de reproduction de la section 6, à titre descriptif.
 
 ---
 
 ## 9. Valeurs inscrites au gel
 
-À compléter au gel, avant la mesure : empreintes des données générées, de la v2, de son q8 complet, de sa version élaguée et de son index ; résultat du garde-fou.
+Valeurs relevées le 15 novembre 2026, avant toute lecture du jeu v2, du lot de test ou du CDTN par la v2.
+
+* **Génération** : 2 720 passages en 7 168 s, sous régulation thermique, sans relevé hors de l'état nominal. Fichier partiel `3efc40a3…`, sélection `47bc23ce…`.
+* **Filtres** : 2 553 questions gardées, 111 renvois à la source, 17 méta-formulations, 15 longueurs hors bornes, 9 sans point d'interrogation, 7 au-dessus du seuil de Jaccard, puis 8 doublons retirés ; 2 réponses coupées à 75 tokens.
+* **Paires** : 2 289 d'entraînement sur 175 fiches (`6847d478…`), 264 de validation sur 19 fiches (`d3ddcde6…`), manifeste `f7f0d225…`. Contrôle indépendant : aucune fiche commune avec les 67 exclues ni entre entraînement et validation, aucun doublon, chaque passage identique au découpage.
+* **Relecture** : tirage `b03d2bc0…`, verdicts du protocole `42a8f264…` (3 fausses), seconde lecture `faf1d9b9…` (5 fausses), voir section 8.
+* **Entraînement** : 288 pas dont 29 d'échauffement, 1 944 s, perte moyenne 0,125 ; 62,7 % des lots contiennent deux passages d'une même fiche. Commit `93d2d2a`, rapport `e9644bd9…`, poids de la v2 `508868b8…`.
+* **Garde-fou** : Recall@5 sur la validation synthétique de 82,95 % pour la base, 87,50 % pour la v1 et 94,32 % pour la v2 ; écart v2 moins v1 de +6,8 points, IC95 de Tango [+3,7 ; +10,8], 20 succès propres à la v2 contre 2, McNemar exact p = 1,2e-4. Passé. Fichier `6d66ba95…`.
+* **Export** : l'export rejoué sur la v1 redonne octet pour octet les fichiers livrés le 14 octobre. v2 : fp32 `8594324a…`, q8 `09d304fe…` (118 371 400 octets, mêmes opérateurs que la v1), parité fp32 atteinte (cosinus minimal 0,999999999997). Rapport `34a34b56…`.
+* **Élagage** : `8642b6ba…` (68 925 256 octets), deux exécutions identiques octet pour octet, tokeniseur élagué identique à celui de la v1 ; contrôle en Python : découpages identiques pour 822, 113, 5 433 et 4 240 textes, 935 sorties sur 935 identiques bit à bit. Le contrôle dans le navigateur sera fait si la v2 est servie.
+* **Index** : `1bbdade6…`, construit par le même code que celui de la v1, qui redonne l'index de la v1 bit à bit quand on lui donne les poids de la v1.
+* **Référence du navigateur** : 822 vecteurs de contrôle du q8 complet, `27516cc2…`.
 
 ---
 
 ## 10. Historique
 
 * **15 novembre 2026** : amendement rédigé avant la génération des données ; filtre des renvois à la source ajouté après un pilote de 20 passages, jamais utilisé pour l'entraînement.
+* **17 novembre 2026** : décision de Mahé sur la relecture (poursuivre, fragilité déclarée) ; jeux de la décision alignés sur le protocole 10 (jeu v2 et CDTN) ; valeurs inscrites à la section 9 et écarts ajoutés à la section 8 ; amendement figé avant toute mesure de la v2.

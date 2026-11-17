@@ -39,12 +39,13 @@ MESURE_A1 = D / "evaluation/ajustement_05/mesure_20261115T142540Z.json"
 SORTIES = D / "evaluation/ajustement_v2"
 
 # Empreintes inscrites au gel de l'amendement A2 (section 9) ; tant qu'elles valent None, seule la calibration est lue.
-SHA256_AMENDEMENT_A2: str | None = None
+SHA256_AMENDEMENT_A2: str | None = "e522a434df0a304587651431c2a4d29a7e9a8b01eaa2b25729e3171cd7cbc10f"   # figé le 17/11 (#167)
 EMPREINTES_A2: dict[str, tuple[Path, str | None]] = {
     "mesure_a1": (MESURE_A1, "d35b49365f0c36eea556b3ad847d3cc98975b30f759f1e9f7d122cfe1a992d90"),
-    "poids_v2": (DOSSIER_V2 / "model.safetensors", None),
-    "q8_v2": (a05.NAV / "ajuste_v2/onnx/model_quantized.onnx", None),
-    "garde_fou": (GARDE_FOU, None),
+    "poids_v2": (DOSSIER_V2 / "model.safetensors", "508868b82a21b6fd769636db254d90173d680188eedcd60ee9e4b8826b322e6c"),
+    "q8_v2": (a05.NAV / "ajuste_v2/onnx/model_quantized.onnx", "09d304fed9960730defa7b9102b3436a136f1e88bc88581846ec4e4b431934cf"),
+    "garde_fou": (GARDE_FOU, "6d66ba95eb19e666653376af240df9b2dc42e1884d82ee50fb8143ef7ad39644"),
+    "index_v2": (INDEX_V2, "1bbdade6b7568f84650167d566b1eeba9f9ca180aef3481683d60bfaa57d06e3"),
 }
 SYSTEMES = ("base", "v1", "v2")
 COMPARAISONS = (("v2", "v1"), ("v2", "base"), ("v1", "base"))
@@ -205,6 +206,8 @@ def decision(equipe: dict, cdtn: dict) -> dict:
             "regle": "servir la v2 si les deux écarts observés (v2 moins v1) sont positifs ou nuls, et l'un d'eux "
                      "strictement positif (amendement A2, section 7)",
             "verdict": "servir la v2, sous réserve de l'hébergement (section 5)" if servir else "garder la v1",
+            "statut": "descriptif sur le lot de test : la décision suit la section 7 figée, sur le jeu v2 et le CDTN "
+                      "(scripts/evaluation/mesures_10.py famille_e, protocole 10)",
             "v2_meilleure_sur_le_lot_de_test": bool(e["ic95_tango"][0] > 0),
             "v2_meilleure_sur_le_cdtn": bool(c["ic95_tango"][0] > 0)}
 
