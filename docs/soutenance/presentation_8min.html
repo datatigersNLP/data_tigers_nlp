@@ -35,8 +35,9 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: var(--nuit); }
 body { font-family: "DM Sans", system-ui, sans-serif; color: var(--encre); -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1; }
-.scene { position: fixed; inset: 0; display: grid; place-items: center; }
-.toile { width: 1920px; height: 1080px; position: relative; background: var(--papier); overflow: hidden; flex: none; }
+/* la toile de 1920 x 1080 est centrée puis réduite à la fenêtre, quelle que soit sa taille (aperçu, projecteur, téléphone) */
+.scene { position: fixed; inset: 0; overflow: hidden; }
+.toile { width: 1920px; height: 1080px; position: absolute; left: 50%; top: 50%; transform-origin: 50% 50%; background: var(--papier); overflow: hidden; }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* diapositives : une seule visible ; les étapes (data-e) apparaissent quand l'orateur avance */
@@ -180,7 +181,7 @@ svg .e { transform-box: fill-box; transform-origin: center; }
 .formule { font-size: 21px; color: var(--texte2); margin: 6px 0 0; line-height: 1.4; }
 .formule b { color: var(--encre); }
 .bandeau-res { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: auto; }
-.bandeau-res div { border-top: 5px solid var(--orange-vif); padding-top: 12px; }
+.bandeau-res > div { border-top: 5px solid var(--orange-vif); padding-top: 12px; }
 .bandeau-res .chiffres { font-size: 40px; font-weight: 740; letter-spacing: -.01em; }
 .bandeau-res .chiffres small { font-size: 30px; color: var(--gris); font-weight: 600; }
 .mini-fleche { width: 34px; height: 18px; margin: 0 10px; vertical-align: middle; }
@@ -268,7 +269,7 @@ aside.texte-a-dire { display: none; }
 @media print {
   html, body { background: #fff; overflow: visible; height: auto; }
   .scene { position: static; display: block; }
-  .toile { transform: none !important; page-break-after: always; }
+  .toile { position: relative; left: 0; top: 0; transform: none !important; page-break-after: always; }
   .diapo { position: absolute; opacity: 1; visibility: visible; }
   .notes { display: none !important; }
   @page { size: 1920px 1080px; margin: 0; }
@@ -671,7 +672,7 @@ const DONNEES = {"_source":"Calculé le 21/11/2026 sur les données du projet (i
   // mise à l'échelle de la toile de 1920 x 1080 dans la fenêtre
   function ajuster() {
     const k = Math.min(innerWidth / 1920, innerHeight / 1080);
-    toile.style.transform = `scale(${k})`;
+    toile.style.transform = `translate(-50%, -50%) scale(${k})`;
   }
   addEventListener("resize", ajuster);
   ajuster();
