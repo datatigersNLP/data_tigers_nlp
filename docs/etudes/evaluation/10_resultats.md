@@ -12,7 +12,7 @@ Cette page publie les familles de mesures du protocole 10, section 7, au fur et 
 * **Famille B, récupération** : la récupération du volet B, R0, R1 et R2, et la règle qui décide de la chaîne de démonstration (#172).
 * **Famille E** : les encodeurs candidats pour le volet A (#167), ici le candidat v2-T (section 7 de cette page).
 
-Restent à mesurer : la famille B de bout en bout, avec Ollama, en cours, et le candidat v3-C, dont l'amendement A3 n'est pas encore écrit.
+Reste à mesurer : le candidat v3-C, dont l'amendement A3 n'est pas écrit.
 
 Les mesures sont faites par `scripts/evaluation/mesures_10.py` (commandes `famille_a`, `famille_b`, `effet_k` et `famille_e`). Chaque fichier de résultats est écrit une seule fois dans `data/evaluation/protocole_10/`, non versionné ; ses empreintes sont en section 10.
 
@@ -91,9 +91,33 @@ Sur le jeu v1 (descriptif) : R2 moins R1, +2,7 [−2,5 ; +9,5] (2 contre 0) ; R1
 
 ---
 
-## 6. Bout en bout de la famille B : ce qui change
+## 6. Famille B de bout en bout
 
-Le protocole compare, sur le jeu v2, le modèle adapté en B2 au modèle adapté « dans la chaîne de démonstration (R2) », puis le témoin T dans cette chaîne. R2 n'étant pas maintenue, la chaîne de démonstration est R1 : la mesure de bout en bout se fait avec R1, consigne v1, sans seuil. Les autres conditions sont celles du protocole.
+R2 n'étant pas maintenue, la chaîne de démonstration est R1 : la mesure de bout en bout compare, sur les 161 questions du jeu v2, le modèle adapté en B2 (R0, 5 passages, consigne v1, seuil S) au modèle adapté dans R1 (10 passages, consigne v1, sans seuil), puis le témoin T dans R1. Conditions du protocole : Mac de Mahé, Ollama 0.40.13, modèles et digests du #52, température nulle, une exécution par état ; métriques M1 à M5 et règles de `scripts/rag/mesure.py`, pertinence de la section 2.
+
+* **Écart déclaré, dates** : B2 a été exécuté le 17 novembre ; R1 avec le modèle adapté, interrompu le même jour par la fin de la session sans qu'aucun fichier soit écrit, a été repris le 21 novembre, suivi du témoin T. Même Mac, même version d'Ollama, mêmes digests ; les contextes de R1 sont contrôlés contre ceux de la section 5 avant toute génération.
+* **Écart déclaré, durées** : pendant les exécutions du 21 novembre, la machine construisait aussi les diapositives ; les durées sont descriptives et peuvent en être un peu allongées.
+* **Erreurs techniques** : 1 sur 161 en B2 (V036) ; 3 sur 161 dans chaque état de R1 (V022, V114, V122). Ce sont toutes des écarts entre le nombre de tokens compté par Ollama et par le tokeniseur de référence, sous le plafond de 5 %. Ces questions sont retirées des comparaisons qui les concernent.
+
+| Sur les questions sans erreur | B2, modèle adapté | R1, modèle adapté | R1, témoin T |
+|---|---:|---:|---:|
+| M1, abstention correcte hors corpus | 39 sur 40 (97,5 %) | 39 sur 39 (100 %) | 38 sur 39 (97,4 %) |
+| M2, abstention à tort sur le corpus | 57 sur 120 (47,5 %) | 33 sur 119 (27,7 %) | 91 sur 119 (76,5 %) |
+| M3, réponse citée valide | 63 sur 120 (52,5 %) | 86 sur 119 (72,3 %) | 19 sur 119 (16,0 %) |
+| M4, réponse citant un passage pertinent | 43 sur 120 (35,8 %) | 63 sur 119 (52,9 %) | 12 sur 119 (10,1 %) |
+| M5, réponse hors corpus | 1 sur 40 | 0 sur 39 | 1 sur 39 |
+| Durée par question, médiane | 4,9 s | 11,8 s | 11,9 s |
+| Tokens du prompt, médiane | 1 722,5 | 4 121 | 4 121 |
+
+| Comparaison appariée, sur la population commune | Écart de M4 [IC 95 %] | Discordants | McNemar exact, Holm | M1 |
+|---|---:|---:|---:|---:|
+| R1 adapté moins B2 adapté (118 questions, 39 hors corpus) | +16,9 [+6,4 ; +27,3] | 31, 11 | p = 0,003 | 39 contre 38 |
+| R1 témoin moins R1 adapté (119 questions, 39 hors corpus) | −42,9 [−52,8 ; −32,5] | 3, 54 | p < 0,001 | 38 contre 39 |
+
+* **Décision, par le critère de la section 7** : avec le modèle adapté, la chaîne de démonstration améliore M4 de 16,9 points sur B2, et la borne basse de l'intervalle dépasse 0 : l'amélioration est démontrée. M1 ne baisse pas : 39 abstentions correctes sur 39, contre 38. La chaîne R1 est confirmée pour la démonstration.
+* **L'adaptation est décisive dans cette chaîne** : le témoin T, dans les mêmes conditions, s'abstient à tort sur 76,5 % des questions du corpus et ne cite un passage pertinent que pour 10,1 % d'entre elles.
+* **Le coût est la durée** : 10 passages et un reclasseur font passer la durée médiane de 4,9 à 11,8 secondes par question.
+* **Limites** : le jeu v2 est synthétique ; M4 mesure la traçabilité d'une réponse, pas son exactitude ; un seul passage est annoté par question.
 
 ---
 
@@ -150,4 +174,5 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 * `data/evaluation/protocole_10/reclasseur_bge-m3_famille_b.json` : cache des scores du reclasseur, qui grandit à chaque mesure ; ce n'est pas un résultat. La famille B y a calculé 5 080 paires, dont 219 pour compléter les candidats de R2 sur le CDTN ; un score n'y est jamais recalculé.
 * `data/evaluation/protocole_10/effet_k_20261117T131939Z.json` : SHA-256 `9cb00fe577f5a19bffba1b78324f1ecfb22a8a8578100b5a712a561bc2a7b517`.
 * `data/evaluation/protocole_10/famille_e_20261117T134023Z.json` : SHA-256 `13c474b82fc6d41eb200619b899cad822991106bfe78faaa824417d72a93f231`. Mesure descriptive de l'amendement A2 : `data/evaluation/ajustement_v2/mesure_20261117T134055Z.json`, SHA-256 `7d0065b711848d637ba4dc18e3d9a917729a616d18b9bad704940027cf3706fd` (seconde exécution identique).
+* Bout en bout : `bout_en_bout_B2_adapte_20261117T132817Z.json` (`0848326f…`), `bout_en_bout_R1_adapte_20261121T123542Z.json` (`6f4b866a…`), `bout_en_bout_R1_temoin_20261121T130808Z.json` (`b9ac9420…`), analyse `bout_en_bout_analyse_20261121T134041Z.json` (`c4571cb6…`).
 * Environnement : `scripts/evaluation/requirements-lock.txt`, plus onnxruntime 1.30.0, version déjà figée par `scripts/indexation/requirements-lock.txt`.
