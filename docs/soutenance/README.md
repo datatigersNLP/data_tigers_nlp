@@ -3,7 +3,8 @@
 **Équipe** Data Tigers  
 **Ticket** #114 (préparer la soutenance J4 : pitch, présentation, vidéo de secours, répétition et envoi)  
 **Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date ; **mis à jour le** 16 novembre 2026 : encodeur ajusté servi (#164), chaîne v2 du volet B (#163), mesure corrigée par le jugement mutualisé, présentée comme une limite corrigée (#139, annexes 14 et 15)  
-**Usage** une seule source pour deux formats : les fichiers Marp donnent les PDF, et le même texte donne la version HTML animée.
+**Usage** une seule source pour deux formats : les fichiers Marp donnent les PDF, et le même texte donne la version HTML animée.  
+**Nouveau format, 21 novembre 2026** : 8 minutes de présentation sans pitch, puis environ 5 minutes de questions. Le support à projeter est `presentation_8min.html` (voir `8min/README.md`) ; les fichiers Marp restent la réserve d'annexes pour les questions.
 
 ---
 
@@ -15,6 +16,7 @@
 | `presentation.md` | démonstration (1 diapositive, 3 min 50), présentation (10 diapositives, 7 min 57), annexes (15 diapositives, pour les questions) |
 | `pitch.pdf`, `presentation.pdf` | rendus Marp de ces deux fichiers |
 | `soutenance.html` | les 31 diapositives en une page animée, sans aucune ressource externe |
+| `presentation_8min.html` | **support du format de 8 minutes annoncé le 21/11** : 12 diapositives animées, schémas construits sur des données réelles, notes et chronomètre (touche N) ; source et contrôles dans `8min/` |
 | `figures/*.svg` | les 8 figures, générées par `outils/figures.py` ; ne pas les modifier à la main |
 | `outils/figures.py` | génère les figures ; échelles exactes et contrôle de la largeur des textes |
 | `outils/construire_html.py` | construit `soutenance.html` à partir des deux fichiers Marp |

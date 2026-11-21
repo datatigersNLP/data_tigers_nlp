@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code du travail, en clair : soutenance</title>
+<meta name="description" content="Support de la soutenance du projet NLP 2 de l'équipe Data Tigers : 8 minutes, volets A et B.">
+<link rel="icon" type="image/svg+xml" href="@@LOGO_URI@@">
+<style>
+@font-face {
+  font-family: "DM Sans";
+  src: url(data:font/woff2;base64,@@POLICE@@) format("woff2");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: block;
+}
+:root {
+  --papier: #f7f6f3;
+  --papier-2: #efede8;
+  --filet: #dcd8cf;
+  --encre: #1c1b1a;
+  --texte2: #3d3a36;
+  --gris: #5e5a55;
+  --vert: #17604a;
+  --vert-fonce: #0f4535;
+  --vert-clair: #e4ece8;
+  --bleu: #2f5d8a;
+  --bleu-clair: #e3ebf3;
+  --orange: #c7621c;
+  --orange-vif: #f39a33;
+  --orange-clair: #fbeedd;
+  --nuit: #22201d;
+  --duree: .55s;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--nuit); }
+body { font-family: "DM Sans", system-ui, sans-serif; color: var(--encre); -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1; }
+.scene { position: fixed; inset: 0; display: grid; place-items: center; }
+.toile { width: 1920px; height: 1080px; position: relative; background: var(--papier); overflow: hidden; flex: none; }
+.pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* diapositives : une seule visible ; les étapes (data-e) apparaissent quand l'orateur avance */
+.diapo { position: absolute; inset: 0; padding: 104px 128px 150px; display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility 0s linear .4s; }
+.diapo.active { opacity: 1; visibility: visible; transition: opacity .4s ease; }
+.titre { font-size: 62px; line-height: 1.08; letter-spacing: -.022em; font-weight: 720; margin: 0 0 18px; max-width: 1500px; text-wrap: balance; }
+.chapeau { font-size: 31px; line-height: 1.4; color: var(--texte2); margin: 0 0 40px; max-width: 1380px; text-wrap: pretty; }
+p, li, dd, td, th { text-wrap: pretty; }
+.e { opacity: 0; transform: translateY(16px); transition: opacity var(--duree) ease, transform var(--duree) cubic-bezier(.2,.7,.2,1); }
+.e.vu { opacity: 1; transform: none; }
+.e-fondu { opacity: 0; transition: opacity var(--duree) ease; }
+.e-fondu.vu { opacity: 1; }
+svg .e { transform-box: fill-box; transform-origin: center; }
+
+/* pied de page : logo, progression par temps prévu, numéro */
+.pied { position: absolute; left: 128px; right: 128px; bottom: 52px; height: 32px; display: flex; align-items: center; gap: 28px; z-index: 5; pointer-events: none; }
+.pied img { width: 32px; height: 32px; }
+.pied .equipe { font-size: 22px; font-weight: 650; color: var(--texte2); }
+.pied .fil { flex: 1; display: flex; gap: 6px; height: 6px; }
+.pied .fil span { background: var(--filet); border-radius: 3px; transition: background .4s; }
+.pied .fil span.fait { background: var(--vert); }
+.pied .fil span.ici { background: var(--orange-vif); }
+.pied .num { font-size: 22px; color: var(--gris); min-width: 76px; text-align: right; }
+.diapo.sombre ~ .pied .equipe, .toile.sombre .pied .equipe, .toile.sombre .pied .num { color: #cfc9be; }
+
+/* couverture */
+.couverture { flex-direction: row; align-items: center; gap: 120px; padding-bottom: 104px; }
+.couverture .tigre { width: 384px; height: 384px; flex: none; }
+.couverture h1 { font-size: 112px; line-height: .98; letter-spacing: -.035em; font-weight: 760; margin: 0 0 28px; }
+.couverture .sous { font-size: 38px; line-height: 1.32; color: var(--texte2); margin: 0 0 56px; max-width: 980px; }
+.couverture .noms { font-size: 28px; line-height: 1.5; margin: 0 0 8px; font-weight: 600; }
+.couverture .cadre { font-size: 26px; line-height: 1.5; color: var(--gris); margin: 0; }
+
+/* problème */
+.deux { display: grid; grid-template-columns: 820px 1fr; gap: 88px; align-items: start; }
+.question-boite { background: #fff; border: 4px solid var(--encre); box-shadow: 8px 8px 0 var(--encre); padding: 34px 38px 30px; }
+.question-boite p { font-size: 48px; line-height: 1.28; margin: 0 0 24px; font-weight: 560; letter-spacing: -.012em; }
+.question-boite small { font-size: 22px; color: var(--gris); }
+.exigences { margin: 0; display: grid; gap: 34px; padding-top: 8px; }
+.exigences div { position: relative; padding: 0 0 0 40px; }
+.exigences div::before { content: ""; position: absolute; left: 0; top: 12px; width: 18px; height: 18px; background: var(--vert); box-shadow: 4px 4px 0 var(--vert-clair); }
+.exigences dt { font-size: 36px; font-weight: 700; margin: 0 0 6px; }
+.exigences dd { margin: 0; font-size: 28px; line-height: 1.4; color: var(--texte2); }
+.volets { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.volet { padding: 26px 30px; border-radius: 6px; }
+.volet h3 { font-size: 32px; margin: 0 0 8px; }
+.volet p { font-size: 27px; line-height: 1.42; margin: 0; color: var(--texte2); }
+.volet.a { background: var(--vert-clair); }
+.volet.a h3 { color: var(--vert-fonce); }
+.volet.b { background: var(--orange-clair); }
+.volet.b h3 { color: #8a3f0c; }
+.corpus { font-size: 24px; color: var(--gris); margin: 22px 0 0; }
+
+/* schémas en SVG */
+.schema { width: 100%; height: auto; overflow: visible; font-family: "DM Sans", system-ui, sans-serif; }
+.schema .boite { fill: #fff; stroke: var(--encre); stroke-width: 3; }
+.schema .boite.vert { fill: var(--vert-clair); stroke: var(--vert); }
+.schema .boite.bleu { fill: var(--bleu-clair); stroke: var(--bleu); }
+.schema .boite.orange { fill: var(--orange-clair); stroke: var(--orange); }
+.schema .boite.plein { fill: var(--vert); stroke: var(--vert); }
+.schema .t1 { font-size: 27px; font-weight: 700; fill: var(--encre); }
+.schema .t2 { font-size: 22px; fill: var(--texte2); }
+.schema .t2b { font-size: 22px; fill: #fff; }
+.schema .t1b { font-size: 27px; font-weight: 700; fill: #fff; }
+.schema .lien { fill: none; stroke: var(--encre); stroke-width: 3; stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset .8s ease .15s; }
+.schema .vu .lien, .schema .lien.vu { stroke-dashoffset: 0; }
+.schema .pointe { fill: var(--encre); }
+.schema .flux { fill: var(--orange-vif); stroke: var(--encre); stroke-width: 2; }
+.schema .lien.bleu { stroke: var(--bleu); }
+.schema .lien.vert { stroke: var(--vert); }
+.legende { font-size: 25px; line-height: 1.42; color: var(--texte2); margin: 26px 0 0; max-width: 1500px; }
+.legende b { color: var(--encre); }
+
+/* volet A : navigateur, tokens, vecteur, grille des passages */
+.volet-a { display: grid; grid-template-columns: 1110px 1fr; gap: 64px; flex: 1; min-height: 0; }
+.nav { background: #fff; border: 3px solid var(--encre); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+.nav .barre { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-bottom: 3px solid var(--encre); background: var(--papier-2); }
+.nav .barre i { width: 14px; height: 14px; border-radius: 50%; background: var(--filet); display: block; }
+.nav .barre span { margin-left: 14px; font-size: 20px; color: var(--gris); }
+.nav .dedans { padding: 22px 26px; display: grid; gap: 18px; }
+.nav .q { font-size: 28px; font-weight: 600; }
+.etiquette { font-size: 20px; color: var(--gris); margin: 0 0 6px; }
+.tokens { display: flex; flex-wrap: wrap; gap: 6px; }
+.tokens span { font-size: 21px; padding: 3px 9px; border: 2px solid var(--vert); border-radius: 4px; background: var(--vert-clair); color: var(--vert-fonce);
+  opacity: 0; transform: translateY(8px); transition: opacity .3s, transform .3s; }
+.vu .tokens span { opacity: 1; transform: none; }
+.ligne-vecteur { display: flex; align-items: center; gap: 20px; }
+.ligne-vecteur svg { flex: none; }
+.ligne-grille { display: flex; gap: 22px; align-items: flex-start; }
+.grille-passages { position: relative; flex: none; width: 848px; height: 320px; }
+.grille-passages canvas { position: absolute; inset: 0; width: 848px; height: 320px; clip-path: inset(0 100% 0 0); transition: clip-path 1.6s linear; }
+.vu .grille-passages canvas { clip-path: inset(0 0 0 0); }
+.grille-passages svg { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease 1.7s; }
+.vu .grille-passages svg { opacity: 1; }
+.echelle { font-size: 19px; color: var(--gris); line-height: 1.3; }
+.echelle .rampe { width: 26px; height: 120px; border-radius: 3px; margin-bottom: 8px;
+  background: linear-gradient(to top, #efe9df, #d8c9b2, #e6a35f, #c7621c); }
+.resultats { border-top: 3px solid var(--encre); padding-top: 14px; }
+.resultats h4 { font-size: 25px; margin: 0 0 8px; }
+.resultats ol { margin: 0; padding-left: 30px; font-size: 21px; line-height: 1.45; color: var(--texte2); }
+.faits { display: grid; gap: 30px; align-content: start; }
+.fait .gros { font-size: 66px; line-height: 1; font-weight: 740; letter-spacing: -.02em; color: var(--vert); }
+.fait p { font-size: 24px; line-height: 1.4; margin: 8px 0 0; color: var(--texte2); }
+
+/* ajustement contrastif */
+.ajust { display: grid; grid-template-columns: 820px 1fr; gap: 80px; flex: 1; }
+.nuage { background: #fff; border: 3px solid var(--encre); border-radius: 14px; }
+.nuage .point { transition: transform 1.4s cubic-bezier(.3,.1,.2,1); }
+.resultat-ligne { display: flex; align-items: baseline; gap: 22px; }
+.resultat-ligne .avant { font-size: 54px; font-weight: 700; color: var(--gris); }
+.resultat-ligne .apres { font-size: 88px; font-weight: 760; color: var(--vert); letter-spacing: -.02em; }
+.resultat-ligne .fleche { width: 64px; height: 30px; }
+.precisions { font-size: 25px; line-height: 1.42; color: var(--texte2); margin: 10px 0 0; }
+.liste-faits { margin: 0 0 30px; padding: 0; list-style: none; display: grid; gap: 14px; }
+.liste-faits li { font-size: 26px; line-height: 1.4; padding-left: 26px; position: relative; color: var(--texte2); }
+.liste-faits li::before { content: ""; position: absolute; left: 0; top: 13px; width: 12px; height: 12px; background: var(--vert); }
+.note-bas { font-size: 23px; line-height: 1.4; color: var(--gris); margin: auto 0 0; padding-top: 18px; border-top: 2px solid var(--filet); }
+
+/* recherche hybride : quatre colonnes de rangs */
+.hybride-q { font-size: 30px; font-weight: 600; margin: 0 0 28px; padding: 16px 22px; background: #fff; border: 3px solid var(--encre); box-shadow: 6px 6px 0 var(--encre); max-width: 1664px; }
+.colonnes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+.col h3 { font-size: 27px; margin: 0 0 2px; }
+.col .sous { font-size: 20px; color: var(--gris); margin: 0 0 12px; min-height: 28px; }
+.col.dense h3 { color: var(--vert); }
+.col.lex h3 { color: var(--bleu); }
+.col.rerank h3 { color: var(--orange); }
+.rangs { position: relative; height: 420px; }
+.rang { position: absolute; left: 0; right: 0; height: 62px; display: flex; align-items: center; gap: 12px; padding: 0 12px;
+  border: 2px solid var(--filet); background: #fff; border-radius: 5px; font-size: 19px; line-height: 1.2; color: var(--texte2);
+  top: 0; transform: translateY(calc(var(--r) * 68px)); transition: transform 1.1s cubic-bezier(.3,.1,.2,1), opacity .5s ease, background .4s, border-color .4s; }
+.rang b { font-size: 21px; color: var(--encre); min-width: 42px; }
+.rang span { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.rang.cible { border-color: var(--orange); background: var(--orange-clair); color: var(--encre); font-weight: 600; z-index: 2; box-shadow: 0 6px 18px -8px rgba(199,98,28,.55); }
+.rang.cible b { color: var(--orange); }
+.rang.saut { border-style: dashed; justify-content: center; color: var(--gris); }
+.col.rerank .rang { transform: translateY(calc(var(--avant) * 68px)); }
+.col.rerank.vu .rang { transform: translateY(calc(var(--apres) * 68px)); transition-delay: .5s; }
+.col.rerank .rang.hors { opacity: 0; }
+.col.rerank.vu .rang.hors { opacity: 1; }
+.formule { font-size: 21px; color: var(--texte2); margin: 6px 0 0; line-height: 1.4; }
+.formule b { color: var(--encre); }
+.bandeau-res { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: auto; }
+.bandeau-res div { border-top: 5px solid var(--orange-vif); padding-top: 12px; }
+.bandeau-res .chiffres { font-size: 40px; font-weight: 740; letter-spacing: -.01em; }
+.bandeau-res .chiffres small { font-size: 30px; color: var(--gris); font-weight: 600; }
+.mini-fleche { width: 34px; height: 18px; margin: 0 10px; vertical-align: middle; }
+.bandeau-res p { font-size: 22px; margin: 4px 0 0; color: var(--texte2); }
+
+/* k = 10 : barres */
+.k10 { display: grid; grid-template-columns: 1040px 1fr; gap: 80px; flex: 1; }
+.barres { display: grid; gap: 34px; align-content: start; }
+.barre-groupe h4 { font-size: 26px; margin: 0 0 10px; }
+.barre { position: relative; height: 46px; margin-bottom: 8px; }
+.barre .rempli { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v) * 9.6px); border-radius: 3px; transform: scaleX(0); transform-origin: left center; transition: transform 1.1s cubic-bezier(.3,.1,.2,1); }
+.barre.cinq .rempli { background: #cfd9d4; }
+.barre.dix .rempli { background: var(--vert); transition-delay: .25s; }
+.vu .barre .rempli { transform: none; }
+.barre span { position: absolute; left: 14px; top: 8px; font-size: 22px; font-weight: 650; color: var(--encre); white-space: nowrap; z-index: 1; }
+.barre.dix span { color: #fff; }
+.barre em { position: absolute; top: 6px; font-style: normal; font-size: 25px; font-weight: 740; left: calc(var(--v) * 9.6px + 14px); opacity: 0; transition: opacity .4s ease 1.1s; }
+.vu .barre em { opacity: 1; }
+.axe { font-size: 20px; color: var(--gris); }
+
+/* modèles */
+.modeles { display: grid; grid-template-columns: 1fr 1fr 1.15fr; gap: 34px; flex: 1; }
+.modele { border-top: 8px solid var(--encre); padding-top: 20px; display: flex; flex-direction: column; }
+.modele.m-a { border-color: var(--vert); }
+.modele.m-r { border-color: var(--orange); }
+.modele.m-q { border-color: var(--encre); }
+.modele .ou { font-size: 22px; font-weight: 650; color: var(--gris); margin: 0 0 6px; }
+.modele h3 { font-size: 34px; line-height: 1.1; margin: 0 0 18px; letter-spacing: -.01em; }
+.modele dl { margin: 0; display: grid; gap: 14px; }
+.modele dt { font-size: 22px; color: var(--gris); }
+.modele dd { margin: 0; font-size: 25px; line-height: 1.38; color: var(--encre); }
+
+/* données synthétiques */
+.usages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; flex: 1; }
+.usage { border-top: 8px solid var(--vert); padding: 22px 6px 0 0; display: flex; flex-direction: column; gap: 14px; }
+.usage.u-b { border-color: var(--orange); }
+.usage.u-c { border-color: var(--bleu); }
+.usage .qui { font-size: 22px; font-weight: 650; color: var(--gris); }
+.usage h3 { font-size: 31px; line-height: 1.15; margin: 0; }
+.usage p { font-size: 26px; line-height: 1.42; margin: 0; color: var(--texte2); }
+.usage .issue { margin-top: auto; padding-top: 14px; border-top: 2px solid var(--filet); }
+.usage .issue strong { display: block; font-size: 40px; letter-spacing: -.01em; color: var(--vert); }
+.usage.u-b .issue strong { color: var(--orange); }
+.usage.u-c .issue strong { color: var(--bleu); }
+
+/* bilan */
+.bilan { display: grid; grid-template-columns: 760px 1fr; gap: 72px; flex: 1; }
+.regles { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; align-content: start; }
+.regles li { position: relative; padding: 18px 22px 18px 62px; background: #fff; border: 2px solid var(--filet); }
+.regles li::before { content: ""; position: absolute; left: 22px; top: 26px; width: 20px; height: 20px; background: var(--orange-vif); box-shadow: inset -4px -4px 0 var(--orange); }
+.regles b { display: block; font-size: 27px; margin-bottom: 4px; }
+.regles span { font-size: 23px; line-height: 1.4; color: var(--texte2); }
+table.compare { border-collapse: collapse; width: 100%; font-size: 23px; }
+.compare th, .compare td { text-align: left; padding: 12px 14px; border-bottom: 2px solid var(--filet); vertical-align: top; line-height: 1.35; }
+.compare thead th { font-size: 25px; border-bottom: 4px solid var(--encre); }
+.compare thead th.a { color: var(--vert); }
+.compare thead th.b { color: var(--orange); }
+.compare tbody th { color: var(--gris); font-weight: 650; width: 170px; }
+
+/* fin */
+.fin { flex-direction: row; align-items: center; gap: 110px; background: var(--nuit); color: #f3efe8; }
+.fin .tigre { width: 320px; height: 320px; flex: none; }
+.fin h2 { font-size: 104px; line-height: 1; margin: 0 0 30px; letter-spacing: -.03em; }
+.fin p { font-size: 30px; line-height: 1.5; color: #cfc9be; margin: 0 0 10px; }
+.fin p b { color: #fff; }
+
+/* notes de l'orateur (touche N) et chronomètre */
+.notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 46vh; overflow: auto; background: rgba(28,27,26,.96); color: #f3efe8; font: 17px/1.5 "DM Sans", system-ui, sans-serif;
+  padding: 16px 24px 20px; display: none; z-index: 20; border-top: 3px solid var(--orange-vif); }
+.notes.ouvert { display: block; }
+.notes .tete { display: flex; gap: 24px; align-items: baseline; margin-bottom: 8px; font-weight: 700; }
+.notes .chrono { font-size: 22px; color: var(--orange-vif); }
+.notes .cible { color: #cfc9be; font-weight: 500; }
+.notes .aide { margin-left: auto; color: #9d978d; font-weight: 400; font-size: 14px; }
+.notes p { margin: 0 0 8px; max-width: 1100px; }
+.notes ul { margin: 0; padding-left: 20px; color: #d8d2c7; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+aside.texte-a-dire { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duree: 0s; }
+  .diapo, .e, .e-fondu, .rang, .barre .rempli, .barre em, .grille-passages canvas, .grille-passages svg, .nuage .point, .schema .lien, .tokens span { transition: none !important; }
+  .schema .flux { display: none; }
+}
+@media print {
+  html, body { background: #fff; overflow: visible; height: auto; }
+  .scene { position: static; display: block; }
+  .toile { transform: none !important; page-break-after: always; }
+  .diapo { position: absolute; opacity: 1; visibility: visible; }
+  .notes { display: none !important; }
+  @page { size: 1920px 1080px; margin: 0; }
+}
+</style>
+</head>
+<body>
+<div class="scene">
+<main class="toile" id="toile" aria-roledescription="présentation">
+
+<!-- 1. Couverture -->
+<section class="diapo couverture" data-duree="15" aria-label="Couverture">
+  <img class="tigre pixel" src="@@LOGO_URI@@" alt="Le tigre de l'équipe, en robe d'avocat, lit un livre ouvert" width="384" height="384">
+  <div>
+    <h1>Code du travail, en&nbsp;clair</h1>
+    <p class="sous">Trouver le bon passage dans les fiches du ministère du Travail, puis répondre en le citant.</p>
+    <p class="noms">Mahé BEGNIS, Remy RAYANE, Jibril BENSALEM, Vaneck DAGAR, Maïmouna SIGNATE</p>
+    <p class="cadre">Équipe Data Tigers. Master 2 Data &amp; IA, FGES. Module NLP 2.<br>Soutenance du 30 novembre 2026.</p>
+  </div>
+  <aside class="texte-a-dire" data-plan="Ouverture">
+    <p>Bonjour. Nous sommes l'équipe Data Tigers. Notre projet aide un salarié ou un employeur à trouver la réponse à une question de droit du travail dans les fiches officielles du ministère, de deux façons : un site qui trouve les bons passages, et un assistant local qui rédige une réponse en les citant.</p>
+  </aside>
+</section>
+
+<!-- 2. Problème -->
+<section class="diapo" data-duree="40" data-etapes="2" aria-label="La question de départ">
+  <h2 class="titre">Une question de travail, 261 fiches officielles</h2>
+  <div class="deux">
+    <div class="question-boite">
+      <p>« J'aimerais m'absenter trois mois pour voyager sans être payé : mon employeur est-il obligé d'accepter ? »</p>
+      <small>Une question de notre jeu de test</small>
+    </div>
+    <dl class="exigences e" data-e="1">
+      <div><dt>Répondre depuis les sources</dt><dd>les fiches pratiques du ministère, pas la mémoire d'un modèle</dd></div>
+      <div><dt>Montrer d'où vient la réponse</dt><dd>chaque passage avec sa fiche, sa section et son lien</dd></div>
+      <div><dt>Se taire hors du sujet</dt><dd>retraite, fiscalité, fonction publique : ne pas inventer</dd></div>
+    </dl>
+  </div>
+  <div class="volets e" data-e="2">
+    <div class="volet a"><h3>Volet A, en ligne</h3><p>Un petit modèle que nous maîtrisons, exécuté dans le navigateur du visiteur, trouve les passages qui répondent.</p></div>
+    <div class="volet b"><h3>Volet B, sur un ordinateur</h3><p>Un grand modèle emprunté, que nous adaptons, lit ces passages et rédige une réponse qui les cite.</p></div>
+  </div>
+  <p class="corpus e" data-e="2">261 fiches pratiques de travail-emploi.gouv.fr, découpées en 4&nbsp;240 passages. Instantané du 11 septembre 2026, Licence Ouverte Etalab 2.0.</p>
+  <aside class="texte-a-dire" data-plan="Problématique">
+    <p>Prenez cette question, tirée de notre jeu de test. La réponse existe : elle est dans une fiche du ministère. Le défi est de la retrouver parmi 261 fiches, de montrer d'où elle vient, et de se taire quand la question sort du sujet, plutôt que d'inventer.</p>
+    <p>Le sujet impose deux volets. Le volet A, en ligne, sert un petit modèle que nous maîtrisons entièrement, dans le navigateur. Le volet B, local, emprunte un grand modèle de langage, que nous adaptons pour qu'il rédige des réponses sourcées.</p>
+  </aside>
+</section>
+
+<!-- 3. Chaîne commune -->
+<section class="diapo" data-duree="35" data-etapes="4" aria-label="Une chaîne commune aux deux volets">
+  <h2 class="titre">Une préparation commune aux deux volets</h2>
+  <p class="chapeau">Les fiches sont découpées et encodées une seule fois ; le même index sert au site et à l'assistant.</p>
+  <svg class="schema" viewBox="0 0 1664 460" role="img" aria-label="Fiches, découpage en 4 240 passages, encodage en vecteurs de 384 nombres, index commun, puis volet A dans le navigateur et volet B sur le Mac">
+    <defs><marker id="m3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="pointe" d="M0 0L10 5L0 10z"/></marker></defs>
+    <g>
+      <rect class="boite" x="0" y="150" width="260" height="150" rx="10"/>
+      <text class="t1" x="24" y="200">261 fiches</text>
+      <text class="t2" x="24" y="236">du ministère,</text>
+      <text class="t2" x="24" y="266">en sections</text>
+    </g>
+    <g class="e" data-e="1">
+      <path class="lien" d="M262 225 H318" marker-end="url(#m3)"/>
+      <rect class="boite" x="322" y="150" width="300" height="150" rx="10"/>
+      <text class="t1" x="346" y="200">4 240 passages</text>
+      <text class="t2" x="346" y="236">512 tokens au plus,</text>
+      <text class="t2" x="346" y="266">avec leur en-tête</text>
+    </g>
+    <g class="e" data-e="2">
+      <path class="lien" d="M624 225 H680" marker-end="url(#m3)"/>
+      <rect class="boite vert" x="684" y="150" width="310" height="150" rx="10"/>
+      <text class="t1" x="708" y="200">Encodage E5</text>
+      <text class="t2" x="708" y="236">un vecteur de 384</text>
+      <text class="t2" x="708" y="266">nombres par passage</text>
+    </g>
+    <g class="e" data-e="3">
+      <path class="lien" d="M996 225 H1052" marker-end="url(#m3)"/>
+      <rect class="boite" x="1056" y="150" width="230" height="150" rx="10"/>
+      <text class="t1" x="1080" y="200">Index</text>
+      <text class="t2" x="1080" y="236">contrôlé par</text>
+      <text class="t2" x="1080" y="266">empreinte</text>
+    </g>
+    <g class="e" data-e="4">
+      <path class="lien vert" d="M1288 205 C1330 205 1320 70 1356 70" marker-end="url(#m3)"/>
+      <path class="lien" d="M1288 245 C1330 245 1320 380 1356 380" marker-end="url(#m3)"/>
+      <rect class="boite vert" x="1360" y="10" width="304" height="130" rx="10"/>
+      <text class="t1" x="1384" y="60" fill="#0f4535">Volet A</text>
+      <text class="t2" x="1384" y="96">le site, dans</text>
+      <text class="t2" x="1384" y="124">le navigateur</text>
+      <rect class="boite orange" x="1360" y="320" width="304" height="130" rx="10"/>
+      <text class="t1" x="1384" y="370">Volet B</text>
+      <text class="t2" x="1384" y="406">l'assistant,</text>
+      <text class="t2" x="1384" y="434">sur le Mac</text>
+      <circle class="flux" r="8"><animateMotion dur="2.6s" repeatCount="indefinite" path="M1288 205 C1330 205 1320 70 1356 70"/></circle>
+      <circle class="flux" r="8"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite" path="M1288 245 C1330 245 1320 380 1356 380"/></circle>
+    </g>
+  </svg>
+  <p class="legende e" data-e="4"><b>Un choix de conception :</b> la recherche du volet A est la première moitié du volet B. Le découpage, l'encodage et l'index sont écrits une fois, testés une fois, et partagés.</p>
+  <aside class="texte-a-dire" data-plan="Architecture commune">
+    <p>Les deux volets partagent leur préparation. Nous découpons les 261 fiches selon leurs sections, en 4 240 passages d'au plus 512 tokens, chacun précédé de son en-tête : fiche, section, intertitres. Chaque passage est encodé une fois en un vecteur de 384 nombres, et l'index est contrôlé par empreinte. Le site du volet A cherche dans cet index ; l'assistant du volet B part de la même recherche, puis génère.</p>
+  </aside>
+</section>
+
+<!-- 4. Volet A -->
+<section class="diapo" data-duree="45" data-etapes="4" aria-label="Volet A, la recherche dans le navigateur">
+  <h2 class="titre">Volet A : tout se calcule dans le navigateur</h2>
+  <div class="volet-a">
+    <div class="nav">
+      <div class="barre"><i></i><i></i><i></i><span>datatigersnlp.github.io/data_tigers_nlp</span></div>
+      <div class="dedans">
+        <div class="q" id="qa"></div>
+        <div class="e" data-e="1">
+          <p class="etiquette">1. La question découpée en pièces par le tokeniseur</p>
+          <div class="tokens" id="tokens"></div>
+        </div>
+        <div class="e" data-e="2">
+          <p class="etiquette">2. Son vecteur de 384 nombres, calculé par l'encodeur ajusté (un pixel par nombre)</p>
+          <div class="ligne-vecteur"><svg id="vecteur" width="768" height="96" class="pixel" aria-label="Vecteur réel de la question"></svg></div>
+        </div>
+        <div class="e" data-e="3">
+          <p class="etiquette">3. Comparé aux 4 240 passages (un pixel par passage, foncé si proche)</p>
+          <div class="ligne-grille">
+            <div class="grille-passages"><canvas id="grille" width="106" height="40" class="pixel"></canvas><svg id="grille-top" width="848" height="320"></svg></div>
+            <div class="echelle"><div class="rampe"></div>proche<br>de la<br>question</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="faits">
+      <div class="fait"><div class="gros">0&nbsp;serveur</div><p>la question ne quitte pas l'appareil : aucune requête après le chargement</p></div>
+      <div class="fait"><div class="gros">65,7&nbsp;Mio</div><p>le modèle, compressé en entiers sur 8 bits, sans le vocabulaire des alphabets non latins</p></div>
+      <div class="fait"><div class="gros">21&nbsp;ms</div><p>par recherche, en médiane</p></div>
+      <div class="resultats e" data-e="4">
+        <h4>4. Les 10 passages les plus proches, regroupés par fiche</h4>
+        <ol id="top-a"></ol>
+      </div>
+    </div>
+  </div>
+  <aside class="texte-a-dire" data-plan="Volet A">
+    <p>Voici le volet A, réellement calculé pour une question du site. Le navigateur découpe la question en pièces, puis notre encodeur la transforme en 384 nombres : un pixel par nombre. Il compare ce vecteur aux 4 240 passages, un pixel par passage, plus foncé quand il est proche. Les dix plus proches sont affichés, regroupés par fiche ; ici, tous viennent de la fiche sur les congés payés.</p>
+    <p>Tout se passe dans le navigateur : aucun serveur, aucune requête après le chargement. Pour y tenir, le modèle est quantifié sur 8 bits et allégé du vocabulaire des alphabets non latins : 65,7 mébioctets, sans changer un seul résultat. Une recherche prend 21 millisecondes.</p>
+    <ul><li>Les 21 ms ont été mesurées le 19/10 sur le site, avec l'encodeur de base, de même architecture et de même taille.</li><li>Les scores vont de 0,525 à 0,859 pour cette question ; sous 0,7683, le site refuse de répondre.</li></ul>
+  </aside>
+</section>
+
+<!-- 5. Ajuster l'encodeur -->
+<section class="diapo" data-duree="45" data-etapes="3" aria-label="Choix : ajuster l'encodeur">
+  <h2 class="titre">Ajuster l'encodeur à nos fiches</h2>
+  <div class="ajust">
+    <svg class="nuage" id="nuage" viewBox="0 0 820 640" role="img" aria-label="Schéma de l'apprentissage contrastif : la question se rapproche de son passage et s'éloigne des autres"></svg>
+    <div>
+      <ul class="liste-faits e" data-e="1">
+        <li><b>109 paires</b> question et passage : Qwen écrit une question pour un passage tiré de nos fiches.</li>
+        <li><b>Apprentissage contrastif</b> : chaque question est rapprochée de son passage et éloignée des autres passages du lot.</li>
+        <li>Les 61 fiches du test sont exclues ; 2 époques, 185,5&nbsp;s sur processeur.</li>
+      </ul>
+      <div class="e" data-e="3">
+        <div class="resultat-ligne"><span class="avant">43,8&nbsp;%</span><svg class="fleche" viewBox="0 0 64 30"><path d="M0 15H54M44 4L58 15L44 26" fill="none" stroke="#1c1b1a" stroke-width="4"/></svg><span class="apres">63,0&nbsp;%</span></div>
+        <p class="precisions">des questions de test trouvent un bon passage dans les 5 premiers : <b>+19,2 points</b>, intervalle à 95&nbsp;% de +9,7 à +30,4. Avec 10 passages regroupés par fiche, une fiche pertinente est affichée pour <b>93,2&nbsp;%</b> des questions.</p>
+      </div>
+    </div>
+  </div>
+  <p class="note-bas e" data-e="3">Servi sur le site depuis le 15 novembre, selon une règle écrite avant la mesure. Une version nourrie de 2&nbsp;289 paires ne fait pas mieux sur les questions écrites par des humains.</p>
+  <aside class="texte-a-dire" data-plan="Choix : ajuster l'encodeur">
+    <p>Premier choix technique : adapter l'encodeur à notre corpus. Il ne connaît pas nos fiches, et ses vecteurs se ressemblent tous. Nous avons fait écrire par Qwen une question pour 109 passages, hors des fiches du test. L'apprentissage contrastif rapproche chaque question de son passage et l'éloigne des autres passages du lot.</p>
+    <p>Résultat sur les questions de test : le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 %, soit 19 points de plus, un gain démontré. Avec dix passages regroupés par fiche, une fiche pertinente est affichée pour 93 % des questions. Une version entraînée sur vingt fois plus de questions synthétiques n'a pas fait mieux sur les questions humaines : nous gardons la première.</p>
+    <ul><li>Perte : MultipleNegativesRankingLoss, lot de 16, taux 2e-5.</li><li>Sur le CDTN, jeu externe : 67,4 % puis 72,3 %.</li><li>Le nuage de points est un schéma, pas une projection réelle.</li></ul>
+  </aside>
+</section>
+
+<!-- 6. Volet B -->
+<section class="diapo" data-duree="40" data-etapes="4" aria-label="Volet B, l'assistant local">
+  <h2 class="titre">Volet B : un assistant qui cite ses sources</h2>
+  <p class="chapeau">Tout s'exécute sur un Mac de l'équipe, avec Ollama : aucune API distante.</p>
+  <svg class="schema" viewBox="0 0 1664 560" role="img" aria-label="Question, recherche hybride, reclasseur, dix passages, Qwen adapté, réponse citée vérifiée ou abstention">
+    <defs><marker id="m6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="pointe" d="M0 0L10 5L0 10z"/></marker></defs>
+    <g>
+      <rect class="boite" x="0" y="40" width="250" height="130" rx="10"/>
+      <text class="t1" x="24" y="94">Question</text>
+      <text class="t2" x="24" y="130">mot pour mot</text>
+    </g>
+    <g class="e" data-e="1">
+      <path class="lien" d="M252 105 H318" marker-end="url(#m6)"/>
+      <rect class="boite vert" x="322" y="22" width="340" height="166" rx="10"/>
+      <text class="t1" x="346" y="74">Recherche hybride</text>
+      <text class="t2" x="346" y="110">sens (E5) et mots (BM25),</text>
+      <text class="t2" x="346" y="140">rangs fusionnés</text>
+      <path class="lien" d="M664 105 H730" marker-end="url(#m6)"/>
+      <rect class="boite orange" x="734" y="22" width="330" height="166" rx="10"/>
+      <text class="t1" x="758" y="74">Reclasseur</text>
+      <text class="t2" x="758" y="110">relit les 20 premiers</text>
+      <text class="t2" x="758" y="140">avec la question</text>
+      <path class="lien" d="M1066 105 H1132" marker-end="url(#m6)"/>
+      <rect class="boite" x="1136" y="22" width="528" height="166" rx="10"/>
+      <text class="t1" x="1160" y="74">10 passages, de P1 à P10</text>
+      <text class="t2" x="1160" y="110">dans un prompt de 7 616 tokens</text>
+      <text class="t2" x="1160" y="140">au plus, avec la consigne</text>
+    </g>
+    <g class="e" data-e="2">
+      <path class="lien" d="M1400 190 V250 H860 V300" marker-end="url(#m6)"/>
+      <rect class="boite plein" x="560" y="304" width="600" height="150" rx="10"/>
+      <image href="@@LOGO_URI@@" x="586" y="331" width="96" height="96" class="pixel"/>
+      <text class="t1b" x="708" y="364">Qwen2.5-7B, adapté par nous</text>
+      <text class="t2b" x="708" y="400">quantifié en 4 bits : 4,36 Gio</text>
+      <text class="t2b" x="708" y="430">servi par Ollama, sur le Mac</text>
+    </g>
+    <g class="e" data-e="3">
+      <path class="lien" d="M1162 360 H1238" marker-end="url(#m6)"/>
+      <rect class="boite vert" x="1242" y="300" width="422" height="116" rx="10"/>
+      <text class="t1" x="1266" y="348">Réponse citée</text>
+      <text class="t2" x="1266" y="384">chaque phrase suivie de [Pk]</text>
+      <path class="lien" d="M1453 418 V470" marker-end="url(#m6)"/>
+      <rect class="boite" x="1242" y="474" width="422" height="80" rx="10"/>
+      <text class="t2" x="1266" y="522">chaque [Pk] vérifié dans le contexte</text>
+    </g>
+    <g class="e" data-e="4">
+      <path class="lien" d="M558 380 H330" marker-end="url(#m6)"/>
+      <rect class="boite bleu" x="0" y="318" width="326" height="124" rx="10"/>
+      <text class="t1" x="24" y="366">Ou abstention</text>
+      <text class="t2" x="24" y="402">si les passages ne</text>
+      <text class="t2" x="24" y="430">répondent pas</text>
+    </g>
+  </svg>
+  <aside class="texte-a-dire" data-plan="Volet B">
+    <p>Le volet B part de la même question. Une recherche hybride, par le sens et par les mots, propose des passages ; un reclasseur relit les vingt premiers avec la question ; les dix meilleurs, numérotés de P1 à P10, forment le contexte avec une consigne. Qwen, adapté par nous et servi par Ollama sur un Mac, rédige une réponse qui cite ses passages ; chaque citation est vérifiée. Si les passages ne répondent pas, il doit s'abstenir.</p>
+    <ul><li>La consigne interdit de compléter avec des connaissances générales.</li><li>Pas de seuil d'abstention dans la démonstration : le modèle décide seul.</li></ul>
+  </aside>
+</section>
+
+<!-- 7. Recherche hybride -->
+<section class="diapo" data-duree="60" data-etapes="4" aria-label="Choix : chercher par le sens et par les mots">
+  <h2 class="titre">Chercher par le sens et par les mots</h2>
+  <p class="hybride-q" id="qh"></p>
+  <div class="colonnes">
+    <div class="col dense e" data-e="1"><h3>Sens (E5)</h3><p class="sous">vecteurs proches</p><div class="rangs" id="col-dense"></div></div>
+    <div class="col lex e" data-e="2"><h3>Mots (BM25)</h3><p class="sous">termes en commun</p><div class="rangs" id="col-lex"></div></div>
+    <div class="col fusion e" data-e="3"><h3>Fusion des rangs</h3><p class="sous" id="formule"></p><div class="rangs" id="col-fusion"></div></div>
+    <div class="col rerank e" data-e="4"><h3>Reclasseur</h3><p class="sous">lit question et passage</p><div class="rangs" id="col-rerank"></div></div>
+  </div>
+  <div class="bandeau-res e" data-e="4">
+    <div><div class="chiffres"><small>45,2&nbsp;%</small><svg class="mini-fleche" viewBox="0 0 40 20" aria-label="puis"><path d="M0 10H32M24 3L34 10L24 17" fill="none" stroke="#5e5a55" stroke-width="3"/></svg>72,6&nbsp;%</div><p>lot de test : un passage pertinent dans le contexte</p></div>
+    <div><div class="chiffres"><small>57,0&nbsp;%</small><svg class="mini-fleche" viewBox="0 0 40 20" aria-label="puis"><path d="M0 10H32M24 3L34 10L24 17" fill="none" stroke="#5e5a55" stroke-width="3"/></svg>86,0&nbsp;%</div><p>jeu v2, 121 questions : +28,9 points</p></div>
+    <div><div class="chiffres"><small>70,9&nbsp;%</small><svg class="mini-fleche" viewBox="0 0 40 20" aria-label="puis"><path d="M0 10H32M24 3L34 10L24 17" fill="none" stroke="#5e5a55" stroke-width="3"/></svg>85,1&nbsp;%</div><p>CDTN, jeu externe : +14,2 points</p></div>
+  </div>
+  <aside class="texte-a-dire" data-plan="Choix : recherche hybride">
+    <p>Deuxième choix : ne pas chercher seulement par le sens. Sur cette question réelle, la recherche par le sens classe le bon passage, la fiche sur le congé sans solde, 59e : ses scores sont tous très proches. BM25, qui cherche les mots en commun, le place 2e. La fusion des rangs additionne les inverses des rangs, sans aucun réglage : il remonte au 6e rang. Le reclasseur lit la question et chaque passage ensemble : il le place en tête, avec un score de 0,66 contre 0,09 pour le suivant.</p>
+    <p>Sur l'ensemble, la part des questions dont le contexte contient un passage pertinent passe de 45 à 73 % sur nos questions de test, et de 57 à 86 % sur le jeu v2.</p>
+    <ul><li>Fusion RRF : k = 60, la valeur de l'article de Cormack et al. (2009), jamais réglée.</li><li>Nos mots vides gardent les négations (ne, pas, sans) : elles comptent en droit.</li><li>Les trois écarts sont démontrés (McNemar exact, p &lt; 0,001 sur le jeu v2 et le lot de test).</li></ul>
+  </aside>
+</section>
+
+<!-- 8. Dix passages -->
+<section class="diapo" data-duree="35" data-etapes="2" aria-label="Pourquoi 10 passages plutôt que 5">
+  <h2 class="titre">Pourquoi 10 passages plutôt que 5</h2>
+  <p class="chapeau">Un passage pertinent dans le contexte, avec 5 puis 10 passages, sur les 121 questions du jeu v2.</p>
+  <div class="k10">
+    <div class="barres e-fondu" data-e="1" id="barres"></div>
+    <div class="e" data-e="2">
+      <ul class="liste-faits">
+        <li><b>Aucune question perdue</b> : les 10 premiers contiennent les 5 premiers. Le gain va de 4 à 14 points selon le jeu et la méthode.</li>
+        <li><b>Le coût</b> : 3&nbsp;953 tokens lus par le modèle au lieu de 2&nbsp;179, et un contexte moins précis, 23,4&nbsp;% de passages pertinents au lieu de 31,4&nbsp;%.</li>
+        <li><b>Pas 15</b> : jusqu'à 6&nbsp;889 tokens, près du plafond de 7&nbsp;616.</li>
+        <li><b>Fixé avant de mesurer</b>, le 9 novembre, pour le budget du prompt et l'écart à l'entraînement.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="texte-a-dire" data-plan="Choix : 10 passages">
+    <p>Nous avons étendu le contexte de cinq à dix passages : plus de passages pertinents y entrent. À méthode égale, aucune question n'est perdue, puisque les dix premiers contiennent les cinq premiers, et le gain va de 4 à 14 points. Le prix : le modèle lit deux fois plus de tokens et doit écarter plus de passages hors sujet. Quinze passages approcheraient le plafond du prompt. Le nombre a été fixé avant la mesure, pour ne pas choisir sur les résultats.</p>
+    <ul><li>Coût et précision mesurés sur le CDTN, pour la chaîne retenue.</li><li>Sur le lot de test : E5 seul 45,2 puis 58,9 % ; chaîne retenue 68,5 puis 72,6 %.</li></ul>
+  </aside>
+</section>
+
+<!-- 9. Modèles -->
+<section class="diapo" data-duree="45" data-etapes="3" aria-label="Choix : trois modèles">
+  <h2 class="titre">Trois modèles, choisis pour la machine qui les exécute</h2>
+  <div class="modeles">
+    <div class="modele m-a e" data-e="1">
+      <p class="ou">dans le navigateur</p>
+      <h3>multilingual-e5-small</h3>
+      <dl>
+        <dt>Taille</dt><dd>118 millions de paramètres, vecteurs de 384 nombres</dd>
+        <dt>Pourquoi lui</dt><dd>multilingue et assez petit pour un navigateur ; ajusté sur nos fiches</dd>
+        <dt>Allégé</dt><dd>81,6&nbsp;% des poids sont la table des mots : sans les alphabets non latins, 112,8 puis 65,7&nbsp;Mio, résultats identiques sur 822 requêtes</dd>
+      </dl>
+    </div>
+    <div class="modele m-r e" data-e="2">
+      <p class="ou">sur le Mac</p>
+      <h3>bge-reranker-v2-m3</h3>
+      <dl>
+        <dt>Rôle</dt><dd>lit la question et un passage ensemble, et note leur accord</dd>
+        <dt>Pourquoi lui</dt><dd>le seul utile des trois reclasseurs testés : +7,7 points à 5 passages</dd>
+        <dt>Coût</dt><dd>environ 2&nbsp;s par question sur le processeur</dd>
+      </dl>
+    </div>
+    <div class="modele m-q e" data-e="3">
+      <p class="ou">sur le Mac, servi par Ollama</p>
+      <h3>Qwen2.5-7B-Instruct</h3>
+      <dl>
+        <dt>Pourquoi lui</dt><dd>poids ouverts sous licence Apache 2.0, bon en français ; en 4 bits, 4,36&nbsp;Gio tiennent dans les 24&nbsp;Gio du Mac</dd>
+        <dt>Adaptation</dt><dd>LoRA : 11,5 millions de paramètres appris, 0,15&nbsp;% du modèle</dd>
+        <dt>Service</dt><dd>Ollama refuse les LoRA : fusion dans les poids, puis compression ; un témoin passe par la même chaîne</dd>
+      </dl>
+    </div>
+  </div>
+  <aside class="texte-a-dire" data-plan="Choix : les modèles">
+    <p>Chaque modèle est choisi pour la machine qui l'exécute. Dans le navigateur, E5-small : multilingue, 118 millions de paramètres ; l'essentiel de son poids est son vocabulaire, dont nous retirons les alphabets non latins sans changer un résultat. Sur le Mac, le reclasseur bge-m3, le seul des trois testés qui apporte un gain. Et Qwen2.5-7B : poids ouverts, bon en français, et quatre gigas en 4 bits. Nous l'adaptons par LoRA, en n'apprenant que 0,15 % de ses paramètres. Ollama refusant les LoRA, nous fusionnons le correctif dans les poids avant de compresser, et un témoin passe par la même chaîne pour isoler l'effet de l'adaptation.</p>
+    <ul><li>Génération mesurée : 46,9 tokens par seconde en médiane sur le Mac.</li><li>Le témoin T : modèle d'origine, même fusion et même compression, sans correctif.</li></ul>
+  </aside>
+</section>
+
+<!-- 10. Données synthétiques -->
+<section class="diapo" data-duree="50" data-etapes="3" aria-label="Choix : des données synthétiques contrôlées">
+  <h2 class="titre">Des questions écrites par des modèles, toujours contrôlées</h2>
+  <div class="usages">
+    <div class="usage u-a e" data-e="1">
+      <p class="qui">pour entraîner l'encodeur</p>
+      <h3>Une question par passage</h3>
+      <p>Qwen écrit la question qu'un salarié poserait ; des filtres écartent les questions mal formées et celles trop proches de nos questions de test.</p>
+      <div class="issue"><strong>+19,2 points</strong><p>de bons passages dans les 5 premiers</p></div>
+    </div>
+    <div class="usage u-b e" data-e="2">
+      <p class="qui">pour adapter Qwen</p>
+      <h3>Répondre en recopiant, ou s'abstenir</h3>
+      <p>218 exemples dans les conditions réelles : la réponse recopie le passage et le cite. Relus par deux membres : un premier lot refusé (8 faux sur 30), le second accepté (3 sur 30).</p>
+      <div class="issue"><strong>13,9 puis 25,0&nbsp;%</strong><p>de réponses citant un passage pertinent : +11,1 points, démontré ; pas plus exactes</p></div>
+    </div>
+    <div class="usage u-c e" data-e="3">
+      <p class="qui">pour évaluer</p>
+      <h3>Un jeu de test neuf</h3>
+      <p>161 questions écrites par Claude et vérifiées par un second modèle, sur autorisation de l'enseignant ; notre jeu humain reste le contrôle.</p>
+      <div class="issue"><strong>121 + 40</strong><p>questions du corpus et hors corpus</p></div>
+    </div>
+  </div>
+  <p class="note-bas">Les 61 fiches du test ne servent jamais à l'entraînement : un script le vérifie.</p>
+  <aside class="texte-a-dire" data-plan="Choix : données synthétiques">
+    <p>Nous manquions de données annotées : nous en avons fait produire par des modèles, sans jamais les croire sur parole. Pour l'encodeur, Qwen écrit une question par passage. Pour adapter Qwen, 218 exemples reproduisent l'usage réel : la réponse recopie le passage et le cite, ou s'abstient. Deux membres les relisent : le premier lot a été refusé, car le modèle faisait dire aux passages ce qu'ils ne disent pas. L'adaptation fait passer les réponses citant un passage pertinent de 14 à 25 %, un gain démontré ; jugées à l'aveugle, elles sont mieux appuyées, mais pas plus exactes. Enfin, pour évaluer sur un jeu neuf, Claude a écrit 161 questions, contrôlées par un second modèle, avec l'autorisation de l'enseignant.</p>
+    <ul><li>Abstention correcte hors corpus : 83,3 % avant et après adaptation.</li><li>Intervalle à 97,5 % de l'écart : de +2,1 à +23,8 points ; 8 questions gagnées, aucune perdue.</li></ul>
+  </aside>
+</section>
+
+<!-- 11. Bilan -->
+<section class="diapo" data-duree="40" data-etapes="2" aria-label="Bilan">
+  <h2 class="titre">Des règles écrites avant de mesurer</h2>
+  <div class="bilan">
+    <ul class="regles e" data-e="1">
+      <li><b>Base servie jusqu'au 15 novembre</b><span>l'encodeur ajusté n'était pas mesuré à temps : la règle de repli s'est appliquée</span></li>
+      <li><b>Nouvelle consigne du volet B écartée</b><span>plus de bonnes réponses, mais une abstention correcte de moins que la tolérance</span></li>
+      <li><b>Encodeur ajusté non retenu dans le volet B</b><span>84,3&nbsp;% contre 86,0&nbsp;% : après fusion et reclasseur, il n'apporte rien</span></li>
+    </ul>
+    <table class="compare e" data-e="2">
+      <thead><tr><th></th><th class="a">Volet A, recherche</th><th class="b">Volet B, assistant</th></tr></thead>
+      <tbody>
+        <tr><th>Coût</th><td>aucun serveur</td><td>une machine dédiée</td></tr>
+        <tr><th>Latence</th><td>21 ms</td><td>environ 5 s, à 5 passages</td></tr>
+        <tr><th>Qualité</th><td>fiche pertinente affichée : 93,2&nbsp;%</td><td>réponse citant un passage pertinent : 25,0&nbsp;%</td></tr>
+        <tr><th>Contrôle</th><td>tout vérifiable par empreinte</td><td>comportement appris de données inconnues</td></tr>
+        <tr><th>Dépendance</th><td>aucune à l'exécution</td><td>Ollama et poids ouverts de Qwen</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="texte-a-dire" data-plan="Bilan">
+    <p>Notre méthode tient en une phrase : écrire la règle avant de mesurer. Elle nous a fait renoncer à des choix que nous aimions : la base est restée servie un mois, une nouvelle consigne plus performante a été écartée, et notre encodeur ajusté n'apporte rien au volet B. Les deux volets répondent au même besoin avec des compromis opposés : le site ne coûte rien, répond en vingt millisecondes et tout y est vérifiable ; l'assistant rédige une réponse, mais demande une machine et quelques secondes, et son comportement vient de données que nous ne connaissons pas.</p>
+    <ul><li>Latence du volet B : 4,8 s en médiane, chaîne à 5 passages, mesurée le 17/11 sur le jeu v2.</li><li>Les deux chiffres de qualité ne mesurent pas la même chose.</li></ul>
+  </aside>
+</section>
+
+<!-- 12. Fin -->
+<section class="diapo fin" data-duree="10" aria-label="Merci">
+  <img class="tigre pixel" src="@@LOGO_URI@@" alt="" width="320" height="320">
+  <div>
+    <h2>Merci.<br>Vos questions&nbsp;?</h2>
+    <p><b>Site du volet A</b> : datatigersnlp.github.io/data_tigers_nlp</p>
+    <p><b>Dépôt</b> : github.com/datatigersNLP/data_tigers_nlp</p>
+  </div>
+  <aside class="texte-a-dire" data-plan="Questions">
+    <p>Merci. Nous pouvons montrer le site et l'assistant en direct pendant les questions.</p>
+  </aside>
+</section>
+
+<footer class="pied" aria-hidden="true"><img class="pixel" src="@@LOGO_URI@@" alt=""><span class="equipe">Data Tigers</span><div class="fil" id="fil"></div><span class="num" id="num"></span></footer>
+</main>
+</div>
+<div class="notes" id="notes" role="region" aria-label="Notes de l'orateur"></div>
+<p class="sr" id="annonce" aria-live="polite"></p>
+
+<script>
+const DONNEES = /*@@DONNEES@@*/null;
+(function () {
+  const toile = document.getElementById("toile");
+  const diapos = [...toile.querySelectorAll(".diapo")];
+  const fil = document.getElementById("fil");
+  const num = document.getElementById("num");
+  const notes = document.getElementById("notes");
+  const annonce = document.getElementById("annonce");
+  const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const total = diapos.reduce((s, d) => s + Number(d.dataset.duree || 0), 0);
+  let i = 0, etape = 0, debut = null;
+
+  // mise à l'échelle de la toile de 1920 x 1080 dans la fenêtre
+  function ajuster() {
+    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    toile.style.transform = `scale(${k})`;
+  }
+  addEventListener("resize", ajuster);
+  ajuster();
+
+  // fil de progression : un segment par diapositive, de longueur proportionnelle à sa durée prévue
+  diapos.forEach((d) => { const s = document.createElement("span"); s.style.flex = d.dataset.duree; fil.append(s); });
+
+  function afficher() {
+    diapos.forEach((d, k) => {
+      d.classList.toggle("active", k === i);
+      d.inert = k !== i;
+      d.setAttribute("aria-hidden", k === i ? "false" : "true");
+    });
+    const d = diapos[i];
+    d.querySelectorAll("[data-e]").forEach((el) => el.classList.toggle("vu", Number(el.dataset.e) <= etape));
+    toile.classList.toggle("sombre", d.classList.contains("fin"));
+    [...fil.children].forEach((s, k) => { s.className = k < i ? "fait" : k === i ? "ici" : ""; });
+    num.textContent = `${i + 1} / ${diapos.length}`;
+    annonce.textContent = `Diapositive ${i + 1} sur ${diapos.length} : ${d.getAttribute("aria-label")}`;
+    crochets.forEach((f) => f(i, etape));
+    ecrireNotes();
+    // ouverte en fichier local (file://), l'adresse ne peut pas être réécrite : l'étape n'y est simplement pas gardée
+    try { history.replaceState(null, "", `#${i + 1}.${etape}`); } catch { /* origine opaque */ }
+  }
+  const crochets = [];   // animations pilotées par l'étape, ajoutées plus bas
+  const nbEtapes = (d) => Number(d.dataset.etapes || 0);
+  function suivant() {
+    if (debut === null) debut = Date.now();
+    if (etape < nbEtapes(diapos[i])) etape++;
+    else if (i < diapos.length - 1) { i++; etape = 0; }
+    afficher();
+  }
+  function precedent() {
+    if (etape > 0) etape--;
+    else if (i > 0) { i--; etape = nbEtapes(diapos[i]); }
+    afficher();
+  }
+  function aller(n, e) { i = Math.max(0, Math.min(diapos.length - 1, n)); etape = Math.max(0, Math.min(nbEtapes(diapos[i]), e)); afficher(); }
+
+  // notes de l'orateur et chronomètre (N), plein écran (F), début et fin (Origine, Fin)
+  function ecrireNotes() {
+    if (!notes.classList.contains("ouvert")) return;
+    const d = diapos[i];
+    const a = d.querySelector("aside.texte-a-dire");
+    const ecoule = debut ? Math.round((Date.now() - debut) / 1000) : 0;
+    const prevu = diapos.slice(0, i + 1).reduce((s, x) => s + Number(x.dataset.duree || 0), 0);
+    const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    notes.innerHTML = `<div class="tete"><span>${i + 1}. ${a?.dataset.plan || ""}</span><span class="chrono">${mmss(ecoule)}</span>` +
+      `<span class="cible">${d.dataset.duree} s pour cette diapositive ; ${mmss(prevu)} à la fin de celle-ci, sur ${mmss(total)}</span>` +
+      `<span class="aide">flèches ou espace : avancer ; N : notes ; F : plein écran ; R : remettre le chronomètre à zéro</span></div>` + (a ? a.innerHTML : "");
+  }
+  setInterval(ecrireNotes, 1000);
+  addEventListener("keydown", (ev) => {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+    const k = ev.key;
+    if (["ArrowRight", "ArrowDown", "PageDown", " ", "Enter"].includes(k)) { ev.preventDefault(); suivant(); }
+    else if (["ArrowLeft", "ArrowUp", "PageUp", "Backspace"].includes(k)) { ev.preventDefault(); precedent(); }
+    else if (k === "Home") aller(0, 0);
+    else if (k === "End") aller(diapos.length - 1, 0);
+    else if (k === "n" || k === "N") { notes.classList.toggle("ouvert"); ecrireNotes(); }
+    else if (k === "f" || k === "F") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+    else if (k === "r" || k === "R") { debut = Date.now(); ecrireNotes(); }
+  });
+  toile.addEventListener("click", (ev) => { if (ev.target.closest("a, button")) return; ev.clientX > innerWidth / 3 ? suivant() : precedent(); });
+
+  // contenus calculés à partir des données réelles (donnees.json)
+  const D = DONNEES;
+  // volet A : question, tokens, vecteur, grille des 4 240 passages, 10 premiers
+  document.getElementById("qa").textContent = D.site.question;
+  const tk = document.getElementById("tokens");
+  D.site.tokens.forEach((t, k) => { const s = document.createElement("span"); s.textContent = t.replace("▁", "·"); s.style.transitionDelay = `${k * 45}ms`; tk.append(s); });
+  const couleur = (x) => { // de -0,15 à +0,15 : bleu, papier, orange
+    const t = Math.max(-1, Math.min(1, x / 0.15));
+    const c = t < 0 ? [47, 93, 138] : [199, 98, 28], p = [239, 233, 223], a = Math.abs(t);
+    return `rgb(${c.map((v, j) => Math.round(p[j] + (v - p[j]) * a)).join(",")})`;
+  };
+  const vs = document.getElementById("vecteur");
+  vs.innerHTML = D.site.vecteur.map((x, k) => `<rect x="${(k % 48) * 16}" y="${Math.floor(k / 48) * 12}" width="16" height="12" fill="${couleur(x)}"/>`).join("");
+  const cv = document.getElementById("grille"), cx = cv.getContext("2d");
+  const smin = 0.525, smax = 0.859;
+  D.site.scores.forEach((s, k) => {
+    const t = Math.max(0, Math.min(1, (s - smin) / (smax - smin)));
+    const r = [[239, 233, 223], [216, 201, 178], [230, 163, 95], [199, 98, 28]];
+    const u = t * 3, j = Math.min(2, Math.floor(u)), f = u - j;
+    const c = r[j].map((v, m) => Math.round(v + (r[j + 1][m] - v) * f));
+    cx.fillStyle = `rgb(${c.join(",")})`; cx.fillRect(k % 106, Math.floor(k / 106), 1, 1);
+  });
+  document.getElementById("grille-top").innerHTML = D.site.top10_indices.map((k) =>
+    `<rect x="${(k % 106) * 8 - 3}" y="${Math.floor(k / 106) * 8 - 3}" width="14" height="14" fill="none" stroke="#1c1b1a" stroke-width="3"/>`).join("");
+  const groupes = [];
+  D.site.top10.forEach((p) => { const g = groupes.find((x) => x.fiche === p.fiche); g ? g.n++ : groupes.push({ fiche: p.fiche, n: 1, score: p.score }); });
+  document.getElementById("top-a").innerHTML = groupes.map((g) =>
+    `<li><b>${g.fiche}</b> : ${g.n} passage${g.n > 1 ? "s" : ""}, meilleur score ${g.score.toLocaleString("fr-FR", { minimumFractionDigits: 3 })}</li>`).join("");
+
+  // nuage de l'apprentissage contrastif (schéma) : la question rejoint son passage, les autres s'écartent
+  const nuage = document.getElementById("nuage");
+  const autres = [[120, 120], [250, 520], [660, 110], [700, 470], [420, 90], [140, 330], [560, 560], [330, 330]];
+  const pousse = [[90, 90], [230, 560], [700, 80], [740, 500], [420, 55], [95, 330], [580, 600], [250, 300]];
+  nuage.innerHTML = `
+    <text x="28" y="48" font-size="22" fill="#5e5a55">schéma de l'espace des vecteurs</text>
+    ${autres.map(([x, y], k) => `<g class="point" data-avant="${x},${y}" data-apres="${pousse[k]}"><rect x="-11" y="-11" width="22" height="22" fill="#cfc9be"/></g>`).join("")}
+    <g class="point" id="pt-p" data-avant="520,300" data-apres="470,320"><rect x="-16" y="-16" width="32" height="32" fill="#17604a"/><text x="24" y="8" font-size="24" fill="#0f4535" font-weight="700">son passage</text></g>
+    <g class="point" id="pt-q" data-avant="210,470" data-apres="420,340"><rect x="-16" y="-16" width="32" height="32" fill="#f39a33" stroke="#1c1b1a" stroke-width="3"/><text x="-60" y="52" font-size="24" fill="#8a3f0c" font-weight="700">question</text></g>`;
+  function nuageEtat(apres) {
+    nuage.querySelectorAll(".point").forEach((g) => { const [x, y] = (apres ? g.dataset.apres : g.dataset.avant).split(",").map(Number); g.style.transform = `translate(${x}px, ${y}px)`; });
+  }
+  nuageEtat(false);
+  const d5 = diapos.indexOf(nuage.closest(".diapo"));
+  crochets.push((n, e) => nuageEtat(n === d5 && e >= 2));
+
+  // recherche hybride : quatre colonnes de rangs réels
+  const H = D.hybride;
+  document.getElementById("qh").textContent = `« ${H.question} »`;
+  const court = (p) => `${p.fiche} : ${p.section === "Chapô" ? "introduction" : p.section}`;
+  const ligne = (rang, p, extra = "") => `<div class="rang${p.pertinent ? " cible" : ""}" ${extra}><b>${rang}</b><span>${court(p)}</span></div>`;
+  const cible = { fiche: H.passage.fiche, section: H.passage.section, pertinent: true };
+  document.getElementById("col-dense").innerHTML =
+    H.top.dense.slice(0, 4).map((p, k) => ligne(`${k + 1}`, p, `style="--r:${k}"`)).join("") +
+    `<div class="rang saut" style="--r:4"><span>${H.rangs.dense_base - 5} autres passages</span></div>` + ligne(`${H.rangs.dense_base}e`, cible, `style="--r:5"`);
+  document.getElementById("col-lex").innerHTML = H.top.bm25.map((p, k) => ligne(`${k + 1}`, p, `style="--r:${k}"`)).join("");
+  document.getElementById("col-fusion").innerHTML = H.top.fusion.map((p, k) => ligne(`${k + 1}`, p, `style="--r:${k}"`)).join("");
+  const fr = (x) => x.toLocaleString("fr-FR", { maximumFractionDigits: 4 });
+  document.getElementById("formule").innerHTML = `1/(60+${H.rangs.dense_base}) + 1/(60+${H.rangs.bm25}) = ${fr(H.rrf)}`;
+  document.getElementById("col-rerank").innerHTML = H.top.reclasseur.map((p, k) => {
+    const avant = H.rangs_fusion_des_reclasses[k] - 1;
+    return `<div class="rang${p.pertinent ? " cible" : ""}${avant > 5 ? " hors" : ""}" style="--avant:${Math.min(avant, 5)};--apres:${k}"><b>${k + 1}</b><span>${court(p)}</span></div>`;
+  }).join("");
+
+  // dix passages : barres réelles (jeu v2, protocole 10)
+  const series = [["E5 seul", 57.0, 66.1], ["Fusion avec BM25", 66.9, 76.9], ["Fusion et reclasseur, la chaîne retenue", 81.0, 86.0]];
+  const pct = (v) => `${v.toLocaleString("fr-FR", { minimumFractionDigits: 1 })} %`;
+  document.getElementById("barres").innerHTML = series.map(([nom, a, b]) => `
+    <div class="barre-groupe"><h4>${nom}</h4>
+      <div class="barre cinq" style="--v:${a}"><div class="rempli"></div><span>5 passages</span><em>${pct(a)}</em></div>
+      <div class="barre dix" style="--v:${b}"><div class="rempli"></div><span>10 passages</span><em>${pct(b)}</em></div></div>`).join("") +
+    `<p class="axe">Barres à l'échelle, de 0 à 100 %.</p>`;
+
+  // diapositive et étape indiquées dans l'adresse (#numéro.étape), pour reprendre une répétition
+  const m = location.hash.match(/^#(\d+)(?:\.(\d+))?$/);
+  if (m) { i = Math.min(diapos.length - 1, Number(m[1]) - 1); etape = Math.min(nbEtapes(diapos[i]), Number(m[2] || 0)); }
+  if (reduit) document.documentElement.style.setProperty("--duree", "0s");
+  afficher();
+})();
+</script>
+</body>
+</html>
