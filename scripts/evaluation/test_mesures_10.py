@@ -217,5 +217,38 @@ class TestDecisionA3(unittest.TestCase):
         self.assertFalse(m.demontre({"ic95_tango": [0.01, 0.2]}, 0.05))     # seuil strict
 
 
+class TestCodeFige(unittest.TestCase):
+    """Seule modification admise après le gel de A3 : la ligne ajuste_v3 de la page d'encodage."""
+
+    def test_page_avec_la_seule_ligne_admise(self):
+        import shutil
+        import tempfile
+        racine = Path(m.RACINE)
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            for c in [*m.EMPREINTES_MESURE_A3, m.PAGE_ENCODAGE]:
+                (d / c).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(racine / c, d / c)
+            q8 = "ab" * 32
+            page = (d / m.PAGE_ENCODAGE).read_text(encoding="utf-8")
+            repere = '  ajuste_v2: "09d304fed9960730defa7b9102b3436a136f1e88bc88581846ec4e4b431934cf",'
+            self.assertIn(repere, page)
+            with self.assertRaises(m.ErreurMesure10):
+                m.controler_code_fige(q8, d)                               # ligne admise absente
+            ligne = f'  ajuste_v3: "{q8}",  // q8 ajusté v3 (#167, amendement A3)\n'
+            i = page.index("\n", page.index(repere)) + 1                    # après la ligne ajuste_v2 entière
+            (d / m.PAGE_ENCODAGE).write_text(page[:i] + ligne + page[i:], encoding="utf-8")
+            self.assertEqual(m.controler_code_fige(q8, d)["ligne_admise"], ligne.strip())
+            with self.assertRaises(m.ErreurMesure10):
+                m.controler_code_fige("cd" * 32, d)                        # empreinte différente de celle du registre
+            (d / m.PAGE_ENCODAGE).write_text(page[:i] + ligne + page[i:].replace("q8", "q4", 1), encoding="utf-8")
+            with self.assertRaises(m.ErreurMesure10):
+                m.controler_code_fige(q8, d)                               # autre modification de la page
+            (d / m.PAGE_ENCODAGE).write_text(page[:i] + ligne + page[i:], encoding="utf-8")
+            (d / "scripts/evaluation/metrics.py").write_text("# modifié\n", encoding="utf-8")
+            with self.assertRaises(m.ErreurMesure10):
+                m.controler_code_fige(q8, d)                               # module modifié
+
+
 if __name__ == "__main__":
     unittest.main()

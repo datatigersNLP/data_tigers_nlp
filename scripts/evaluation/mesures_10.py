@@ -664,6 +664,18 @@ SHA256_QUESTIONS_CDTN_SEUIL = "fea79fbe90b28f6a7cafc554656a660f0635b37f861c93415
 SEUILS_V1_SERVIS = {"seuil": 0.7682965993881226, "borne": 0.8140405416488647}   # front/src/recherche/moteur.js (#164)
 CENTILES = {"seuil": 5, "borne": 25}                                              # règles de la #164 (cdtn_seuil.py)
 NIVEAU = 0.05
+# Code figé de la mesure (A3, section 9), contrôlé à chaque exécution. La page d'encodage n'admet qu'un ajout après le
+# gel : la ligne ajuste_v3 de MODELES_LOCAUX, avec l'empreinte du q8 inscrite au registre.
+EMPREINTES_MESURE_A3 = {
+    "scripts/evaluation/encoder_navigateur.py": "62d5be890952851c2cc8a7c67c48e7ccc3afb40a48db39eff997475d900e8625",
+    "scripts/evaluation/metrics.py": "1c9c28f2e0933016b32c1293c50ea1eb2d521bc91f05e69c2a2d4b26cb4f2de4",
+    "scripts/evaluation/ajustement_05.py": "925e800adf1107fdbd7233c94ff3502f3ae83abe1f5798d2cd8716d872f9fb36",
+    "scripts/evaluation/pertinence.py": "5acd3aa98b6f035bfddfc724ed187c7dad4842950423a044d5ce2451669151fb",
+    "scripts/recuperation/recuperation.py": "694c3755032fcc31e4e16b719da686359ed5312c37047fd9d2703256a34cbddb",
+    "scripts/rag/mesure.py": "d6a4df6a7c1d812abed4f677ca081f4bf40f7c6a10377352e08d127c96215e38",
+}
+PAGE_ENCODAGE = "scripts/evaluation/encodage_navigateur.html"
+SHA256_PAGE_ENCODAGE_GEL = "20360c5b55b98efb3f6053c845caad533cbd8c17d87fdbd85bb6323c995747ab"
 
 
 def registre_v3() -> list[dict]:
@@ -748,6 +760,27 @@ def etat_depot() -> dict:
     return {"commit": tete, "propre": not sale}
 
 
+def controler_code_fige(sha256_q8: str, racine: Path = RACINE) -> dict:
+    """Code de la mesure identique au gel de A3 ; la page d'encodage, privée de la seule ligne admise (ajuste_v3 avec
+    l'empreinte du q8 inscrite au registre), doit redonner son empreinte du gel. Rend aussi le dernier commit qui a
+    modifié mesures_10.py, à comparer à celui de A3, section 9 (ce fichier ne peut pas porter sa propre empreinte)."""
+    import re
+    import subprocess
+    ecarts = [c for c, attendu in EMPREINTES_MESURE_A3.items() if sha256(racine / c) != attendu]
+    lignes = (racine / PAGE_ENCODAGE).read_text(encoding="utf-8").splitlines(keepends=True)
+    admise = re.compile(r'^\s*ajuste_v3: "' + re.escape(sha256_q8) + r'",[^\n]*\n$')
+    ajouts = [l for l in lignes if admise.match(l)]
+    reste = "".join(l for l in lignes if not admise.match(l)).encode("utf-8")
+    if len(ajouts) != 1 or hashlib.sha256(reste).hexdigest() != SHA256_PAGE_ENCODAGE_GEL:
+        ecarts.append(PAGE_ENCODAGE)
+    if ecarts:
+        raise ErreurMesure10(f"Code de la mesure différent du gel de A3 : {ecarts}")
+    dernier = subprocess.run(["git", "-C", str(racine), "log", "-1", "--format=%H", "--", "scripts/evaluation/mesures_10.py"],
+                             capture_output=True, text=True).stdout.strip()
+    return {"empreintes_controlees": len(EMPREINTES_MESURE_A3) + 1, "ligne_admise": ajouts[0].strip(),
+            "dernier_commit_mesures_10": dernier}
+
+
 def famille_e_a3() -> dict:
     """Règle de l'amendement A3, section 7 : conditions a, b, c, d et f, calculées ; la condition e (hébergement,
     mesures du site, PR fusionnée avant le 26/11 à 23 h 59) est vérifiée hors de ce script. Contrôles préalables : la
@@ -761,6 +794,7 @@ def famille_e_a3() -> dict:
         raise ErreurMesure10("Deux exécutions ont déjà eu lieu : aucune troisième n'est admise (A3, section 6)")
     evenements = registre_v3()
     candidats = {"v2_T": CANDIDATS_E["v2_T"], "v3_C": candidat_v3(evenements)}
+    depot["code_fige"] = controler_code_fige(candidats["v3_C"]["sha256_q8"])
     table, _ = a5.table_et_index_site()
     url_passage = [u.rstrip("/") for u in table.url]
     v1 = matrice_ajuste()
