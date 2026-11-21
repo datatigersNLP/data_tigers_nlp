@@ -10,11 +10,9 @@ Cette page publie les familles de mesures du protocole 10, section 7, au fur et 
 
 * **Famille A** : la fusion de la recherche dense du site avec BM25 V3, candidate pour le volet A (#173).
 * **Famille B, récupération** : la récupération du volet B, R0, R1 et R2, et la règle qui décide de la chaîne de démonstration (#172).
-* **Famille E** : les encodeurs candidats pour le volet A (#167), ici le candidat v2-T (section 7 de cette page).
+* **Famille E** : les encodeurs candidats pour le volet A (#167), la v2-T (section 7) et la v3-C (section 7 bis). Aucun n'est servi ; la v1 reste l'encodeur du site.
 
-Reste à mesurer : le candidat v3-C, dont l'amendement A3 n'est pas écrit.
-
-Les mesures sont faites par `scripts/evaluation/mesures_10.py` (commandes `famille_a`, `famille_b`, `effet_k` et `famille_e`). Chaque fichier de résultats est écrit une seule fois dans `data/evaluation/protocole_10/`, non versionné ; ses empreintes sont en section 10.
+Les mesures sont faites par `scripts/evaluation/mesures_10.py` (commandes `famille_a`, `famille_b`, `effet_k`, `famille_e` et `famille_e_a3`). Chaque fichier de résultats est écrit une seule fois dans `data/evaluation/protocole_10/`, non versionné ; ses empreintes sont en section 10.
 
 ---
 
@@ -135,7 +133,35 @@ La v2-T reprend la recette de l'encodeur ajusté v1 avec 2 289 paires d'entraîn
 * **Règle de l'amendement A2 sur le jeu v2 et le CDTN** : les deux écarts sont positifs ou nuls et l'un est strictement positif ; la règle retient la v2-T. Elle n'est pas dite meilleure : l'intervalle sur le jeu v2 contient 0, et le CDTN donne une égalité exacte.
 * **Le jeu humain va en sens inverse** : −5,5 points sur le lot de test (4 questions contre 8). Ce lot a été lu plusieurs fois, ce résultat est descriptif ; il pèse néanmoins contre un gain réel.
 * **Lecture** : le seul écart positif vient du jeu v2, dont les questions sont générées à partir d'un passage, comme les paires d'entraînement de la v2-T. Plus de questions synthétiques de T n'ont pas amélioré la v1 sur les questions écrites par des humains.
-* **Mise en service** : selon la section 7 du protocole, la v2-T n'est servie avant J4 que si le contrôle de son hébergement dans le navigateur, le recalcul des seuils d'abstention et de la zone grise, les mesures du site et le redéploiement sont faits avant le gel du 20 novembre ; sinon après J4. La décision est en attente (#167).
+* **Mise en service** : la v2-T n'est pas servie. Le 21 novembre, Mahé a décidé de mesurer plutôt la v3-C (amendement A3, section 7 ; section 7 bis de cette page).
+
+---
+
+## 7 bis. Famille E : encodeur v3-C (amendement A3)
+
+La v3-C reprend la recette et les 2 720 passages de la v2-T ; seules les questions changent. Elles sont écrites par des sous-agents Claude Sonnet (`claude-sonnet-5-5`), un par lot de 42 ou 43 passages, et relues par deux juges Claude Opus (amendement A3 du protocole 05, #167). L'amendement, audité trois fois par un sous-agent Claude Opus indépendant, a été figé le 21 novembre avant toute génération (commit `3d52395`, SHA-256 `432fa7c7…`), avec le code de cette mesure (`famille_e_a3`, commit `b033277`) et une règle de mise en service plus stricte que celle de l'amendement A2.
+
+* **Génération et relecture** : 64 lots, 66 appels contrôlés dans leurs journaux ; 2 lots relancés une fois pour un identifiant de passage mal recopié. Après filtres, 2 420 paires d'entraînement et 275 de validation. Les deux juges trouvent les mêmes 3 paires fausses sur 30 (kappa 1,0), à la limite de la règle.
+* **Entraînement et garde-fou** : 304 pas en 946 secondes (4 fils de calcul), poids `921e8520…`. Garde-fou passé : Recall@5 de 96,7 % contre 93,1 % pour la v1 sur les questions de validation, écrites par le même générateur que l'entraînement.
+* **Hébergement** : l'export rejoué sur la v1 redonne bit à bit les fichiers livrés ; q8 `3d5a24e6…` (cosinus minimal 0,9946 avec le fp32) ; élagage sans perte (935 sorties identiques bit à bit) ; index `ef475c9c…`, dont le code redonne bit à bit l'index de la v2-T.
+
+| Recall@5 | Questions (groupes) | v1, servie | v3-C | Écart [IC 95 %] | v3-C seule, v1 seule | p de décision ; p de Holm |
+|---|---:|---:|---:|---:|---:|---:|
+| Jeu v2 | 121 (61 fiches) | 57,0 % | 69,4 % | +12,4 [+5,5 ; +20,3] | 18, 3 | 0,0015 ; 0,006 |
+| CDTN | 494 (131 requêtes) | 72,3 % | 70,0 % | −2,2 [−6,6 ; +2,0] | 25, 36 | 0,289 ; 0,630 |
+| Lot de test du jeu v1 | 73 (61 fiches) | 63,0 % | 57,5 % | −5,5 [−14,7 ; +2,7] | 2, 6 | |
+
+La valeur p de décision est la plus grande de celle du test exact de McNemar et de celle du test groupé d'Obuchowski ; la correction de Holm porte sur quatre hypothèses, la v2-T et la v3-C, chacune sur le jeu v2 et le CDTN.
+
+| Hors corpus, sous la borne de la zone grise (dont refusées) | Questions | v1, seuils servis | v3-C, seuils recalculés |
+|---|---:|---:|---:|
+| Jeu v2 | 40 | 39 (33) | 39 (28) |
+| Lot de test du jeu v1 | 24 | 23 (10) | 18 (6) |
+
+* **Contrôles**, tous conformes : la v1 redonne le Recall@5 du protocole 05 sur le CDTN ; la v2-T redonne exactement la mesure du 17 novembre ; la fonction des seuils redonne exactement les seuils servis de la v1 ; le code de mesure est celui du gel, la seule modification admise (la ligne `ajuste_v3` de la page d'encodage) étant contrôlée ; deux exécutions donnent des résultats identiques, et la décision est prise à la seconde.
+* **Règle de l'amendement A3** : condition a (garde-fou) satisfaite ; b non, l'écart sur le CDTN est négatif ; c non, le gain n'est démontré que sur le jeu v2, avec un écart négatif sur le CDTN ; d non, recul sur le lot de test ; f non, 5 questions hors corpus de plus au-dessus de la borne sur le lot de test. **La v3-C n'est pas servie ; la v1 reste l'encodeur du site.**
+* **Lecture** : la v3-C gagne nettement sur le jeu v2, le seul jeu écrit par Claude, comme ses paires d'entraînement ; elle ne gagne ni sur le CDTN ni sur les questions humaines, où elle recule à titre descriptif. Le gain observé tient au style des questions générées, pas à une meilleure recherche pour de vrais utilisateurs : c'est la circularité que la condition c devait écarter. Avec la v2-T, deux encodeurs entraînés sur plus de 2 000 questions synthétiques ne font pas mieux que la v1, entraînée sur 109 questions.
+* **Seuils** : comme la v2-T, la v3-C répartit ses scores bien plus bas que la v1 (5e centile du CDTN 0,354 contre 0,768 ; 25e centile 0,464 contre 0,814). Ses seuils auraient dû être recalculés avant tout service.
 
 ---
 
@@ -161,7 +187,7 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 ## 9. Limites
 
 * **Le CDTN n'est pas neutre entre R1 et R2** : la configuration de R1 a été choisie sur ce jeu par le protocole 07. Seul le jeu v2 est indépendant pour cette comparaison ; il donne le même sens.
-* **Questions générées par Claude** : proches du style d'un générateur, et un peu plus proches des mots du passage que les questions humaines. Le jeu v1 et le CDTN, écrits sans IA, servent de contrôle ; sur la famille A, le jeu v1 ne confirme pas le jeu v2.
+* **Questions générées par Claude** : proches du style d'un générateur, et un peu plus proches des mots du passage que les questions humaines. Le jeu v1 et le CDTN, écrits sans IA, servent de contrôle ; sur la famille A, le jeu v1 ne confirme pas le jeu v2, et sur la famille E, la v3-C, entraînée sur des questions de Claude, n'est démontrée meilleure que sur le jeu v2.
 * **Un seul passage annoté par question au jeu v2** : les critères sont des minorants.
 * **Puissance** : 121 questions et 61 fiches ne permettent de détecter que des écarts de plusieurs points ; une égalité à deux points près n'est pas exclue entre R1 et R2.
 
@@ -174,5 +200,6 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 * `data/evaluation/protocole_10/reclasseur_bge-m3_famille_b.json` : cache des scores du reclasseur, qui grandit à chaque mesure ; ce n'est pas un résultat. La famille B y a calculé 5 080 paires, dont 219 pour compléter les candidats de R2 sur le CDTN ; un score n'y est jamais recalculé.
 * `data/evaluation/protocole_10/effet_k_20261117T131939Z.json` : SHA-256 `9cb00fe577f5a19bffba1b78324f1ecfb22a8a8578100b5a712a561bc2a7b517`.
 * `data/evaluation/protocole_10/famille_e_20261117T134023Z.json` : SHA-256 `13c474b82fc6d41eb200619b899cad822991106bfe78faaa824417d72a93f231`. Mesure descriptive de l'amendement A2 : `data/evaluation/ajustement_v2/mesure_20261117T134055Z.json`, SHA-256 `7d0065b711848d637ba4dc18e3d9a917729a616d18b9bad704940027cf3706fd` (seconde exécution identique).
+* `data/evaluation/protocole_10/famille_e_a3_20261121T162950Z.json` (première exécution) : SHA-256 `22376e298437624126cafbc6be61ae3aa7e595000074e8b710eeaf7834f9acee` ; `famille_e_a3_20261121T162956Z.json` (seconde, identique, décision valide) : SHA-256 `a27a45e493590e0ec8ef0addd5040b43fb791e92223c3a134fe63cc31fe35a50`. Registre de la v3 au moment de la mesure : `data/adaptation/v3/registre.jsonl`, chaîné, 144 événements, SHA-256 `a732dbebf6d629a6e2848282dce7e0d3708a5399c0951234fddc3438f7d32a4b`.
 * Bout en bout : `bout_en_bout_B2_adapte_20261117T132817Z.json` (`0848326f…`), `bout_en_bout_R1_adapte_20261121T123542Z.json` (`6f4b866a…`), `bout_en_bout_R1_temoin_20261121T130808Z.json` (`b9ac9420…`), analyse `bout_en_bout_analyse_20261121T134041Z.json` (`c4571cb6…`).
 * Environnement : `scripts/evaluation/requirements-lock.txt`, plus onnxruntime 1.30.0, version déjà figée par `scripts/indexation/requirements-lock.txt`.
