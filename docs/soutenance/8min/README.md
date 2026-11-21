@@ -54,7 +54,7 @@ Depuis la racine du dépôt :
 
 ```
 python3 docs/soutenance/8min/construire.py          # écrit docs/soutenance/presentation_8min.html
-python3 docs/soutenance/8min/verifier_chiffres.py   # 37 chiffres contre leurs sources ; aucun tiret long
+python3 docs/soutenance/8min/verifier_chiffres.py   # 40 chiffres contre leurs sources ; aucun tiret long
 ```
 
 `verifier_chiffres.py` relit les fichiers de résultats dans `data/` (option `--donnees`, par défaut la copie de mesure `~/NLP2_local/depot_v2/data`) et les documents publiés sur `dev`.

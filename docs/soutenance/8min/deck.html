@@ -442,7 +442,7 @@ aside.texte-a-dire { display: none; }
 <!-- 6. Volet B -->
 <section class="diapo" data-duree="40" data-etapes="4" aria-label="Volet B, l'assistant local">
   <h2 class="titre">Volet B : un assistant qui cite ses sources</h2>
-  <p class="chapeau">Tout s'exécute sur un Mac de l'équipe, avec Ollama : aucune API distante.</p>
+  <p class="chapeau">Tout s'exécute sur un Mac de l'équipe, avec Ollama : aucune API distante, environ 12&nbsp;s par réponse.</p>
   <svg class="schema" viewBox="0 0 1664 560" role="img" aria-label="Question, recherche hybride, reclasseur, dix passages, Qwen adapté, réponse citée vérifiée ou abstention">
     <defs><marker id="m6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="pointe" d="M0 0L10 5L0 10z"/></marker></defs>
     <g>
@@ -605,7 +605,7 @@ aside.texte-a-dire { display: none; }
   <p class="note-bas">Les 61 fiches du test ne servent jamais à l'entraînement : un script le vérifie.</p>
   <aside class="texte-a-dire" data-plan="Choix : données synthétiques">
     <p>Nous manquions de données annotées : nous en avons fait produire par des modèles, sans jamais les croire sur parole. Pour l'encodeur, Qwen écrit une question par passage. Pour adapter Qwen, 218 exemples reproduisent l'usage réel : la réponse recopie le passage et le cite, ou s'abstient. Deux membres les relisent : le premier lot a été refusé, car le modèle faisait dire aux passages ce qu'ils ne disent pas. L'adaptation fait passer les réponses citant un passage pertinent de 14 à 25 %, un gain démontré ; jugées à l'aveugle, elles sont mieux appuyées, mais pas plus exactes. Enfin, pour évaluer sur un jeu neuf, Claude a écrit 161 questions, contrôlées par un second modèle, avec l'autorisation de l'enseignant.</p>
-    <ul><li>Abstention correcte hors corpus : 83,3 % avant et après adaptation.</li><li>Intervalle à 97,5 % de l'écart : de +2,1 à +23,8 points ; 8 questions gagnées, aucune perdue.</li></ul>
+    <ul><li>Dans la chaîne de démonstration, sur le jeu v2 : 52,9 % de réponses citant un passage pertinent pour le modèle adapté, 10,1 % pour le modèle d'origine (54 questions gagnées, 3 perdues) ; +16,9 points sur l'ancienne chaîne, démontré.</li><li>Abstention correcte hors corpus : 83,3 % avant et après adaptation (lot de test).</li><li>Intervalle à 97,5 % de l'écart : de +2,1 à +23,8 points ; 8 questions gagnées, aucune perdue.</li></ul>
   </aside>
 </section>
 
@@ -617,21 +617,22 @@ aside.texte-a-dire { display: none; }
       <li><b>Base servie jusqu'au 15 novembre</b><span>l'encodeur ajusté n'était pas mesuré à temps : la règle de repli s'est appliquée</span></li>
       <li><b>Nouvelle consigne du volet B écartée</b><span>plus de bonnes réponses, mais une abstention correcte de moins que la tolérance</span></li>
       <li><b>Encodeur ajusté non retenu dans le volet B</b><span>84,3&nbsp;% contre 86,0&nbsp;% : après fusion et reclasseur, il n'apporte rien</span></li>
+      <li><b>Chaîne de démonstration confirmée</b><span>avec le modèle adapté, +16,9 points de réponses citant un passage pertinent sur l'ancienne chaîne, gain démontré</span></li>
     </ul>
     <table class="compare e" data-e="2">
       <thead><tr><th></th><th class="a">Volet A, recherche</th><th class="b">Volet B, assistant</th></tr></thead>
       <tbody>
         <tr><th>Coût</th><td>aucun serveur</td><td>une machine dédiée</td></tr>
-        <tr><th>Latence</th><td>21 ms</td><td>environ 5 s, à 5 passages</td></tr>
-        <tr><th>Qualité</th><td>fiche pertinente affichée : 93,2&nbsp;%</td><td>réponse citant un passage pertinent : 25,0&nbsp;%</td></tr>
+        <tr><th>Latence</th><td>21 ms par recherche</td><td>11,8 s par réponse, en médiane</td></tr>
+        <tr><th>Qualité</th><td>fiche pertinente affichée : 93,2&nbsp;% (questions humaines)</td><td>réponse citant un passage pertinent : 52,9&nbsp;% (jeu v2)</td></tr>
         <tr><th>Contrôle</th><td>tout vérifiable par empreinte</td><td>comportement appris de données inconnues</td></tr>
         <tr><th>Dépendance</th><td>aucune à l'exécution</td><td>Ollama et poids ouverts de Qwen</td></tr>
       </tbody>
     </table>
   </div>
   <aside class="texte-a-dire" data-plan="Bilan">
-    <p>Notre méthode tient en une phrase : écrire la règle avant de mesurer. Elle nous a fait renoncer à des choix que nous aimions : la base est restée servie un mois, une nouvelle consigne plus performante a été écartée, et notre encodeur ajusté n'apporte rien au volet B. Les deux volets répondent au même besoin avec des compromis opposés : le site ne coûte rien, répond en vingt millisecondes et tout y est vérifiable ; l'assistant rédige une réponse, mais demande une machine et quelques secondes, et son comportement vient de données que nous ne connaissons pas.</p>
-    <ul><li>Latence du volet B : 4,8 s en médiane, chaîne à 5 passages, mesurée le 17/11 sur le jeu v2.</li><li>Les deux chiffres de qualité ne mesurent pas la même chose.</li></ul>
+    <p>Notre méthode tient en une phrase : écrire la règle avant de mesurer. Elle nous a fait renoncer à des choix que nous aimions : la base est restée servie un mois, une nouvelle consigne plus performante a été écartée, et notre encodeur ajusté n'apporte rien au volet B. Elle confirme aussi nos choix quand ils tiennent : la chaîne de démonstration, avec le modèle adapté, gagne 17 points sur l'ancienne. Les deux volets répondent au même besoin avec des compromis opposés : le site ne coûte rien, répond en vingt millisecondes et tout y est vérifiable ; l'assistant rédige une réponse, mais demande une machine et une douzaine de secondes, et son comportement vient de données que nous ne connaissons pas.</p>
+    <ul><li>Latence du volet B : 11,8 s en médiane par question, chaîne de la démonstration (10 passages, reclasseur), mesurée le 21/11 sur le jeu v2 ; 4,9 s avec l'ancienne chaîne à 5 passages.</li><li>Les deux chiffres de qualité ne mesurent pas la même chose, ni sur le même jeu.</li></ul>
   </aside>
 </section>
 

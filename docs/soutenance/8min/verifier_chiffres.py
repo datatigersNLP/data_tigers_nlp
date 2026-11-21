@@ -42,6 +42,7 @@ def main(argv=None) -> int:
     k = json.loads((D / "evaluation/protocole_10/effet_k_20261117T131939Z.json").read_text(encoding="utf-8"))
     g = json.loads((D / "evaluation/recuperation/resultats_grille.json").read_text(encoding="utf-8"))["configurations"]
     conf = json.loads((D / "evaluation/recuperation/confirmation/resultats.json").read_text(encoding="utf-8"))["principal"]
+    bb = json.loads((D / "evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json").read_text(encoding="utf-8"))
     r05 = doc("docs/etudes/evaluation/05_resultats_ajustement.md")
     rapport = doc("docs/rapport/RAPPORT_FINAL.md")
     j3 = doc("docs/jalons/J3_diapositives_mahe.md")
@@ -85,6 +86,9 @@ def main(argv=None) -> int:
         ("218 exemples", "218 exemples" if "218 exemples" in j3 else None, "J3, diapositive 7"),
         ("8 faux sur 30", "8 faux sur 30", "PR #162, présentation (lot v1 refusé)"),
         ("121 + 40", "121 + 40", "jeu v2 figé (8bfd9fb) : 121 du corpus, 40 hors corpus"),
+        ("52,9 %", pc(bb["etats"]["R1_adapte"]["M4"]["proportion"]) + " %", "bout en bout, R1 adapté, M4"),
+        ("+16,9 points", f"+{pc(bb['comparaisons']['R1_adapte_moins_B2_adapte']['M4']['ecart'])} points", "bout en bout, M4, R1 moins B2"),
+        ("11,8 s", f"{bb['etats']['R1_adapte']['descriptif']['duree_totale_mediane_ns'] / 1e9:.1f}".replace(".", ",") + " s", "bout en bout, R1 adapté, durée médiane"),
     ]
     ecarts = 0
     for ecrit, source, nom in controles:
