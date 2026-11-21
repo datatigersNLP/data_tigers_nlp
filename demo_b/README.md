@@ -57,6 +57,11 @@ fois le manque corrigé, relancer la couche si c'est l'index, E5 ou le tokeniseu
 Le modèle servi se règle sur le serveur, jamais depuis le navigateur : `--modele <nom> --digest <empreinte>` pour le modèle
 adapté (#107). Pour modifier l'interface, `npm run dev` dans `demo_b/` relaie `/api` vers cette couche.
 
+## Logo et confidentialité
+
+- **Logo** : le même tigre qu'au volet A (`docs/charte/logo/`), en favicon (`public/favicon.svg`), dans le panneau et comme avatar de l'assistant (`src/assets/logo-tigre.svg`).
+- **Confidentialité et mentions** (`src/composants/Confidentialite.jsx`, #176) : fenêtre modale ouverte depuis le panneau et depuis la ligne de mentions. Elle dit ce qui a été vérifié le 21/11 : tout s'exécute sur cet ordinateur ; l'interface ne charge aucune ressource extérieure et n'utilise aucun stockage ; la couche locale et Ollama, tels que lancés pour la démonstration, ne journalisent que la route, la durée et l'adresse locale de chaque appel, sans la question ni la réponse. Lancer Ollama en mode de débogage (`OLLAMA_DEBUG=1`) ou ajouter une trace des questions rendrait ce texte faux : il faudrait alors le modifier.
+
 ## Tests
 
 ```powershell
