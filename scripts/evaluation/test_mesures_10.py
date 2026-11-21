@@ -169,5 +169,53 @@ class TestSeuils(unittest.TestCase):
         self.assertAlmostEqual(float(np.percentile(scores, 5)), 0.525, places=6)     # position 1 sur 0..20
 
 
+class TestDecisionA3(unittest.TestCase):
+    """Conditions b, c, d et f de l'amendement A3 et Holm sur quatre hypothèses, sur des blocs synthétiques."""
+
+    @staticmethod
+    def ecart(e, bas=-0.01, p=0.5, pg=0.5, dem=False):
+        return {"ecart_recall5": {"ecart": e, "ic95_tango": [bas, e + 0.1], "p_mcnemar": p, "p_groupe": pg, "demontre": dem}}
+
+    def bloc(self, v2, cdtn, test):
+        return {"jeu_v2": v2, "cdtn": cdtn, "jeu_v1_test": test}
+
+    HORS = {"jeu_v2": {"v1": {"sous_la_borne": 39}, "v3_C": {"sous_la_borne": 39}},
+            "jeu_v1_test": {"v1": {"sous_la_borne": 23}, "v3_C": {"sous_la_borne": 23}}}
+
+    def test_gain_demontre_sur_le_seul_jeu_v2_insuffisant(self):
+        b = self.bloc(self.ecart(0.08, dem=True), self.ecart(0.0), self.ecart(0.0))
+        c = m.conditions_a3(b, self.HORS)
+        self.assertTrue(c["b_regle_a2"])
+        self.assertFalse(c["c_demontree"])                     # CDTN à 0 : le jeu écrit par Claude ne suffit pas
+        b["cdtn"] = self.ecart(0.01)
+        self.assertTrue(m.conditions_a3(b, self.HORS)["c_demontree"])
+
+    def test_gain_demontre_sur_le_cdtn(self):
+        b = self.bloc(self.ecart(0.0), self.ecart(0.05, dem=True), self.ecart(-0.01))
+        c = m.conditions_a3(b, self.HORS)
+        self.assertTrue(c["c_demontree"])
+        self.assertFalse(c["d_questions_humaines"])            # recul sur les questions humaines
+
+    def test_hors_corpus_egalite_admise_recul_refuse(self):
+        b = self.bloc(self.ecart(0.05), self.ecart(0.05, dem=True), self.ecart(0.0))
+        self.assertTrue(m.conditions_a3(b, self.HORS)["f_hors_corpus"])
+        recul = {**self.HORS, "jeu_v1_test": {"v1": {"sous_la_borne": 23}, "v3_C": {"sous_la_borne": 22}}}
+        self.assertFalse(m.conditions_a3(b, recul)["f_hors_corpus"])
+
+    def test_holm_quatre_hypotheses_et_plus_grande_valeur_p(self):
+        cands = {"v2_T": self.bloc(self.ecart(0.05, p=0.20, pg=0.15), self.ecart(0.0, p=1.0, pg=1.0), None),
+                 "v3_C": self.bloc(self.ecart(0.09, p=0.004, pg=0.010), self.ecart(0.04, p=0.03, pg=0.012), None)}
+        h = m.p_holm_quatre(cands)
+        self.assertEqual(h["p"], {"v2_T|jeu_v2": 0.20, "v2_T|cdtn": 1.0, "v3_C|jeu_v2": 0.010, "v3_C|cdtn": 0.03})
+        # p croissants 0,010 ; 0,03 ; 0,20 ; 1,0 : ajustés 0,04 ; 0,09 ; 0,40 ; 1,0
+        self.assertAlmostEqual(h["p_holm"]["v3_C|jeu_v2"], 0.04)
+        self.assertAlmostEqual(h["p_holm"]["v3_C|cdtn"], 0.09)
+        self.assertAlmostEqual(h["p_holm"]["v2_T|jeu_v2"], 0.40)
+        self.assertEqual(h["p_holm"]["v2_T|cdtn"], 1.0)
+        self.assertTrue(m.demontre({"ic95_tango": [0.01, 0.2]}, 0.04))
+        self.assertFalse(m.demontre({"ic95_tango": [0.0, 0.2]}, 0.001))     # borne basse nulle : non démontré
+        self.assertFalse(m.demontre({"ic95_tango": [0.01, 0.2]}, 0.05))     # seuil strict
+
+
 if __name__ == "__main__":
     unittest.main()

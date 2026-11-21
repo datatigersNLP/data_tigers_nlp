@@ -715,11 +715,50 @@ def seuils_site(vecteurs: dict, matrice: np.ndarray) -> dict:
     return {k: float(np.percentile(scores, c)) for k, c in CENTILES.items()} | {"variantes": len(ids)}
 
 
+def demontre(e: dict, p_holm: float) -> bool:
+    return bool(e["ic95_tango"][0] > 0 and p_holm < NIVEAU)
+
+
+def p_holm_quatre(candidats: dict) -> dict:
+    """Holm sur les quatre hypothèses (v2-T et v3-C, sur le jeu v2 et le CDTN), avec pour chacune la plus grande des
+    valeurs p du test exact de McNemar et du test groupé d'Obuchowski."""
+    p = {f"{n}|{j}": max(b[j]["ecart_recall5"]["p_mcnemar"], b[j]["ecart_recall5"]["p_groupe"])
+         for n, b in candidats.items() for j in ("jeu_v2", "cdtn")}
+    return {"p": p, "p_holm": holm(p)}
+
+
+def conditions_a3(b3: dict, hors_corpus: dict) -> dict:
+    """Conditions b, c, d et f de l'amendement A3, section 7, pour le bloc de la v3-C (écarts déjà annotés de
+    « demontre ») et le décompte hors corpus ; a est contrôlée en amont, e hors de ce script."""
+    e2, ec, et = (b3[j]["ecart_recall5"]["ecart"] for j in ("jeu_v2", "cdtn", "jeu_v1_test"))
+    return {
+        "a_garde_fou": True,
+        "b_regle_a2": bool(e2 >= 0 and ec >= 0 and (e2 > 0 or ec > 0)),
+        "c_demontree": bool(b3["cdtn"]["ecart_recall5"]["demontre"] or (b3["jeu_v2"]["ecart_recall5"]["demontre"] and ec > 0)),
+        "d_questions_humaines": bool(et >= 0),
+        "f_hors_corpus": all(h["v3_C"]["sous_la_borne"] >= h["v1"]["sous_la_borne"] for h in hors_corpus.values()),
+    }
+
+
+def etat_depot() -> dict:
+    import subprocess
+    tete = subprocess.run(["git", "-C", str(RACINE), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    sale = subprocess.run(["git", "-C", str(RACINE), "status", "--porcelain", "--", "scripts", "docs/etudes/evaluation"],
+                          capture_output=True, text=True).stdout.strip()
+    return {"commit": tete, "propre": not sale}
+
+
 def famille_e_a3() -> dict:
     """Règle de l'amendement A3, section 7 : conditions a, b, c, d et f, calculées ; la condition e (hébergement,
     mesures du site, PR fusionnée avant le 26/11 à 23 h 59) est vérifiée hors de ce script. Contrôles préalables : la
     v1 redonne le protocole 05 sur le CDTN et ses seuils servis ; la v2-T redonne la mesure du 17/11. Un contrôle en
     échec arrête tout : rien n'est décidé et la v1 reste servie. La décision exige deux exécutions identiques."""
+    depot = etat_depot()
+    if not depot["propre"]:
+        raise ErreurMesure10("Scripts ou protocoles modifiés et non commités : la mesure se fait au code figé")
+    precedentes = sorted(SORTIES.glob("famille_e_a3_*.json"))
+    if len(precedentes) >= 2:
+        raise ErreurMesure10("Deux exécutions ont déjà eu lieu : aucune troisième n'est admise (A3, section 6)")
     evenements = registre_v3()
     candidats = {"v2_T": CANDIDATS_E["v2_T"], "v3_C": candidat_v3(evenements)}
     table, _ = a5.table_et_index_site()
@@ -756,7 +795,7 @@ def famille_e_a3() -> dict:
     gel = next(e["depot"] for e in evenements if "depot" in e)
     res = {"protocole": "10, section 7, famille E ; amendement A3 du protocole 05, sections 6 et 7",
            "sha256_protocole": sha256(RACINE / "docs/etudes/evaluation/10_protocole_jeu_v2.md"),
-           "sha256_mesures_10": sha256(Path(__file__)), "amendement_a3": gel,
+           "sha256_mesures_10": sha256(Path(__file__)), "depot": depot, "amendement_a3": gel,
            "sha256_registre_v3": sha256(REGISTRE_V3), "candidats": {}}
     matrices, vecteurs_c = {}, {}
     for nom, cand in candidats.items():
@@ -792,14 +831,12 @@ def famille_e_a3() -> dict:
 
     # Condition c : Holm sur les quatre hypothèses {v2-T, v3-C} x {jeu v2, CDTN}, valeur p la plus grande du test exact
     # de McNemar et du test groupé d'Obuchowski ; intervalle de Tango à 95 % corrigé de l'effet de plan
-    p = {f"{n}|{j}": max(b[j]["ecart_recall5"]["p_mcnemar"], b[j]["ecart_recall5"]["p_groupe"])
-         for n, b in res["candidats"].items() for j in ("jeu_v2", "cdtn")}
-    ph = holm(p)
+    h = p_holm_quatre(res["candidats"])
     for n, b in res["candidats"].items():
         for j in ("jeu_v2", "cdtn"):
             e = b[j]["ecart_recall5"]
-            e["p_decision"], e["p_holm_4"] = p[f"{n}|{j}"], ph[f"{n}|{j}"]
-            e["demontre"] = bool(e["ic95_tango"][0] > 0 and ph[f"{n}|{j}"] < NIVEAU)
+            e["p_decision"], e["p_holm_4"] = h["p"][f"{n}|{j}"], h["p_holm"][f"{n}|{j}"]
+            e["demontre"] = demontre(e, e["p_holm_4"])
 
     # Condition f : questions hors corpus sous la borne de la zone grise (refusées ou averties), v3-C et ses seuils
     # recalculés contre la v1 et ses seuils servis, sur le jeu v2 et le lot de test du jeu v1
@@ -814,25 +851,17 @@ def famille_e_a3() -> dict:
             for n, s in (("v1", s1), ("v3_C", s3))}}
     res["seuils"] = seuils
 
-    b3 = res["candidats"]["v3_C"]
-    e2, ec, et = (b3[j]["ecart_recall5"]["ecart"] for j in ("jeu_v2", "cdtn", "jeu_v1_test"))
-    conditions = {
-        "a_garde_fou": True,                                              # contrôlé par candidat_v3 et ci-dessus
-        "b_regle_a2": bool(e2 >= 0 and ec >= 0 and (e2 > 0 or ec > 0)),
-        "c_demontree": bool(b3["cdtn"]["ecart_recall5"]["demontre"] or (b3["jeu_v2"]["ecart_recall5"]["demontre"] and ec > 0)),
-        "d_questions_humaines": bool(et >= 0),
-        "f_hors_corpus": all(h["v3_C"]["sous_la_borne"] >= h["v1"]["sous_la_borne"] for h in res["hors_corpus"].values()),
-    }
+    conditions = conditions_a3(res["candidats"]["v3_C"], res["hors_corpus"])   # a : contrôlée par candidat_v3
     res["decision"] = {**conditions, "regle_a3_sans_e": all(conditions.values()),
                        "e": "à vérifier et consigner sur le #167 : hébergement validé, seuils ci-dessus servis, mesures du site refaites, PR fusionnée avant le 26/11/2026 à 23 h 59"}
 
-    # Deux exécutions identiques exigées (A3, section 6)
+    # Deux exécutions identiques exigées (A3, section 6) : la décision ne vaut qu'à la seconde, si elle est identique
     coeur = json.loads(json.dumps(res, ensure_ascii=False))
-    precedentes = sorted(SORTIES.glob("famille_e_a3_*.json"))
     res["execution"] = len(precedentes) + 1
     if precedentes:
         premiere = json.loads(precedentes[0].read_text(encoding="utf-8"))
-        res["identique_a_la_premiere"] = {k: v for k, v in premiere.items() if k != "execution"} == coeur
+        res["identique_a_la_premiere"] = {k: v for k, v in premiere.items() if k not in ("execution", "decision_valide")} == coeur
+    res["decision_valide"] = bool(res["execution"] == 2 and res.get("identique_a_la_premiere"))
     chemin = SORTIES / f"famille_e_a3_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
     print(f"écrit {chemin.name}, SHA-256 {a5.ecrire_une_fois(chemin, res)}")
     for n, b in res["candidats"].items():
@@ -842,7 +871,8 @@ def famille_e_a3() -> dict:
                   f"[{e['ic95_tango'][0]:+.3f} ; {e['ic95_tango'][1]:+.3f}] p={e['p_mcnemar']:.3f} p_groupe={e['p_groupe']:.3f}"
                   + (f" p_holm_4={e['p_holm_4']:.3f}" if "p_holm_4" in e else ""))
     print(json.dumps({"hors_corpus": res["hors_corpus"], "seuils": seuils, "decision": res["decision"],
-                      "execution": res["execution"], "identique_a_la_premiere": res.get("identique_a_la_premiere")},
+                      "execution": res["execution"], "identique_a_la_premiere": res.get("identique_a_la_premiere"),
+                      "decision_valide": res["decision_valide"]},
                      ensure_ascii=False, indent=1))
     return res
 
