@@ -101,5 +101,73 @@ class TestGardeM1(unittest.TestCase):
             m.garde_m1(self.lignes(["abstention"]), self.lignes(["abstention", "abstention"]))
 
 
+class TestRegistreV3(unittest.TestCase):
+    """Lecture du registre de la v3 par la mesure de l'amendement A3 : chaînage, arrêt, gel inchangé, empreintes."""
+
+    def ecrire(self, evenements):
+        import hashlib
+        import json
+        import tempfile
+        self._tmp = tempfile.TemporaryDirectory()
+        chemin = Path(self._tmp.name) / "registre.jsonl"
+        lignes, precedent = [], None
+        for i, e in enumerate(evenements):
+            ligne = json.dumps({"n": i, "precedent": precedent, **e}, ensure_ascii=False)
+            lignes.append(ligne)
+            precedent = hashlib.sha256(ligne.encode("utf-8")).hexdigest()
+        chemin.write_text("\n".join(lignes) + "\n", encoding="utf-8")
+        self._ancien, m.REGISTRE_V3 = m.REGISTRE_V3, chemin
+        return chemin
+
+    def tearDown(self):
+        if hasattr(self, "_ancien"):
+            m.REGISTRE_V3 = self._ancien
+            self._tmp.cleanup()
+
+    GEL = {"commit": "c", "sha256_a3": "a3", "sha256_script": "s"}
+    COMPLET = [{"evenement": "lots", "depot": GEL},
+               {"evenement": "garde_fou", "depot": GEL, "passe": True, "sha256_garde_fou": "g"},
+               {"evenement": "export", "depot": GEL, "sha256_q8": "q"},
+               {"evenement": "index", "depot": GEL, "sha256_index": "i"}]
+
+    def test_registre_complet(self):
+        self.ecrire(self.COMPLET)
+        c = m.candidat_v3(m.registre_v3())
+        self.assertEqual((c["modele_local"], c["sha256_q8"], c["sha256_index"], c["sha256_garde_fou"]),
+                         ("ajuste_v3", "q", "i", "g"))
+
+    def test_falsification_detectee(self):
+        chemin = self.ecrire(self.COMPLET)
+        chemin.write_text(chemin.read_text(encoding="utf-8").replace('"q"', '"r"'), encoding="utf-8")
+        with self.assertRaises(m.ErreurMesure10):
+            m.registre_v3()
+
+    def test_arret_ou_gel_modifie_refuses(self):
+        for evenements in (self.COMPLET + [{"evenement": "arret", "motif": "x"}],
+                           self.COMPLET + [{"evenement": "x", "depot": {**self.GEL, "sha256_a3": "autre"}}]):
+            self.ecrire(evenements)
+            with self.assertRaises(m.ErreurMesure10):
+                m.registre_v3()
+            self.tearDown()
+
+    def test_garde_fou_non_passe_ou_export_double(self):
+        for evenements in ([*self.COMPLET[:1], {**self.COMPLET[1], "passe": False}, *self.COMPLET[2:]],
+                           self.COMPLET + [self.COMPLET[2]]):
+            self.ecrire(evenements)
+            with self.assertRaises(m.ErreurMesure10):
+                m.candidat_v3(m.registre_v3())
+            self.tearDown()
+
+
+class TestSeuils(unittest.TestCase):
+    def test_centiles_du_meilleur_score(self):
+        import numpy as np
+        matrice = np.eye(4, dtype=np.float32)
+        vecteurs = {f"q{i}": np.eye(4, dtype=np.float32)[i % 4] * (0.5 + i / 40) for i in range(21)}
+        scores = m.meilleurs_scores(vecteurs, list(vecteurs), matrice)
+        self.assertTrue(np.allclose(scores, [0.5 + i / 40 for i in range(21)]))
+        self.assertAlmostEqual(float(np.percentile(scores, 5)), 0.525, places=6)     # position 1 sur 0..20
+
+
 if __name__ == "__main__":
     unittest.main()

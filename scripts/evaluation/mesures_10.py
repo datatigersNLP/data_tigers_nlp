@@ -4,6 +4,7 @@
     python scripts/evaluation/mesures_10.py famille_b      # volet B : récupération R0, R1, R2 (jeu v2, CDTN, jeu v1)
     python scripts/evaluation/mesures_10.py effet_k        # descriptif : 5 contre 10 passages (justification de k = 10)
     python scripts/evaluation/mesures_10.py famille_e      # encodeurs : v2-T contre v1 servi (amendement A2 figé)
+    python scripts/evaluation/mesures_10.py famille_e_a3   # v2-T et v3-C, règle de l'amendement A3 (deux exécutions)
     python scripts/evaluation/mesures_10.py bout_en_bout --etat B2 --phase adapte   # puis R1 adapte, R1 temoin (Ollama)
     python scripts/evaluation/mesures_10.py analyser_bout_en_bout
 
@@ -653,6 +654,200 @@ def famille_e() -> dict:
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# Famille E, amendement A3 (#167) : candidat v3-C, règle de mise en service écrite avant toute génération
+# ---------------------------------------------------------------------------------------------------------------
+REGISTRE_V3 = D / "adaptation" / "v3" / "registre.jsonl"
+FAMILLE_E_A2 = SORTIES / "famille_e_20261117T134023Z.json"
+SHA256_FAMILLE_E_A2 = "13c474b82fc6d41eb200619b899cad822991106bfe78faaa824417d72a93f231"
+QUESTIONS_CDTN_SEUIL = D / "evaluation" / "cdtn" / "questions_cdtn.json"
+SHA256_QUESTIONS_CDTN_SEUIL = "fea79fbe90b28f6a7cafc554656a660f0635b37f861c93415928cb3ed00f3f45"
+SEUILS_V1_SERVIS = {"seuil": 0.7682965993881226, "borne": 0.8140405416488647}   # front/src/recherche/moteur.js (#164)
+CENTILES = {"seuil": 5, "borne": 25}                                              # règles de la #164 (cdtn_seuil.py)
+NIVEAU = 0.05
+
+
+def registre_v3() -> list[dict]:
+    """Registre de la v3-C (12_encodeur_v3.py), chaînage contrôlé. Refus s'il porte un arrêt, ou si l'amendement A3 ou
+    le script de la v3 ont changé d'une étape à l'autre."""
+    evenements, precedent = [], None
+    for i, ligne in enumerate(REGISTRE_V3.read_text(encoding="utf-8").splitlines()):
+        e = json.loads(ligne)
+        if e.get("n") != i or e.get("precedent") != precedent:
+            raise ErreurMesure10(f"Registre de la v3 modifié à la ligne {i}")
+        evenements.append(e)
+        precedent = hashlib.sha256(ligne.encode("utf-8")).hexdigest()
+    if any(e["evenement"] == "arret" for e in evenements):
+        raise ErreurMesure10("Le registre de la v3 porte un arrêt : la v3-C n'est pas mesurée")
+    gels = {(e["depot"]["sha256_a3"], e["depot"]["sha256_script"]) for e in evenements if "depot" in e}
+    if len(gels) != 1:
+        raise ErreurMesure10(f"Amendement A3 ou script de la v3 modifiés en cours de route : {sorted(gels)}")
+    return evenements
+
+
+def candidat_v3(evenements: list[dict]) -> dict:
+    """Empreintes de la v3-C lues au registre, jamais recopiées à la main : q8 exporté, index fp32, garde-fou."""
+    un = {}
+    for nom in ("garde_fou", "export", "index"):
+        trouves = [e for e in evenements if e["evenement"] == nom]
+        if len(trouves) != 1:
+            raise ErreurMesure10(f"Événement « {nom} » attendu une fois au registre de la v3")
+        un[nom] = trouves[0]
+    if not un["garde_fou"]["passe"]:
+        raise ErreurMesure10("Garde-fou de la v3-C non passé")
+    return {"modele_local": "ajuste_v3", "sha256_q8": un["export"]["sha256_q8"],
+            "index": a5.NAV / "index_ajuste_v3.f32", "sha256_index": un["index"]["sha256_index"],
+            "garde_fou": D / "adaptation" / "v3" / "garde_fou_v3.json",
+            "sha256_garde_fou": un["garde_fou"]["sha256_garde_fou"]}
+
+
+def meilleurs_scores(vecteurs: dict, ids: list, matrice: np.ndarray) -> np.ndarray:
+    """Plus grand cosinus de chaque question avec les 4 240 passages, calculé comme cdtn_seuil.py (produit matriciel)."""
+    return (np.stack([vecteurs[i] for i in ids]).astype(np.float32) @ matrice.T).max(axis=1)
+
+
+def seuils_site(vecteurs: dict, matrice: np.ndarray) -> dict:
+    """Seuil d'abstention et borne de la zone grise par les règles de la #164 : 5e et 25e centiles (interpolation
+    linéaire) des meilleurs scores des 479 variantes du CDTN de cdtn_seuil.py."""
+    if sha256(QUESTIONS_CDTN_SEUIL) != SHA256_QUESTIONS_CDTN_SEUIL:
+        raise ErreurMesure10("Variantes du CDTN du seuil différentes de celles de la #164")
+    ids = [q["id"] for q in json.loads(QUESTIONS_CDTN_SEUIL.read_text(encoding="utf-8"))["questions"]]
+    scores = meilleurs_scores(vecteurs, ids, matrice)
+    return {k: float(np.percentile(scores, c)) for k, c in CENTILES.items()} | {"variantes": len(ids)}
+
+
+def famille_e_a3() -> dict:
+    """Règle de l'amendement A3, section 7 : conditions a, b, c, d et f, calculées ; la condition e (hébergement,
+    mesures du site, PR fusionnée avant le 26/11 à 23 h 59) est vérifiée hors de ce script. Contrôles préalables : la
+    v1 redonne le protocole 05 sur le CDTN et ses seuils servis ; la v2-T redonne la mesure du 17/11. Un contrôle en
+    échec arrête tout : rien n'est décidé et la v1 reste servie. La décision exige deux exécutions identiques."""
+    evenements = registre_v3()
+    candidats = {"v2_T": CANDIDATS_E["v2_T"], "v3_C": candidat_v3(evenements)}
+    table, _ = a5.table_et_index_site()
+    url_passage = [u.rstrip("/") for u in table.url]
+    v1 = matrice_ajuste()
+    jeu_v2 = lire_jeu_v2()
+    corpus = [q for q in jeu_v2 if q["type"] == "dans_corpus"]
+    pv2 = PertinenceV2(table.texte.tolist())
+    pert_v2 = [pv2.pertinents(q["extrait"]) for q in corpus]
+    pop = json.loads(a5.POPULATION_CDTN.read_text(encoding="utf-8"))
+    if sha256(a5.POPULATION_CDTN) != a5.EMPREINTES["population_cdtn"][1]:
+        raise ErreurMesure10("Population du CDTN différente de celle du protocole 05")
+    ids_c, pert_c, grp_c = [], [], []
+    for r in pop["requetes"]:
+        for f in r["formulations"]:
+            ids_c.append(f["id"]); pert_c.append(set(r["pertinents"])); grp_c.append(r["id"])
+    import mesure
+    jeu_v1_test = mesure.lire_jeu("test")
+    v1_test = [q for q in jeu_v1_test if q["type"] == "dans_corpus"]
+    ip = IndexPertinence(table.texte.tolist())
+    pert_t = [set(ip.pertinents(q["extrait"])) for q in v1_test]
+    jeux = {"jeu_v2": ("jeu_v2", [q["id"] for q in corpus], pert_v2, [q["url"] for q in corpus]),
+            "cdtn": ("cdtn_mesure", ids_c, pert_c, grp_c),
+            "jeu_v1_test": ("navigateur", [q["id"] for q in v1_test], pert_t, [q["fiche"] for q in v1_test])}
+    v1_vecteurs = {"jeu_v2": a5.charger_vecteurs(VECTEURS["jeu_v2"], "ajuste"),
+                   "cdtn": a5.charger_vecteurs(VECTEURS["cdtn"], "ajuste"),
+                   "jeu_v1_test": a5.charger_vecteurs(VECTEURS["jeu_v1"], "ajuste"),
+                   "cdtn_seuil": a5.charger_vecteurs(a5.VECTEURS / "vecteurs_cdtn_ajuste.json", "ajuste")}
+
+    def dense(vecteurs, matrice, pertinents):
+        listes = [rc.classement(matrice @ v)[:AFFICHES].tolist() for v in vecteurs]
+        return evaluer(listes, pertinents, [{url_passage[i] for i in p} for p in pertinents], url_passage)
+
+    gel = next(e["depot"] for e in evenements if "depot" in e)
+    res = {"protocole": "10, section 7, famille E ; amendement A3 du protocole 05, sections 6 et 7",
+           "sha256_protocole": sha256(RACINE / "docs/etudes/evaluation/10_protocole_jeu_v2.md"),
+           "sha256_mesures_10": sha256(Path(__file__)), "amendement_a3": gel,
+           "sha256_registre_v3": sha256(REGISTRE_V3), "candidats": {}}
+    matrices, vecteurs_c = {}, {}
+    for nom, cand in candidats.items():
+        if sha256(cand["garde_fou"]) != cand["sha256_garde_fou"] or not json.loads(cand["garde_fou"].read_text(encoding="utf-8"))["passe"]:
+            raise ErreurMesure10(f"{nom} : garde-fou absent, modifié ou non passé")
+        matrices[nom] = matrice_candidat(cand)
+        vecteurs_c[nom] = {jeu: vecteurs_candidat(lot, cand) for jeu, (lot, _, _, _) in jeux.items()}
+        bloc = {}
+        for jeu, (lot, ids, pert, grp) in jeux.items():
+            s1 = dense(np.stack([v1_vecteurs[jeu][i] for i in ids]), v1, pert)
+            s2 = dense(np.stack([vecteurs_c[nom][jeu][i] for i in ids]), matrices[nom], pert)
+            bloc[jeu] = {"questions": len(ids), "groupes": len(set(grp)), "v1": resume(s1), nom: resume(s2),
+                         "ecart_recall5": a5.ecart(s2["r5"], s1["r5"], grp)}
+        res["candidats"][nom] = bloc
+
+    # Contrôles de reproduction : un échec arrête tout (A3, section 6)
+    r5_05 = json.loads(RESULTATS_05.read_text(encoding="utf-8"))["cdtn"]["systemes"]["ajuste"]["recall@5"]
+    if abs(res["candidats"]["v3_C"]["cdtn"]["v1"]["recall@5"] - r5_05) > 1e-12:
+        raise ErreurMesure10("v1 ne reproduit pas le protocole 05 sur le CDTN")
+    if sha256(FAMILLE_E_A2) != SHA256_FAMILLE_E_A2:
+        raise ErreurMesure10("Mesure du 17 novembre différente de celle publiée")
+    ref = json.loads(FAMILLE_E_A2.read_text(encoding="utf-8"))["candidats"]["v2_T"]
+    garder = lambda b: json.loads(json.dumps({k: (v if k != "ecart_recall5" else {x: y for x, y in v.items() if x not in ("p_holm", "dit_meilleur")})
+                                              for k, v in b.items()}))
+    ecarts_v2 = [j for j in jeux if garder(res["candidats"]["v2_T"][j]) != garder(ref[j])]
+    if ecarts_v2:
+        raise ErreurMesure10(f"La v2-T ne redonne pas la mesure du 17 novembre sur {ecarts_v2}")
+    seuils = {"v1": seuils_site(v1_vecteurs["cdtn_seuil"], v1),
+              "v3_C": seuils_site(vecteurs_candidat("cdtn", candidats["v3_C"]), matrices["v3_C"])}
+    if {k: seuils["v1"][k] for k in CENTILES} != SEUILS_V1_SERVIS:
+        raise ErreurMesure10(f"Les seuils de la v1 ne redonnent pas ceux servis : {seuils['v1']}")
+    res["controles"] = {"v1_cdtn_protocole_05": True, "v2_T_mesure_du_17_novembre": True, "seuils_v1_servis": True}
+
+    # Condition c : Holm sur les quatre hypothèses {v2-T, v3-C} x {jeu v2, CDTN}, valeur p la plus grande du test exact
+    # de McNemar et du test groupé d'Obuchowski ; intervalle de Tango à 95 % corrigé de l'effet de plan
+    p = {f"{n}|{j}": max(b[j]["ecart_recall5"]["p_mcnemar"], b[j]["ecart_recall5"]["p_groupe"])
+         for n, b in res["candidats"].items() for j in ("jeu_v2", "cdtn")}
+    ph = holm(p)
+    for n, b in res["candidats"].items():
+        for j in ("jeu_v2", "cdtn"):
+            e = b[j]["ecart_recall5"]
+            e["p_decision"], e["p_holm_4"] = p[f"{n}|{j}"], ph[f"{n}|{j}"]
+            e["demontre"] = bool(e["ic95_tango"][0] > 0 and ph[f"{n}|{j}"] < NIVEAU)
+
+    # Condition f : questions hors corpus sous la borne de la zone grise (refusées ou averties), v3-C et ses seuils
+    # recalculés contre la v1 et ses seuils servis, sur le jeu v2 et le lot de test du jeu v1
+    hors = {"jeu_v2": ("jeu_v2", [q["id"] for q in jeu_v2 if q["type"] == "hors_corpus"]),
+            "jeu_v1_test": ("jeu_v1_test", [q["id"] for q in jeu_v1_test if q["type"] == "hors_corpus"])}
+    res["hors_corpus"] = {}
+    for jeu, (cle, ids) in hors.items():
+        s1 = meilleurs_scores(v1_vecteurs[cle], ids, v1)
+        s3 = meilleurs_scores(vecteurs_c["v3_C"][cle], ids, matrices["v3_C"])
+        res["hors_corpus"][jeu] = {"questions": len(ids), **{
+            n: {"refusees": int((s < seuils[n]["seuil"]).sum()), "sous_la_borne": int((s < seuils[n]["borne"]).sum())}
+            for n, s in (("v1", s1), ("v3_C", s3))}}
+    res["seuils"] = seuils
+
+    b3 = res["candidats"]["v3_C"]
+    e2, ec, et = (b3[j]["ecart_recall5"]["ecart"] for j in ("jeu_v2", "cdtn", "jeu_v1_test"))
+    conditions = {
+        "a_garde_fou": True,                                              # contrôlé par candidat_v3 et ci-dessus
+        "b_regle_a2": bool(e2 >= 0 and ec >= 0 and (e2 > 0 or ec > 0)),
+        "c_demontree": bool(b3["cdtn"]["ecart_recall5"]["demontre"] or (b3["jeu_v2"]["ecart_recall5"]["demontre"] and ec > 0)),
+        "d_questions_humaines": bool(et >= 0),
+        "f_hors_corpus": all(h["v3_C"]["sous_la_borne"] >= h["v1"]["sous_la_borne"] for h in res["hors_corpus"].values()),
+    }
+    res["decision"] = {**conditions, "regle_a3_sans_e": all(conditions.values()),
+                       "e": "à vérifier et consigner sur le #167 : hébergement validé, seuils ci-dessus servis, mesures du site refaites, PR fusionnée avant le 26/11/2026 à 23 h 59"}
+
+    # Deux exécutions identiques exigées (A3, section 6)
+    coeur = json.loads(json.dumps(res, ensure_ascii=False))
+    precedentes = sorted(SORTIES.glob("famille_e_a3_*.json"))
+    res["execution"] = len(precedentes) + 1
+    if precedentes:
+        premiere = json.loads(precedentes[0].read_text(encoding="utf-8"))
+        res["identique_a_la_premiere"] = {k: v for k, v in premiere.items() if k != "execution"} == coeur
+    chemin = SORTIES / f"famille_e_a3_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
+    print(f"écrit {chemin.name}, SHA-256 {a5.ecrire_une_fois(chemin, res)}")
+    for n, b in res["candidats"].items():
+        for jeu in ("jeu_v2", "cdtn", "jeu_v1_test"):
+            e = b[jeu]["ecart_recall5"]
+            print(f"{n} {jeu:12s} R@5 v1 {b[jeu]['v1']['recall@5']:.3f} {n} {b[jeu][n]['recall@5']:.3f} écart {e['ecart']:+.3f} "
+                  f"[{e['ic95_tango'][0]:+.3f} ; {e['ic95_tango'][1]:+.3f}] p={e['p_mcnemar']:.3f} p_groupe={e['p_groupe']:.3f}"
+                  + (f" p_holm_4={e['p_holm_4']:.3f}" if "p_holm_4" in e else ""))
+    print(json.dumps({"hors_corpus": res["hors_corpus"], "seuils": seuils, "decision": res["decision"],
+                      "execution": res["execution"], "identique_a_la_premiere": res.get("identique_a_la_premiere")},
+                     ensure_ascii=False, indent=1))
+    return res
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # Famille B de bout en bout (section 7), sur les 161 questions du jeu v2
 # ---------------------------------------------------------------------------------------------------------------
 # R2 n'étant pas maintenue (famille B, récupération), la chaîne de démonstration est R1 (10_resultats.md, section 6).
@@ -808,7 +1003,7 @@ def afficher_b(res: dict) -> None:
 def main(argv=None) -> int:
     import argparse
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("commande", choices=("famille_a", "famille_b", "effet_k", "famille_e", "bout_en_bout",
+    p.add_argument("commande", choices=("famille_a", "famille_b", "effet_k", "famille_e", "famille_e_a3", "bout_en_bout",
                                         "analyser_bout_en_bout"))
     p.add_argument("--etat", choices=("B2", "R1"))
     p.add_argument("--phase", choices=tuple(PHASES))
@@ -831,6 +1026,9 @@ def main(argv=None) -> int:
         return 0
     if a.commande == "famille_e":
         famille_e()
+        return 0
+    if a.commande == "famille_e_a3":
+        famille_e_a3()
         return 0
     res = famille_a()
     print(json.dumps({k: res[k] for k in ("controle_reproduction_05", "decision")}, ensure_ascii=False, indent=1))
