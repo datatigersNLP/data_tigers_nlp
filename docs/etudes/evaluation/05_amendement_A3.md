@@ -139,7 +139,8 @@ Relevées le 21 novembre 2026, avant toute génération.
 
 ## 10. Historique
 
-* **21 novembre 2026** : amendement rédigé ; audité par un sous-agent Claude Opus indépendant (16 constats, dont 2 bloquants : isolement des sous-agents non contrôlé, relances non bornées ni tracées ; verdict « gel possible après corrections ») ; corrigé ; essai du format des journaux sur un appel sans enjeu ; second audit (aucun constat bloquant ; trois importants : journal attribué à un autre lot, registre sans verrou, effets de bord des outils, et sept mineurs) ; corrigé, tests et mutations rejoués ; figé avant toute génération.
+* **21 novembre 2026** : amendement rédigé ; audité par un sous-agent Claude Opus indépendant (16 constats, dont 2 bloquants : isolement des sous-agents non contrôlé, relances non bornées ni tracées ; verdict « gel possible après corrections ») ; corrigé ; essai du format des journaux sur un appel sans enjeu ; second audit (aucun constat bloquant ; trois importants : journal attribué à un autre lot, registre sans verrou, effets de bord des outils, et sept mineurs) ; corrigé, tests et mutations rejoués ; figé avant toute génération (commit `3d52395`, SHA-256 `432fa7c7…`).
+* **21 novembre 2026, après la mesure** : génération (64 lots, 2 relances), 2 420 paires, relecture 3 fausses sur 30 (kappa 1,0), garde-fou passé, hébergement conforme ; règle de la section 7 non satisfaite (conditions b, c, d et f), décision valide à la seconde exécution identique. La v3-C n'est pas servie ; la v1 reste l'encodeur du site. Résultats : `10_resultats.md`, section 7 bis (branche `docs/171-protocole-10`). Cette ligne est la seule modification de l'amendement après son gel.
 
 ---
 
