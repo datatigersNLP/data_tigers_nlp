@@ -1943,7 +1943,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 ### Session 69, 21 et 22 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code, avec des sous-agents Claude Sonnet 5.5 et Opus 5.5
 
-**Objet.** Fin de la mesure de bout en bout de la chaîne de démonstration (protocole 10, #172) ; logo et mentions de confidentialité des deux interfaces, demandés par l'enseignant (#176) ; support de soutenance au nouveau format de 8 minutes (#114) ; encodeur v3-C, dont les paires d'entraînement sont écrites par des sous-agents Claude (#167, amendement A3) ; report de ces travaux dans le rapport V1, le README et le support (22 novembre) ; l'après-midi du 22 novembre, tâches restantes de Mahé avant la V1 : PR, tickets, rapport et démonstration.
+**Objet.** Fin de la mesure de bout en bout de la chaîne de démonstration (protocole 10, #172) ; logo et mentions de confidentialité des deux interfaces, demandés par l'enseignant (#176) ; support de soutenance au nouveau format de 8 minutes (#114) ; encodeur v3-C, dont les paires d'entraînement sont écrites par des sous-agents Claude (#167, amendement A3) ; report de ces travaux dans le rapport V1, le README et le support (22 novembre) ; l'après-midi du 22 novembre, tâches restantes de Mahé avant la V1 : PR, tickets, rapport et démonstration ; vidéo de secours du volet B (#111).
 
 **Produit.**
 - `docs/etudes/evaluation/10_resultats.md` : section 6, bout en bout (`8ffcf01`), et section 7 bis, v3-C (`0e8ef20`), sur la PR #174.
@@ -1955,6 +1955,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - `6f55999` (renoncement au #173 dans `10_resultats.md`) et `9d6eed3` (test du code figé réparé), sur la PR #174.
 - Rapport : section 4.1 rédigée par l'assistant à partir du journal et des tickets ; section 5 (outils retenus le 10 novembre, compteurs au 22 novembre) et section 6 ; fiche des assistants d'IA (ligne, observations et décision de Mahé).
 - Démonstration : la couche R1 de la #175 sert l'interface de la #177 (lanceur local mis à jour, hors dépôt).
+- Vidéo de secours du volet B (#111) : 64 s en 1080p, hors dépôt (`~/NLP2_local/soutenance/`), avec ses scripts de capture et de montage et leur README (`~/NLP2_local/outils/video_demo/`) ; les attentes de génération sont accélérées au montage, une puce l'indique à l'écran, et le carton de fin dit que les questions sont une illustration, pas une mesure.
 
 **Mesures exécutées.**
 - Bout en bout : R1 avec le modèle adapté, puis avec le témoin, relancés le 21 novembre, la mesure du 17 novembre s'étant arrêtée avec la session ; Ollama sur 127.0.0.1.
@@ -1962,6 +1963,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Confidentialité : requêtes réseau, cookies et stockages du site en ligne relevés dans le navigateur, avant et après une question.
 - Tests du 22 novembre : 29 sur la #174 et 62 sur la #179, tous réussis ; contrôle de la page neutralisé dans une copie de travail de `mesures_10.py` : le test réparé échoue, puis le fichier est restauré à l'identique.
 - Démonstration, une question au modèle adapté : réponse citant le bon passage, rédigée en 21,3 s ; un seul hôte contacté, 127.0.0.1:8765 ; aucun mot de la question ni de la réponse dans les journaux d'Ollama et des couches.
+- Vidéo : 9 questions répétées par l'API, puis trois captures ; les 4 réponses filmées sont identiques mot pour mot à la répétition (température 0), chacune lue contre son passage ; T et le modèle adapté ont reçu les 10 mêmes passages ; seuls 127.0.0.1:8765 et :8766 ont été contactés.
 
 **Résultats retenus.**
 - Bout en bout : la chaîne de démonstration cite un passage pertinent pour 52,9 % des questions du jeu v2, +16,9 points démontrés sur B2 ; abstention correcte sur les 39 questions hors corpus évaluées ; 10,1 % avec le modèle d'origine ; 11,8 s par question en médiane, contre 4,9 s pour B2.
@@ -1972,6 +1974,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - La mise en service de la v2-T, que la règle A2 retenait : Mahé a préféré mesurer la v3-C.
 - Un type de sous-agent limité à la lecture : il aurait fallu modifier la configuration de Claude Code. Le risque d'un sous-agent disposant de tous les outils est déclaré dans A3 et contrôlé par le journal de chaque appel.
 - Le contrôle dans le navigateur de la v3-C élaguée : sans objet, la v3-C n'étant pas servie.
+- Pour la vidéo, deux réponses du modèle adapté : un fragment commençant par un tiret (période d'essai d'un cadre), et une dérogation aux 48 heures attribuée à l'inspecteur du travail, alors que le passage cité dit la DREETS.
 
 **Ce que l'équipe a validé, et par qui.** Décisions de Mahé du 21 novembre : v3-C avec des générateurs Sonnet et des relecteurs Opus ; sous-agents laissés tels quels, risque jugé contrôlé ; renoncement à la fusion dans le site ; Mahé directeur de la publication. Relectures demandées à Jibril : PR #177, qui sera la nouvelle version du site, et PR #174. Section 4.1 du rapport et décision de Mahé dans la fiche des assistants d'IA : textes de l'assistant, à relire et à amender par Mahé avant la V1.
 
@@ -2155,6 +2158,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 22/11 | Attente de la réponse de la démonstration écrite sur un format de citation supposé (« [P1] »), alors que l'interface affiche « P1 » : attente expirée au bout de 3 minutes | journal de la couche, réponse rendue en 16 s | état de la page relu, sans relancer de génération |
 | 22/11 | Phrase du rapport portant « 185,5 secondes », que le vérificateur du support lit sur `dev`, retirée par la réécriture de la section 2.1 du 17/11 : le contrôle aurait échoué après la fusion de la #178 | recoupement des chiffres lus par le vérificateur avec la branche du rapport | contrôle pointé sur la ligne de l'annexe (PR #162) |
 | 22/11 | Sorties d'erreur de la conversion des PDF écrites dans `/tmp` au lieu du scratchpad | relecture de la commande | fichiers supprimés aussitôt, aucune donnée sensible ; conversions suivantes dans le scratchpad |
+| 22/11 | Vidéo prévue en 1920 x 1080 par le screencast de Chrome, qui ne livre que la taille CSS (1280 x 720) : agrandie, l'image est floue | lecture de l'en-tête JPEG d'une image capturée | captures par `Page.captureScreenshot` à l'échelle 1,5, identiques au pixel près à la capture de référence |
+| 22/11 | Carton de fin de la vidéo effacé avant la dernière image | planche de contrôle | carton maintenu jusqu'au repère de fin, capture refaite |
+| 22/11 | Vidéo encodée en plage pleine (`yuvj420p`), couleurs non déclarées | lecture des propriétés du flux | conversion en plage vidéo, BT.709 déclarée |
+| 22/11 | Contrôle d'un remplacement de code faux : le mot cherché figurait dans le commentaire ajouté | assertion en échec avant toute écriture | contrôle réécrit sur les appels eux-mêmes |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

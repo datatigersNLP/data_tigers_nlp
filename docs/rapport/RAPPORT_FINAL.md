@@ -184,7 +184,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 169 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 173 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -373,7 +373,7 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 - **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, sur l'ensemble du projet : 69 sessions consignées au 22 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 169 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 173 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
