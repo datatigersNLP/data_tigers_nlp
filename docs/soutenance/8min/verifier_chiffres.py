@@ -71,7 +71,7 @@ def main(argv=None) -> int:
         ("+19,2 points", "+19,2 points" if "+19,2 points" in r05 else None, "05_resultats, écart"),
         ("+9,7 à +30,4", "+9,7 à +30,4" if "+9,7 à +30,4" in r05 else None, "05_resultats, IC"),
         ("93,2 %", "93,2 %" if "93,2 %" in r05 else None, "05_resultats, section 4"),
-        ("185,5 s", "185,5 s" if "185,5 secondes" in rapport else None, "rapport, 2.1 (V0)"),
+        ("185,5 s", "185,5 s" if "2 époques, 185,5 s" in rapport else None, "rapport, annexe (ajustement)"),
         ("109 paires", "109 paires" if "109 paires" in rapport else None, "rapport, 2.1"),
         ("45,2 %", pc(conf["rappel_contexte_r0"]) + " %", "confirmation du 9/11, R0"),
         ("72,6 %", pc(conf["rappel_contexte_v2"]) + " %", "confirmation du 9/11, V2"),
