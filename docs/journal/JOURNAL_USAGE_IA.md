@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 12 novembre 2026 ; sessions 1 à 63 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56 et 61 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 22 novembre 2026 ; sessions 1 à 63, 68 et 69 (64 à 67 en PR #161) ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56 et 61 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -28,6 +28,12 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 
 **Règle de vérification.** Aucune affirmation produite par l'assistant n'est reprise sans mesure. Les chiffres des livrables proviennent de commandes exécutées, dont la méthode est décrite en annexe de chaque document. Cette exigence a permis de détecter plusieurs erreurs, listées en section 4.
 
+**Questions de test et jugements produits par l'IA, sur autorisation de l'enseignant.** Le 17 novembre 2026, l'enseignant a autorisé par écrit l'usage de Claude pour générer des questions de test synthétiques et pour évaluer. Le courriel est conservé par Mahé, hors du dépôt. Cet usage s'écarte de la règle que l'équipe s'était donnée : le README de `evaluation/questions/` réservait la génération par IA aux paires d'entraînement. Il est encadré par le protocole 10 (`docs/etudes/evaluation/10_protocole_jeu_v2.md`), figé avant toute génération :
+- chaque générateur et chaque juge est un sous-agent indépendant, dans un contexte neuf, sans accès au dépôt ni aux autres sorties ;
+- leurs consignes sont publiées mot pour mot, et leurs sorties sont extraites de leur journal, jamais recopiées à la main ;
+- chaque question passe des contrôles mécaniques éliminatoires (forme, extrait recopié mot pour mot, nouveauté face au jeu humain) ;
+- les résultats obtenus sur ces questions, ou avec ces juges, sont signalés comme tels : ils ne remplacent ni le jeu humain v1 ni un jugement humain.
+
 ---
 
 ## 2. Outils déclarés
@@ -39,6 +45,8 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 | Google Antigravity | plateforme d'agents, alternative gratuite | les autres membres | même usage, divergence déclarée au jalon J2 |
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
 | ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
+| Claude Fable 5.2 et Claude Haiku 5.5 | modèles de langage, exécutés comme sous-agents indépendants par Claude Code | Mahé BEGNIS (session 68) | juge de contrôle des questions du jeu v2 (Fable) ; juges d'étalonnage du jugement mutualisé du #139 (Fable et Haiku), sur autorisation de l'enseignant (section 1) |
+| Claude Sonnet 5.5 | modèle de langage, exécuté comme sous-agent indépendant par Claude Code | Mahé BEGNIS (session 69) | écriture des 2 420 paires d'entraînement de l'encodeur v3-C (amendement A3), relues par deux sous-agents Claude Opus 5.5 |
 | Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN et compilation du PDF du journal (sessions 17 à 19) ; mesure QLoRA du Legion et son bilan (session 43) ; développement, tests, analyse des sorties et documentation Agent0 (session 40 et sessions 48 à 54) |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
@@ -1896,6 +1904,78 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Un rechargement de la page pendant un calcul a bloqué les questions suivantes jusqu'à sa fin.
 - Une question tapée avec des apostrophes droites ne récupère pas les mêmes passages que le texte officiel.
 
+### Session 68, 17 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code, avec des sous-agents Claude Opus 5.5, Fable 5.2 et Haiku 5.5
+
+**Objet.** Protocole 10 (#171) : jeu de questions v2 généré et contrôlé par des sous-agents Claude, étalonnage du jugement mutualisé du #139 par deux juges d'IA, mesures des familles A (fusion du volet A, #173) et B (récupération du volet B, #172), justification de k = 10 demandée par l'enseignant ; mise en production de la chaîne de démonstration (#172).
+
+**Produit.**
+- Protocole 10 figé avant toute génération (`ffa0486`), jeu v2 figé et étiqueté `jeu-questions-v2` (`8bfd9fb`) : 121 questions du corpus, sur les 61 fiches du lot de test, et 40 hors corpus.
+- `scripts/evaluation/jeu_v2.py` et `scripts/evaluation/mesures_10.py`, avec leurs tests ; page `docs/etudes/evaluation/10_resultats.md` (PR #174, brouillon).
+- PR #175 : chaîne v2 de la démonstration en production, sans dépendance au dossier `data/`.
+- Corrections de la PR #166 après la revue de Jibril (`c5cae1e`) ; étalonnage consigné dans la PR #168 (`ab2310e`).
+
+**Mesures exécutées.**
+- Quatre générateurs Opus 5.5 (trois lots de 61 passages, un lot hors corpus) ; juge de contrôle Fable 5.2 sur 183 questions ; vérification des 60 questions hors corpus par Fable 5.2 ; étalonnage du #139 par Fable 5.2 et Haiku 5.5 sur 100 paires.
+- Familles A et B sur le jeu v2, le CDTN et le lot de test du jeu v1, après des contrôles de reproduction : D redonne le protocole 05, R0 et R1 redonnent la grille du protocole 07 formulation par formulation, et la confirmation du 9 novembre sur le jeu v1.
+- Parité de la production et de la mesure sur les 121 questions du jeu v2 : vecteurs identiques bit à bit, contextes identiques pour R1 et pour R2.
+- Famille E : amendement A2 figé (`2008338`) avant toute mesure, puis encodeur v2-T mesuré sur le jeu v2 et le CDTN (`1ce4d98`).
+
+**Résultats retenus.**
+- Famille A : la fusion est adoptée par la règle (+5,0 points sur le jeu v2, +2,6 sur le CDTN), mais elle n'est pas démontrée meilleure, et le jeu humain v1 va en sens inverse (−6,8 points, descriptif).
+- Famille B : R2, avec l'encodeur ajusté, n'est pas maintenue (84,3 % contre 86,0 % sur le jeu v2) ; la démonstration revient à R1.
+- Passer de 5 à 10 passages fait gagner de 4 à 14 points de rappel du contexte, à récupération égale.
+- Famille E : la règle A2 retient la v2-T sans gain démontré (+5,8 points sur le jeu v2, égalité sur le CDTN, −5,5 sur le lot de test, descriptif).
+- Étalonnage : accord entre les deux juges d'IA, kappa 0,77 ; la règle principale n'a qu'un positif sur 80 paires et ne peut pas être étalonnée.
+
+**Ce qui a été écarté, et pourquoi.**
+- La règle D4 pour les 14 extraits du jeu v2 de moins de 80 caractères : remplacée, avant tout résultat, par une règle plus stricte (extrait contenu en entier).
+- Le libellé « confirmés par deux juges d'IA » pour les majorants du #139 : le kappa de 1,0 de la règle principale repose sur un seul positif.
+- L'encodeur ajusté dans la chaîne de démonstration : la règle de maintien écrite d'avance ne le garde pas.
+
+**Ce que l'équipe a validé, et par qui.** Décisions de Mahé : jeu de test et étalonnage par des sous-agents, sur l'autorisation écrite de l'enseignant. Relectures demandées à Jibril : PR #174 et #175.
+
+**Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
+
+**Difficultés rencontrées.**
+- L'échantillon d'étalonnage du #139 n'était pas stratifié : un seul positif selon la règle principale.
+- Le q8 encodé en Python ne donne pas exactement les vecteurs du navigateur (cosinus minimal 0,98957), mais le même Recall@5 dense sur le jeu v2.
+- onnxruntime absent de l'environnement de mesure, sans pip : installé avec uv, à la version déjà figée par l'indexation.
+
+### Session 69, 21 et 22 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code, avec des sous-agents Claude Sonnet 5.5 et Opus 5.5
+
+**Objet.** Fin de la mesure de bout en bout de la chaîne de démonstration (protocole 10, #172) ; logo et mentions de confidentialité des deux interfaces, demandés par l'enseignant (#176) ; support de soutenance au nouveau format de 8 minutes (#114) ; encodeur v3-C, dont les paires d'entraînement sont écrites par des sous-agents Claude (#167, amendement A3) ; report de ces travaux dans le rapport V1, le README et le support (22 novembre).
+
+**Produit.**
+- `docs/etudes/evaluation/10_resultats.md` : section 6, bout en bout (`8ffcf01`), et section 7 bis, v3-C (`0e8ef20`), sur la PR #174.
+- PR #177 : logo en pixel art, à source unique `docs/charte/logo/tigre.py`, et fenêtres de confidentialité des deux interfaces (`d5ffac8`).
+- Support de 8 minutes `docs/soutenance/presentation_8min.html` (`96f0670`, puis `c03c497` avec les chiffres du bout en bout), sur la PR #162.
+- Amendement A3 et `scripts/adaptation/12_encodeur_v3.py`, avec 34 tests, figés avant toute génération (`3d52395`) ; `mesures_10.py famille_e_a3`, avec 19 tests (`d7716a5`, `1c01250`, `b033277`).
+- Rapport V1 (sections 1, 2.1 à 2.5, 3.1, 3.4, 6 et annexe), README et diapositive 5 du support mis à jour le 22 novembre.
+
+**Mesures exécutées.**
+- Bout en bout : R1 avec le modèle adapté, puis avec le témoin, relancés le 21 novembre, la mesure du 17 novembre s'étant arrêtée avec la session ; Ollama sur 127.0.0.1.
+- v3-C : 66 appels de sous-agents Sonnet (64 lots, dont 2 relancés), chacun inscrit avant son lancement dans un registre chaîné de 144 événements et contrôlé sur son journal ; relecture de 30 paires par deux juges Opus ; entraînement sur le processeur, à priorité basse ; export, élagage et index ; `famille_e_a3` exécutée deux fois, résultats identiques (`22376e29…`, `a27a45e4…`).
+- Confidentialité : requêtes réseau, cookies et stockages du site en ligne relevés dans le navigateur, avant et après une question.
+
+**Résultats retenus.**
+- Bout en bout : la chaîne de démonstration cite un passage pertinent pour 52,9 % des questions du jeu v2, +16,9 points démontrés sur B2 ; abstention correcte sur les 39 questions hors corpus évaluées ; 10,1 % avec le modèle d'origine ; 11,8 s par question en médiane, contre 4,9 s pour B2.
+- v3-C : +12,4 points de Recall@5 démontrés sur le jeu v2, écrit par Claude, mais −2,2 sur le CDTN et −5,5 sur le lot de test ; la règle A3 l'écarte, l'encodeur ajusté v1 reste servi.
+
+**Ce qui a été écarté, et pourquoi.**
+- La fusion avec BM25 dans le site (#173) : aucun gain démontré, et le jeu humain va en sens inverse.
+- La mise en service de la v2-T, que la règle A2 retenait : Mahé a préféré mesurer la v3-C.
+- Un type de sous-agent limité à la lecture : il aurait fallu modifier la configuration de Claude Code. Le risque d'un sous-agent disposant de tous les outils est déclaré dans A3 et contrôlé par le journal de chaque appel.
+- Le contrôle dans le navigateur de la v3-C élaguée : sans objet, la v3-C n'étant pas servie.
+
+**Ce que l'équipe a validé, et par qui.** Décisions de Mahé du 21 novembre : v3-C avec des générateurs Sonnet et des relecteurs Opus ; sous-agents laissés tels quels, risque jugé contrôlé ; renoncement à la fusion dans le site ; Mahé directeur de la publication. Relectures demandées à Jibril : PR #177, qui sera la nouvelle version du site, et PR #174.
+
+**Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
+
+**Difficultés rencontrées.**
+- Les sous-agents générateurs des lots 23 et 41 ont recopié de travers un même identifiant de passage ; le contrôle d'ingestion les a refusés, et la relance unique prévue par A3 a suffi.
+- Une fenêtre `<dialog>` native laisse la touche Tab sortir vers l'interface du navigateur : boucle de tabulation ajoutée, comme dans le panneau latéral.
+- Ouvert en `file://`, le support refusait `history.replaceState` (origine opaque), ce qui bloquait le passage d'une étape à l'autre : appel protégé.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -2049,6 +2129,17 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 08/11 | Remarque sur la #128 attribuant au site du ministère le refus du lien « Voir dans la fiche » | nouvel essai de Maïmouna, connexion vérifiée | remarque retirée, le lien fonctionne |
 | 08/11 | Phrase de conclusion de la réponse sur les congés payés présentée comme inventée et contradictoire | question de Maïmouna, relecture des cinq passages | son contenu figure en P5, ainsi qu'en P1 et P3 ; seule l'absence de citation est retenue |
 | 08/11 | Fichier d'annotation complet, lot de test compris, ouvert par l'assistant dans l'éditeur au lieu des seules questions de calibration | relecture de la commande par l'assistant | onglet fermé sans lecture, copie locale supprimée et remplacée par les 8 questions de calibration |
+| 17/11 | Rappel du contexte de l'E5 de base à 10 passages sur le CDTN annoncé à 77,7 %, publié à 77,6 % le 9 novembre | recoupement avec le commentaire du #138 | valeur exacte relue (0,77649), 77,6 % |
+| 17/11 | Empreinte du cache du reclasseur publiée comme celle d'un résultat, alors que le cache grandit à chaque mesure | empreinte relue après la préparation du bout en bout | empreinte retirée, le cache est décrit comme tel |
+| 17/11 | Recall@5 identique de la base et de l'ajusté sur le jeu v2 (57,0 %), soupçonné d'être un même calcul | comparaison des listes question par question | coïncidence vérifiée : 9 succès propres à chacun, jamais les mêmes 5 passages |
+| 21/11 | Mesure de bout en bout du 17/11 arrêtée avec la fin de session pendant R1 adapté : aucun fichier écrit | fichier de résultats absent à la reprise | R1 adapté et R1 témoin relancés ; reprise déclarée comme écart dans `10_resultats.md` |
+| 21/11 | Test du verrou et un test de mutation passés à tort : Python exécutait un `.pyc` périmé, laissé par une mutation de même longueur annulée dans la même seconde | contre-vérification des tests de mutation | caches supprimés, tests lancés avec `python -B` et `PYTHONDONTWRITEBYTECODE=1`, 15 mutations rejouées, verrou testé entre deux processus |
+| 21/11 | Identifiant `m2-article375981-*` recopié de travers par les sous-agents générateurs des lots 23 et 41 | contrôle d'ingestion du script | lots inscrits non conformes, relancés une fois comme le prévoit A3, puis conformes |
+| 21/11 | Commentaire de gel du #167 annonçant 20 tests de mesure au lieu de 19 | recomptage après publication | commentaire corrigé |
+| 21/11 | Registre de la v3-C annoncé à 143 événements au lieu de 144 | recomptage des lignes du registre | corrigé, avec son empreinte |
+| 22/11 | Rapport : v2-T dite écartée par les règles écrites d'avance, alors que la règle A2 la retenait | recoupement avec `10_resultats.md`, section 7 | phrase corrigée avant commit |
+| 22/11 | Rapport : cache du site décrit comme contenant le modèle et l'index | recoupement avec le texte de la fenêtre de confidentialité (PR #177) | « les fichiers du modèle » |
+| 22/11 | Message de commit du journal annonçant quatorze erreurs ajoutées à la section 4, au lieu de dix | recomptage des lignes avant envoi | message corrigé avant envoi |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
