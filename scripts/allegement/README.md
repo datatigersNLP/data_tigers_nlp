@@ -46,4 +46,13 @@ Puis servir le dépôt avec `python3 -m http.server 8765 --bind 127.0.0.1` et ou
 
 ## Pour l'encodeur ajusté (#49)
 
-Si la mesure du protocole 05 le retient : `elaguer_vocabulaire.py --dossier <modèle ajusté exporté> --nom <nom>`, puis `verifier_elagage.py <dossier élagué> --source <modèle ajusté complet>`. Dans le navigateur, la référence est alors celle de sa version complète, encodée par la page de fidélité de la PR #63 (`?modele=ajuste`) ; `controle_navigateur.html` compare aujourd'hui au q8 de Xenova, et devra lire cette autre référence. Son seuil d'abstention doit aussi être recalculé (`scripts/evaluation/cdtn_seuil.py`).
+Retenu par la mesure du protocole 05 et servi depuis le 15 novembre 2026 (#164) :
+
+| Étape | Commande | Résultat |
+|---|---|---|
+| Élagage | `elaguer_vocabulaire.py --dossier data/adaptation/navigateur/ajuste --nom multilingual-e5-small-ajuste-q8-elague` | 118 371 400 octets ramenés à 68 925 256 ; deux exécutions identiques octet par octet |
+| Contrôle en Python | `verifier_elagage.py <dossier élagué> --source data/adaptation/navigateur/ajuste` | découpage identique pour 822, 113, 5 433 et 4 240 textes ; 935 sorties sur 935 identiques bit à bit |
+| Référence du navigateur | `scripts/evaluation/encoder_navigateur.py --modele ajuste --lot controle` | 822 vecteurs du q8 ajusté complet, dans `data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste.json` |
+| Contrôle dans le navigateur | `scripts/evaluation/encoder_navigateur.py --page controle --index index_ajuste --reference ajuste` | 822 vecteurs sur 822 identiques bit à bit, 19,7 ms par requête |
+
+Avec `?index=index_ajuste&reference=ajuste`, `controle_navigateur.html` lit le modèle désigné par l'en-tête de `front/public/index_ajuste/` et compare ses vecteurs à cette référence, après avoir vérifié que la référence vient du q8 d'origine de l'en-tête et porte sur les mêmes requêtes ; sans paramètre, la page compare toujours le modèle de base au q8 de Xenova. Le seuil d'abstention a été recalculé par `scripts/evaluation/cdtn_seuil.py calculer_ajuste`. Détail : `docs/etudes/evaluation/05_resultats_ajustement.md`.
