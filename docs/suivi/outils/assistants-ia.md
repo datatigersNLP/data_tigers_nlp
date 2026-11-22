@@ -49,8 +49,9 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 - Cas où l'ancienne méthode reste préférable : (Remy) l'édition manuelle directe est plus sûre pour les retouches ciblées sur un texte déjà relu ou la saisie stricte d'une donnée d'environnement vérifiée.
 
 ## Décision
-À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
-- Motif :
+- (Remy, Google Antigravity) Conservé pour certains usages : prototypage de scripts d'évaluation et d'export, audits documentaires multi-fichiers, réconciliation des écarts Git et rédactions préparatoires.
+  - Motif : (Remy) La formule gratuite permet un agent intégré dans l'IDE réactif pour manipuler le dépôt sous Windows 11 sans coût d'abonnement. Cependant, sa propension avérée aux hallucinations plausibles (versions locales inventées, attributions de tickets erronées, confusion sur les statuts d'issues) et ses réflexes shell Bash incompatibles avec PowerShell imposent d'exclure toute validation factuelle autonome et de restreindre son emploi à l'assistance sous vérification locale stricte (commandes, tests et sources primaires).
+- (Mahé, Vaneck, Jibril, Maïmouna) À compléter.
 
 ## À retenir pour le rapport
 - Apport : (Remy) capacité de prototypage, de vérification et d'audit multi-fichiers accessible sans coût d'abonnement pour l'équipe.
