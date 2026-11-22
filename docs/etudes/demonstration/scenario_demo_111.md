@@ -1,121 +1,110 @@
 # Scénario de la démonstration du volet B (issue #111)
 
-Responsable : Vaneck DAGAR. Soutien : Maïmouna SIGNATE. Modèles et essai : Mahé BEGNIS. Machine de la démonstration : le Legion de Jibril BENSALEM.
+Responsable : Vaneck DAGAR. Soutien : Maïmouna SIGNATE. Modèles, chaîne et essais : Mahé BEGNIS.
 
-**Statut** proposé le 14 novembre 2026, revu le 16 novembre après la relecture de Mahé et l'essai de bout en bout fait sur son Mac (PR #170). Les réponses restent à confirmer pendant la répétition sur le Legion. La vidéo de secours est prévue le 18 novembre.
+**Statut** proposé le 14 novembre 2026, revu le 16 novembre après la relecture de Mahé, puis le 22 novembre pour la chaîne de démonstration v2 (état R1, PR #175, #172). Les questions et les comportements attendus sont ceux de l'essai et de la vidéo de secours faits par Mahé sur son Mac le 22 novembre (commentaire du #111).
 
 ## 1. Objet
 
 Montrer en 2 min 40 l'assistant réglementaire local du volet B (cas B1) :
 - une réponse citée, dont la référence ouvre son passage ;
-- une abstention sur une question hors corpus ;
-- la même question posée au témoin T, puis au modèle adapté (#107).
+- la même question posée au témoin T, puis au modèle adapté (#107) ;
+- une abstention sur une question hors corpus.
 
-Le sujet prévoit environ 4 minutes de démonstration pour les deux volets : le volet A en ligne (environ 1 min 10), puis le volet B en local. Il n'y a ni introduction ni conclusion : la présentation qui suit porte les résultats (#114). La vidéo de secours tient dans la même durée.
+Le sujet prévoit environ 4 minutes de démonstration pour les deux volets : le volet A en ligne (environ 1 min 10), puis le volet B en local. Il n'y a ni introduction ni conclusion : la présentation qui suit porte les résultats (#114). La vidéo de secours suit le même déroulé.
 
-Ce scénario sert de script pour la vidéo et pour la démonstration en soutenance. Ce n'est pas une mesure : les résultats mesurés sont ceux du protocole 06 (#52).
+Ce scénario sert de script pour la démonstration en soutenance. Ce n'est pas une mesure : les résultats mesurés sont ceux des protocoles 06 (#52) et 10 (#174).
 
-## 2. Préparation
+## 2. La chaîne montrée
 
-La procédure complète est dans `docs/etudes/demonstration/demo_legion_111.md` (PR #170) : transfert des deux modèles, contrôle des empreintes, création des modèles dans Ollama, construction de l'interface. L'essentiel pour le scénario :
+La couche `scripts/rag/serveur_demo_v2.py` (PR #175) sert la même interface que `serveur_demo.py` ; seule la récupération change (état R1 du protocole 10) :
+- **récupération hybride** : E5 de base et BM25, fusionnés (RRF), puis les 20 premiers candidats reclassés par `BAAI/bge-reranker-v2-m3` ;
+- **contexte** : jusqu'à 10 passages dans le budget de tokens du prompt, consigne v1 ;
+- **abstention** : pas de seuil S, le modèle seul s'abstient.
 
-- **Deux couches en même temps**, dans deux fenêtres PowerShell : le modèle adapté sur le port 8765, T sur le port 8766. On passe d'un modèle à l'autre en changeant d'onglet, sans relancer de couche en direct.
+L'interface est celle de la PR #177 : logo de l'équipe et fenêtre « Confidentialité et mentions ».
 
-  ```powershell
-  .venv\Scripts\python.exe scripts\rag\serveur_demo.py --modele qwen2.5-7b-instruct:lora-v2b-q4_k_m-local --digest 18cb25f099f2ba1b21a3bc945da6be7ce4d128cb4e579325fc0f70dfccb37174
-  .venv\Scripts\python.exe scripts\rag\serveur_demo.py --port 8766 --modele qwen2.5-7b-instruct:temoin-q4_k_m-local --digest 8a077f3d3f56b636face1357eba557b21e2ba68bc72ee81e48b377272da72f27
-  ```
+## 3. Préparation
+
+Sur le Mac de Mahé, depuis `dev` à jour, une fois les PR #175 et #177 fusionnées. Le cache (E5, tokeniseur Qwen, reclasseur, mots vides de BM25) se prépare une fois avec une connexion : voir la section « Avec la chaîne v2 » de `demo_b/README.md`.
+
+**Deux couches en même temps**, dans deux terminaux : le modèle adapté sur le port 8765, T sur le port 8766. On passe d'un modèle à l'autre en changeant d'onglet, sans relancer de couche en direct.
+
+```bash
+python scripts/rag/serveur_demo_v2.py --modele qwen2.5-7b-instruct:lora-v2b-q4_k_m-local --digest 18cb25f099f2ba1b21a3bc945da6be7ce4d128cb4e579325fc0f70dfccb37174
+python scripts/rag/serveur_demo_v2.py --port 8766 --modele qwen2.5-7b-instruct:temoin-q4_k_m-local --digest 8a077f3d3f56b636face1357eba557b21e2ba68bc72ee81e48b377272da72f27
+```
 
 - **Deux onglets** : http://127.0.0.1:8765/ (adapté) et http://127.0.0.1:8766/ (T). Chacun doit afficher « L'assistant est prêt. ».
-- **Mise en route** : poser une question d'échauffement dans chaque onglet peu avant de commencer, en finissant par le modèle adapté.
-- **Mémoire du GPU** : avec 8 Gio, le Legion ne garde sans doute qu'un modèle à la fois. La première question après un changement de modèle inclut alors le chargement, environ 20 s d'après la #31. Au moment 4, cela peut arriver deux fois. À vérifier en répétition avec `ollama ps` ; si c'est le cas, parler pendant le chargement (texte prévu au moment 4).
+- **Mise en route** : poser une question d'échauffement dans chaque onglet peu avant de commencer, en finissant par le modèle adapté. Le premier appel est plus lent : il charge le modèle dans Ollama et le reclasseur en mémoire.
+- **Exemples du panneau** : les trois questions du scénario y figurent ; un clic remplit la question sans risque de faute de frappe.
 
-## 3. Déroulé et minutage
+## 4. Déroulé et minutage
 
-Dans la vidéo, les temps d'attente de la génération sont coupés au montage. L'interface affiche sous chaque réponse le modèle qui l'a rédigée et sa durée réelle : la coupe ne cache donc rien.
+L'interface affiche sous chaque réponse le modèle qui l'a rédigée et sa durée réelle. Sur le Mac, une question prend une dizaine de secondes en médiane (11,8 s sur le jeu v2, protocole 10) ; parler pendant la génération.
 
 | Temps | Moment | Onglet | Ce qu'on montre |
 |---|---|---|---|
-| 0:00 à 0:50 | 1. Question directe | adapté (8765) | une réponse citée, et le clic sur `[P1]` qui ouvre le passage |
-| 0:50 à 1:30 | 3. Hors corpus | adapté (8765) | l'encadré d'abstention et les passages consultés |
-| 1:30 à 2:40 | 4. T puis adapté | T (8766), puis adapté (8765) | la même question, et la différence entre les deux réponses |
-| s'il reste du temps | 2. Réserve | adapté (8765) | une question à deux volets |
+| 0:00 à 0:50 | 1. Question directe | adapté (8765) | une réponse citée, et le clic sur la citation qui ouvre le passage |
+| 0:50 à 2:00 | 2. T puis adapté | T (8766), puis adapté (8765) | la même question, et la différence entre les deux réponses |
+| 2:00 à 2:40 | 3. Hors corpus | adapté (8765) | l'encadré d'abstention et les passages consultés |
+| s'il reste du temps | Confidentialité | adapté (8765) | la fenêtre « Confidentialité et mentions » : tout reste sur cet ordinateur |
 
-La numérotation des moments est gardée pour rester alignée avec la PR #170 et la diapositive Démonstration.
-
-## 4. Détail des moments
+## 5. Détail des moments
 
 ### Moment 1 : question directe
 
-- **Question** : « Quelle est la durée maximale de la période d'essai d'un cadre en CDI ? »
-- **Attendu** : une réponse citée `[P1]`. Le passage P1 (fiche « La période d'essai ») donne « quatre mois pour les cadres ».
-- **À montrer** : cliquer sur `[P1]`, qui amène la carte du passage avec sa fiche, sa section et son lien.
-- **À dire** : « L'assistant tourne entièrement sur cet ordinateur. Il récupère d'abord les cinq passages des fiches du ministère du Travail les plus proches de la question, puis le modèle rédige sa réponse à partir de ces seuls passages, en les citant. »
-- **À savoir** : le modèle adapté répond très court, parfois par un simple fragment. À l'essai, sa réponse commençait par un tiret, que l'interface affiche comme une liste d'un élément.
+- **Question** : « Combien de jours de congés payés ai-je par an ? »
+- **Attendu, d'après l'essai du 22 novembre** : une réponse citée `[P2]`.
+- **À montrer** : cliquer sur la citation, qui amène la carte du passage avec sa fiche, sa section et son lien.
+- **À dire** : « L'assistant tourne entièrement sur cet ordinateur. Il retrouve d'abord les passages des fiches du ministère du Travail les plus proches de la question, puis le modèle rédige sa réponse à partir de ces seuls passages, en les citant. »
+
+### Moment 2 : la même question, à T puis au modèle adapté
+
+- **Question** : « Ma période d'essai peut-elle être renouvelée ? »
+- **Déroulé** : poser la question dans l'onglet de T (8766), puis la même dans l'onglet du modèle adapté (8765).
+- **Attendu, d'après l'essai du 22 novembre** : T s'abstient ; le modèle adapté répond en citant `[P1]`. Les deux ont reçu les mêmes passages.
+- **À dire** : « T est le modèle d'origine, passé par la même chaîne d'export que le modèle adapté, et il reçoit les mêmes passages. Ici, il s'abstient alors que la réponse s'y trouve : c'est le défaut que visait l'adaptation. Le modèle adapté répond, en citant le passage. Cette question a été choisie après essai : c'est une illustration, pas une mesure. »
 
 ### Moment 3 : question hors corpus
 
 - **Question** : « Comment est calculée la pension de retraite d'un fonctionnaire ? »
-- **Attendu** : l'abstention. Aucun des cinq passages renvoyés ne traite de la retraite des fonctionnaires.
-- **À montrer** : l'encadré d'abstention, puis le bouton « Afficher les 5 passages consultés », pour montrer qu'ils ne répondent pas.
+- **Attendu** : l'abstention. Les fiches du ministère du Travail ne traitent pas de la retraite des fonctionnaires.
+- **À montrer** : l'encadré d'abstention, puis le bouton « Afficher les … passages consultés », pour montrer qu'ils ne répondent pas.
 - **À dire** : « Le corpus ne traite pas de ce sujet. Plutôt que de répondre de mémoire, le modèle s'abstient. L'interface ne prétend pas savoir pourquoi : on peut ouvrir les passages pour le vérifier. »
-
-### Moment 4 : la même question, à T puis au modèle adapté
-
-- **Question** : « Ma période d'essai peut-elle être renouvelée ? »
-- **Déroulé** : poser la question dans l'onglet de T (8766), puis la même dans l'onglet du modèle adapté (8765).
-- **Attendu, d'après l'essai du 16 novembre** : T s'abstient, alors que la réponse est dans les passages ; le modèle adapté répond « une fois si un accord de branche étendu le prévoit », en citant `[P2]`.
-- **À dire** : « T est le modèle d'origine, passé par la même chaîne d'export que le modèle adapté. Ici, il s'abstient alors que le passage P2 contient la réponse : c'est le défaut que visait l'adaptation. Le modèle adapté répond, en citant ce passage. Cette question a été choisie après essai : c'est une illustration, pas une mesure. »
-- **Si un chargement a lieu** : « Le modèle se charge en mémoire du GPU, ce qui prend une vingtaine de secondes la première fois. »
-- **Question de rechange** : « Combien d'heures puis-je travailler au maximum sur une semaine ? » (à l'essai : T s'abstient, le modèle adapté répond « 48 heures par semaine » en citant `[P2]`).
-
-### Moment 2, en réserve : question à deux volets
-
-- **Question** : « Je suis en arrêt maladie : mon employeur peut-il me licencier, et suis-je payé pendant l'arrêt ? »
-- **Attendu au départ** : une réponse qui cite deux passages de la fiche « Les absences liées à la maladie ou à l'accident non professionnel », P2 pour l'indemnisation et P3 pour le licenciement.
-- **Obtenu à l'essai** : une seule citation, `[P3]`, sur le licenciement ; la rémunération n'est pas traitée. À ne jouer que s'il reste du temps, en le disant : « La question a deux volets ; le modèle n'en traite qu'un. Les deux passages consultés montrent que l'information sur l'indemnisation était disponible. »
-
-## 5. Les quatre questions candidates du moment 4
-
-Résultats de l'essai du 16 novembre sur le Mac de Mahé (PR #170), même code, mêmes modèles et mêmes digests que sur le Legion. Sur le GPU du Legion, les textes peuvent différer légèrement.
-
-| Question | Où est la réponse | T | Modèle adapté | Décision |
-|---|---|---|---|---|
-| « Ma période d'essai peut-elle être renouvelée ? » | P2 : « une fois si un accord de branche étendu le prévoit » | abstention | réponse citée `[P2]` | **retenue** |
-| « Combien d'heures puis-je travailler au maximum sur une semaine ? » | P2 : « 48 heures par semaine », et 44 heures en moyenne sur 12 semaines | abstention | « 48 heures par semaine » `[P2]` | rechange |
-| « Quelle est la durée minimale du repos entre deux journées de travail ? » | P1 : « 11 heures consécutives » | réponse citée `[P1][P2]` | réponse citée `[P1][P2]` | écartée : aucune différence |
-| « Un apprenti mineur a-t-il le droit de travailler la nuit ? » | P2 : interdiction selon l'âge ; P1 et P3 : dérogations | réponse plus complète `[P1]` | réponse partielle `[P2]` | écartée : le modèle adapté fait moins bien |
 
 ## 6. Choix des questions
 
-- **Origine** : les questions ont été écrites pour la démonstration. Aucune ne figure dans le jeu de test `jeu-questions-v1`.
-- **Vérification** : pour chacune, les cinq passages renvoyés par la récupération de la #85 (E5 de base en fp32, index `front/public/index/`) ont été lus le 14 novembre, sur la machine de Vaneck. Les réponses des modèles ont été obtenues lors de l'essai de Mahé, le 16 novembre.
-- **Questions écartées dès le 14 novembre** : congé de paternité (la récupération ne renvoie que le congé parental) ; démission ou rupture conventionnelle pour le chômage (aucun des deux passages ne parle de chômage) ; prime de précarité en fin de CDD et dates de congés imposées (passages sans la réponse) ; SMIC et règlement intérieur (réponse évidente, donc peu de différence attendue entre les modèles) ; durée maximale d'un CDD (les 18 mois n'apparaissent que dans un passage sur les CDD d'usage).
+- **Origine** : les trois questions ont été écrites pour la démonstration. Aucune ne figure dans le jeu de test `jeu-questions-v1` ni dans le jeu v2 (`evaluation/questions_v2/`).
+- **Historique** : le 14 novembre, les questions candidates ont été choisies d'après les passages renvoyés par la chaîne de la #85 (E5 de base, 5 passages). Les essais de Mahé, le 16 novembre puis le 22 novembre avec la chaîne R1, ont conduit à en écarter plusieurs.
+- **Écartées après essai** :
+  - « Quelle est la durée maximale de la période d'essai d'un cadre en CDI ? » : avec la chaîne R1, la réponse sort en fragment qui commence par un tiret ;
+  - « Combien d'heures puis-je travailler au maximum sur une semaine ? » : la dérogation est attribuée à l'inspecteur du travail, alors que le passage dit la DREETS ;
+  - « Je suis en arrêt maladie : mon employeur peut-il me licencier, et suis-je payé pendant l'arrêt ? » : une seule citation, la rémunération n'est pas traitée (essai du 16 novembre) ;
+  - « Quelle est la durée minimale du repos entre deux journées de travail ? » : aucune différence entre T et le modèle adapté (essai du 16 novembre) ;
+  - « Un apprenti mineur a-t-il le droit de travailler la nuit ? » : le modèle adapté fait moins bien que T (essai du 16 novembre).
 
-## 7. Résultats des essais
+## 7. Essais
 
-| Moment | Question | Machine | Modèle | Résultat | Durée |
-|---|---|---|---|---|---|
-| 1 | période d'essai d'un cadre | Mac, 16/11 | adapté | réponse citée `[P1]` | 9,4 s, chargement compris |
-| 3 | retraite d'un fonctionnaire | Mac, 16/11 | adapté | abstention | 6,0 s |
-| 4 | renouvellement de la période d'essai | Mac, 16/11 | T | abstention | |
-| 4 | renouvellement de la période d'essai | Mac, 16/11 | adapté | réponse citée `[P2]` | |
-| 2 | arrêt maladie | Mac, 16/11 | adapté | une seule citation `[P3]`, rémunération non traitée | 5,0 s |
-| 1 | période d'essai d'un cadre | Legion | adapté | à compléter en répétition | |
-| 3 | retraite d'un fonctionnaire | Legion | adapté | à compléter en répétition | |
-| 4 | renouvellement de la période d'essai | Legion | T | à compléter en répétition | |
-| 4 | renouvellement de la période d'essai | Legion | adapté | à compléter en répétition | |
+| Date | Machine et chaîne | Moment | Modèle | Résultat |
+|---|---|---|---|---|
+| 22/11 | Mac de Mahé, R1 | 1. congés payés | adapté | réponse citée `[P2]` |
+| 22/11 | Mac de Mahé, R1 | 2. période d'essai renouvelée | T | abstention |
+| 22/11 | Mac de Mahé, R1 | 2. période d'essai renouvelée | adapté | réponse citée `[P1]` |
+| 22/11 | Mac de Mahé, R1 | 3. retraite d'un fonctionnaire | adapté | abstention |
+| à refaire | Mac de Mahé, R1 depuis `dev` | 1 à 3 | T et adapté | après la fusion des #175 et #177 |
 
-Si une question ne donne pas le comportement attendu sur le Legion, passer à la question de rechange et le consigner ici.
+À température nulle, les réponses filmées le 22 novembre étaient identiques mot pour mot à une répétition préalable. Si une question ne donne plus le comportement attendu, le consigner ici avant de la remplacer.
 
 ## 8. À ne pas dire
 
 - « L'assistant ne se trompe jamais » ou « les citations prouvent la réponse » : une citation existante ne prouve ni que le passage justifie la réponse, ni que chaque affirmation est couverte.
 - « Le modèle sait que la question est hors corpus » : il s'est abstenu à partir des passages fournis.
 - « La démonstration applique le seuil S » : elle n'applique aucun seuil.
-- « Le moment 4 prouve l'amélioration » : c'est une illustration choisie après essai ; la preuve est la mesure du protocole 06.
+- « Le moment 2 prouve l'amélioration » : c'est une illustration choisie après essai ; la preuve est la mesure (protocoles 06 et 10).
 - « T est le modèle de base de la #31 » : T est le modèle d'origine passé par la même chaîne d'export que le modèle adapté.
+- « Le volet B utilise l'encodeur ajusté du site » : la chaîne R1 garde l'E5 de base ; l'état R2, avec l'encodeur ajusté, n'a pas été retenu par la règle du protocole 10.
 
 ## 9. Sources
 
-`docs/etudes/demonstration/contrat_interface_111.md` (PR #121) ; `docs/etudes/demonstration/demo_legion_111.md` (PR #170, essai du 16 novembre) ; `demo_b/README.md` ; `demo_b/src/composants/Reponse.jsx` (libellé du bouton) ; `scripts/rag/serveur_demo.py` ; #52 (amendement M1, modèles, digests et résultats du 11 novembre) ; #111 ; relecture de Mahé du 14 novembre sur la PR #158.
+#111 (essais du 16 et du 22 novembre, vidéo de secours) ; #172 et PR #175 (chaîne R1, `demo_b/README.md`, section « Avec la chaîne v2 ») ; PR #174 (protocole 10, `docs/etudes/evaluation/10_resultats.md`) ; PR #177 (interface) ; `docs/etudes/demonstration/contrat_interface_111.md` (PR #121) ; #52 (modèles et digests) ; relecture de Mahé du 14 novembre sur la PR #158.
