@@ -1943,7 +1943,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 ### Session 69, 21 et 22 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code, avec des sous-agents Claude Sonnet 5.5 et Opus 5.5
 
-**Objet.** Fin de la mesure de bout en bout de la chaîne de démonstration (protocole 10, #172) ; logo et mentions de confidentialité des deux interfaces, demandés par l'enseignant (#176) ; support de soutenance au nouveau format de 8 minutes (#114) ; encodeur v3-C, dont les paires d'entraînement sont écrites par des sous-agents Claude (#167, amendement A3) ; report de ces travaux dans le rapport V1, le README et le support (22 novembre).
+**Objet.** Fin de la mesure de bout en bout de la chaîne de démonstration (protocole 10, #172) ; logo et mentions de confidentialité des deux interfaces, demandés par l'enseignant (#176) ; support de soutenance au nouveau format de 8 minutes (#114) ; encodeur v3-C, dont les paires d'entraînement sont écrites par des sous-agents Claude (#167, amendement A3) ; report de ces travaux dans le rapport V1, le README et le support (22 novembre) ; l'après-midi du 22 novembre, tâches restantes de Mahé avant la V1 : PR, tickets, rapport et démonstration.
 
 **Produit.**
 - `docs/etudes/evaluation/10_resultats.md` : section 6, bout en bout (`8ffcf01`), et section 7 bis, v3-C (`0e8ef20`), sur la PR #174.
@@ -1951,11 +1951,17 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Support de 8 minutes `docs/soutenance/presentation_8min.html` (`96f0670`, puis `c03c497` avec les chiffres du bout en bout), sur la PR #162.
 - Amendement A3 et `scripts/adaptation/12_encodeur_v3.py`, avec 34 tests, figés avant toute génération (`3d52395`) ; `mesures_10.py famille_e_a3`, avec 19 tests (`d7716a5`, `1c01250`, `b033277`).
 - Rapport V1 (sections 1, 2.1 à 2.5, 3.1, 3.4, 6 et annexe), README et diapositive 5 du support mis à jour le 22 novembre.
+- PR #179 : encodeurs v2-T et v3-C vers `dev`, relecteur Remy. PR #174 : description finale, passée en prête. PR #168 : étalonnage du 17 novembre décrit, relecteur Remy. #173 fermé (renoncement) ; état de la #140 publié.
+- `6f55999` (renoncement au #173 dans `10_resultats.md`) et `9d6eed3` (test du code figé réparé), sur la PR #174.
+- Rapport : section 4.1 rédigée par l'assistant à partir du journal et des tickets ; section 5 (outils retenus le 10 novembre, compteurs au 22 novembre) et section 6 ; fiche des assistants d'IA (ligne, observations et décision de Mahé).
+- Démonstration : la couche R1 de la #175 sert l'interface de la #177 (lanceur local mis à jour, hors dépôt).
 
 **Mesures exécutées.**
 - Bout en bout : R1 avec le modèle adapté, puis avec le témoin, relancés le 21 novembre, la mesure du 17 novembre s'étant arrêtée avec la session ; Ollama sur 127.0.0.1.
 - v3-C : 66 appels de sous-agents Sonnet (64 lots, dont 2 relancés), chacun inscrit avant son lancement dans un registre chaîné de 144 événements et contrôlé sur son journal ; relecture de 30 paires par deux juges Opus ; entraînement sur le processeur, à priorité basse ; export, élagage et index ; `famille_e_a3` exécutée deux fois, résultats identiques (`22376e29…`, `a27a45e4…`).
 - Confidentialité : requêtes réseau, cookies et stockages du site en ligne relevés dans le navigateur, avant et après une question.
+- Tests du 22 novembre : 29 sur la #174 et 62 sur la #179, tous réussis ; contrôle de la page neutralisé dans une copie de travail de `mesures_10.py` : le test réparé échoue, puis le fichier est restauré à l'identique.
+- Démonstration, une question au modèle adapté : réponse citant le bon passage, rédigée en 21,3 s ; un seul hôte contacté, 127.0.0.1:8765 ; aucun mot de la question ni de la réponse dans les journaux d'Ollama et des couches.
 
 **Résultats retenus.**
 - Bout en bout : la chaîne de démonstration cite un passage pertinent pour 52,9 % des questions du jeu v2, +16,9 points démontrés sur B2 ; abstention correcte sur les 39 questions hors corpus évaluées ; 10,1 % avec le modèle d'origine ; 11,8 s par question en médiane, contre 4,9 s pour B2.
@@ -1967,7 +1973,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Un type de sous-agent limité à la lecture : il aurait fallu modifier la configuration de Claude Code. Le risque d'un sous-agent disposant de tous les outils est déclaré dans A3 et contrôlé par le journal de chaque appel.
 - Le contrôle dans le navigateur de la v3-C élaguée : sans objet, la v3-C n'étant pas servie.
 
-**Ce que l'équipe a validé, et par qui.** Décisions de Mahé du 21 novembre : v3-C avec des générateurs Sonnet et des relecteurs Opus ; sous-agents laissés tels quels, risque jugé contrôlé ; renoncement à la fusion dans le site ; Mahé directeur de la publication. Relectures demandées à Jibril : PR #177, qui sera la nouvelle version du site, et PR #174.
+**Ce que l'équipe a validé, et par qui.** Décisions de Mahé du 21 novembre : v3-C avec des générateurs Sonnet et des relecteurs Opus ; sous-agents laissés tels quels, risque jugé contrôlé ; renoncement à la fusion dans le site ; Mahé directeur de la publication. Relectures demandées à Jibril : PR #177, qui sera la nouvelle version du site, et PR #174. Section 4.1 du rapport et décision de Mahé dans la fiche des assistants d'IA : textes de l'assistant, à relire et à amender par Mahé avant la V1.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -1975,6 +1981,8 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Les sous-agents générateurs des lots 23 et 41 ont recopié de travers un même identifiant de passage ; le contrôle d'ingestion les a refusés, et la relance unique prévue par A3 a suffi.
 - Une fenêtre `<dialog>` native laisse la touche Tab sortir vers l'interface du navigateur : boucle de tabulation ajoutée, comme dans le panneau latéral.
 - Ouvert en `file://`, le support refusait `history.replaceState` (origine opaque), ce qui bloquait le passage d'une étape à l'autre : appel protégé.
+- L'approbation de la #161 au nom de Mahé a été refusée par le classifieur de sécurité de Claude Code : le texte de la revue lui est remis, sans contournement.
+- Trois paires de PR entrent en conflit, repérées avant toute fusion : #161 et #178 (journal), #175 et #177 (`demo_b/README.md`), #174 et #179 (page d'encodage). Ordre de fusion proposé : la première de chaque paire, puis résolution dans la seconde.
 
 ---
 
@@ -2140,6 +2148,13 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 22/11 | Rapport : v2-T dite écartée par les règles écrites d'avance, alors que la règle A2 la retenait | recoupement avec `10_resultats.md`, section 7 | phrase corrigée avant commit |
 | 22/11 | Rapport : cache du site décrit comme contenant le modèle et l'index | recoupement avec le texte de la fenêtre de confidentialité (PR #177) | « les fichiers du modèle » |
 | 22/11 | Message de commit du journal annonçant quatorze erreurs ajoutées à la section 4, au lieu de dix | recomptage des lignes avant envoi | message corrigé avant envoi |
+| 22/11 | Test du code figé de la famille E en échec depuis `3d006e3` (21/11) : la page portait déjà la ligne `ajuste_v3` que le test ajoutait, et la suite n'avait pas été relancée après ce commit | relance de toute la suite avant un commit de la #174 | test reparti de l'état du gel, contrôlé par mutation (`9d6eed3`) |
+| 22/11 | Note de renoncement du #173 justifiée par un risque de portage en JavaScript que la décision du 21/11 ne mentionne pas | relecture contre la décision consignée | motif retiré avant commit |
+| 22/11 | Section 4.1 : élagage du #50 donné de 112,9 à 65,7 Mio, chiffre du q8 ajusté, au lieu de 112,8 pour le q8 de base | recoupement avec la section 2.3 et l'annexe | corrigé avant commit |
+| 22/11 | Même piège qu'au 30/10 : `git rev-parse --short` appelé avec deux révisions | message « Needed a single revision » | commandes séparées |
+| 22/11 | Attente de la réponse de la démonstration écrite sur un format de citation supposé (« [P1] »), alors que l'interface affiche « P1 » : attente expirée au bout de 3 minutes | journal de la couche, réponse rendue en 16 s | état de la page relu, sans relancer de génération |
+| 22/11 | Phrase du rapport portant « 185,5 secondes », que le vérificateur du support lit sur `dev`, retirée par la réécriture de la section 2.1 du 17/11 : le contrôle aurait échoué après la fusion de la #178 | recoupement des chiffres lus par le vérificateur avec la branche du rapport | contrôle pointé sur la ligne de l'annexe (PR #162) |
+| 22/11 | Sorties d'erreur de la conversion des PDF écrites dans `/tmp` au lieu du scratchpad | relecture de la commande | fichiers supprimés aussitôt, aucune donnée sensible ; conversions suivantes dans le scratchpad |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
