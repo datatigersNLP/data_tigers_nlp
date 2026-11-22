@@ -1,4 +1,5 @@
 """Tests des mesures du protocole 10 (#171) : pertinence des extraits courts et métriques des listes."""
+import hashlib
 import sys
 import unittest
 from pathlib import Path
@@ -220,6 +221,10 @@ class TestDecisionA3(unittest.TestCase):
 class TestCodeFige(unittest.TestCase):
     """Seule modification admise après le gel de A3 : la ligne ajuste_v3 de la page d'encodage."""
 
+    def test_page_du_depot_conforme_avec_le_q8_de_la_v3_c(self):
+        q8 = "3d5a24e6a741e59d6c5a69b84eb6cebb99181a0d72e1ec17b05fa96a99b8db3a"   # q8 de la v3-C (10_resultats, 7 bis)
+        self.assertIn(q8, m.controler_code_fige(q8)["ligne_admise"])
+
     def test_page_avec_la_seule_ligne_admise(self):
         import shutil
         import tempfile
@@ -230,7 +235,11 @@ class TestCodeFige(unittest.TestCase):
                 (d / c).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(racine / c, d / c)
             q8 = "ab" * 32
-            page = (d / m.PAGE_ENCODAGE).read_text(encoding="utf-8")
+            # la page du dépôt porte la ligne ajuste_v3 réelle depuis 3d006e3 : repartir de l'état du gel
+            reelle = (d / m.PAGE_ENCODAGE).read_text(encoding="utf-8")
+            page = "".join(l for l in reelle.splitlines(keepends=True) if not l.startswith("  ajuste_v3:"))
+            self.assertEqual(hashlib.sha256(page.encode("utf-8")).hexdigest(), m.SHA256_PAGE_ENCODAGE_GEL)
+            (d / m.PAGE_ENCODAGE).write_text(page, encoding="utf-8")
             repere = '  ajuste_v2: "09d304fed9960730defa7b9102b3436a136f1e88bc88581846ec4e4b431934cf",'
             self.assertIn(repere, page)
             with self.assertRaises(m.ErreurMesure10):
