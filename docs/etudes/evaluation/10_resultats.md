@@ -1,6 +1,6 @@
 # Protocole 10 : résultats des familles A, B et E
 
-**Date** : 17 novembre 2026. **Tickets** : #171, #172, #173. **Règles** : protocole 10 (`10_protocole_jeu_v2.md`, figé avant toute génération, commit `ffa0486`, SHA-256 `8d123613…`). **Jeu** : `evaluation/questions_v2/questions_v2.csv`, étiquette `jeu-questions-v2` (`8bfd9fb`). **Auteur** : Mahé BEGNIS.
+**Date** : 17 novembre 2026 ; complété le 21 novembre (sections 6 et 7 bis) et le 22 novembre (section 4, renoncement au #173). **Tickets** : #167, #171, #172, #173. **Règles** : protocole 10 (`10_protocole_jeu_v2.md`, figé avant toute génération, commit `ffa0486`, SHA-256 `8d123613…`). **Jeu** : `evaluation/questions_v2/questions_v2.csv`, étiquette `jeu-questions-v2` (`8bfd9fb`). **Auteur** : Mahé BEGNIS.
 
 ---
 
@@ -52,7 +52,8 @@ Fiche pertinente parmi les 10 passages affichés : 89,3 % contre 95,0 % sur le j
 * **F n'est pas dite meilleure** : les deux intervalles de Tango contiennent 0.
 * **Le jeu humain va en sens inverse** : sur le lot de test du jeu v1, écrit par l'équipe sans IA, F perd 6,8 points (5 contre 10 questions). Ce lot a déjà été lu par plusieurs mesures, ce résultat est donc descriptif ; il pèse néanmoins contre une conclusion favorable à F.
 * **Lecture** : les questions du jeu v2 sont générées à partir d'un passage et en reprennent un peu plus les mots (indice de Jaccard médian 0,111, contre 0,095 au jeu v1), ce qui avantage BM25. Le gain de F sur le jeu v2 est donc à lire comme un majorant.
-* **Conséquence pour le #173** : la fusion dans le navigateur est permise par la règle mais pas démontrée utile. Elle n'est implémentée que si le temps le permet avant le gel du 20 novembre, avec un test de parité entre Python et JavaScript.
+* **Conséquence pour le #173** : la fusion dans le navigateur est permise par la règle mais pas démontrée utile. Elle ne devait être implémentée que si le temps le permettait avant le gel du 20 novembre, avec un test de parité entre Python et JavaScript.
+* **Renoncement, le 21 novembre** (décision de Mahé) : la fusion n'est pas portée sur le site. Aucun gain n'est démontré, et le jeu humain va en sens inverse. Le site garde la recherche dense de l'encodeur ajusté v1.
 
 ---
 
