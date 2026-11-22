@@ -29,6 +29,16 @@ def doc(chemin: str, ref: str = "origin/dev") -> str:
                           check=True).stdout
 
 
+def doc_premier(chemin: str, refs: tuple[str, ...]) -> str:
+    """Premier document trouvé parmi plusieurs références (branche d'une PR ouverte, puis dev après sa fusion)."""
+    for ref in refs:
+        try:
+            return doc(chemin, ref)
+        except subprocess.CalledProcessError:
+            continue
+    return ""
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--donnees", type=Path, default=Path.home() / "NLP2_local/depot_v2/data")
@@ -43,6 +53,8 @@ def main(argv=None) -> int:
     g = json.loads((D / "evaluation/recuperation/resultats_grille.json").read_text(encoding="utf-8"))["configurations"]
     conf = json.loads((D / "evaluation/recuperation/confirmation/resultats.json").read_text(encoding="utf-8"))["principal"]
     bb = json.loads((D / "evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json").read_text(encoding="utf-8"))
+    e3 = json.loads((D / "evaluation/protocole_10/famille_e_a3_20261121T162956Z.json").read_text(encoding="utf-8"))["candidats"]["v3_C"]
+    r10 = doc_premier("docs/etudes/evaluation/10_resultats.md", ("origin/docs/171-protocole-10", "origin/dev"))
     r05 = doc("docs/etudes/evaluation/05_resultats_ajustement.md")
     rapport = doc("docs/rapport/RAPPORT_FINAL.md")
     j3 = doc("docs/jalons/J3_diapositives_mahe.md")
@@ -89,6 +101,9 @@ def main(argv=None) -> int:
         ("52,9 %", pc(bb["etats"]["R1_adapte"]["M4"]["proportion"]) + " %", "bout en bout, R1 adapté, M4"),
         ("+16,9 points", f"+{pc(bb['comparaisons']['R1_adapte_moins_B2_adapte']['M4']['ecart'])} points", "bout en bout, M4, R1 moins B2"),
         ("11,8 s", f"{bb['etats']['R1_adapte']['descriptif']['duree_totale_mediane_ns'] / 1e9:.1f}".replace(".", ",") + " s", "bout en bout, R1 adapté, durée médiane"),
+        ("2 289 et 2 420", "2 289 et 2 420" if "2 289 paires d'entraînement" in r10 and "2 420 paires d'entraînement" in r10 else None, "10_resultats, sections 7 et 7 bis"),
+        ("12,4 points", f"{pc(e3['jeu_v2']['ecart_recall5']['ecart'])} points", "famille E, A3, v3-C, jeu v2"),
+        ("recule de 5,5 points", f"recule de {pc(-e3['jeu_v1_test']['ecart_recall5']['ecart'])} points", "famille E, A3, v3-C, lot de test"),
     ]
     ecarts = 0
     for ecrit, source, nom in controles:

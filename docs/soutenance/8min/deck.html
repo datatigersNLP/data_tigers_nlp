@@ -416,7 +416,7 @@ aside.texte-a-dire { display: none; }
 </section>
 
 <!-- 5. Ajuster l'encodeur -->
-<section class="diapo" data-duree="45" data-etapes="3" aria-label="Choix : ajuster l'encodeur">
+<section class="diapo" data-duree="50" data-etapes="3" aria-label="Choix : ajuster l'encodeur">
   <h2 class="titre">Ajuster l'encodeur à nos fiches</h2>
   <div class="ajust">
     <svg class="nuage" id="nuage" viewBox="0 0 820 640" role="img" aria-label="Schéma de l'apprentissage contrastif : la question se rapproche de son passage et s'éloigne des autres"></svg>
@@ -432,11 +432,11 @@ aside.texte-a-dire { display: none; }
       </div>
     </div>
   </div>
-  <p class="note-bas e" data-e="3">Servi sur le site depuis le 15 novembre, selon une règle écrite avant la mesure. Une version nourrie de 2&nbsp;289 paires ne fait pas mieux sur les questions écrites par des humains.</p>
+  <p class="note-bas e" data-e="3">Servi sur le site depuis le 15 novembre, selon une règle écrite avant la mesure. Deux versions nourries de 2&nbsp;289 et 2&nbsp;420 questions synthétiques, de Qwen puis de Claude, ne sont pas servies : celle de Claude gagne 12,4&nbsp;points sur un jeu écrit par Claude, mais recule de 5,5&nbsp;points sur les questions humaines.</p>
   <aside class="texte-a-dire" data-plan="Choix : ajuster l'encodeur">
     <p>Premier choix technique : adapter l'encodeur à notre corpus. Il ne connaît pas nos fiches, et ses vecteurs se ressemblent tous. Nous avons fait écrire par Qwen une question pour 109 passages, hors des fiches du test. L'apprentissage contrastif rapproche chaque question de son passage et l'éloigne des autres passages du lot.</p>
-    <p>Résultat sur les questions de test : le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 %, soit 19 points de plus, un gain démontré. Avec dix passages regroupés par fiche, une fiche pertinente est affichée pour 93 % des questions. Une version entraînée sur vingt fois plus de questions synthétiques n'a pas fait mieux sur les questions humaines : nous gardons la première.</p>
-    <ul><li>Perte : MultipleNegativesRankingLoss, lot de 16, taux 2e-5.</li><li>Sur le CDTN, jeu externe : 67,4 % puis 72,3 %.</li><li>Le nuage de points est un schéma, pas une projection réelle.</li></ul>
+    <p>Résultat sur les questions de test : le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 %, soit 19 points de plus, un gain démontré. Avec dix passages regroupés par fiche, une fiche pertinente est affichée pour 93 % des questions. Nous avons ensuite essayé vingt fois plus de questions synthétiques, écrites par Qwen puis par Claude. La version de Claude gagne 12 points sur notre jeu écrit par Claude, mais recule sur les questions humaines : elle a appris le style de Claude, pas nos fiches. La règle écrite d'avance l'écarte ; nous gardons la première.</p>
+    <ul><li>Perte : MultipleNegativesRankingLoss, lot de 16, taux 2e-5.</li><li>Sur le CDTN, jeu externe : 67,4 % puis 72,3 %.</li><li>Le nuage de points est un schéma, pas une projection réelle.</li><li>v2-T, 2 289 paires de Qwen : +5,8 points sur le jeu v2, non démontré ; égalité sur le CDTN.</li><li>v3-C, 2 420 paires écrites par Claude Sonnet et relues par deux juges Claude Opus, règle figée avant toute génération : jeu v2 +12,4 [+5,5 ; +20,3], démontré ; CDTN −2,2 ; lot de test −5,5 ; 5 questions hors corpus de plus au-dessus de la borne.</li></ul>
   </aside>
 </section>
 
