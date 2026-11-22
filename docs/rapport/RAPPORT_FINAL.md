@@ -6,11 +6,11 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Enseignant** Adrian ROSARI
-**Version** V0 du 19 octobre 2026, à compléter jusqu'à la V1, à remettre strictement avant le jalon J4
+**Version** V1 en cours de rédaction, état du 22 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
 
-**Objet.** Ce rapport suit la section 11 du sujet : analyse technique, retour d'expérience, axes de progression et cinq outils novateurs. Cette V0 est écrite à la fin du volet A. Elle rédige ce qui est déjà établi et signale explicitement ce qui reste à mesurer ou à rédiger, principalement le volet B et les axes de progression individuels.
+**Objet.** Ce rapport suit la section 11 du sujet : analyse technique, retour d'expérience, axes de progression et cinq outils novateurs. La V0 a été écrite à la fin du volet A, le 19 octobre. Cette V1 ajoute le volet B, adapté et mesuré, les améliorations du volet A servies depuis le 15 novembre, la justification du passage de 5 à 10 passages demandée par l'enseignant (section 2.4), les essais d'encodeurs entraînés sur des questions synthétiques, non retenus (section 2.3), et les mentions de confidentialité ajoutées aux deux interfaces (section 2.2). Ce qui reste à mesurer ou à rédiger est signalé explicitement (section 6).
 
-**Sources.** Tous les chiffres proviennent du dépôt (`datatigersNLP/data_tigers_nlp`) : études, protocoles, mesures, classeur de suivi, journal d'usage de l'IA, historique Git et tickets GitHub. L'annexe relie chaque chiffre à sa source. Les mesures du site en ligne datées du 19 octobre 2026 ont été faites sur la version `7e2ce07`.
+**Sources.** Tous les chiffres proviennent du dépôt (`datatigersNLP/data_tigers_nlp`) : études, protocoles, mesures, classeur de suivi, journal d'usage de l'IA, historique Git et tickets GitHub. L'annexe relie chaque chiffre à sa source. Les mesures du site en ligne datées du 19 octobre 2026 ont été faites sur la version `7e2ce07`. Les questions du jeu v2 et certains jugements ont été produits par Claude, sur autorisation écrite de l'enseignant ; ils sont signalés comme tels (section 3.1).
 
 *Ce document a été produit avec l'assistance d'outils d'intelligence artificielle. Les usages sont consignés dans le journal prévu par le sujet ; chaque chiffre a été recoupé avec sa source avant publication.*
 
@@ -21,11 +21,11 @@
 | Volet | Cas | Ce qui est livré |
 |---|---|---|
 | A, application en ligne | A3, recherche sémantique en corpus fermé | site public https://datatigersnlp.github.io/data_tigers_nlp/, inférence dans le navigateur, aucun serveur |
-| B, application locale | B1, assistant réglementaire sourcé, avec abstention | chaîne RAG locale avec Qwen2.5-7B-Instruct, en cours (PR #85) |
+| B, application locale | B1, assistant réglementaire sourcé, avec abstention | chaîne RAG locale : Qwen2.5-7B-Instruct adapté par l'équipe, récupération par fusion avec BM25 et reclasseur, démonstration sur un Mac |
 
 Le corpus est commun : les 261 fiches pratiques du ministère du Travail, découpées en 4 240 passages, instantané SocialGouv du 11 septembre 2026, sous Licence Ouverte Etalab 2.0. Le cas A3 constitue la couche de récupération du cas B1 : le découpage, l'encodage et l'index sont écrits une fois et servent aux deux volets.
 
-La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octobre 2026 sur `main` (`8955962`). Le site en ligne est déployé depuis `dev` ; il intègre depuis le 19 octobre deux changements postérieurs au tag (PR #88 et #102).
+La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octobre 2026 sur `main` (`8955962`). Le site en ligne est déployé depuis `dev`. Depuis le 15 novembre, il sert l'encodeur ajusté par l'équipe et affiche 10 passages regroupés par fiche (#164, PR #165). À la demande de l'enseignant, les deux interfaces affichent le logo de l'équipe et une fenêtre de confidentialité (#176, PR #177, en relecture).
 
 ## 2. Analyse technique
 
@@ -34,34 +34,47 @@ La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octo
 | | Volet A | Volet B |
 |---|---|---|
 | Modèle | `multilingual-e5-small`, encodeur de phrases | `Qwen2.5-7B-Instruct`, modèle génératif |
-| Forme servie | q8 (entiers sur 8 bits), vocabulaire élagué sans perte : 65,7 Mio | GGUF Q4_K_M : 4,36 Gio |
-| Exécution | navigateur du visiteur, Transformers.js 4.3.0 et ONNX Runtime Web | PC portable, Ollama, GPU NVIDIA RTX 5070 Laptop (8 Gio de VRAM) |
-| Sortie | 5 passages réels, ordonnés, avec score, section et lien | réponse rédigée, citant les passages fournis |
-| Entraîné par l'équipe | non : encodeur pré-entraîné ; ajustement étudié (#49), non servi | non : adaptation à engager (section 6) |
+| Entraîné par l'équipe | oui : ajustement contrastif sur 109 paires question-passage (#49), servi depuis le 15 novembre | oui : adaptation LoRA sur 218 exemples (lot v2b, #107), fusionnée dans les poids, puis quantifiée |
+| Forme servie | q8 (entiers sur 8 bits) de l'encodeur ajusté, vocabulaire élagué sans perte : 65,7 Mio | GGUF Q4_K_M : 4,36 Gio |
+| Exécution | navigateur du visiteur, Transformers.js 4.3.0 et ONNX Runtime Web | Mac de l'équipe (M4 Pro, 24 Gio de mémoire unifiée), Ollama 0.40.13 ; entraînement de l'adaptateur sur le même Mac |
+| Récupération | recherche dense seule | chaîne de démonstration (PR #175) : E5 de base et BM25 fusionnés, 20 candidats reclassés par `bge-reranker-v2-m3` ; 5 passages d'E5 dans la chaîne mesurée en B2 |
+| Sortie | 10 passages réels, regroupés par fiche, avec score, section et lien ; avertissement si la correspondance est faible | réponse rédigée, citant les 10 passages fournis, ou abstention |
 
-**Un point à dire d'emblée.** Le sujet oppose un modèle « de faible capacité, long à entraîner, entièrement maîtrisé » (volet A) à un modèle « performant, immédiatement disponible, dont la composition n'est pas connue » (volet B). Il précise que le modèle servi du volet A « doit préférentiellement être celui que vous avez entraîné ». Ce n'est pas notre cas. Le site sert un encodeur pré-entraîné ouvert, dont les poids, le tokeniseur et la licence (MIT) sont connus. Nous l'avons quantifié, élagué, indexé et servi nous-mêmes, mais pas entraîné.
+**Ce que l'équipe a entraîné.** Le sujet oppose un modèle « de faible capacité, long à entraîner, entièrement maîtrisé » (volet A) à un modèle « performant, immédiatement disponible, dont la composition n'est pas connue » (volet B). Il précise que le modèle servi du volet A « doit préférentiellement être celui que vous avez entraîné ».
 
-L'équipe a tenté de l'adapter (#49) : apprentissage contrastif sur 109 paires question-passage générées en local avec Qwen, 2 époques, 185,5 secondes sur processeur. Le protocole 05, figé avant toute mesure, ne servait l'encodeur ajusté qu'à trois conditions : sa parité entre Python et navigateur vérifiée, un écart de Recall@5 avec la base positif ou nul sur les deux jeux d'évaluation, et un hébergement possible avant le 17 octobre. Il gardait la base si une condition manquait le 16 octobre. La mesure n'ayant pas été faite à temps, cette règle écrite d'avance s'est appliquée : le site sert l'encodeur de base.
+**Volet A : l'encodeur ajusté est servi depuis le 15 novembre.**
+- **Jusqu'au 15 novembre, la règle de repli s'appliquait.** Le protocole 05, figé avant toute mesure, gardait l'encodeur de base si une de ses conditions manquait le 16 octobre ; la mesure n'ayant pas été faite à temps, le site a servi l'encodeur de base pendant un mois.
+- **Mesure du 15 novembre** (amendement A1, figé avant la mesure) : sur le lot de test, le Recall@5 passe de 43,8 % à 63,0 % (+19,2 points [+9,7 ; +30,4]) ; sur le CDTN, de 67,4 % à 72,3 %. La règle est satisfaite et l'ajusté est déclaré meilleur au niveau du passage.
+- **Avec 10 passages regroupés par fiche**, une fiche pertinente est affichée pour 93,2 % des questions du lot de test, contre 83,6 % sur le site précédent.
+- **Deux encodeurs nourris de questions synthétiques ne sont pas servis.** Entraînés sur 2 289 puis 2 420 questions générées, par le modèle témoin puis par Claude Sonnet, ils ne font pas mieux que l'ajusté sur les questions humaines (section 2.3).
 
-La maîtrise porte donc sur l'exécution, pas sur l'apprentissage :
-- chaque octet servi est versionné et vérifié par empreinte ;
+**Volet B : un comportement, pas des connaissances.** L'adaptation apprend au modèle à citer les passages fournis et à s'abstenir hors du corpus ; les faits restent dans les passages. Les 61 fiches du lot de test sont exclues des données d'entraînement. Ollama refusant les adaptateurs LoRA, l'adaptateur est fusionné dans les poids bf16 officiels, converti en GGUF et quantifié ; le modèle de base suit la même chaîne et sert de témoin T.
+
+**La maîtrise porte aussi sur l'exécution** :
+- chaque octet servi est versionné, ou vérifié par empreinte ;
 - les vecteurs du navigateur sont contrôlés contre ceux de Python ;
 - à l'exécution, rien ne dépend d'un service tiers.
 
 ### 2.2 Comparaison sur les six dimensions du sujet
 
-Les mesures du volet B sont celles des essais réels consignés à ce jour ; la mesure systématique relève de #52.
+Pour le volet A, la qualité est celle de l'encodeur ajusté, servi depuis le 15 novembre ; le coût et la latence ont été mesurés avec l'encodeur de base, de même architecture et de même taille une fois élagué (65,7 Mio), et n'ont pas été remesurés. Pour le volet B, la latence et la qualité sont celles de la chaîne de démonstration, mesurée de bout en bout le 21 novembre sur le jeu v2 (protocole 10) ; l'exactitude jugée par des humains relève de #52.
 
-| Dimension | Volet A, mesuré | Volet B, état au 19 octobre |
+| Dimension | Volet A, mesuré | Volet B, mesuré |
 |---|---|---|
-| Coût | aucun coût de service : GitHub Pages, fichiers statiques. Le coût est reporté sur le visiteur : 61,3 Mio transférés à la première visite, puis mise en cache | aucun coût de service, mais un matériel dédié : modèle de 4,36 Gio, 5 694 Mio de VRAM occupés après le premier appel (1 036 Mio avant) |
-| Latence | recherche : 21 ms en médiane sur 10 questions (19 à 24 ms), 46 ms pour la première ; premier résultat 20,1 s après l'ouverture d'une page jamais visitée, sur la connexion de mesure | premier appel 37,7 s, dont 19,1 s de chargement ; génération de 47 à 67 tokens par seconde. Chaîne RAG, question Q036 : 46,2 s au total, dont 21,9 s de chargement, 18,5 s de lecture du prompt et 5,8 s de génération |
-| Qualité | Recall@5 de 43,8 % sur 73 questions du corpus (IC 95 % : 32,9 à 55,4), contre 42,5 % pour BM25 ; non-infériorité démontrée (marge de 15 points), supériorité non démontrée. La bonne fiche est dans les 5 résultats pour 83,6 % des questions | non mesurée. Deux essais : Q036, réponse citée mais conditions d'application omises ; Q003, abstention correcte |
+| Coût | aucun coût de service : GitHub Pages, fichiers statiques. Le coût est reporté sur le visiteur : 61,3 Mio transférés à la première visite, puis mise en cache | aucun coût de service, mais un matériel dédié : modèle de 4,36 Gio, démonstration sur un Mac M4 Pro de 24 Gio de mémoire unifiée. Sur une carte NVIDIA, le 19 octobre, 5 694 Mio de VRAM occupés après le premier appel (1 036 Mio avant) |
+| Latence | recherche : 21 ms en médiane sur 10 questions (19 à 24 ms), 46 ms pour la première ; premier résultat 20,1 s après l'ouverture d'une page jamais visitée, sur la connexion de mesure | chaîne de démonstration (10 passages, reclasseur) : 11,8 s par question en médiane sur le jeu v2, contre 4,9 s pour l'ancienne chaîne à 5 passages. Le premier appel charge le modèle : 37,7 s, dont 19,1 s de chargement, le 19 octobre sur une carte NVIDIA |
+| Qualité | Recall@5 de 63,0 % sur 73 questions du corpus (IC 95 % : 50,9 à 73,6), contre 43,8 % pour l'encodeur de base et 42,5 % pour BM25. Avec 10 passages regroupés par fiche, une fiche pertinente est affichée pour 93,2 % des questions | réponses citant un passage pertinent : 52,9 % (63 sur 119) avec le modèle adapté, 10,1 % avec le modèle d'origine ; +16,9 points [+6,4 ; +27,3] sur l'ancienne chaîne, démontré. Abstention correcte sur les 39 questions hors corpus évaluées. Exactitude jugée par des humains : en cours (#52) |
 | Contrôle | tout est figé et vérifiable : modèle, index et passages par empreinte SHA-256, versions épinglées, vecteurs identiques bit à bit entre q8 d'origine et q8 élagué (822 sur 822) | poids et gabarit figés par empreinte, température 0, graine fixée ; mais le comportement du modèle dépend de données d'entraînement inconnues |
 | Explicabilité | chaque résultat est un passage réel, avec son score de similarité, sa section et le lien vers la fiche ; rien n'est généré. Limite : le score ne se lit qu'en relatif ; les cinq passages de la question sur les congés payés vont de 0,895 à 0,889 | la réponse cite ses passages ; une citation existante ne prouve ni sa justification ni la couverture de chaque affirmation |
-| Dépendance à un fournisseur | à l'exécution, aucune : seul le site est contacté, vérifié sous Chromium, Firefox et WebKit. À la construction : GitHub (Pages, Actions), npm, et Hugging Face pour l'origine du q8, recopié dans le site | Ollama, poids publiés par l'équipe Qwen (Apache 2.0), pilote et GPU NVIDIA ; aucune API distante à l'exécution |
+| Dépendance à un fournisseur | à l'exécution, aucune : seul le site est contacté, vérifié sous Chromium, Firefox et WebKit. À la construction : GitHub (Pages, Actions), npm, et Hugging Face pour l'origine du q8, recopié dans le site | Ollama, poids publiés par l'équipe Qwen (Apache 2.0) et reclasseur `bge-reranker-v2-m3` ; aucune API distante à l'exécution |
 
-**Abstention.** Le volet A signale les questions hors du périmètre par un seuil de similarité, fixé sur un jeu externe (CDTN) avant la mesure. Le score sépare assez bien les questions hors corpus (AUC 0,841, IC 95 % : 0,747 à 0,921). Mais le seuil conserve 72 des 73 questions du corpus et ne rejette que 9 des 24 questions hors corpus. Il repère surtout les saisies sans rapport avec le droit du travail, et l'interface ne promet pas davantage.
+**Abstention.** Le volet A signale les questions hors du périmètre par un seuil de similarité, fixé sur un jeu externe (CDTN) avant la mesure, et avertit dans une zone grise juste au-dessus. Avec l'encodeur ajusté servi, le score sépare assez bien les questions hors corpus (AUC 0,865). Le seuil conserve 70 des 73 questions du corpus du lot de test et rejette 10 des 24 questions hors corpus ; 13 autres reçoivent l'avertissement. Il repère surtout les saisies sans rapport avec le droit du travail, et l'interface ne promet pas davantage.
+
+**Confidentialité.** À la demande de l'enseignant, chaque interface ouvre une fenêtre de confidentialité (#176, PR #177, en relecture). Elle décrit ce qui a été vérifié le 21 novembre :
+- le site en ligne ne contacte que son propre domaine, n'envoie rien quand on pose une question, ne dépose aucun cookie et ne garde dans le cache du navigateur que les fichiers du modèle, environ 100 Mo ;
+- l'hébergeur, GitHub Pages, journalise les adresses IP pour sa sécurité ;
+- dans la configuration de la démonstration, l'assistant local ne journalise ni les questions ni les réponses ;
+- les mentions légales nomment le directeur de la publication, Mahé BEGNIS, et l'hébergeur.
 
 ### 2.3 Ce que les mesures ont appris
 
@@ -69,13 +82,58 @@ Les mesures du volet B sont celles des essais réels consignés à ce jour ; la 
 - **L'essentiel du poids était inutile.** La table des mots représente 81,6 % des paramètres de l'encodeur et couvre 250 037 pièces d'une centaine de langues. Retirer celles qui contiennent une lettre étrangère aux alphabets latin et grec ramène le q8 de 112,8 à 65,7 Mio (−42 %), avec des sorties identiques bit à bit. Le modèle passe ainsi sous la limite de 100 Mio par fichier de GitHub et peut être servi par le site lui-même.
 - **Une dépendance invisible.** À son import, Transformers.js fait télécharger le moteur d'exécution ONNX Runtime depuis le CDN jsDelivr. Le site semblait autonome, et seul un essai avec ce CDN bloqué l'a montré. Le moteur est servi par le site depuis la PR #81.
 - **Le parcours au clavier dépend du système.** Sur macOS, où la navigation au clavier est désactivée par défaut, Tab ne passe pas par les boutons. Dans le menu sur téléphone, le focus quittait alors le panneau. La tabulation y est désormais entièrement gérée par le code (PR #102), et vérifiée sous trois moteurs.
+- **Plus de questions synthétiques ne font pas une meilleure recherche.** Deux encodeurs ont repris la recette de l'ajusté avec vingt fois plus de questions générées : 2 289 écrites par le modèle témoin T (v2-T, amendement A2), puis 2 420 écrites par des sous-agents Claude Sonnet et relues par deux juges Claude Opus (v3-C, amendement A3, figé avant toute génération). La règle de l'amendement A2 retenait la v2-T, sans gain démontré : +5,8 points de Recall@5 sur le jeu v2 (intervalle contenant 0), égalité exacte sur le CDTN, −5,5 sur les questions humaines du lot de test ; Mahé a choisi de mesurer plutôt la v3-C. Celle-ci gagne 12,4 points, démontrés, sur le jeu v2, lui aussi écrit par Claude. Elle recule en revanche sur le CDTN (−2,2) et sur le lot de test (−5,5), et laisse passer 5 questions hors corpus de plus ; la règle de l'amendement A3 l'écarte. Le gain tient au style des questions générées, pas à une meilleure recherche : aucun des deux n'est servi, l'ajusté reste celui du site.
+- **La fusion avec BM25 n'a pas été portée sur le site.** La règle de la famille A du protocole 10 la permettait (+5,0 points sur le jeu v2, +2,6 sur le CDTN), mais aucun gain n'est démontré et les questions humaines vont en sens inverse (−6,8). L'équipe y a renoncé (#173).
 - **Le contrôle a priori a tenu.** Le protocole d'évaluation du notebook 03 a été figé, avec son empreinte, avant la mesure unique du 13 octobre, et la règle de repli de l'encodeur ajusté avait été écrite d'avance. Les deux décisions qui en découlent, le verdict du critère du J2 et le choix de l'encodeur servi, résultent de l'application de règles fixées avant les résultats.
 
-### 2.4 À compléter pour la V1
+### 2.4 Pourquoi 10 passages au lieu de 5
 
-- Mesures du volet B avant et après adaptation (#52), sur le jeu humain et dans les conditions du volet A pour la récupération.
-- Comparaison finale des deux volets sur les six dimensions, avec les mêmes questions.
-- Coût réel en temps de calcul de l'adaptation du volet B.
+La chaîne du volet B donnait d'abord 5 passages au modèle, et le site du volet A en affichait 5. Depuis novembre, le modèle en reçoit 10, et le site en affiche 10, regroupés par fiche. La raison est simple : plus de passages pertinents entrent dans le contexte avec 10 passages qu'avec 5.
+
+**Comment le choix a été fait.** Le 9 novembre, la grille de réglage de la récupération (#138) a montré que le nombre de passages était le levier le plus fort. Sur le jeu CDTN, avec l'E5 de base, un passage pertinent figure dans le contexte pour 70,9 % des questions avec 5 passages, et pour 77,6 % avec 10. La règle de choix initiale, qui maximisait ce rappel, aurait toujours retenu le plus grand nombre de la grille, 15. L'amendement A1 a donc fixé k = 10 d'avance, avant la lecture des résultats des reclasseurs, pour deux raisons :
+- **le budget du prompt** : 5 101 tokens au plus sur le CDTN, pour un plafond de 7 616 ;
+- **l'écart à l'entraînement** de l'adaptateur, fait sur des contextes de 5 passages.
+
+**Ce que les mesures confirment.** À récupération égale, passer de 5 à 10 passages ne retire aucun passage pertinent : il en ajoute.
+
+| Un passage pertinent dans le contexte, 5 puis 10 passages | Jeu v2 (121 questions) | Lot de test (73) | CDTN (82 requêtes) |
+|---|---|---|---|
+| E5 de base | 57,0 % puis 66,1 % | 45,2 % puis 58,9 % | 70,9 % puis 77,6 % |
+| Fusion avec BM25, sans reclasseur | 66,9 % puis 76,9 % | 57,5 % puis 68,5 % | 70,7 % puis 83,5 % |
+| Fusion et reclasseur bge-m3 (chaîne retenue) | 81,0 % puis 86,0 % | 68,5 % puis 72,6 % | 78,5 % puis 85,1 % |
+
+Le gain va de 4 à 14 points selon le jeu et la méthode. Il est plus faible après le reclasseur, qui remonte déjà les bons passages dans les 5 premiers.
+
+**Ce qu'il coûte.**
+- **Longueur du prompt** : 3 953 tokens en moyenne contre 2 179 à 5 passages, pour la chaîne retenue sur le CDTN, donc une lecture plus longue par le modèle.
+- **Précision du contexte** : la part des passages fournis qui sont pertinents passe de 31,4 % à 23,4 %. Le modèle doit écarter plus de passages hors sujet.
+- **Pourquoi pas 15** : l'E5 de base y atteint 85,9 % sur le CDTN, mais avec 4 805 tokens en moyenne et 6 889 au plus, près du plafond. La fusion et le reclasseur atteignent un rappel voisin, 85,1 %, avec 10 passages.
+
+**Volet A.** Afficher 10 passages au lieu de 5, regroupés par fiche, fait gagner 6,8 points au rappel à la fiche sur le lot de test (5 questions gagnées, aucune perdue), au prix de 4,0 fiches à lire en moyenne au lieu de 2,4.
+
+Sources : commentaire de l'amendement A1 sur le #138 ; `docs/etudes/evaluation/10_resultats.md`, section 8 ; `docs/etudes/evaluation/05_resultats_ajustement.md`, section 4.
+
+### 2.5 Volet B : ce que les mesures ont montré
+
+**L'adaptation, mesurée le 11 novembre** (protocole 06, chaîne B2, lot de test, modèle adapté contre témoin T, intervalles à 97,5 %) :
+- **Réponses citant un passage pertinent (M4)** : 18 sur 72 contre 10 sur 72, soit +11,1 points [+2,1 ; +23,8]. Huit questions gagnent une citation pertinente, aucune n'en perd : l'amélioration est démontrée selon la règle prévue.
+- **Abstention correcte hors corpus (M1)** : 20 sur 24 dans les deux cas ; aucune amélioration démontrée.
+- **Abstention à tort sur le corpus (M2, descriptif)** : de 70,8 % à 55,6 %. Plus de la moitié des questions du corpus reçoivent encore une abstention.
+- **Une citation pertinente ne prouve pas l'exactitude** de toute la réponse. Le jugement humain à l'aveugle de l'exactitude est en cours (#52) ; ses résultats seront ajoutés quand les deux juges auront terminé.
+
+**La récupération v2** (#138, protocole 07, confirmée une fois sur le lot de test le 9 novembre) fait passer de 45,2 % à 72,6 % les questions dont le contexte contient un passage pertinent. Sur le jeu v2, de 57,0 % à 86,0 % (+28,9 points [+20,5 ; +38,0]).
+
+**Ce qui n'a pas été retenu, par des règles écrites d'avance.**
+- **La chaîne v2 complète** (#163, protocole 08) : nouvelle consigne et abstention décidée par le reclasseur. Elle donne plus de réponses citant un passage pertinent (27 sur 73 contre 18 sur 72), mais s'abstient sur 18 questions hors corpus sur 24 au lieu de 20, une de plus que la tolérance.
+- **L'encodeur ajusté dans la récupération du volet B** (protocole 10) : 84,3 % contre 86,0 % sur le jeu v2, et 84,6 % contre 85,1 % sur le CDTN. Son avantage en recherche dense seule ne survit pas à la fusion avec BM25 et au reclasseur.
+
+**Ce qui est servi en démonstration** : le modèle adapté, avec la récupération v2 et la consigne v1, sans seuil (PR #175). Sur le lot de test, cette récupération avec le seuil S (état V1 du protocole 08) donne 24 réponses citant un passage pertinent sur 73, et 20 abstentions correctes sur 24.
+
+**La chaîne de démonstration, mesurée de bout en bout le 21 novembre** (protocole 10, jeu v2) :
+- **Réponses citant un passage pertinent (M4)** : 52,9 % (63 sur 119). Sur les 118 questions communes, 52,5 % contre 35,6 % pour l'ancienne chaîne B2, soit +16,9 points [+6,4 ; +27,3] (31 questions gagnées, 11 perdues, p = 0,003) : le gain est démontré.
+- **Abstention correcte hors corpus (M1)** : 39 sur 39 questions évaluées, contre 38 avec B2 ; la garde de la règle est respectée.
+- **Effet de l'adaptation** : avec le modèle d'origine (témoin T), la même chaîne ne cite un passage pertinent que pour 10,1 % des questions (54 gagnées par l'adaptation, 3 perdues).
+- **Prix** : 11,8 s par question en médiane, contre 4,9 s pour B2, à cause des 10 passages et du reclasseur.
 
 ## 3. Retour d'expérience
 
@@ -97,6 +155,15 @@ Cette partie porte sur la conduite du projet. Les faits ci-dessous sont communs 
 | D5, adaptation et évaluation du volet B | Mahé | Jibril |
 
 Les décisions se prennent en Weekly. Quand un compte rendu ne rapporte pas d'arbitrage, le responsable technique consigne les décisions par écrit dans le ticket (Weekly 4), ou les arrête après la séance en indiquant qu'elles restent discutables (Weekly 5). Les mesures ont été encadrées par des protocoles figés avant toute mesure (notebook 03, protocole 05), avec leur empreinte.
+
+**Questions de test et jugements produits par l'IA.** Le lot de test humain (73 questions du corpus, 24 hors corpus) avait été lu par plus de six mesures en novembre : toute nouvelle comparaison y devenait descriptive. Faute de temps pour écrire un nouveau jeu humain avant cette V1, l'équipe a fait générer un jeu v2 par des sous-agents Claude indépendants, sur autorisation écrite de l'enseignant du 17 novembre (le courriel est conservé par Mahé). Le cadre est celui du protocole 10, figé avant toute génération :
+- **Questions** : 121 questions du corpus, deux par fiche sur les 61 fiches du lot de test, exclues de tout entraînement, et 40 questions hors corpus vérifiées. Chaque question a passé des contrôles mécaniques et un juge de contrôle d'un autre modèle.
+- **Jugements** : l'étalonnage du jugement mutualisé du #139 a été confié à deux juges d'IA d'autres modèles. Leur accord ne remplace pas un jugement humain, et il est présenté comme tel.
+- **Limites déclarées** : un générateur qui part d'un passage en reprend un peu plus les mots (indice de Jaccard médian 0,111 contre 0,095 pour les questions humaines), ce qui avantage BM25. Le jeu humain v1 et le CDTN, écrits sans IA, restent les contrôles.
+
+Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait la génération par IA aux paires d'entraînement ; il est consigné dans le journal d'usage de l'IA (section 1 et session 68).
+
+**Paires d'entraînement écrites par l'IA, sous registre.** Les 2 420 paires de la v3-C ont été écrites par des sous-agents Claude Sonnet, ce que la règle d'équipe permet, et relues par deux juges Claude Opus. L'amendement A3, audité trois fois par un sous-agent Claude Opus indépendant, a été figé avant toute génération. Chaque appel a été inscrit à un registre chaîné avant d'être lancé, et son journal contrôlé : consigne exacte, modèle exact, aucun outil autre que la lecture du fichier remis. Deux lots non conformes ont été relancés une fois, comme prévu (journal d'usage de l'IA, session 69).
 
 **Réunions.** Six réunions sont documentées entre le 14 septembre et le 14 octobre, en général une par semaine :
 
@@ -186,6 +253,7 @@ Propositions communes, à discuter en équipe avant la V1 :
 - **Consigner le jour même** les sessions d'usage de l'IA et les comptes rendus, pendant la réunion.
 - **Garder les protocoles figés et les règles de repli écrites d'avance** : ils ont permis de décider sans biais et à l'heure.
 - **Mesurer dans les conditions réelles et sur plusieurs plateformes** dès le premier prototype : navigateurs, systèmes, réseau bloqué.
+- **Ne pas juger un modèle entraîné sur des données générées avec un jeu écrit par le même type de générateur** : la v3-C n'était meilleure que sur les questions de Claude. Un jeu humain, même petit, reste le contrôle indispensable.
 - **Automatiser les contrôles** : depuis le 19 octobre, les tests du moteur passent avant chaque déploiement, et un écart de version d'une dépendance arrête la mise en ligne. Ce garde-fou aurait dû exister dès le premier déploiement.
 
 ## 4. Axes de progression
@@ -293,14 +361,15 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 ## 6. Ce qui reste avant la V1
 
+État au 22 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3) et la mise à jour de la section 2.2 sont faites. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Adaptation du modèle du volet B, exigée au jalon J3 : aucun ticket ne la porte encore | Mahé et Jibril (domaine D5), à confirmer | J3 |
-| Supports de présentation, exigés au jalon J3 « même incomplets » | toute l'équipe | J3 |
-| Mesures du volet B avant et après adaptation (#52), puis comparaison finale des deux volets | Mahé, Jibril | avant la V1 |
-| Axes de progression individuels (section 4) | chaque membre | avant la V1 |
-| Validation des cinq outils, fiches finalisées | toute l'équipe | Weekly 8, puis avant la V1 |
+| Exactitude jugée à l'aveugle (#52) : précisions d'un juge attendues, puis analyse à deux juges | Maïmouna, Vaneck ; analyse par Mahé | avant la V1 |
+| Axe de progression de Mahé (section 4.1) | Mahé | avant la V1 |
+| Validation des cinq outils, fiches finalisées | toute l'équipe | avant la V1 |
 | Capture du board | Jibril | avant la V1 |
+| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | avant J4 (30/11) |
 
 ## Annexe. Chiffres et sources
 
@@ -318,3 +387,8 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | rôles, domaines, réunions, charges | `docs/suivi/SUIVI.md`, `docs/reunions/README.md`, tickets #2, #6, #9, #10, #11, #26 |
 | PR, revues, commits | API GitHub et `git log` de `dev`, relevés le 19/10/2026 |
 | erreurs détectées | `docs/journal/JOURNAL_USAGE_IA.md`, section 4 |
+| abstention de l'encodeur ajusté : AUC 0,865, 70 sur 73, 10 sur 24, 13 avertissements | `docs/etudes/evaluation/05_resultats_ajustement.md`, section 5 |
+| chaîne de démonstration de bout en bout : 52,9 %, +16,9 points, 10,1 %, 11,8 s et 4,9 s | `docs/etudes/evaluation/10_resultats.md`, section 6 (PR #174) ; `data/evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json` |
+| fusion du volet A : +5,0, +2,6 et −6,8 points | `10_resultats.md`, section 4 (PR #174) |
+| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` |
+| confidentialité des deux interfaces | PR #177 : `front/src/composants/Confidentialite.jsx`, `demo_b/src/composants/Confidentialite.jsx` |
