@@ -184,7 +184,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 68 erreurs ou pièges détectés par la vérification au 18 octobre, dont 32 du 11 au 18 octobre.
+- **Rattraper des erreurs** : le journal recense 169 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -217,7 +217,7 @@ Le pilotage a été réel pour la création des tickets, mais rétrospectif pour
 
 **Relecture par un tiers.** La relecture croisée a trouvé des erreurs que l'auteur n'avait pas vues. Sur les 19 erreurs des sessions de Mahé entre le 11 et le 18 octobre, 4 ont été trouvées par Jibril en relecture. Vaneck en a relevé deux dans des PR de Mahé (#76 et #78). Les revues de Jibril sur les PR documentaires (#82, #89, #102) ont vérifié les chiffres contre l'API GitHub et contre le rendu du PDF.
 
-**Assistants d'IA.** Leur usage est consigné session par session : 37 sessions au 18 octobre, et la session 38 du 19 octobre en relecture (PR #104). Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex. La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
+**Assistants d'IA.** Leur usage est consigné session par session : 69 sessions au 22 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
 
 ### 3.3 Difficultés
 
@@ -262,7 +262,24 @@ Le sujet recommande une rédaction individuelle. Chaque membre complète son enc
 
 ### 4.1 Mahé BEGNIS
 
-> À rédiger par Mahé.
+**Compétences techniques acquises.**
+- **Mesurer avant de décider** : écrire et figer chaque protocole avant la mesure, avec son empreinte publiée (protocoles 05 à 10, amendements A1 à A3) ; comparer deux systèmes sur les mêmes questions par des tests appariés (McNemar exact, test groupé d'Obuchowski quand plusieurs questions partagent une fiche), avec des intervalles de Tango et une correction de Holm ; appliquer la règle écrite d'avance, y compris quand elle fait renoncer (repli du 16 octobre, chaîne v2 du volet B, v3-C).
+- **Servir un modèle dans le navigateur** : quantification q8, élagage sans perte du vocabulaire (de 112,8 à 65,7 Mio, #50), contrôle de parité entre Python et le navigateur sur 822 vecteurs.
+- **Adapter et servir un modèle génératif en local** : adaptateur LoRA entraîné sous MLX, fusion dans les poids, export GGUF et Q4_K_M avec un contrôle de requantification (#140), service par Ollama sur 127.0.0.1.
+- **Récupération hybride** : fusion RRF de la recherche dense et de BM25, reclasseur, budget de tokens du contexte (protocole 07).
+- **Encadrer des sous-agents d'IA** : générateurs et juges à contexte neuf, consignes publiées, registre chaîné et journaux contrôlés (protocole 10, amendement A3).
+
+**Lacunes et points à approfondir.**
+- **Comprendre tout le code produit à mon nom** : presque tout mon travail est passé par Claude Code (29 sessions consignées). Une partie de ce code, je la connais par ses tests plus que par sa lecture ligne à ligne ; c'est ce que je dois combler avant la soutenance, où chacun peut être interrogé sur n'importe quelle portion du code.
+- **Vérifier plus tôt** : 11 des 19 erreurs de mes sessions du 11 au 18 octobre figuraient déjà dans une PR, une revue ou un document publiés. Le 22 novembre encore, un test est resté en échec une journée, faute d'avoir relancé toute la suite après un commit : je dois relancer tous les tests après chaque commit, pas seulement ceux du changement.
+- **Concevoir les échantillons de contrôle** : l'étalonnage du jugement mutualisé (#139) n'a pas pu conclure sur la règle principale, faute d'un échantillon stratifié selon les verdicts.
+- **Estimer la charge** : aucun des tickets dont j'étais responsable en novembre n'a reçu d'estimation chiffrée avant son démarrage. C'est en partie pour cela que l'analyse des écarts (section 3.3) repose sur 4 tickets.
+
+**Positionnement dans l'équipe, délégation et délais.**
+- **Rôle de lead technique** : protocoles, mesures et revues de PR, et règles du dépôt (branches protégées, une approbation exigée avant toute fusion). Quand les Weekly 7 et 8 n'ont pas eu lieu, j'ai pris les décisions par écrit dans les tickets, en les déclarant comme décisions du lead, révisables par l'équipe.
+- **Trop de travail concentré** : une grande partie du travail technique est passée par moi et par l'assistant. C'est efficace, mais fragile : la démonstration du volet B tourne sur mon Mac, et mes coéquipiers ont fini le projet plus souvent comme relecteurs que comme auteurs. J'aurais dû déléguer plus tôt des parties entières, avec leur mesure.
+- **Demander des relectures** : elles ont rattrapé ce que l'assistant et moi avions laissé passer, par exemple les deux garde-fous et l'incohérence documentaire relevés par Jibril sur la PR #166.
+- **Délais** : le jalon J3 a été tenu. La V1 du rapport, prévue le 19 novembre, ne l'a pas été : j'ai fait passer de nouvelles mesures avant la rédaction (encodeurs v2-T et v3-C, mesure de bout en bout).
 
 ### 4.2 Remy RAYANE
 
@@ -314,7 +331,7 @@ Le sujet recommande une rédaction individuelle. Chaque membre complète son enc
 
 ## 5. Cinq outils novateurs
 
-**Présélection proposée, à valider au Weekly 8.** La méthode de suivi prévoit de choisir les cinq outils au Weekly 8 (4 novembre). Les cinq ci-dessous sont proposés parce qu'ils répondent aux critères retenus par l'équipe :
+**Cinq outils retenus le 10 novembre.** Le Weekly 8 (4 novembre), qui devait les choisir, n'a pas eu lieu. Mahé les a proposés par écrit le 30 octobre et retenus le 10 novembre, sans objection dans le ticket du Weekly 8 (#14) : c'est une décision écrite du lead, pas un vote. Ils répondent aux critères retenus par l'équipe :
 - un usage réel et répété, avec des preuves dans le dépôt ;
 - au moins une limite observée ;
 - un retour que la documentation officielle ne donne pas.
@@ -354,22 +371,24 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 ### 5.5 Assistants de développement par IA
 
-- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, sur l'ensemble du projet : 37 sessions consignées au 18 octobre.
+- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, sur l'ensemble du projet : 69 sessions consignées au 22 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 68 erreurs ou pièges détectés par la vérification au 18 octobre. Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 169 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 22 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3) et la mise à jour de la section 2.2 sont faites. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 22 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), la mise à jour de la section 2.2, la section 4.1 et la section 5 sont faites. Les cinq outils ont été retenus le 10 novembre. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Exactitude jugée à l'aveugle (#52) : précisions d'un juge attendues, puis analyse à deux juges | Maïmouna, Vaneck ; analyse par Mahé | avant la V1 |
-| Axe de progression de Mahé (section 4.1) | Mahé | avant la V1 |
-| Validation des cinq outils, fiches finalisées | toute l'équipe | avant la V1 |
-| Capture du board | Jibril | avant la V1 |
-| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | avant J4 (30/11) |
+| Exactitude jugée à l'aveugle (#52) : précisions d'un juge attendues, puis analyse à deux juges | Maïmouna, Vaneck ; analyse par Mahé | 26/11 |
+| Section 4.1, rédigée le 22 novembre avec l'assistant à partir du journal : relecture et corrections | Mahé | 24/11 |
+| Fiches des outils : lignes encore à compléter (Playwright, GitHub CLI, assistants d'IA) et décision collective de la fiche des assistants d'IA | Jibril ; toute l'équipe | 25/11 |
+| Charges réelles des tickets fermés dans `docs/suivi/SUIVI.md`, pour mettre à jour la section 3.3 | Jibril (tenue), chacun pour ses tickets | 25/11 |
+| Capture du board | Jibril | 25/11 |
+| Fusion des PR citées par ce rapport (#161, #174, #175, #177, #179, #166, #168), puis de celle-ci | relecteurs ; fusions par Mahé | 26/11 |
+| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
 
 ## Annexe. Chiffres et sources
 
@@ -390,5 +409,5 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | abstention de l'encodeur ajusté : AUC 0,865, 70 sur 73, 10 sur 24, 13 avertissements | `docs/etudes/evaluation/05_resultats_ajustement.md`, section 5 |
 | chaîne de démonstration de bout en bout : 52,9 %, +16,9 points, 10,1 %, 11,8 s et 4,9 s | `docs/etudes/evaluation/10_resultats.md`, section 6 (PR #174) ; `data/evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json` |
 | fusion du volet A : +5,0, +2,6 et −6,8 points | `10_resultats.md`, section 4 (PR #174) |
-| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` |
+| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` (PR #179) |
 | confidentialité des deux interfaces | PR #177 : `front/src/composants/Confidentialite.jsx`, `demo_b/src/composants/Confidentialite.jsx` |
