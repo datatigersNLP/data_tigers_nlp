@@ -229,6 +229,32 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
 
+### Charges individuelles déclarées par Rémy
+
+Relevé de Rémy transmis par Jibril le 23/11/2026, en heures de travail humain actif. Ce tableau conserve sa part individuelle ; il ne représente pas nécessairement la charge totale du ticket. Pour les tickets encore ouverts, il s'agit d'un relevé et non d'une clôture. Les lignes historiques et les écarts du tableau principal sont conservés jusqu'à consolidation des périmètres comparables.
+
+| Ticket | Réel déclaré par Rémy | Périmètre déclaré |
+|---|---:|---|
+| #1 | 0,5 h | Création du dépôt |
+| #4 | 2 h | Choix des embeddings |
+| #29 | 0,5 h | Soutien ; distinct des 1,5 h cumulées de Vaneck et Maïmouna déjà inscrites |
+| #30 | 4 h | Index précalculé et PIAF |
+| #31 | 3 h | Première inférence Qwen / Ollama |
+| #34 | 1 h | Régularisation de la session 9 du journal |
+| #45 | 3,5 h | Chaîne de mesure PIAF ; valeur déjà inscrite au tableau principal, non comptée deux fois |
+| #46 | 2 h | Revue de la mesure et PR #73 |
+| #47 | 3,5 h | Références TF-IDF / BM25 ; valeur déjà inscrite au tableau principal, non comptée deux fois |
+| #48 | 1,5 h | Soutien à l'intégration de la recherche front |
+| #49 | 14 h | 6 h paires et pipeline, 6,5 h export et contrôles, 1,5 h audits ; hors calculs passifs |
+| #50 | 1 h | Revue de parité de la PR #78 |
+| #51 | 2,5 h | Index commun, récupération et citations |
+| #107 | 4 h | Revues de faisabilité, séparation et runtime |
+| #112 | 8,5 h | Supports J3 et retours de relecture |
+| #113 | 6,5 h | Fiches outils et contribution au rapport |
+| #114 / transverse | 3 h | Revues J4 des PR #179, #168 et #162 ; périmètre transversal déclaré, pas de répartition supplémentaire par ticket |
+
+Le relevé des six postes #49, #51, #107, #112, #113 et revues J4 totalise 38,5 h selon Rémy ; il exclut les autres tickets de ce tableau. Ce total n'est pas une charge d'équipe. Pour #49, la charge déclarée ne confirme pas à elle seule la présentation à l'équipe mentionnée dans le ticket.
+
 ## Points opérationnels à suivre
 
 Cette section reprend les dates et dépendances écrites ; elle ne décide pas de nouvelles priorités.
