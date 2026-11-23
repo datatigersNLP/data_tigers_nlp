@@ -75,9 +75,10 @@ la #85 (`docs/etudes/evaluation/10_resultats.md`, section 5). `--dense ajuste` s
 l'encodeur ajusté du volet A (question encodée par le q8 que sert le site, avec onnxruntime ; passages par l'index du
 site) : mesuré à 84,3 %, il n'a pas été retenu par la règle du protocole.
 
-Aucun fichier de `data/` n'est lu : l'en-tête des passages est reconstruit depuis l'index versionné. La liste de mots
-vides Snowball de BM25 V3 est téléchargée une fois, à une révision figée et contrôlée par son empreinte, dans
-`data/evaluation/`.
+L'en-tête des passages est reconstruit depuis l'index versionné, sans lire le parquet M2. La liste de mots vides
+Snowball de BM25 V3 est téléchargée lors de la préparation du cache, à une révision figée, dans `data/evaluation/`.
+Au lancement du serveur, elle est lue et son empreinte contrôlée localement ; si elle manque ou est modifiée, la
+récupération reste indisponible et la cause est affichée, sans tentative de téléchargement.
 
 Préparer le cache une fois, avec une connexion, depuis la racine du dépôt (environ 2,3 Go pour le reclasseur) :
 
