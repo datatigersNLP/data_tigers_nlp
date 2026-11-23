@@ -41,6 +41,21 @@ def sha256_octets(octets: bytes) -> str:
     return hashlib.sha256(octets).hexdigest()
 
 
+def mots_vides_locaux() -> set[str]:
+    """Lire la liste préparée sans utiliser le téléchargement automatique de lexical_baselines."""
+    from lexical_baselines import MOTS_VIDES_CACHE, MOTS_VIDES_SHA256, TERMES_NEGATION_RESTRICTION
+    try:
+        octets = MOTS_VIDES_CACHE.read_bytes()
+    except FileNotFoundError as exc:
+        raise rc.ErreurRecuperationV2("Liste Snowball absente du cache ; préparer le cache avec connexion "
+                                    "avant la démonstration (voir demo_b/README.md).") from exc
+    if sha256_octets(octets) != MOTS_VIDES_SHA256:
+        raise rc.ErreurRecuperationV2("Empreinte de la liste Snowball incorrecte ; réparer le cache "
+                                    "avant la démonstration (voir demo_b/README.md).")
+    mots = {ligne.split("|")[0].strip() for ligne in octets.decode("utf-8").splitlines()} - {""}
+    return mots - TERMES_NEGATION_RESTRICTION
+
+
 def entete(passage: dict) -> str:
     """Règle du notebook 01 (`entete`) : « fiche > section > intertitres », sans le chapô ni une section qui répète le
     titre de la fiche. Le chapô est la seule section dont le titre est « Chapô » (vérifié sur les 4 240 passages)."""
@@ -126,18 +141,21 @@ class RecuperationDemo:
     """
 
     def __init__(self, passages: Sequence[dict], encoder: Callable[[str], np.ndarray], matrice: np.ndarray,
-                 reclasseur, mesurer: Callable[[str, list[int]], int], description: dict):
+                 reclasseur, mesurer: Callable[[str, list[int]], int], description: dict,
+                 mots_vides: set[str] | None = None):
         from lexical_baselines import BM25Retriever
         self.passages, self.encoder, self.matrice = passages, encoder, matrice
         self.reclasseur, self.mesurer, self.description = reclasseur, mesurer, description
         self.textes = textes_lexicaux(passages)
-        self.bm25 = BM25Retriever(stopwords_variant="snowball_no_negation", stemming="french").fit(
-            self.textes, doc_ids=[p["passage_id"] for p in passages])
+        self.bm25 = BM25Retriever(stopwords_variant=None, stemming="french")
+        self.bm25.tokenizer.stopwords = mots_vides if mots_vides is not None else mots_vides_locaux()
+        self.bm25.fit(self.textes, doc_ids=[p["passage_id"] for p in passages])
 
     @classmethod
     def charger(cls, dense: str = "base", index_base: rag.IndexCommun | None = None) -> "RecuperationDemo":
         if dense not in DENSES:
             raise rc.ErreurRecuperationV2(f"Partie dense inconnue : {dense}")
+        mots_vides = mots_vides_locaux()
         index_base = index_base or rag.charger_index()
         if dense == "ajuste":
             index_aj, q8 = IndexAjuste(index_base), EncodeurQ8()
@@ -160,7 +178,7 @@ class RecuperationDemo:
                             "reclasseur": f"{reclasseur.nom} ({reclasseur.revision[:8]})",
                             "lexical": "BM25 V3 (mots vides Snowball sans négations, racinisation française)",
                             "seuil_S": None})
-        return cls(passages, encoder, matrice, reclasseur, mesurer, description)
+        return cls(passages, encoder, matrice, reclasseur, mesurer, description, mots_vides=mots_vides)
 
     def recuperer(self, question: str) -> dict:
         vecteur = self.encoder(question)
