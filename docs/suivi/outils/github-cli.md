@@ -17,7 +17,7 @@ Chaque membre tient sa propre ligne à jour.
 | Vaneck | 2.101.0 | Windows | |
 | Mahé | 2.92.0 | macOS 27.0.1, arm64 | version relevée le 26/10 ; PR, revues, tickets et lectures de l'API sous l'identité `mahebegnis`, vérifiée par `gh api user` |
 | Rémy | non installé | Windows 11 | outil non utilisé par Rémy au 10/11 : lectures de l'API REST GitHub réalisées en Python (`urllib`) et gestion des branches par `git` |
-| Jibril | À vérifier | Windows 11 | Jibril confirme avoir utilisé directement `gh` pendant le projet ; version à relever sur son poste. |
+| Jibril | 2.101.0 | Windows 11 | Utilisation directe déclarée ; version relevée sur le Legion le 23/11/2026, sans présumer des versions antérieures. |
 | Maïmouna | 2.102.0 | Windows 11, ARM (Snapdragon X Plus), binaire arm64 natif | version relevée le 12/11 ; lecture des pull requests, des tickets et des notifications sous l'identité `msignate` |
 
 ## Mise en place
