@@ -15,3 +15,5 @@
 - **Consolidation :** #182 fusionnée dans `dev` le 23 novembre ; fusion de `dev` dans la branche #169 et résolution du conflit de `SUIVI.md` en conservant les charges de Vaneck et les estimations de Jibril. #169 reste à relire et à fusionner.
 
 - **Clôtures Agent0 :** le 23/11, Jibril accepte les estimations non chronométrées (~3 h, ~3 h, ~5 h, ~6 h et ~4 h) comme charges approximatives déclarées. Codex vérifie les livrables et leurs relectures puis clôt #91 à #95 dans le périmètre livré ; aucune validation des candidats ni exécution du pilote n'est déduite. Le suivi est aligné et son titre corrigé. #112 est vérifié et conservé ouvert en attendant la consolidation des charges collectives.
+
+- **Clôture #49 :** Jibril demande le 23/11 la fermeture sur la base de l'avis de Rémy, responsable, acceptant l'écart Jaccard comme exception documentée. Codex ferme le ticket et aligne le suivi ; la présentation des résultats à l'équipe reste à faire et n'est pas attestée par la fermeture.
