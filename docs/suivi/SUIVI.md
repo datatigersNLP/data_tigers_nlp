@@ -59,7 +59,7 @@ Les sections suivantes gardent les relevés datés et leur provenance ; les déc
 
 - **#49 :** Rémy a déclaré 14 h de travail actif pour sa part ; Jibril confirme que le résultat n'a pas encore été présenté à l'équipe. Le critère d'étanchéité reste à clarifier. Ticket ouvert.
 - **#111 et #140 :** la vidéo de secours du volet B a été réalisée par Mahé et montrée ; Jibril la juge conforme pour cet usage ([#111](https://github.com/datatigersNLP/data_tigers_nlp/issues/111)). Le scénario #158 reste en PR ; le transfert des modèles vers le Legion n'est plus requis selon l'amendement communiqué par Mahé.
-- **#91 à #95 :** livrables techniques du périmètre retenu intégrés ; temps actif de Jibril restant à déclarer. **#96 à #98 :** suites reportées ; #144 a préparé le lanceur et #145 les sources, sans constituer une exécution réelle ni un lot humainement accepté et figé.
+- **#91 à #95 :** livrables techniques du périmètre retenu intégrés ; Jibril a validé des estimations rétrospectives de son temps actif : 3 h, 3 h, 5 h, 6 h et 4 h respectivement, non mesurées au fil de l'eau. **#96 à #98 :** suites reportées ; #144 a préparé le lanceur et #145 les sources, sans constituer une exécution réelle ni un lot humainement accepté et figé.
 - **Charges :** parts de Rémy consignées dans le tableau complémentaire ci-dessous ; celles de Vaneck sont proposées dans la PR #182. Elles ne sont pas des totaux d'équipe et leur intégration est à revoir après les fusions.
 
 ## Domaines
@@ -207,11 +207,11 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #52 | 23/10 | NR | non estimée | - | NR |
 | #53 | NR | NR | 16 (P) | - | NR |
 | #56 | NR | NR | NR | - | NR |
-| #91 | 18/10 | NR | NR | - | NR |
-| #92 | 18/10 | NR | NR | - | NR |
-| #93 | 18/10 | NR | NR | - | NR |
-| #94 | NR | NR | NR | - | NR |
-| #95 | NR | NR | NR | - | NR |
+| #91 | 18/10 | NR | NR | Jibril : ~3 h (estimation rétrospective) | NR |
+| #92 | 18/10 | NR | NR | Jibril : ~3 h (estimation rétrospective) | NR |
+| #93 | 18/10 | NR | NR | Jibril : ~5 h (estimation rétrospective) | NR |
+| #94 | NR | NR | NR | Jibril : ~6 h (estimation rétrospective) | NR |
+| #95 | NR | NR | NR | Jibril : ~4 h (estimation rétrospective) | NR |
 | #96 | NR | NR | NR | - | NR |
 | #97 | NR | NR | NR | - | NR |
 | #98 | NR | NR | NR | - | NR |
@@ -236,7 +236,7 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
 
-### Charges individuelles déclarées par Rémy
+- #91 à #95 : estimations rétrospectives de travail actif proposées avec l'assistance de Codex et validées par Jibril le 23/11 ; 3 h, 3 h, 5 h, 6 h et 4 h, soit environ 21 h. Elles ne proviennent pas d'un suivi chronométré. Les estimations initiales des tickets restent inchangées et les écarts ne sont pas calculés ici ; #95 couvre le support livré, pas la préparation ultérieure du pilote #145. Les tickets restent ouverts à cette date.\n\n### Charges individuelles déclarées par Rémy
 
 Relevé de Rémy transmis par Jibril le 23/11/2026, en heures de travail humain actif. Ce tableau conserve sa part individuelle ; il ne représente pas nécessairement la charge totale du ticket. Pour les tickets encore ouverts, il s'agit d'un relevé et non d'une clôture. Les lignes historiques et les écarts du tableau principal sont conservés jusqu'à consolidation des périmètres comparables.
 
