@@ -1,4 +1,4 @@
-"""Récupération de la chaîne de démonstration du volet B (#172), sans dépendance au dossier data/ ni à la #166.
+"""Récupération de la chaîne de démonstration du volet B (#172), sans dépendance au parquet M2 ni à la #166.
 
 Chaînes mesurées par le protocole 10 (famille B) : partie lexicale par BM25 V3 ; fusion RRF (k = 60) des 100 premiers
 rangs de la partie dense et de BM25 ; reclassement des 20 premiers candidats par bge-reranker-v2-m3 sur l'en-tête et le
