@@ -17,7 +17,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 | Vaneck | Claude Code dans VS Code (2.1.322 au 14/11) | Claude Opus 5.5 | payante | préparation et contrôle du corpus (#27), interface du site du volet A et tests Playwright (#48, #53), démonstration du volet B (#111), relectures de pull requests |
 | Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
 | Rémy | Google Antigravity | Gemini 3.8 Flash (High) | formule gratuite | métriques et références lexicales (#45, #47), étude d'ajustement contrastif (#49), revues et audits (#109, #115, #120, #124), cadrage des supports J3 (#112) et rapport (#113) |
-| Jibril | à compléter | à compléter | à compléter | à compléter |
+| Jibril | ChatGPT / Codex | À confirmer selon les sessions | ChatGPT Plus | Compréhension du code et des concepts NLP, coordination, documentation, relecture de PR, préparation et vérification de commandes, suivi GitHub. |
 | Maïmouna | Claude Code dans VS Code (2.1.322 au 12/11) | Claude Opus 5.5 | payante | compréhension des tâches et du code, relectures de pull requests, vérification de la chaîne RAG, rédaction du journal et des fiches |
 
 ## Mise en place
@@ -49,6 +49,9 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 - Cas où l'ancienne méthode reste préférable : (Remy) l'édition manuelle directe est plus sûre pour les retouches ciblées sur un texte déjà relu ou la saisie stricte d'une donnée d'environnement vérifiée.
 
 ## Décision
+
+(Jibril) Conservé pour certains usages : l'assistant facilite la compréhension du projet, la préparation de documents, les relectures et le suivi des tâches. Ses propositions et ses actions doivent être vérifiées : il peut confondre des versions ou des statuts, ou fournir une information plausible mais incorrecte. Les décisions, validations humaines et résultats expérimentaux restent sous la responsabilité de l'équipe. Les réponses doivent être confrontées aux fichiers et à l'état actuel du dépôt ; les commandes nécessitent aussi une vérification du dossier et de l'environnement Windows.
+
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
 - Motif :
 
