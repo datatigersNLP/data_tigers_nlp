@@ -39,11 +39,11 @@ Source : corps et commentaires des tickets et PR relus le 16/11, notamment #13/#
 | #49 | Ajustement, mesures et contrôles intégrés par #165 ; Recall@5 63,0 % contre 43,8 % | Ouvert : présentation à l'équipe non attestée comme événement et charge réelle à renseigner |
 | #51 | Socle #85, reproduction de Maïmouna publiée le 08/11 et acceptée par Mahé le 10/11, exemples commentés | Ouvert : présentation et bilan de charge. Les charges partielles restent attribuées à leurs déclarants |
 | #52 | Mesure avant du 09/11 et recalcul indépendant, puis résultats T/adapté du 11/11 publiés | Ouvert : présentation attestée, jugement humain consolidé/défauts et charge |
-| #91 | Schéma #99 relu et fusionné | Ouvert uniquement pour le temps actif réel à déclarer selon sa checklist |
-| #92 | Sélection/provenance #100 relue et fusionnée | Ouvert uniquement pour le temps actif réel à déclarer selon sa checklist |
-| #93 | Génération simple/reformulation #101 relue et fusionnée | Ouvert uniquement pour le temps actif réel à déclarer selon sa checklist |
-| #94 | Périmètre technique réduit #103 relu et fusionné | Ouvert pour la charge réelle ; aucune validation sémantique des candidats déduite |
-| #95 | Support #106 livré ; préparation #145 et contrôle encodeur #153 intégrés ensuite | Ouvert pour la charge du support ; un pilote relu/figé n'est pas déclaré |
+| #91 | Schéma #99 relu et fusionné | Fermé le 23/11 ; charge active approximative déclarée ~3 h |
+| #92 | Sélection/provenance #100 relue et fusionnée | Fermé le 23/11 ; charge active approximative déclarée ~3 h |
+| #93 | Génération simple/reformulation #101 relue et fusionnée | Fermé le 23/11 ; ~5 h déclarées, candidats non validés humainement |
+| #94 | Périmètre technique réduit #103 relu et fusionné | Fermé le 23/11 ; ~6 h déclarées, aucune validation sémantique déduite |
+| #95 | Support #106 livré ; préparation #145 et contrôle encodeur #153 intégrés ensuite | Fermé le 23/11 ; ~4 h pour le support, pilote non déclaré relu ou figé |
 | #107 | Entraînement, export, service et mesures du 11/11 réalisés | Ouvert : jugement consolidé, défauts, feuille de route au rapport et charges |
 | #112 | Support assemblé #134, compléments #156/#157 et résultats #152 versionnés | Critères documentaires cochés ; ouvert pour le bilan de charge collectif |
 
@@ -141,11 +141,11 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
 | #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Fermé | 30/09/2026 | 18/10/2026 |
 | #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Fermé | 04/10/2026 | 14/10/2026 |
-| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
-| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
-| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
-| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
-| #95 | [Agent0 Light] A5 — Livrer le support vérifié de relecture des essais | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
+| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | J3 | Fermé | 18/10/2026 | 23/11/2026 |
+| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | J3 | Fermé | 18/10/2026 | 23/11/2026 |
+| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | J3 | Fermé | 18/10/2026 | 23/11/2026 |
+| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | J4 | Fermé | 18/10/2026 | 23/11/2026 |
+| #95 | [Agent0 Light] A5 — Livrer le support vérifié de relecture des essais | D5 | Jibril | J4 | Fermé | 18/10/2026 | 23/11/2026 |
 | #96 | [Agent0 Light] B1 — Exécuter le RAG sur un Challenge Set figé | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
 | #97 | [Agent0 Light] B2 — Mesurer les résultats et diagnostiquer les erreurs du RAG | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
 | #98 | [Agent0 Light] C1 — Générer un nouveau lot ciblé sur les faiblesses détectées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
@@ -237,7 +237,9 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
 
-- #91 à #95 : estimations rétrospectives de travail actif proposées avec l'assistance de Codex et validées par Jibril le 23/11 ; 3 h, 3 h, 5 h, 6 h et 4 h, soit environ 21 h. Elles ne proviennent pas d'un suivi chronométré. Les estimations initiales des tickets restent inchangées et les écarts ne sont pas calculés ici ; #95 couvre le support livré, pas la préparation ultérieure du pilote #145. Les tickets restent ouverts à cette date.\n\n### Autres charges individuelles estimées par Jibril
+- #91 à #95 : estimations rétrospectives de travail actif proposées avec l'assistance de Codex et validées par Jibril le 23/11 ; 3 h, 3 h, 5 h, 6 h et 4 h, soit environ 21 h. Elles ne proviennent pas d'un suivi chronométré. Les estimations initiales des tickets restent inchangées et les écarts ne sont pas calculés ici ; #95 couvre le support livré, pas la préparation ultérieure du pilote #145. Jibril accepte ces valeurs comme charges approximatives déclarées et les cinq tickets sont fermés le 23/11.
+
+### Autres charges individuelles estimées par Jibril
 
 Propositions rétrospectives divisées par deux à la demande de Jibril, puis validées par lui le 23/11/2026. Ce sont des approximations de travail humain actif, non des temps chronométrés ; elles portent sur sa part uniquement. Les durées passives sont exclues. Pour les tickets ouverts, ces valeurs constituent un relevé partiel, pas une clôture ni un total d'équipe. Les estimations initiales et charges des autres membres restent inchangées.
 
