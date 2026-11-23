@@ -36,7 +36,7 @@ Source : corps et commentaires des tickets et PR relus le 16/11, notamment #13/#
 | #13, Weekly 7 | Suivi écrit du 29/10 complété par les décisions datées du 30/10 et leurs suites | Fermé le 16/11 comme compte rendu complété, sans réunion synchrone |
 | #14, Weekly 8 | Non-tenue confirmée, points d'étape et suites écrites reconstitués depuis les sources | Fermé le 16/11 comme suivi documenté, sans présence ni vote inventés |
 | #15, Weekly 9 | Suivi écrit prévu le 12/11 complété rétrospectivement le 16/11 ; résultat du point d'arrêt expliqué | Fermé le 16/11 comme compte rendu, sans prétendre à un échange conjoint le 12/11 |
-| #49 | Ajustement, mesures et contrôles intégrés par #165 ; Recall@5 63,0 % contre 43,8 % | Ouvert : présentation à l'équipe non attestée comme événement et charge réelle à renseigner |
+| #49 | Ajustement, mesures et contrôles intégrés par #165 ; Recall@5 63,0 % contre 43,8 % | Fermé le 23/11 à la demande de Jibril ; présentation des résultats à l'équipe non attestée |
 | #51 | Socle #85, reproduction de Maïmouna publiée le 08/11 et acceptée par Mahé le 10/11, exemples commentés | Ouvert : présentation et bilan de charge. Les charges partielles restent attribuées à leurs déclarants |
 | #52 | Mesure avant du 09/11 et recalcul indépendant, puis résultats T/adapté du 11/11 publiés | Ouvert : présentation attestée, jugement humain consolidé/défauts et charge |
 | #91 | Schéma #99 relu et fusionné | Fermé le 23/11 ; charge active approximative déclarée ~3 h |
@@ -57,7 +57,7 @@ Les sections suivantes gardent les relevés datés et leur provenance ; les déc
 
 ## Actualisation ciblée du 23 novembre 2026
 
-- **#49 :** Rémy a déclaré 14 h de travail actif pour sa part ; Jibril confirme que le résultat n'a pas encore été présenté à l'équipe. Le critère d'étanchéité reste à clarifier. Ticket ouvert.
+- **#49 :** Rémy a déclaré 14 h de travail actif pour sa part. L'écart Jaccard est accepté comme exception selon l'avis de Rémy et l'arbitrage rapporté par Jibril ; le ticket est fermé à la demande de Jibril le 23/11. La présentation des résultats à l'équipe reste à faire et n'est pas attestée par la clôture.
 - **#111 et #140 :** la vidéo de secours du volet B a été réalisée par Mahé et montrée ; Jibril la juge conforme pour cet usage ([#111](https://github.com/datatigersNLP/data_tigers_nlp/issues/111)). Le scénario #158 reste en PR ; le transfert des modèles vers le Legion n'est plus requis selon l'amendement communiqué par Mahé.
 - **#91 à #95 :** livrables techniques du périmètre retenu intégrés ; Jibril a validé des estimations rétrospectives de son temps actif : 3 h, 3 h, 5 h, 6 h et 4 h respectivement, non mesurées au fil de l'eau. **#96 à #98 :** suites reportées ; #144 a préparé le lanceur et #145 les sources, sans constituer une exécution réelle ni un lot humainement accepté et figé.
 - **Charges :** parts de Rémy consignées dans le tableau complémentaire ci-dessous ; celles de Vaneck sont proposées dans la PR #182. Elles ne sont pas des totaux d'équipe et leur intégration est à revoir après les fusions.
@@ -135,7 +135,7 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #46 | Évaluer la recherche du volet A sur le jeu de questions (notebook 03) | D2, D5 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #47 | Construire les références lexicales TF-IDF et BM25 | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 13/10/2026 |
 | #48 | Brancher la recherche sémantique dans le site du volet A | D3 | Mahé, Vaneck, Remy, Maïmouna | J3 | Fermé | 30/09/2026 | 12/10/2026 |
-| #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J4 | Ouvert | 30/09/2026 | - |
+| #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J4 | Fermé | 30/09/2026 | 23/11/2026 |
 | #50 | Réduire le poids du modèle servi par réduction du vocabulaire | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #51 | Construire la chaîne RAG du volet B sur l'index commun | D4 | Remy, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
 | #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
