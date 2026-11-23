@@ -9,3 +9,5 @@
 - **Weekly 10 :** à la demande de Jibril, Codex a actualisé #16 par un relevé documentaire daté du 23/11. Jibril indique que la réunion du 18/11 ne s'est pas tenue ; le texte conserve le modèle historique et distingue les faits ultérieurs.
 
 - **Relevé du Legion :** Jibril a transmis le 23/11 les sorties `gh --version` (2.101.0) et `ollama list`, où figure `qwen2.5-coder:7b-instruct-q4_K_M`. Ces sorties constatent les versions présentes ; elles ne démontrent ni la version de `gh` utilisée antérieurement ni l'utilisation de cette variante précise de Qwen dans le projet.
+
+- **Confirmation :** Jibril confirme ensuite avoir utilisé `qwen2.5-coder:7b-instruct-q4_K_M` pour le projet ; les usages précis restent à renseigner.
