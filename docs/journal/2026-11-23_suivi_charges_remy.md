@@ -11,3 +11,5 @@
 - **Charges Agent0 :** à la demande de Jibril, Codex a proposé des estimations rétrospectives de travail actif ; Jibril a validé 3 h, 3 h, 5 h, 6 h et 4 h pour #91 à #95. Ces valeurs, non chronométrées, ont été inscrites dans les tickets et proposées dans le suivi de #169. Les estimations initiales restent distinctes ; aucun ticket n'a été fermé.
 
 - **Autres charges de Jibril :** sur sa demande, Codex a proposé une première estimation, divisée par deux à sa demande puis validée par lui pour #31, #51, #52, #53, #56, #107, #112, #96, #163, #171, #172 et #176. Elles sont indiquées comme estimations rétrospectives non chronométrées et individuelles dans chaque ticket et proposées dans le suivi ; l'état des tickets est conservé, sans modifier la charge collective de #44.
+
+- **Consolidation :** #182 fusionnée dans `dev` le 23 novembre ; fusion de `dev` dans la branche #169 et résolution du conflit de `SUIVI.md` en conservant les charges de Vaneck et les estimations de Jibril. #169 reste à relire et à fusionner.

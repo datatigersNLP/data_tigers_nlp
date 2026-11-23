@@ -3,7 +3,7 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé ; 26 octobre 2026 : début du travail sur #52 daté, points opérationnels de #49, #52 et #107 ; soutenance avancée au 30/11 : jalon J4 au 30/11, #52 en J3, échéances resserrées ; revue de la #108 traitée, format des données d'adaptation proposé, PR #116, par Mahé ; 27 octobre 2026 : #85, #100, #101, #109 et #118 fusionnées, faisabilité du Legion, script de mesure, premier jet des supports de J3, par Mahé ; 30 octobre 2026 : #105, #116 et #117 fusionnées, décisions sur les machines, Agent0, #49 et le Weekly 9, protocole et script après la calibration, charges de #51 et #111, par Mahé ; 2 novembre 2026 : version d'Ollama arbitrée (0.40.13), protocole et script après la revue de Jibril, gel reporté, par Mahé ; 7 novembre 2026 : gel fait le 04/11, verrou approuvé, lot d'adaptation v2b, Weekly 7 et 8 non tenus, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé ; 26 octobre 2026 : début du travail sur #52 daté, points opérationnels de #49, #52 et #107 ; soutenance avancée au 30/11 : jalon J4 au 30/11, #52 en J3, échéances resserrées ; revue de la #108 traitée, format des données d'adaptation proposé, PR #116, par Mahé ; 27 octobre 2026 : #85, #100, #101, #109 et #118 fusionnées, faisabilité du Legion, script de mesure, premier jet des supports de J3, par Mahé ; 30 octobre 2026 : #105, #116 et #117 fusionnées, décisions sur les machines, Agent0, #49 et le Weekly 9, protocole et script après la calibration, charges de #51 et #111, par Mahé ; 2 novembre 2026 : version d'Ollama arbitrée (0.40.13), protocole et script après la revue de Jibril, gel reporté, par Mahé ; 7 novembre 2026 : gel fait le 04/11, verrou approuvé, lot d'adaptation v2b, Weekly 7 et 8 non tenus, par Mahé ; 22 novembre 2026 : charges réelles déclarées par Vaneck, par Vaneck)
 
 **Complément du 16 novembre 2026** : Weeklys 7 à 9 documentés puis clôturés ; états de réalisation et points de clôture des tâches rapprochés des preuves GitHub. Le relevé daté ci-dessous complète l'inventaire historique sans remplacer les estimations ou fabriquer des charges.
 
@@ -167,7 +167,7 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #4 | 19/09 | 19/09 | NR | NR | NR |
 | #5 | 19/09 | NR | NR | NR | NR |
 | #6 | 19/09 | NR | NR | NR | NR |
-| #7 | NR | NR | NR | NR | NR |
+| #7 | NR | NR | NR | Vaneck : 2 h (déclaré le 22/11) | NR |
 | #8 | NR | NR | NR | - | NR |
 | #9 | NR | NR | NR | NR | NR |
 | #10 | NR | NR | NR | NR | NR |
@@ -194,19 +194,19 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #31 | NR | NR | 4 | NR | NR |
 | #33 | NR | NR | NR | NR | NR |
 | #34 | NR | NR | NR | NR | NR |
-| #35 | NR | NR | NR | NR | NR |
+| #35 | NR | NR | NR | Vaneck : 8 h (déclaré le 22/11) | NR |
 | #43 | NR | NR | NR | - | NR |
 | #44 | 03/10 | 07/10 | non estimée | 18 | NR |
 | #45 | 03/10 | 03/10 | 4 | 3.5 | -0.5 |
 | #46 | NR | NR | NR | - | NR |
 | #47 | 04/10 | 04/10 | 4 | 3.5 | -0.5 |
-| #48 | NR | NR | NR | NR | NR |
+| #48 | NR | NR | NR | Vaneck : 3 h (déclaré le 22/11) | NR |
 | #49 | NR | NR | NR | - | NR |
 | #50 | NR | NR | NR | - | NR |
 | #51 | NR | NR | 16, plus 6 pour Vaneck et Maïmouna (28/10) | relectures de la #85 : Vaneck 2 h, Maïmouna 2 h 30 | NR |
-| #52 | 23/10 | NR | non estimée | - | NR |
-| #53 | NR | NR | 16 (P) | - | NR |
-| #56 | NR | NR | NR | - | NR |
+| #52 | 23/10 | NR | non estimée | Vaneck : 4 h (déclaré le 22/11) | NR |
+| #53 | NR | NR | 16 (P) | Vaneck : 10 h (déclaré le 22/11) | NR |
+| #56 | NR | NR | NR | Vaneck : 4 h (déclaré le 22/11) | NR |
 | #91 | 18/10 | NR | NR | Jibril : ~3 h (estimation rétrospective) | NR |
 | #92 | 18/10 | NR | NR | Jibril : ~3 h (estimation rétrospective) | NR |
 | #93 | 18/10 | NR | NR | Jibril : ~5 h (estimation rétrospective) | NR |
@@ -216,10 +216,10 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #97 | NR | NR | NR | - | NR |
 | #98 | NR | NR | NR | - | NR |
 | #107 | 23/10 | NR | NR | - | NR |
-| #111 | NR | NR | 24, cumulées pour Vaneck et Maïmouna (28/10) | - | NR |
-| #112 | NR | NR | NR | - | NR |
-| #113 | NR | NR | NR | - | NR |
-| #114 | NR | NR | NR | - | NR |
+| #111 | NR | NR | 24, cumulées pour Vaneck et Maïmouna (28/10) | Vaneck : 24 h (déclaré le 22/11) | NR |
+| #112 | NR | NR | NR | Vaneck : 2 h (déclaré le 22/11) | NR |
+| #113 | NR | NR | NR | Vaneck : 6 h (déclaré le 22/11) | NR |
+| #114 | NR | NR | NR | Vaneck : 5 h (déclaré le 22/11) | NR |
 
 ### Provenance des valeurs connues
 
@@ -233,6 +233,7 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 - #53 : 16 h cumulées provisoires pour Vaneck et Jibril, inscrites le 13/10 à la demande de Jibril. Proposition assistée par IA : 4 h d'analyse et de choix UI/UX, 8 h de réalisation, 4 h de contrôles et documentation. Aucune répartition individuelle imposée ; à réviser après le cadrage et à distinguer du reste à faire si le travail a commencé.
 
 - #52 : travail commencé le 23/10, à l'ouverture de la PR #108 qui en écrit le protocole ; aucune estimation n'avait été déclarée avant, dans le ticket ni dans ses commentaires (vérifié le 26/10).
+- #7, #35, #48, #52, #53, #56, #111, #112, #113 et #114 : charges réelles individuelles déclarées par Vaneck le 22/11, en heures de travail actif. Elles ne couvrent que sa part : les autres membres de ces tickets ne sont pas comptés. Aucune estimation n'est reconstruite ; les écarts restent NR, faute d'estimation individuelle comparable (pour #53 et #111, les estimations sont cumulées pour deux membres, et celle de #53 est provisoire). Pour les tickets encore ouverts, la valeur est arrêtée au 22/11.
 
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
 
