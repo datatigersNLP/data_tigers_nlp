@@ -236,7 +236,28 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
 
-- #91 à #95 : estimations rétrospectives de travail actif proposées avec l'assistance de Codex et validées par Jibril le 23/11 ; 3 h, 3 h, 5 h, 6 h et 4 h, soit environ 21 h. Elles ne proviennent pas d'un suivi chronométré. Les estimations initiales des tickets restent inchangées et les écarts ne sont pas calculés ici ; #95 couvre le support livré, pas la préparation ultérieure du pilote #145. Les tickets restent ouverts à cette date.\n\n### Charges individuelles déclarées par Rémy
+- #91 à #95 : estimations rétrospectives de travail actif proposées avec l'assistance de Codex et validées par Jibril le 23/11 ; 3 h, 3 h, 5 h, 6 h et 4 h, soit environ 21 h. Elles ne proviennent pas d'un suivi chronométré. Les estimations initiales des tickets restent inchangées et les écarts ne sont pas calculés ici ; #95 couvre le support livré, pas la préparation ultérieure du pilote #145. Les tickets restent ouverts à cette date.\n\n### Autres charges individuelles estimées par Jibril
+
+Propositions rétrospectives divisées par deux à la demande de Jibril, puis validées par lui le 23/11/2026. Ce sont des approximations de travail humain actif, non des temps chronométrés ; elles portent sur sa part uniquement. Les durées passives sont exclues. Pour les tickets ouverts, ces valeurs constituent un relevé partiel, pas une clôture ni un total d'équipe. Les estimations initiales et charges des autres membres restent inchangées.
+
+| Ticket | Part de Jibril estimée | Périmètre de la proposition |
+|---|---:|---|
+| #31 | ~2 h | Première inférence locale |
+| #51 | ~5 h | Socle RAG et PR #85 |
+| #52 | ~3 h | Calibration, verrou et mesure avant |
+| #53 | ~2 h 30 | Analyse UI/UX et relectures |
+| #56 | ~2 h | Relecture CDTN et transmission |
+| #107 | ~2 h | Faisabilité QLoRA et suivi de l'adaptation |
+| #112 | ~1 h 30 | Contributions aux supports J3 |
+| #96 | ~2 h | Préparation du lanceur #144, sans évaluation réelle |
+| #163 | ~1 h 30 | Relecture et contre-relecture de #166 |
+| #171 | ~1 h | Relecture de #174 |
+| #172 | ~1 h | Relecture de #175 et proposition de correctif |
+| #176 | ~1 h | Relecture de #177 et essais sur le Legion |
+
+Les ~21 h de #91 à #95 ont été déclarées séparément dans le tableau principal : elles ne sont pas reprises dans ce tableau. Les 18 h collectives de #44 demeurent inchangées et ne sont pas réparties. Le tableau principal reste un relevé historique : ses cases vides ou NR ne contredisent pas ce complément daté. Aucun écart entre estimation et réel n'est calculé à partir de périmètres individuels et collectifs différents.
+
+### Charges individuelles déclarées par Rémy
 
 Relevé de Rémy transmis par Jibril le 23/11/2026, en heures de travail humain actif. Ce tableau conserve sa part individuelle ; il ne représente pas nécessairement la charge totale du ticket. Pour les tickets encore ouverts, il s'agit d'un relevé et non d'une clôture. Les lignes historiques et les écarts du tableau principal sont conservés jusqu'à consolidation des périmètres comparables.
 
