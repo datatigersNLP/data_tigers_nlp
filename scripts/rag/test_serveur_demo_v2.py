@@ -6,9 +6,12 @@ v2 n'en redéfinit aucune. Ces tests couvrent ce qui change : l'état décrit la
 dans l'ordre du reclasseur, le score affiché est celui de la partie dense, la consigne reste la v1.
 """
 
+import hashlib
 import json
 from pathlib import Path
 import sys
+import tempfile
+import types
 import unittest
 from unittest.mock import patch
 
@@ -23,6 +26,35 @@ import test_serveur_demo as tsd  # noqa: E402
 
 CONTEXTE = [7, 2, 11, 0, 5, 9, 1, 3, 10, 4]   # ordre du reclasseur simulé : pas celui des scores denses
 DESCRIPTION = {"etat": "R2", "configuration": "rrf+k10+bge-m3@20", "dense": "E5 ajusté v1", "seuil_S": None}
+
+
+class CacheSnowballTests(unittest.TestCase):
+    def test_lecture_locale_refus_et_negations(self):
+        contenu = "le | commentaire\nne\npas\nsans\ntravail\n".encode()
+        with tempfile.TemporaryDirectory() as d:
+            fichier = Path(d) / "mots.txt"
+            module = types.ModuleType("lexical_baselines")
+            module.MOTS_VIDES_CACHE = fichier
+            module.MOTS_VIDES_SHA256 = hashlib.sha256(contenu).hexdigest()
+            module.TERMES_NEGATION_RESTRICTION = {"ne", "pas", "sans"}
+            with patch.dict(sys.modules, {"lexical_baselines": module}), \
+                    patch("urllib.request.urlretrieve", side_effect=AssertionError("téléchargement interdit")) as telecharger:
+                with self.assertRaisesRegex(rc.ErreurRecuperationV2, "absente"):
+                    v2.rd.mots_vides_locaux()
+                fichier.write_bytes(b"modifie")
+                with self.assertRaisesRegex(rc.ErreurRecuperationV2, "Empreinte"):
+                    v2.rd.mots_vides_locaux()
+                fichier.write_bytes(contenu)
+                self.assertEqual(v2.rd.mots_vides_locaux(), {"le", "travail"})
+                telecharger.assert_not_called()
+
+    def test_absence_remontee_dans_etat(self):
+        index = rag.IndexCommun({"index": {"sha256": "a" * 64}}, np.eye(3, 384, dtype="<f4"), [])
+        with patch.object(v2.rag, "charger_index", return_value=index), \
+                patch.object(v2.rd, "mots_vides_locaux", side_effect=rc.ErreurRecuperationV2("Liste absente")):
+            chaine = v2.ChaineV2.charger_v2("base")
+        self.assertIsNone(chaine.recuperation)
+        self.assertIn("Liste absente", chaine.causes[0])
 
 
 class FausseRecuperation:
