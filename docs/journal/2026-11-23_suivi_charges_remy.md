@@ -13,3 +13,5 @@
 - **Autres charges de Jibril :** sur sa demande, Codex a proposé une première estimation, divisée par deux à sa demande puis validée par lui pour #31, #51, #52, #53, #56, #107, #112, #96, #163, #171, #172 et #176. Elles sont indiquées comme estimations rétrospectives non chronométrées et individuelles dans chaque ticket et proposées dans le suivi ; l'état des tickets est conservé, sans modifier la charge collective de #44.
 
 - **Consolidation :** #182 fusionnée dans `dev` le 23 novembre ; fusion de `dev` dans la branche #169 et résolution du conflit de `SUIVI.md` en conservant les charges de Vaneck et les estimations de Jibril. #169 reste à relire et à fusionner.
+
+- **Clôtures Agent0 :** le 23/11, Jibril accepte les estimations non chronométrées (~3 h, ~3 h, ~5 h, ~6 h et ~4 h) comme charges approximatives déclarées. Codex vérifie les livrables et leurs relectures puis clôt #91 à #95 dans le périmètre livré ; aucune validation des candidats ni exécution du pilote n'est déduite. Le suivi est aligné et son titre corrigé. #112 est vérifié et conservé ouvert en attendant la consolidation des charges collectives.
