@@ -18,7 +18,7 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 | Mahé | Claude Code (2.1.306 au 26/10) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (14 sessions), d'après le journal | à compléter | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom |
 | Rémy | Google Antigravity | Gemini 3.8 Flash (High) | formule gratuite | métriques et références lexicales (#45, #47), étude d'ajustement contrastif (#49), revues et audits (#109, #115, #120, #124), cadrage des supports J3 (#112) et rapport (#113) |
 | Jibril | ChatGPT / Codex | GPT-6.1 Sol et GPT-6.1 Terra, déclarés par Jibril | ChatGPT Plus | Compréhension du code et des concepts NLP, coordination, documentation, relecture de PR, préparation et vérification de commandes, suivi GitHub. |
-| Jibril | Qwen Coder en local | Variante précise à confirmer | Utilisation locale ; formule non précisée | Usages détaillés à préciser. |
+| Jibril | Qwen Coder en local | `qwen2.5-coder:7b-instruct-q4_K_M` présent dans Ollama le 23/11 ; utilisation de cette variante dans le projet à confirmer | Utilisation locale ; formule non précisée | Usages détaillés à préciser. |
 | Maïmouna | Claude Code dans VS Code (2.1.322 au 12/11) | Claude Opus 5.5 | payante | compréhension des tâches et du code, relectures de pull requests, vérification de la chaîne RAG, rédaction du journal et des fiches |
 
 ## Mise en place
