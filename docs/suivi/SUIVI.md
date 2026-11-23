@@ -49,11 +49,18 @@ Source : corps et commentaires des tickets et PR relus le 16/11, notamment #13/#
 
 Les cases techniques de #49 et #51 sont cochées seulement pour les éléments étayés. La présentation effective n'est pas assimilée à un commentaire public. Les trois critères de #112 portent sur le contenu préparé/versionné ; ils ne certifient pas une présentation à l'enseignant.
 
-**Autres tâches conservées ouvertes.** #8 attend la confirmation écrite du calendrier ; #96 à #98 ne disposent pas d'un lot synthétique relu et figé ni d'une évaluation achevée ; #111 attend le scénario corrigé, la vidéo et l'essai de démonstration sur le Legion ; #113/#114 attendent la livraison du rapport et de la soutenance. Mahé maintient #138 jusqu'à la fusion de #166 ; #140 attend le transfert/import pour la démonstration ; #163 attend les corrections de #166 ; #139 attend l'étalonnage humain ; #167 attend la décision de Mahé avant gel. Les Weeklys futurs ne sont pas complétés à l'avance.
+**Autres tâches conservées ouvertes au 16/11.** #8 attend la confirmation écrite du calendrier ; #96 à #98 ne disposent pas d'un lot synthétique relu et figé ni d'une évaluation achevée ; #111 attend le scénario corrigé, la vidéo et l'essai de démonstration sur le Legion ; #113/#114 attendent la livraison du rapport et de la soutenance. Mahé maintient #138 jusqu'à la fusion de #166 ; #140 attend le transfert/import pour la démonstration ; #163 attend les corrections de #166 ; #139 attend l'étalonnage humain ; #167 attend la décision de Mahé avant gel. Les Weeklys futurs ne sont pas complétés à l'avance.
 
 **Charges.** Les estimations et charges déjà déclarées sont conservées. Maïmouna déclare pour #51 2 h 30 de relecture, 1 h 30 de reproduction et 1 h 30 d'exemples ; Vaneck déclare 2 h de relecture. Ce sont des valeurs partielles, pas la charge totale de #51. Pour les comptes rendus clôturés, la charge réelle non déclarée reste NR. Aucune estimation historique, date de travail ou durée de modèle n'est convertie en temps actif.
 
 Les sections suivantes gardent les relevés datés et leur provenance ; les décisions anciennes remplacées sont signalées dans les tickets actuels.
+
+## Actualisation ciblée du 23 novembre 2026
+
+- **#49 :** Rémy a déclaré 14 h de travail actif pour sa part ; Jibril confirme que le résultat n'a pas encore été présenté à l'équipe. Le critère d'étanchéité reste à clarifier. Ticket ouvert.
+- **#111 et #140 :** la vidéo de secours du volet B a été réalisée par Mahé et montrée ; Jibril la juge conforme pour cet usage ([#111](https://github.com/datatigersNLP/data_tigers_nlp/issues/111)). Le scénario #158 reste en PR ; le transfert des modèles vers le Legion n'est plus requis selon l'amendement communiqué par Mahé.
+- **#91 à #95 :** livrables techniques du périmètre retenu intégrés ; temps actif de Jibril restant à déclarer. **#96 à #98 :** suites reportées ; #144 a préparé le lanceur et #145 les sources, sans constituer une exécution réelle ni un lot humainement accepté et figé.
+- **Charges :** parts de Rémy consignées dans le tableau complémentaire ci-dessous ; celles de Vaneck sont proposées dans la PR #182. Elles ne sont pas des totaux d'équipe et leur intégration est à revoir après les fusions.
 
 ## Domaines
 
