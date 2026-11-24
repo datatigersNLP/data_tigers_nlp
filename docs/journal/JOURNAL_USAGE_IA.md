@@ -1905,7 +1905,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 **Produit.**
 - Notebooks locaux, hors dépôt : `01_corpus.ipynb`, guidé par l'assistant et complété par moi, et `02_site.ipynb`, généré par l'assistant.
 - Commits des #136 et #137, préparés par l'assistant et relus par moi.
-- Section 4.5 du rapport (#154), rédigée avec l'assistant à partir de mes indications, relue et modifiée par moi.
+- Section 4.5 du rapport (#154), écrite à partir de mes idées et de mes choix, avec l'aide de l'assistant, puis modifiée par moi.
 - Revue de la #134, en commentaire.
 
 **Mesures exécutées.**
@@ -1955,7 +1955,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 **Produit.**
 - Grille finale transmise à Mahé ; l'assistant en a retiré une ligne ajoutée par Excel.
-- Revue de la #158, en commentaire, rédigée par l'assistant à partir de ses contrôles.
+- Revue de la #158, en commentaire : texte proposé par l'assistant d'après ses contrôles, modifié et posté par moi.
 - PR #185 ; charges transmises à Jibril.
 
 **Mesures exécutées, par l'assistant sur ma machine.**
