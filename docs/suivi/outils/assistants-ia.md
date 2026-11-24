@@ -50,7 +50,8 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 
 ## Décision
 À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
-- Motif :
+- (Maïmouna, Claude Code) Conservé pour certains usages.
+  - Motif : (Maïmouna) utile pour comprendre et vérifier, mais il se trompe parfois avec assurance : il faut contrôler à la source.
 
 ## À retenir pour le rapport
 - Apport : (Remy) capacité de prototypage, de vérification et d'audit multi-fichiers accessible sans coût d'abonnement pour l'équipe.
