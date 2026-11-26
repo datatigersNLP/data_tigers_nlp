@@ -74,6 +74,17 @@ n'est jamais versionné : les notebooks et les scripts les reconstruisent.
   et 10 des 24 questions hors corpus rejetées ; 13 autres reçoivent l'avertissement de la zone grise.
 - Détail, contrôles et limites : `docs/etudes/evaluation/05_resultats_ajustement.md`.
 
+## Volet B, chaîne v2 : résultats au 15 novembre 2026 (#163)
+
+- **Chaîne v2 non adoptée** (protocole 08, figé avant la mesure, une seule exécution, analyse descriptive) : avec le
+  modèle adapté, la récupération v2, la consigne v2 et l'abstention par le reclasseur, une citation pertinente est
+  donnée pour 27 des 73 questions du corpus, contre 18 sur 72 pour B2. Mais seules 18 des 24 questions hors corpus
+  sont refusées, contre 20 pour B2 ; la règle écrite d'avance en exigeait au moins 19. B2 reste la chaîne de
+  référence.
+- **Ce qui progresse** : un passage pertinent figure dans le contexte pour 53 questions sur 73, contre 33 sur 72 en
+  B2 ; le modèle adapté en exploite à peu près la même part (27 sur 53 contre 18 sur 33).
+- Détail, contrôles et limites : `docs/etudes/evaluation/08_resultats_chaine_v2.md`.
+
 ## Mesure corrigée au 16 novembre 2026 (#139, provisoire)
 
 La règle D4 ne reconnaît qu'un extrait par question : elle sous-estime tous les systèmes. Le protocole 09, figé
