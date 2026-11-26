@@ -1987,6 +1987,42 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - L'approbation de la #161 au nom de Mahé a été refusée par le classifieur de sécurité de Claude Code : le texte de la revue lui est remis, sans contournement.
 - Trois paires de PR entrent en conflit, repérées avant toute fusion : #161 et #178 (journal), #175 et #177 (`demo_b/README.md`), #174 et #179 (page d'encodage). Ordre de fusion proposé : la première de chaque paire, puis résolution dans la seconde.
 
+### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+
+**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114).
+
+**Produit.**
+- #52 : grille finale de Maïmouna contrôlée ligne à ligne contre celle du 14 novembre ; analyse à deux juges refaite selon le plan figé, les deux versions rapportées (commentaire du #52) ; résultats repris dans le rapport ; dernière case du #107 cochée.
+- PR #174 : limite de la qualification hors corpus explicitée (`c0b5e00`), à la demande de Jibril ; durée médiane du témoin corrigée (`be86a63`).
+- PR #166 : réservation atomique de chaque exécution (`bb892d5`), à la demande de Jibril.
+- PR #175 : correctif de Jibril vérifié (`fix/175-cache-snowball-hors-ligne`), intégration en attente de Mahé ; PR #177 : alerte `npm audit` sur Vite analysée.
+- PR #162 : 17 annexes hors des 8 minutes, textes à dire allégés, script oral généré depuis le support, 42 questions préparées (`c0cf440`) ; artefact privé mis à jour.
+
+**Mesures exécutées.**
+- Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
+- Parité de BM25 avant et après le correctif de Jibril : 161 × 4 240 scores identiques bit à bit ; 12, 12 et 21 tests réussis ; construction refusée sans liste de mots vides, aucun téléchargement tenté.
+- Tests de `chaine_v2.py` : 18 réussis ; sans la réservation, 3 échouent.
+- Questions de démonstration : 8 sur le site en ligne, 3 sur l'assistant local.
+- Support : 61 chiffres contre leurs sources, 0 écart ; mise en page des 30 diapositives contrôlée dans Chromium, détecteur validé par un contrôle négatif.
+
+**Résultats retenus.**
+- #52 : réponses du modèle adapté mieux appuyées sur leurs passages chez les deux juges, pas plus exactes ; kappa de 0,36 sur l'exactitude.
+- Démonstration du volet A : congés payés, renouvellement de la période d'essai, congé pour un mariage, retraite d'un fonctionnaire (refus), et la question de la diapositive 2 comme limite de la recherche par le sens.
+
+**Ce qui a été écarté, et pourquoi.**
+- Compter les défauts du #52 par un classement automatique : ce serait un verdict d'IA sur un jugement humain ; les défauts sont décrits par des exemples.
+- Passer Vite à 8.3.5 dans le site avant la soutenance : l'alerte ne touche que le serveur de développement, pas le site publié.
+- Pour la démonstration du volet B en direct : la question de la diapositive 2 et le refus d'une rupture conventionnelle, où le modèle adapté s'abstient.
+
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Décisions attendues de Mahé : intégration du correctif de Jibril dans la #175, approbation de la #161, ordre de fusion.
+
+**Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
+
+**Difficultés rencontrées.**
+- Le classifieur de sécurité de Claude Code a refusé l'intégration de la branche de Jibril dans la #175 et son envoi : laissés à Mahé, sans contournement.
+- La grille finale de Maïmouna contient, outre le recodage qu'elle annonce, ses précisions du 14 novembre (7 verdicts, tous sur les 10 points à préciser) : déclaré sur le #52.
+- 16 paires de PR en conflit, sur la fiche des assistants d'IA, le journal et le README : un ordre de fusion est proposé.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -2162,6 +2198,16 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 22/11 | Carton de fin de la vidéo effacé avant la dernière image | planche de contrôle | carton maintenu jusqu'au repère de fin, capture refaite |
 | 22/11 | Vidéo encodée en plage pleine (`yuvj420p`), couleurs non déclarées | lecture des propriétés du flux | conversion en plage vidéo, BT.709 déclarée |
 | 22/11 | Contrôle d'un remplacement de code faux : le mot cherché figurait dans le commentaire ajouté | assertion en échec avant toute écriture | contrôle réécrit sur les appels eux-mêmes |
+| 21/11 | Durée médiane du témoin dans R1 publiée à 11,9 s au lieu de 11,8 s (11,8496 s) dans `10_resultats.md` | vérificateur de chiffres du support, le 26/11 | corrigé (`be86a63`), et dans l'annexe |
+| 26/11 | Même piège zsh : une liste de PR dans une variable, non découpée par la boucle | message « integer expression expected » | tableau zsh |
+| 26/11 | Contrôle de mise en page qui ne changeait que l'ancre : le support ne la lit qu'au chargement, les 30 contrôles ont porté sur la diapositive 1 | toutes les lignes du rapport titrées « Couverture » | page rechargée à chaque ancre |
+| 26/11 | Contrôle négatif du détecteur de débordement fait avec un bloc vide, rétréci par la mise en page : faux « non détecté » | relecture du résultat | refait avec 40 paragraphes : détecté |
+| 26/11 | Repères de chronométrage du script écrits à la main et faux (3:35 et 6:30 au lieu de 3:50 et 7:00) | recalcul depuis les durées | calculés par le générateur |
+| 26/11 | Script : étape 2 de la diapositive 5, une animation, absente de la liste des apparitions | relecture du script généré | chaque étape annoncée est listée |
+| 26/11 | Annexe de démonstration du volet B : « de 12 à 25 s par réponse », alors que 25,9 s avaient été observées | recoupement avec la répétition | corrigé avant publication |
+| 26/11 | Questions préparées : trois formulations inexactes (médiane de 1 722,5 tokens écrite 1 722 ; rang 59 attribué au site, alors qu'il vient de l'E5 de base du volet B ; 91,8 % attribués à l'encodeur servi) | recoupement avec les sources | corrigées avant publication |
+| 26/11 | Contrôle ajouté au vérificateur sur une chaîne absente du support | relecture du contrôle | ligne entière du tableau contrôlée, contrôle négatif fait |
+| 26/11 | Annexe et questions préparées annonçant 72 sessions et plus de 170 erreurs, sans la session 73 du jour | préparation du journal | 73 sessions, plus de 180 erreurs |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
