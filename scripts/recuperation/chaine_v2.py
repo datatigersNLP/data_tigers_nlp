@@ -27,6 +27,7 @@ import csv
 import datetime as dt
 import hashlib
 import json
+import os
 import platform
 import sys
 from importlib.metadata import version
@@ -284,6 +285,25 @@ def preparees_etat(etat: str, questions: list[dict], contextes: list[dict], pass
     return preparees
 
 
+def reserver_lancement(chemin: Path, lot: str, phase: str, etat: str, modele: str, digest: str) -> Path:
+    """Revue de la #166 (23/11) : réserve l'exécution d'un état par la création exclusive (mode « x », atomique) d'un
+    fichier de lancement, juste avant le premier appel au générateur. Garanties : un second lancement, simultané ou
+    ultérieur, est refusé avant tout appel au générateur ; une exécution interrompue laisse ce fichier sans sortie, état
+    explicite qui bloque toute relance jusqu'à examen humain (aucune suppression automatique). Le fichier est gardé après
+    une exécution complète, comme trace. Restriction : un seul dossier de sorties local ; aucune garantie entre machines."""
+    marque = chemin.with_name(chemin.name + ".lancement")
+    marque.parent.mkdir(parents=True, exist_ok=True)
+    trace = {"lot": lot, "phase": phase, "etat": etat, "modele": modele, "digest": digest, "pid": os.getpid(),
+             "debut": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
+    try:
+        with open(marque, "x", encoding="utf-8") as f:
+            f.write(json.dumps(trace, ensure_ascii=False) + "\n")
+    except FileExistsError:
+        raise ErreurChaineV2(f"Lancement déjà réservé (exécution en cours ou interrompue) : {marque} ; "
+                             "examiner ce fichier et les journaux avant toute décision") from None
+    return marque
+
+
 def executer(lot: str, phase: str, etat: str, modele: str, digest: str, generer=None, sorties: Path = SORTIES) -> Path:
     if etat not in ETATS or lot not in LOTS or phase not in ("temoin", "apres"):
         raise ErreurChaineV2("Lot, phase ou état inconnu")
@@ -300,6 +320,7 @@ def executer(lot: str, phase: str, etat: str, modele: str, digest: str, generer=
         raise ErreurChaineV2("Contextes préparés avec un autre seuil τ ou un autre protocole")
     questions = mesure.lire_jeu(lot)
     preparees = preparees_etat(etat, questions, contextes["questions"], index.passages, mesure.charger_seuil(), tau)
+    reserver_lancement(chemin, lot, phase, etat, modele, digest)   # après les contrôles, avant le premier appel
     lignes = mesure.executer_etat("B2", preparees, generer or generation.generer_reponse, modele, digest)
     par_id = {c["id"]: c for c in contextes["questions"]}
     for l, q in zip(lignes, preparees):

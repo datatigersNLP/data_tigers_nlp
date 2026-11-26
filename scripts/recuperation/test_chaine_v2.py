@@ -194,7 +194,61 @@ class TestExecutionFactice(unittest.TestCase):
                 with self.assertRaises(cv.ErreurChaineV2):        # une seule exécution par état et par phase
                     cv.executer("calibration", "temoin", "V2", "modele", "digest", generer=generer, sorties=sorties)
                 self.assertEqual(len(appels), appels_avant)       # refus avant tout appel au générateur (#166)
+                marque = chemin.with_name(chemin.name + ".lancement")
+                self.assertTrue(marque.is_file())                 # trace du lancement gardée après une exécution complète
+                self.assertEqual(json.loads(marque.read_text(encoding="utf-8"))["etat"], "V2")
         self.assertEqual(index.matrice.shape[0], 4240)
+
+    def _preparer(self, sorties: Path) -> Path:
+        """Dossier de sorties minimal pour exécuter l'état V2 du lot de calibration."""
+        questions = mesure.lire_jeu("calibration")
+        tau_fichier = sorties / "seuil_reclasseur.json"
+        tau_fichier.write_text(json.dumps({"seuil": 0.5}), encoding="utf-8")
+        sha_tau = hashlib.sha256(tau_fichier.read_bytes()).hexdigest()
+        contextes = [{"id": q["id"], "contexte": [0, 1, 2], "score_e5_max": 0.99, "score_reclasseur_max": 0.9}
+                     for q in questions]
+        (sorties / "calibration").mkdir()
+        (sorties / "calibration" / "contextes.json").write_text(json.dumps(
+            {"seuil_reclasseur_sha256": sha_tau, "protocole_08": None, "questions": contextes}), encoding="utf-8")
+        return tau_fichier
+
+    def test_lancement_simultane_refuse_avant_le_generateur(self):
+        """Revue de la #166 : un second lancement qui démarre avant la première écriture est refusé (réservation)."""
+        appels = []
+        with tempfile.TemporaryDirectory() as d:
+            sorties = Path(d)
+            tau_fichier = self._preparer(sorties)
+            marque = sorties / "calibration" / "temoin" / "V2.jsonl.lancement"
+            marque.parent.mkdir(parents=True)
+            marque.write_text("{}\n", encoding="utf-8")       # un autre lancement a déjà réservé l'état
+            with unittest.mock.patch.object(cv, "FICHIER_TAU", tau_fichier):
+                with self.assertRaisesRegex(cv.ErreurChaineV2, "déjà réservé"):
+                    cv.executer("calibration", "temoin", "V2", "m", "d", generer=lambda *a: appels.append(a),
+                                sorties=sorties)
+            self.assertEqual(appels, [])
+            self.assertFalse((sorties / "calibration" / "temoin" / "V2.jsonl").exists())
+
+    def test_interruption_laisse_un_etat_explicite(self):
+        """Revue de la #166 : une interruption avant l'écriture laisse la réservation, qui bloque toute relance."""
+        appels = []
+
+        def generer(*a):
+            appels.append(a)
+            raise KeyboardInterrupt
+
+        with tempfile.TemporaryDirectory() as d:
+            sorties = Path(d)
+            tau_fichier = self._preparer(sorties)
+            with unittest.mock.patch.object(cv, "FICHIER_TAU", tau_fichier):
+                with self.assertRaises(KeyboardInterrupt):
+                    cv.executer("calibration", "temoin", "V2", "m", "d", generer=generer, sorties=sorties)
+                chemin = sorties / "calibration" / "temoin" / "V2.jsonl"
+                self.assertFalse(chemin.exists())
+                self.assertTrue(chemin.with_name("V2.jsonl.lancement").is_file())
+                n = len(appels)
+                with self.assertRaisesRegex(cv.ErreurChaineV2, "interrompue"):
+                    cv.executer("calibration", "temoin", "V2", "m", "d", generer=generer, sorties=sorties)
+                self.assertEqual(len(appels), n)
 
 
 class TestGardesDeLAnalyse(unittest.TestCase):
