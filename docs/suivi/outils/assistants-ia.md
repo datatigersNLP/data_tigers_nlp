@@ -61,6 +61,8 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 - (Jibril, ChatGPT / Codex) Conservé pour certains usages : l'assistant facilite la compréhension du projet, la préparation de documents, les relectures et le suivi des tâches. Ses propositions et ses actions doivent être vérifiées : il peut confondre des versions ou des statuts, ou fournir une information plausible mais incorrecte. Les décisions, validations humaines et résultats expérimentaux restent sous la responsabilité de l'équipe. Les réponses doivent être confrontées aux fichiers et à l'état actuel du dépôt ; les commandes nécessitent aussi une vérification du dossier et de l'environnement Windows.
 - (Vaneck, Claude Code) Conservé pour certains usages.
   - Motif : (Vaneck) inefficace sur certaines tâches.
+- (Maïmouna, Claude Code) Conservé pour certains usages.
+  - Motif : (Maïmouna) utile pour comprendre et vérifier, mais il se trompe parfois avec assurance : il faut contrôler à la source.
 
 ## À retenir pour le rapport
 - Apport : (Remy) capacité de prototypage, de vérification et d'audit multi-fichiers accessible sans coût d'abonnement pour l'équipe.
