@@ -2200,7 +2200,9 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - PR #174 : limite de la qualification hors corpus explicitée (`c0b5e00`), à la demande de Jibril ; durée médiane du témoin corrigée (`be86a63`).
 - PR #166 : réservation atomique de chaque exécution (`bb892d5`), à la demande de Jibril.
 - PR #175 : correctif de Jibril vérifié (`fix/175-cache-snowball-hors-ligne`), intégration en attente de Mahé ; PR #177 : alerte `npm audit` sur Vite analysée.
-- PR #162 : 17 annexes hors des 8 minutes, textes à dire allégés, script oral généré depuis le support, 42 questions préparées (`c0cf440`) ; artefact privé mis à jour.
+- PR #162 : 17 annexes hors des 8 minutes, textes à dire allégés, script oral généré depuis le support, 43 questions préparées (`c0cf440`, `7a8dedf`) ; artefact privé mis à jour.
+- Fusions, avec l'accord de Mahé du 26/11 : #161, #183, #184, #169, #158, #179, #168 et #181. Les #186, #185 et #180, en conflit avec les précédentes, sont intégrées dans la #178, leurs commits intacts ; conflits de la #174 (avec la #179) et de la #166 (avec la #168) résolus ; neuf relectures publiées au nom de Mahé.
+- Section 4.1 du rapport relue à la demande de Mahé : nombre de sessions, date du test resté en échec, Weekly 7 tenu par écrit.
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2226,6 +2228,8 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Le classifieur de sécurité de Claude Code a refusé l'intégration de la branche de Jibril dans la #175 et son envoi : laissés à Mahé, sans contournement.
 - La grille finale de Maïmouna contient, outre le recodage qu'elle annonce, ses précisions du 14 novembre (7 verdicts, tous sur les 10 points à préciser) : déclaré sur le #52.
 - 16 paires de PR en conflit, sur la fiche des assistants d'IA, le journal et le README : un ordre de fusion est proposé.
+- Les PR de coéquipiers en conflit entre elles ne pouvaient pas être fusionnées sans pousser sur leurs branches : elles passent par la #178.
+- Conflit de la #174 avec la #179 : les versions de la #174 sont gardées, car mesures_10.py fige leur empreinte (gel de A3).
 
 ---
 
@@ -2413,6 +2417,8 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 22/11 | Carton de fin de la vidéo effacé avant la dernière image | planche de contrôle | carton maintenu jusqu'au repère de fin, capture refaite |
 | 22/11 | Vidéo encodée en plage pleine (`yuvj420p`), couleurs non déclarées | lecture des propriétés du flux | conversion en plage vidéo, BT.709 déclarée |
 | 22/11 | Contrôle d'un remplacement de code faux : le mot cherché figurait dans le commentaire ajouté | assertion en échec avant toute écriture | contrôle réécrit sur les appels eux-mêmes |
+| 22/11 | Motif des lignes du tableau des erreurs sans les plages de dates (18-19/10, 25-26/10) : comptes publiés depuis le 22/11 sous-estimés de 2 | contrôle de contiguïté du tableau, le 26/11 | motif corrigé, comptes refaits |
+| 22/11 | Section 4.1 : test en échec daté du 22/11 au lieu du 21/11 ; Weekly 7 dit non tenu, alors qu'il l'a été par écrit | relecture demandée par Mahé, le 26/11 | corrigés |
 | 24/11 | Assistant demandant de refaire les 10 précisions du #52, déjà faites le 14/11 | remarque de Maïmouna, contrôle des fichiers datés | fichiers du 14/11 à 16 h retrouvés |
 | 26/11 | Même piège zsh : une liste de PR dans une variable, non découpée par la boucle | message « integer expression expected » | tableau zsh |
 | 26/11 | Contrôle de mise en page qui ne changeait que l'ancre : le support ne la lit qu'au chargement, les 30 contrôles ont porté sur la diapositive 1 | toutes les lignes du rapport titrées « Couverture » | page rechargée à chaque ancre |
@@ -2423,6 +2429,8 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/11 | Questions préparées : trois formulations inexactes (médiane de 1 722,5 tokens écrite 1 722 ; rang 59 attribué au site, alors qu'il vient de l'E5 de base du volet B ; 91,8 % attribués à l'encodeur servi) | recoupement avec les sources | corrigées avant publication |
 | 26/11 | Contrôle ajouté au vérificateur sur une chaîne absente du support | relecture du contrôle | ligne entière du tableau contrôlée, contrôle négatif fait |
 | 26/11 | Annexe et questions préparées annonçant 72 sessions et plus de 170 erreurs, sans la session 73 du jour | préparation du journal | 73 sessions, plus de 180 erreurs |
+| 26/11 | Commande enchaînée sans arrêt sur erreur : le script de résolution du conflit de la #186 a échoué, mais `git add` et le commit ont enregistré le journal avec ses marqueurs de conflit | lecture du commit local, avant tout envoi | commit corrigé ; scripts suivants arrêtés à la moindre anomalie |
+| 26/11 | Description de la #178 renvoyée inchangée : une chaîne de remplacement ne correspondait pas au texte | assertion du script | renvoyée corrigée, contenu vérifié en ligne |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
