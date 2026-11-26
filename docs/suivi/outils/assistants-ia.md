@@ -17,7 +17,8 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 | Vaneck | Claude Code dans VS Code (2.1.322 au 14/11) | Claude Opus 5.5 | payante | préparation et contrôle du corpus (#27), interface du site du volet A et tests Playwright (#48, #53), démonstration du volet B (#111), relectures de pull requests |
 | Mahé | Claude Code (2.1.306 au 26/10 comme au 22/11) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (21 sessions), d'après le journal ; en sous-agents, Claude Opus 5.5, Sonnet 5.5, Fable 5.2 et Haiku 5.5 (sessions 68 et 69) | payante | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom ; génération et jugement de questions par des sous-agents, sous protocole |
 | Rémy | Google Antigravity | Gemini 3.8 Flash (High) | formule gratuite | métriques et références lexicales (#45, #47), étude d'ajustement contrastif (#49), revues et audits (#109, #115, #120, #124), cadrage des supports J3 (#112) et rapport (#113) |
-| Jibril | à compléter | à compléter | à compléter | à compléter |
+| Jibril | ChatGPT / Codex | GPT-6.1 Sol et GPT-6.1 Terra, déclarés par Jibril | ChatGPT Plus | Compréhension du code et des concepts NLP, coordination, documentation, relecture de PR, préparation et vérification de commandes, suivi GitHub. |
+| Jibril | Qwen Coder en local | `qwen2.5-coder:7b-instruct-q4_K_M`, utilisation pour le projet confirmée par Jibril | Utilisation locale ; formule non précisée | Usages détaillés à préciser. |
 | Maïmouna | Claude Code dans VS Code (2.1.322 au 12/11) | Claude Opus 5.5 | payante | compréhension des tâches et du code, relectures de pull requests, vérification de la chaîne RAG, rédaction du journal et des fiches |
 
 ## Mise en place
@@ -55,8 +56,11 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 - Cas où l'ancienne méthode reste préférable : (Remy) l'édition manuelle directe est plus sûre pour les retouches ciblées sur un texte déjà relu ou la saisie stricte d'une donnée d'environnement vérifiée.
 
 ## Décision
-(Mahé) Adopté, à une condition : chaque affirmation est vérifiée par une mesure, un test ou une source primaire avant d'être publiée. Décision des autres membres : à compléter.
-- Motif : (Mahé) sans lui, ni le périmètre des deux volets ni les contrôles de chaque mesure n'auraient tenu dans le temps du projet ; ses erreurs, fréquentes, sont rattrapées par la vérification, jamais par la confiance.
+- (Mahé, Claude Code) Adopté, à une condition : chaque affirmation est vérifiée par une mesure, un test ou une source primaire avant d'être publiée.
+  - Motif : (Mahé) sans lui, ni le périmètre des deux volets ni les contrôles de chaque mesure n'auraient tenu dans le temps du projet ; ses erreurs, fréquentes, sont rattrapées par la vérification, jamais par la confiance.
+- (Jibril, ChatGPT / Codex) Conservé pour certains usages : l'assistant facilite la compréhension du projet, la préparation de documents, les relectures et le suivi des tâches. Ses propositions et ses actions doivent être vérifiées : il peut confondre des versions ou des statuts, ou fournir une information plausible mais incorrecte. Les décisions, validations humaines et résultats expérimentaux restent sous la responsabilité de l'équipe. Les réponses doivent être confrontées aux fichiers et à l'état actuel du dépôt ; les commandes nécessitent aussi une vérification du dossier et de l'environnement Windows.
+- (Vaneck, Claude Code) Conservé pour certains usages.
+  - Motif : (Vaneck) inefficace sur certaines tâches.
 
 ## À retenir pour le rapport
 - Apport : (Remy) capacité de prototypage, de vérification et d'audit multi-fichiers accessible sans coût d'abonnement pour l'équipe.
