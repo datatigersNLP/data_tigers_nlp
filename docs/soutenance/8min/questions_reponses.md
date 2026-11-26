@@ -136,7 +136,7 @@ Les versions sont épinglées ; une alerte récente vise le serveur de développ
 Un ticket et une branche par tâche, des pull requests vers dev avec une approbation obligatoire, dev et main protégées, des jalons et un classeur de suivi des charges. Les réunions qui n'ont pas eu lieu sont documentées comme telles, avec les décisions écrites qui les ont remplacées.
 
 **Comment avez-vous utilisé l'IA ?** (Mahé)
-Claude Code, Antigravity avec Gemini, ChatGPT et Codex, et Qwen Coder en local, pour écrire du code, mesurer et rédiger. Tout est consigné dans le journal d'usage, session par session, avec plus de 170 erreurs ou pièges détectés par la vérification. Règle : aucune affirmation d'un assistant n'est reprise sans mesure, test ou source primaire (annexe A14).
+Claude Code, Antigravity avec Gemini, ChatGPT et Codex, et Qwen Coder en local, pour écrire du code, mesurer et rédiger. Tout est consigné dans le journal d'usage, session par session, avec plus de 180 erreurs ou pièges détectés par la vérification. Règle : aucune affirmation d'un assistant n'est reprise sans mesure, test ou source primaire (annexe A14).
 
 **Avez-vous compris le code écrit avec l'IA ?** (chacun, sur sa partie)
 Répondre sur sa partie, concrètement : ce que fait le code, comment il a été testé, et une erreur trouvée par la vérification. Le sujet prévoit que chacun peut être interrogé sur n'importe quelle partie : relire avant la soutenance les fichiers de son domaine et ceux qu'on présente.
