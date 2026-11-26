@@ -29,10 +29,12 @@ const noter = (texte) => { document.getElementById("journal").textContent += "\n
 // local (encoder_navigateur.py). Sans paramètre, la page garde son comportement d'origine.
 const parametres = new URLSearchParams(location.search);
 const dossierIndex = parametres.get("index") ?? "index";
-const referenceAjuste = parametres.get("reference") === "ajuste";
-const nomSortie = "controle_navigateur" + (referenceAjuste ? "_ajuste" : "") + ".json";
+// #167 : ?index=index_ajuste_v2&reference=ajuste_v2 fait le même contrôle pour l'encodeur ajusté v2
+const nomReference = parametres.get("reference");
+const referenceAjuste = nomReference === "ajuste" || nomReference === "ajuste_v2";
+const nomSortie = "controle_navigateur" + (referenceAjuste ? "_" + nomReference : "") + ".json";
 try {
-  if (!/^index(_ajuste)?$/.test(dossierIndex)) throw new Error("dossier d'index inconnu : " + dossierIndex);
+  if (!/^index(_ajuste(_v2)?)?$/.test(dossierIndex)) throw new Error("dossier d'index inconnu : " + dossierIndex);
   const entete = await (await fetch(`../../front/public/${dossierIndex}/index_m2.json`)).json();
   if (entete.modele.emplacement !== "site") throw new Error("l'en-tête du site ne désigne pas un modèle servi par le site");
   // même chargement que le site (front/src/recherche/moteur.js) : le dossier des modèles est déclaré comme hôte distant
@@ -42,7 +44,7 @@ try {
   env.remotePathTemplate = "{model}/";
   let requetes, prefixe, attendus;
   if (referenceAjuste) {
-    const r = await (await fetch("../../data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste.json")).json();
+    const r = await (await fetch(`../../data/adaptation/navigateur/vecteurs/vecteurs_controle_${nomReference}.json`)).json();
     const lot = await (await fetch("../../data/indexation/controle/requetes_controle.json")).json();
     if (r.sha256_q8 !== entete.modele.origine.sha256)
       throw new Error("la référence n'a pas été mesurée avec le modèle d'origine de l'en-tête");
@@ -70,7 +72,7 @@ try {
   }
   const encodage_ms = performance.now() - debut;
   window.RESULTATS = { transformers_js: "4.3.0", navigateur: navigator.userAgent, modele: entete.modele.depot,
-    sha256: entete.modele.sha256, index: dossierIndex, reference: referenceAjuste ? "ajuste" : "xenova",
+    sha256: entete.modele.sha256, index: dossierIndex, reference: referenceAjuste ? nomReference : "xenova",
     requetes: requetes.length, identiques, ecart_max: ecartMax, ms_par_requete: encodage_ms / requetes.length };
   noter(`${identiques} vecteurs identiques bit à bit sur ${requetes.length} ; écart maximal ${ecartMax} ; ` +
     `${(encodage_ms / requetes.length).toFixed(1)} ms par requête`);
