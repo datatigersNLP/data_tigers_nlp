@@ -341,3 +341,21 @@ Le Weekly 5 (#11) est prévu le 14/10/2026. Jibril doit renseigner pendant la r�
 - Les dates officielles des jalons et la cohérence des plannings restent suivies dans #8 et les tickets concernés.
 - Travail assisté par Codex dans ChatGPT Work ; Jibril a autorisé la reprise de #38 et l'estimation provisoire de #53. Relecture indépendante du dernier diff encore attendue avant fusion.
 
+
+
+### Charges individuelles de Maïmouna — relevé transmis le 26 novembre 2026
+
+Déclarations transmises par Jibril. Temps humain actif, part individuelle uniquement. Les six derniers postes sont des estimations rétrospectives non chronométrées, proposées avec Claude puis relues et ajustées par Maïmouna. Aucun total d'équipe ni écart avec une estimation collective ne sont déduits.
+
+| Ticket | Part de Maïmouna | Nature et périmètre |
+|---|---:|---|
+| #51 | 5 h 30 | Déjà déclarée : relecture #85 2 h 30, reproduction 1 h 30 et exemples commentés 1 h 30. Les 2 h 30 déjà inscrites ci-dessus sont comprises, pas à ajouter. |
+| #107 | ~2 h 30 | Déjà déclarée, estimée ; relecture du lot v2b. |
+| #48 | ~1 h 15 | Estimation rétrospective. |
+| #52 | ~3 h 15 | Estimation rétrospective. |
+| #56 | ~4 h | Estimation rétrospective. |
+| #111 | ~3 h | Estimation rétrospective : ~2 h pour #128 déjà estimées dans le journal et ~1 h pour #158, incluses dans ce total. |
+| #112 | ~45 min | Estimation rétrospective pour les supports J3. |
+| #113 | ~2 h 30 | Estimation rétrospective. |
+
+Les charges cumulées existantes de #27, #29 et #44 restent inchangées et ne sont pas réparties individuellement. Ce relevé n'atteste pas à lui seul la clôture des tickets concernés.
