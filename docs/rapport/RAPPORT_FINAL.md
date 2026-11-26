@@ -184,7 +184,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 186 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 192 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -246,6 +246,8 @@ Le pilotage a été réel pour la création des tickets, mais rétrospectif pour
 
 Le seul dépassement (#27) est attribué au mauvais découpage du corpus source, repris ensuite (#35). L'échantillon est trop petit pour analyser les causes de sous-estimation. La cause principale est en amont : les estimations n'ont pas été saisies avant le travail, et une charge réelle ne se reconstitue pas après coup. C'est la lacune de méthode la plus nette du projet à ce stade.
 
+**Charges déclarées après coup.** Les 22 et 23 novembre, des parts individuelles ont été ajoutées au classeur de suivi (PR #182 et #169) : Vaneck, 68 h sur 10 tickets, dont 24 h pour la démonstration du volet B (#111) et 10 h pour l'interface du volet A (#53) ; Remy, 14 h sur l'ajustement de l'encodeur (#49) ; Jibril, environ 21 h sur Agent0 (#91 à #95), en estimations rétrospectives non chronométrées. Ce sont des parts individuelles, sans estimation initiale comparable : elles documentent l'effort, mais ne permettent pas d'élargir l'analyse des écarts.
+
 ### 3.4 Enseignements
 
 Propositions communes, à discuter en équipe avant la V1 :
@@ -270,13 +272,13 @@ Le sujet recommande une rédaction individuelle. Chaque membre complète son enc
 - **Encadrer des sous-agents d'IA** : générateurs et juges à contexte neuf, consignes publiées, registre chaîné et journaux contrôlés (protocole 10, amendement A3).
 
 **Lacunes et points à approfondir.**
-- **Comprendre tout le code produit à mon nom** : presque tout mon travail est passé par Claude Code (29 sessions consignées). Une partie de ce code, je la connais par ses tests plus que par sa lecture ligne à ligne ; c'est ce que je dois combler avant la soutenance, où chacun peut être interrogé sur n'importe quelle portion du code.
-- **Vérifier plus tôt** : 11 des 19 erreurs de mes sessions du 11 au 18 octobre figuraient déjà dans une PR, une revue ou un document publiés. Le 22 novembre encore, un test est resté en échec une journée, faute d'avoir relancé toute la suite après un commit : je dois relancer tous les tests après chaque commit, pas seulement ceux du changement.
+- **Comprendre tout le code produit à mon nom** : presque tout mon travail est passé par Claude Code (30 sessions consignées). Une partie de ce code, je la connais par ses tests plus que par sa lecture ligne à ligne ; c'est ce que je dois combler avant la soutenance, où chacun peut être interrogé sur n'importe quelle portion du code.
+- **Vérifier plus tôt** : 11 des 19 erreurs de mes sessions du 11 au 18 octobre figuraient déjà dans une PR, une revue ou un document publiés. Le 21 novembre encore, un test est resté en échec jusqu'au lendemain, faute d'avoir relancé toute la suite après un commit : je dois relancer tous les tests après chaque commit, pas seulement ceux du changement.
 - **Concevoir les échantillons de contrôle** : l'étalonnage du jugement mutualisé (#139) n'a pas pu conclure sur la règle principale, faute d'un échantillon stratifié selon les verdicts.
 - **Estimer la charge** : aucun des tickets dont j'étais responsable en novembre n'a reçu d'estimation chiffrée avant son démarrage. C'est en partie pour cela que l'analyse des écarts (section 3.3) repose sur 4 tickets.
 
 **Positionnement dans l'équipe, délégation et délais.**
-- **Rôle de lead technique** : protocoles, mesures et revues de PR, et règles du dépôt (branches protégées, une approbation exigée avant toute fusion). Quand les Weekly 7 et 8 n'ont pas eu lieu, j'ai pris les décisions par écrit dans les tickets, en les déclarant comme décisions du lead, révisables par l'équipe.
+- **Rôle de lead technique** : protocoles, mesures et revues de PR, et règles du dépôt (branches protégées, une approbation exigée avant toute fusion). Quand les Weekly 7 et 8 n'ont pas eu lieu en réunion, j'ai pris les décisions par écrit dans les tickets, en les déclarant comme décisions du lead, révisables par l'équipe.
 - **Trop de travail concentré** : une grande partie du travail technique est passée par moi et par l'assistant. C'est efficace, mais fragile : la démonstration du volet B tourne sur mon Mac, et mes coéquipiers ont fini le projet plus souvent comme relecteurs que comme auteurs. J'aurais dû déléguer plus tôt des parties entières, avec leur mesure.
 - **Demander des relectures** : elles ont rattrapé ce que l'assistant et moi avions laissé passer, par exemple les deux garde-fous et l'incohérence documentaire relevés par Jibril sur la PR #166.
 - **Délais** : le jalon J3 a été tenu. La V1 du rapport, prévue le 19 novembre, ne l'a pas été : j'ai fait passer de nouvelles mesures avant la rédaction (encodeurs v2-T et v3-C, mesure de bout en bout).
@@ -373,20 +375,20 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 - **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 186 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 192 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4.1 et 5 sont faites. Les cinq outils ont été retenus le 10 novembre, et les membres ont complété leur ligne et leur décision dans les fiches (PR #180, #181, #183 et #185). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #168, #169, #179, #181, #183 et #184 sont fusionnées ; les #180, #185 et #186 sont intégrées dans celle-ci. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Section 4.1, rédigée avec l'assistant à partir du journal : relecture et corrections | Mahé | 27/11 |
-| Charges réelles dans `docs/suivi/SUIVI.md` (PR #169), puis mise à jour de la section 3.3 | Jibril ; Mahé pour la section 3.3 | 27/11 |
+| Relecture des PR #174, #166, #175 et #177 | Jibril | 27/11 |
+| Relecture de la PR #162 (support) et de celle-ci | Remy, Vaneck | 27/11 |
 | Capture du board | Jibril | 27/11 |
-| Fusion des PR citées par ce rapport et par les fiches (#161, #186, #174, #175, #177, #179, #166, #168, #180, #181, #183, #185, #169), puis de celle-ci | relecteurs ; fusions par Mahé | 27/11 |
-| Relecture croisée, comptes du journal recontrôlés, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
+| Fusion des PR approuvées, puis de celle-ci | Mahé | 27/11 |
+| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
 
 ## Annexe. Chiffres et sources
 
