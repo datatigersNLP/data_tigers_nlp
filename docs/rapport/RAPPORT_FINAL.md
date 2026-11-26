@@ -63,7 +63,7 @@ Pour le volet A, la qualité est celle de l'encodeur ajusté, servi depuis le 15
 |---|---|---|
 | Coût | aucun coût de service : GitHub Pages, fichiers statiques. Le coût est reporté sur le visiteur : 61,3 Mio transférés à la première visite, puis mise en cache | aucun coût de service, mais un matériel dédié : modèle de 4,36 Gio, démonstration sur un Mac M4 Pro de 24 Gio de mémoire unifiée. Sur une carte NVIDIA, le 19 octobre, 5 694 Mio de VRAM occupés après le premier appel (1 036 Mio avant) |
 | Latence | recherche : 21 ms en médiane sur 10 questions (19 à 24 ms), 46 ms pour la première ; premier résultat 20,1 s après l'ouverture d'une page jamais visitée, sur la connexion de mesure | chaîne de démonstration (10 passages, reclasseur) : 11,8 s par question en médiane sur le jeu v2, contre 4,9 s pour l'ancienne chaîne à 5 passages. Le premier appel charge le modèle : 37,7 s, dont 19,1 s de chargement, le 19 octobre sur une carte NVIDIA |
-| Qualité | Recall@5 de 63,0 % sur 73 questions du corpus (IC 95 % : 50,9 à 73,6), contre 43,8 % pour l'encodeur de base et 42,5 % pour BM25. Avec 10 passages regroupés par fiche, une fiche pertinente est affichée pour 93,2 % des questions | réponses citant un passage pertinent : 52,9 % (63 sur 119) avec le modèle adapté, 10,1 % avec le modèle d'origine ; +16,9 points [+6,4 ; +27,3] sur l'ancienne chaîne, démontré. Abstention correcte sur les 39 questions hors corpus évaluées. Exactitude jugée par des humains : en cours (#52) |
+| Qualité | Recall@5 de 63,0 % sur 73 questions du corpus (IC 95 % : 50,9 à 73,6), contre 43,8 % pour l'encodeur de base et 42,5 % pour BM25. Avec 10 passages regroupés par fiche, une fiche pertinente est affichée pour 93,2 % des questions | réponses citant un passage pertinent : 52,9 % (63 sur 119) avec le modèle adapté, 10,1 % avec le modèle d'origine ; +16,9 points [+6,4 ; +27,3] sur l'ancienne chaîne, démontré. Abstention correcte sur les 39 questions hors corpus évaluées, hors corpus au sens du protocole 10. Jugées à l'aveugle par deux membres, sur 20 réponses par modèle de l'ancienne chaîne : pas plus exactes, mais mieux appuyées sur leurs passages (#52) |
 | Contrôle | tout est figé et vérifiable : modèle, index et passages par empreinte SHA-256, versions épinglées, vecteurs identiques bit à bit entre q8 d'origine et q8 élagué (822 sur 822) | poids et gabarit figés par empreinte, température 0, graine fixée ; mais le comportement du modèle dépend de données d'entraînement inconnues |
 | Explicabilité | chaque résultat est un passage réel, avec son score de similarité, sa section et le lien vers la fiche ; rien n'est généré. Limite : le score ne se lit qu'en relatif ; les cinq passages de la question sur les congés payés vont de 0,895 à 0,889 | la réponse cite ses passages ; une citation existante ne prouve ni sa justification ni la couverture de chaque affirmation |
 | Dépendance à un fournisseur | à l'exécution, aucune : seul le site est contacté, vérifié sous Chromium, Firefox et WebKit. À la construction : GitHub (Pages, Actions), npm, et Hugging Face pour l'origine du q8, recopié dans le site | Ollama, poids publiés par l'équipe Qwen (Apache 2.0) et reclasseur `bge-reranker-v2-m3` ; aucune API distante à l'exécution |
@@ -119,7 +119,7 @@ Sources : commentaire de l'amendement A1 sur le #138 ; `docs/etudes/evaluation/1
 - **Réponses citant un passage pertinent (M4)** : 18 sur 72 contre 10 sur 72, soit +11,1 points [+2,1 ; +23,8]. Huit questions gagnent une citation pertinente, aucune n'en perd : l'amélioration est démontrée selon la règle prévue.
 - **Abstention correcte hors corpus (M1)** : 20 sur 24 dans les deux cas ; aucune amélioration démontrée.
 - **Abstention à tort sur le corpus (M2, descriptif)** : de 70,8 % à 55,6 %. Plus de la moitié des questions du corpus reçoivent encore une abstention.
-- **Une citation pertinente ne prouve pas l'exactitude** de toute la réponse. Le jugement humain à l'aveugle de l'exactitude est en cours (#52) ; ses résultats seront ajoutés quand les deux juges auront terminé.
+- **Une citation pertinente ne prouve pas l'exactitude** de toute la réponse. Jugées à l'aveugle par deux membres (#52, 20 réponses citées par modèle, chaîne B2), les réponses du modèle adapté sont mieux appuyées sur leurs passages : entièrement appuyées pour 20 et 19 sur 20, contre 11 et 12 pour T, un écart démontré chez les deux juges. Elles ne sont pas plus exactes : entièrement exactes pour 6 et 5 sur 20, contre 12 et 8, un écart non démontré. L'accord entre les juges reste faible (kappa de 0,36 sur l'exactitude). Les défauts diffèrent : réponses incomplètes pour le modèle adapté, entraîné à recopier un passage ; généralisations et confusions pour T.
 
 **La récupération v2** (#138, protocole 07, confirmée une fois sur le lot de test le 9 novembre) fait passer de 45,2 % à 72,6 % les questions dont le contexte contient un passage pertinent. Sur le jeu v2, de 57,0 % à 86,0 % (+28,9 points [+20,5 ; +38,0]).
 
@@ -131,7 +131,7 @@ Sources : commentaire de l'amendement A1 sur le #138 ; `docs/etudes/evaluation/1
 
 **La chaîne de démonstration, mesurée de bout en bout le 21 novembre** (protocole 10, jeu v2) :
 - **Réponses citant un passage pertinent (M4)** : 52,9 % (63 sur 119). Sur les 118 questions communes, 52,5 % contre 35,6 % pour l'ancienne chaîne B2, soit +16,9 points [+6,4 ; +27,3] (31 questions gagnées, 11 perdues, p = 0,003) : le gain est démontré.
-- **Abstention correcte hors corpus (M1)** : 39 sur 39 questions évaluées, contre 38 avec B2 ; la garde de la règle est respectée.
+- **Abstention correcte hors corpus (M1)** : 39 sur 39 questions évaluées, contre 38 avec B2 ; la garde de la règle est respectée. Ces questions sont hors corpus au sens du protocole : un juge d'IA n'a trouvé de réponse dans aucun des 10 premiers passages d'une recherche hybride, ce qui ne prouve pas l'absence de réponse dans tout le corpus.
 - **Effet de l'adaptation** : avec le modèle d'origine (témoin T), la même chaîne ne cite un passage pertinent que pour 10,1 % des questions (54 gagnées par l'adaptation, 3 perdues).
 - **Prix** : 11,8 s par question en médiane, contre 4,9 s pour B2, à cause des 10 passages et du reclasseur.
 
@@ -184,7 +184,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 173 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 186 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -217,7 +217,7 @@ Le pilotage a été réel pour la création des tickets, mais rétrospectif pour
 
 **Relecture par un tiers.** La relecture croisée a trouvé des erreurs que l'auteur n'avait pas vues. Sur les 19 erreurs des sessions de Mahé entre le 11 et le 18 octobre, 4 ont été trouvées par Jibril en relecture. Vaneck en a relevé deux dans des PR de Mahé (#76 et #78). Les revues de Jibril sur les PR documentaires (#82, #89, #102) ont vérifié les chiffres contre l'API GitHub et contre le rendu du PDF.
 
-**Assistants d'IA.** Leur usage est consigné session par session : 69 sessions au 22 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
+**Assistants d'IA.** Leur usage est consigné session par session : 73 sessions au 26 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
 
 ### 3.3 Difficultés
 
@@ -371,24 +371,22 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 ### 5.5 Assistants de développement par IA
 
-- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, sur l'ensemble du projet : 69 sessions consignées au 22 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
+- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 173 erreurs ou pièges détectés par la vérification au 22 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 186 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 22 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), la mise à jour de la section 2.2, la section 4.1 et la section 5 sont faites. Les cinq outils ont été retenus le 10 novembre. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4.1 et 5 sont faites. Les cinq outils ont été retenus le 10 novembre, et les membres ont complété leur ligne et leur décision dans les fiches (PR #180, #181, #183 et #185). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Exactitude jugée à l'aveugle (#52) : précisions d'un juge attendues, puis analyse à deux juges | Maïmouna, Vaneck ; analyse par Mahé | 26/11 |
-| Section 4.1, rédigée le 22 novembre avec l'assistant à partir du journal : relecture et corrections | Mahé | 24/11 |
-| Fiches des outils : lignes encore à compléter (Playwright, GitHub CLI, assistants d'IA) et décision collective de la fiche des assistants d'IA | Jibril ; toute l'équipe | 25/11 |
-| Charges réelles des tickets fermés dans `docs/suivi/SUIVI.md`, pour mettre à jour la section 3.3 | Jibril (tenue), chacun pour ses tickets | 25/11 |
-| Capture du board | Jibril | 25/11 |
-| Fusion des PR citées par ce rapport (#161, #174, #175, #177, #179, #166, #168), puis de celle-ci | relecteurs ; fusions par Mahé | 26/11 |
-| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
+| Section 4.1, rédigée avec l'assistant à partir du journal : relecture et corrections | Mahé | 27/11 |
+| Charges réelles dans `docs/suivi/SUIVI.md` (PR #169), puis mise à jour de la section 3.3 | Jibril ; Mahé pour la section 3.3 | 27/11 |
+| Capture du board | Jibril | 27/11 |
+| Fusion des PR citées par ce rapport et par les fiches (#161, #186, #174, #175, #177, #179, #166, #168, #180, #181, #183, #185, #169), puis de celle-ci | relecteurs ; fusions par Mahé | 27/11 |
+| Relecture croisée, comptes du journal recontrôlés, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
 
 ## Annexe. Chiffres et sources
 
@@ -410,4 +408,5 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | chaîne de démonstration de bout en bout : 52,9 %, +16,9 points, 10,1 %, 11,8 s et 4,9 s | `docs/etudes/evaluation/10_resultats.md`, section 6 (PR #174) ; `data/evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json` |
 | fusion du volet A : +5,0, +2,6 et −6,8 points | `10_resultats.md`, section 4 (PR #174) |
 | encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` (PR #179) |
+| exactitude jugée à l'aveugle : 6 et 5 sur 20 contre 12 et 8, 20 et 19 sur 20 contre 11 et 12, kappa 0,36 | #52, commentaire du 26 novembre ; grilles des juges et clé hors dépôt (`data/`) |
 | confidentialité des deux interfaces | PR #177 : `front/src/composants/Confidentialite.jsx`, `demo_b/src/composants/Confidentialite.jsx` |

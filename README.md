@@ -83,7 +83,8 @@ sont signalés comme tels et ne remplacent pas le jeu humain.
 - **Chaîne de démonstration du volet B, de bout en bout** (10 passages, fusion avec BM25 et reclasseur) : la réponse
   cite un passage pertinent pour 52,9 % des questions du corpus (63 sur 119). Sur les 118 questions communes avec
   l'ancienne chaîne à 5 passages, 52,5 % contre 35,6 %, soit +16,9 points [+6,4 ; +27,3], démontré (p = 0,003).
-  Abstention correcte sur les 39 questions hors corpus évaluées. Avec le modèle d'origine, non adapté, la même
+  Abstention correcte sur les 39 questions hors corpus évaluées, hors corpus au sens du protocole (contrôle des 10
+  premiers passages par un juge d'IA, pas de tout le corpus). Avec le modèle d'origine, non adapté, la même
   chaîne ne cite un passage pertinent que pour 10,1 % des questions. Prix : 11,8 s par question en médiane, contre
   4,9 s.
 - **Fusion avec BM25 dans le site** (#173) : permise par la règle (+5,0 points sur le jeu v2, +2,6 sur le CDTN),
