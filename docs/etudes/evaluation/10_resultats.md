@@ -105,7 +105,7 @@ R2 n'étant pas maintenue, la chaîne de démonstration est R1 : la mesure de bo
 | M3, réponse citée valide | 63 sur 120 (52,5 %) | 86 sur 119 (72,3 %) | 19 sur 119 (16,0 %) |
 | M4, réponse citant un passage pertinent | 43 sur 120 (35,8 %) | 63 sur 119 (52,9 %) | 12 sur 119 (10,1 %) |
 | M5, réponse hors corpus | 1 sur 40 | 0 sur 39 | 1 sur 39 |
-| Durée par question, médiane | 4,9 s | 11,8 s | 11,9 s |
+| Durée par question, médiane | 4,9 s | 11,8 s | 11,8 s |
 | Tokens du prompt, médiane | 1 722,5 | 4 121 | 4 121 |
 
 | Comparaison appariée, sur la population commune | Écart de M4 [IC 95 %] | Discordants | McNemar exact, Holm | M1 |
