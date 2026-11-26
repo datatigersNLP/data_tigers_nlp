@@ -362,5 +362,15 @@
     "relecteur_distinct_de_lauteur": true,
     "validation_code_ne_vaut_pas_validation_candidats": true,
     "verdict_humain_attribue": false
+  },
+  "decision_livraison": {
+    "date": "2026-11-23",
+    "decision_par": "Jibril BENSALEM",
+    "statut": "developpement_agent0_gele_pour_la_remise",
+    "portee": "Developpement Agent0 seulement ; ne signifie pas quun jeu est valide ou fige",
+    "nouvelle_generation_pour_remise": false,
+    "execution_rag_pilote_pour_remise": false,
+    "suite_96_98": "Ouverture hors livraison ; reprise apres nouvelle decision explicite, sans echeance active",
+    "reference_dev_relecture": "85e9710afd974fa1c722f7491ff55ed080200b09"
   }
 }
