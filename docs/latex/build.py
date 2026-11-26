@@ -23,7 +23,7 @@ BANDEAU = {
      "Année universitaire 2026-2027"),
  "RAPPORT_FINAL": ("Rapport du projet",
      "Équipe Data Tigers \\textbullet{} NLP~2 \\textbullet{} M2 Data \\& IA \\textbullet{} FGES",
-     "Version 0 du 19 octobre 2026, à compléter jusqu'à la V1"),
+     "Version 1 du 26 novembre 2026, à remettre avant le jalon J4"),
 }
 SCR = os.path.dirname(os.path.abspath(__file__))
 PRE = os.path.join(SCR, "preambule.tex")

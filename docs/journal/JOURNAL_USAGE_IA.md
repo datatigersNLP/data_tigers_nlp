@@ -2193,7 +2193,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 ### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
 
-**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114).
+**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A ; répartition des contributions mesurée (#113).
 
 **Produit.**
 - #52 : grille finale de Maïmouna contrôlée ligne à ligne contre celle du 14 novembre ; analyse à deux juges refaite selon le plan figé, les deux versions rapportées (commentaire du #52) ; résultats repris dans le rapport ; dernière case du #107 cochée.
@@ -2207,6 +2207,10 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Tickets fermés avec une synthèse chacun : #138, #163, #167, #171, #172 et #139, dont la charge réelle de Mahé reste à déclarer. Description de la #174 alignée sur la qualification du hors corpus.
 - Relecture de la #187 (charges de Maïmouna) : texte préparé, approbation laissée à Mahé.
 - PR de finitions du rapport : corrections signalées par Remy sur la #178 (date de l'en-tête, deux lignes d'annexe), formulation « très probablement » retirée de `10_resultats.md`, section 6 à jour.
+- #170 (démonstration sur la machine Legion) fermée sans fusion, avec un commentaire : la démonstration tourne sur le Mac de Mahé depuis le 16/11.
+- #187 approuvée et fusionnée par Mahé (charges de Maïmouna) ; veille de lecture seule armée sur les PR #177 et #188.
+- Vidéo de secours du volet A, version provisoire de 64,7 s filmée sur le site en ligne, avec l'outil de capture écrit pour elle ; fiche du jour J (fichiers, vérifications, plan B par panne). La version définitive est à refaire après le déploiement de la #177.
+- Répartition des contributions : les heures déclarées sont écartées de la comparaison, et `scripts/suivi/contributions.py` (13 tests) mesure les tickets, les commits et les lignes. Résultats, méthode, limites et contrôles dans `docs/suivi/CONTRIBUTIONS.md` ; synthèse en section 3.3 du rapport.
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2214,17 +2218,22 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Tests de `chaine_v2.py` : 18 réussis ; sans la réservation, 3 échouent.
 - Questions de démonstration : 8 sur le site en ligne, 3 sur l'assistant local.
 - Support : 61 chiffres contre leurs sources, 0 écart ; mise en page des 30 diapositives contrôlée dans Chromium, détecteur validé par un contrôle négatif.
+- Vidéo du volet A : une seule origine contactée, 0 requête refusée, 61,4 Mio reçus à froid ; résultats affichés identiques à ceux de l'annexe A1.
+- Contributions : 462 commits uniques hors fusions recoupés par `git shortlog` ; 85 516 lignes ajoutées, total identique à celui du script du 16/11 ; lignes conservées de `blame` égales, pour le code (25 572) et pour la documentation (18 832), au comptage direct des fichiers de `dev`.
 
 **Résultats retenus.**
 - #52 : réponses du modèle adapté mieux appuyées sur leurs passages chez les deux juges, pas plus exactes ; kappa de 0,36 sur l'exactitude.
 - Démonstration du volet A : congés payés, renouvellement de la période d'essai, congé pour un mariage, retraite d'un fonctionnaire (refus), et la question de la diapositive 2 comme limite de la recherche par le sens.
+- Contributions mesurées : Mahé 201 commits et 19 083 lignes de code ajoutées, Jibril 134 et 5 813, Remy 53 et 2 810, Vaneck 50 et 4 105, Maïmouna 24 et 0 ; relectures des PR des autres : 73, 48, 31, 21 et 13.
 
 **Ce qui a été écarté, et pourquoi.**
 - Compter les défauts du #52 par un classement automatique : ce serait un verdict d'IA sur un jugement humain ; les défauts sont décrits par des exemples.
 - Passer Vite à 8.3.5 dans le site avant la soutenance : l'alerte ne touche que le serveur de développement, pas le site publié.
 - Pour la démonstration du volet B en direct : la question de la diapositive 2 et le refus d'une rupture conventionnelle, où le modèle adapté s'abstient.
+- Les heures déclarées comme base de comparaison entre membres : trois méthodes différentes, aucune charge pour Mahé (décision de Mahé, le 26/11).
+- Le temps de présence en session avec l'assistant comme mesure de l'effort : il passe de 41 h à 101 h selon le seuil d'inactivité, et comprend l'attente de calculs.
 
-**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 en attente d'une approbation.
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 en attente d'une approbation.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -2236,6 +2245,8 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Conflit de la #174 avec la #179 : les versions de la #174 sont gardées, car mesures_10.py fige leur empreinte (gel de A3).
 - Le classifieur de sécurité a refusé l'approbation de la #187 au nom de Mahé, qui n'avait demandé que les neuf relectures précises : texte préparé, publication laissée à Mahé.
 - Le modèle de la session principale est passé de Claude Opus 5.5 à Claude Sonnet 5.5 (commande /model de Mahé) en cours de session.
+- Le classifieur de sécurité a refusé deux fois l'approbation de la #187 au nom de Mahé, malgré sa délégation générale : Mahé l'a publiée lui-même.
+- Dix erreurs, de la synthèse des charges, de la première mesure des lignes et de la couverture du PDF du rapport, rattrapées avant la fusion de la #188 (section 4).
 
 ---
 
@@ -2441,6 +2452,16 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/11 | Résultats du protocole 10 : questions « très probablement hors corpus », une probabilité que rien ne mesure | revue de Jibril sur la #174 | formulation retirée dans la PR de finitions |
 | 26/11 | `git fetch` avec une refspec explicite : elle remplace la refspec par défaut, `origin/dev` n'a pas été mis à jour et les conflits des PR restantes ont été jugés contre une tête de `dev` antérieure de quatre fusions | résultat incohérent (dev à 989a645 après les fusions de 14 h 30) | `fetch` refait sans refspec explicite, tests de fusion refaits |
 | 26/11 | Rapport V1 approuvé avec un en-tête daté du 22/11, une ligne d'annexe sur la PR #85 « en brouillon » et la PR #179 « à fusionner » | revue de Remy sur la #178 | corrigés dans la PR de finitions |
+| 26/11 | Synthèse des charges : « 84 relectures de Mahé, plus que les quatre autres réunis (113) » | recalcul : 84 est inférieur à 113 | remplacé par « 84 sur 197 (43 %) » |
+| 26/11 | Relectures de Mahé comptées 84 : le relevé comprenait 12 commentaires qu'il avait déposés sur ses propres PR | nouvelle définition du relevé, qui exclut l'auteur de la PR | 73 relectures des PR des autres, 186 au total hors robot |
+| 26/11 | Même synthèse : « de 1 à 5 heures par commit », alors que les heures déclarées par commit vont de 0,3 à 1,4 | recalcul sur les données du classeur | corrigé, puis heures écartées de la comparaison (décision de Mahé) |
+| 26/11 | Temps de présence en session présenté comme un repère de l'effort, alors qu'il passe de 41 h à 101 h selon le seuil d'inactivité | variation du seuil | donné en fourchette avec ses réserves, puis écarté |
+| 26/11 | Table d'identités des commits sans trois adresses de Remy : 0 commit pour lui | résultat invraisemblable | table complétée, 53 commits |
+| 26/11 | Script de la synthèse des charges : 2 h de relecture de Vaneck (#51) et les charges collectives omises | recoupement avec le classeur | script corrigé, tableaux complémentaires |
+| 26/11 | Script Python lancé en heredoc derrière un tube : le heredoc a remplacé l'entrée standard | erreur de syntaxe à l'exécution | script écrit dans un fichier |
+| 26/11 | Première mesure des lignes : trois pages HTML de diapositives rangées en code (3 380 lignes de Mahé) et les fichiers de dépendances en documentation | examen des plus gros fichiers de chaque membre | catégories refaites, 85 516 lignes inchangées au total |
+| 26/11 | Tickets touchés comptés d'après les seuls sujets de commit : 6 pour Remy, pour 36 tickets assignés | écart avec les assignations | titres et noms de branche des PR ajoutés (8) ; limite déclarée |
+| 26/11 | Couverture du PDF du rapport V1 : « Version 0 du 19 octobre 2026, à compléter jusqu'à la V1 », bandeau écrit dans la chaîne de conversion et jamais mis à jour | lecture du texte de la première page du PDF | bandeau corrigé, PDF régénéré |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
