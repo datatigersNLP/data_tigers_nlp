@@ -76,6 +76,8 @@ Pour le volet A, la qualité est celle de l'encodeur ajusté, servi depuis le 15
 - dans la configuration de la démonstration, l'assistant local ne journalise ni les questions ni les réponses ;
 - les mentions légales nomment le directeur de la publication, Mahé BEGNIS, et l'hébergeur.
 
+Après la fusion de la #177, ces points ont été revérifiés le 26 novembre sur le site déployé (version `6acc699`) : un seul domaine contacté, aucune requête pendant l'ouverture de la fenêtre ni pendant une question, aucun cookie ni entrée dans le stockage local du navigateur, et un cache de 95,5 Mio, soit environ 100 Mo comme annoncé. Ce contrôle a été fait sous Chromium seulement ; il ne dit rien de la valeur juridique du texte.
+
 ### 2.3 Ce que les mesures ont appris
 
 - **Mesurer là où le modèle est servi.** Le q8 exécuté dans le navigateur ne calcule pas exactement comme le même q8 en Python. Il donne le même premier résultat que le calcul exact pour 91,8 % des requêtes, contre 96,5 % prévus par la simulation Python. Le premier résultat reste toutefois dans les 5 premiers pour 99,9 % d'entre elles. Seule la mesure dans le navigateur a révélé l'écart.
@@ -184,7 +186,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 206 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 211 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -402,16 +404,15 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 - **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 206 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 211 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #178, #179, #181, #183, #184 et #187 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #177, #178, #179, #181, #183, #184 et #187 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. La #177 a été déployée et le site contrôlé le 26 novembre au soir (section 2.2). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Approbation et fusion de la PR #177 (logo et confidentialité), puis contrôle du site déployé | Jibril ou Remy ; Mahé | 27/11 |
 | Capture du board, absente à ce jour | Jibril | 27/11 |
 | PR de `dev` vers `main` et tag final | Mahé | 28/11 |
 | Relecture croisée de cette version, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |

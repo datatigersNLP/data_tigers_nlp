@@ -2193,7 +2193,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 
 ### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
 
-**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A ; répartition des contributions mesurée (#113).
+**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A et contrôle du site déployé ; répartition des contributions mesurée (#113).
 
 **Produit.**
 - #52 : grille finale de Maïmouna contrôlée ligne à ligne contre celle du 14 novembre ; analyse à deux juges refaite selon le plan figé, les deux versions rapportées (commentaire du #52) ; résultats repris dans le rapport ; dernière case du #107 cochée.
@@ -2209,8 +2209,11 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - PR de finitions du rapport : corrections signalées par Remy sur la #178 (date de l'en-tête, deux lignes d'annexe), formulation « très probablement » retirée de `10_resultats.md`, section 6 à jour.
 - #170 (démonstration sur la machine Legion) fermée sans fusion, avec un commentaire : la démonstration tourne sur le Mac de Mahé depuis le 16/11.
 - #187 approuvée et fusionnée par Mahé (charges de Maïmouna) ; veille de lecture seule armée sur les PR #177 et #188.
-- Vidéo de secours du volet A, version provisoire de 64,7 s filmée sur le site en ligne, avec l'outil de capture écrit pour elle ; fiche du jour J (fichiers, vérifications, plan B par panne). La version définitive est à refaire après le déploiement de la #177.
+- Vidéo de secours du volet A, version provisoire de 64,7 s filmée sur le site en ligne, avec l'outil de capture écrit pour elle ; fiche du jour J (fichiers, vérifications, plan B par panne). La version définitive a été refaite après le déploiement de la #177 (voir plus bas).
 - Répartition des contributions : les heures déclarées sont écartées de la comparaison, et `scripts/suivi/contributions.py` (13 tests) mesure les tickets, les commits et les lignes. Résultats, méthode, limites et contrôles dans `docs/suivi/CONTRIBUTIONS.md` ; synthèse en section 3.3 du rapport.
+- #177 approuvée par Jibril sur `b32c03f` puis fusionnée dans `dev` (`6acc699`), avec l'accord général de Mahé du 26/11 ; workflow de déploiement réussi ; site contrôlé en ligne par un script de lecture seule (version affichée, logo, fenêtre de confidentialité, requêtes, cookies, stockages, cache).
+- Vidéo de secours du volet A définitive (69,8 s), filmée sur le site déployé, logo et fenêtre de confidentialité visibles ; la version provisoire est rangée en archive ; fiche du jour J et README de l'outil de capture mis à jour.
+- #176 et #111 fermés avec un commentaire chacun ; #114 mis à jour (deux cases cochées, état du 26/11) ; sections 2.2 et 6 du rapport mises à jour.
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2220,11 +2223,15 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Support : 61 chiffres contre leurs sources, 0 écart ; mise en page des 30 diapositives contrôlée dans Chromium, détecteur validé par un contrôle négatif.
 - Vidéo du volet A : une seule origine contactée, 0 requête refusée, 61,4 Mio reçus à froid ; résultats affichés identiques à ceux de l'annexe A1.
 - Contributions : 462 commits uniques hors fusions recoupés par `git shortlog` ; 85 516 lignes ajoutées, total identique à celui du script du 16/11 ; lignes conservées de `blame` égales, pour le code (25 572) et pour la documentation (18 832), au comptage direct des fichiers de `dev`.
+- Site déployé : version `6acc699`, un seul hôte contacté, aucune requête refusée, aucune requête pendant l'ouverture de la fenêtre ni pendant une question (réponse en 88 ms), aucun cookie, aucune entrée de `localStorage`, `sessionStorage` ni IndexedDB, un cache `transformers-cache` de 95,5 Mio.
+- Vidéo du volet A définitive : 2 943 images, 69,8 s, H.264 High, 1 920 × 1 080, 30 images par seconde, BT.709, sans son ; une seule origine, 0 requête refusée, 61,4 Mio reçus à froid ; résultats affichés identiques à ceux de l'annexe A1 (similarités 0,863, 0,888 et 0,814).
+- Code exécuté par la démonstration du volet B : arbres Git de `demo_b` (tête de la #177) et de `scripts/rag` (tête de la #175) identiques à ceux de `dev` ; dans `scripts/recuperation`, seuls le README, `chaine_v2.py` et son test diffèrent, et la chaîne de démonstration ne les importe pas.
 
 **Résultats retenus.**
 - #52 : réponses du modèle adapté mieux appuyées sur leurs passages chez les deux juges, pas plus exactes ; kappa de 0,36 sur l'exactitude.
 - Démonstration du volet A : congés payés, renouvellement de la période d'essai, congé pour un mariage, retraite d'un fonctionnaire (refus), et la question de la diapositive 2 comme limite de la recherche par le sens.
 - Contributions mesurées : Mahé 201 commits et 19 083 lignes de code ajoutées, Jibril 134 et 5 813, Remy 53 et 2 810, Vaneck 50 et 4 105, Maïmouna 24 et 0 ; relectures des PR des autres : 73, 48, 31, 21 et 13.
+- Site en ligne conforme aux affirmations de la fenêtre de confidentialité (Chromium, première visite) ; le cache annoncé « environ 100 Mo » mesure 95,5 Mio.
 
 **Ce qui a été écarté, et pourquoi.**
 - Compter les défauts du #52 par un classement automatique : ce serait un verdict d'IA sur un jugement humain ; les défauts sont décrits par des exemples.
@@ -2233,7 +2240,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Les heures déclarées comme base de comparaison entre membres : trois méthodes différentes, aucune charge pour Mahé (décision de Mahé, le 26/11).
 - Le temps de présence en session avec l'assistant comme mesure de l'effort : il passe de 41 h à 101 h selon le seuil d'inactivité, et comprend l'attente de calculs.
 
-**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 en attente d'une approbation.
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 approuvée par Jibril le 26/11 à 20 h 10, puis fusionnée avec l'accord général de Mahé.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -2246,7 +2253,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Le classifieur de sécurité a refusé l'approbation de la #187 au nom de Mahé, qui n'avait demandé que les neuf relectures précises : texte préparé, publication laissée à Mahé.
 - Le modèle de la session principale est passé de Claude Opus 5.5 à Claude Sonnet 5.5 (commande /model de Mahé) en cours de session.
 - Le classifieur de sécurité a refusé deux fois l'approbation de la #187 au nom de Mahé, malgré sa délégation générale : Mahé l'a publiée lui-même.
-- Dix erreurs, de la synthèse des charges, de la première mesure des lignes et de la couverture du PDF du rapport, rattrapées avant la fusion de la #188 (section 4).
+- Quinze erreurs rattrapées avant la fusion de la #188 (section 4) : dix de la synthèse des charges, de la première mesure des lignes et de la couverture du PDF du rapport ; cinq de la fusion de la #177, du contrôle du site, de la fermeture des tickets et du montage de la vidéo.
 
 ---
 
@@ -2462,6 +2469,11 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/11 | Première mesure des lignes : trois pages HTML de diapositives rangées en code (3 380 lignes de Mahé) et les fichiers de dépendances en documentation | examen des plus gros fichiers de chaque membre | catégories refaites, 85 516 lignes inchangées au total |
 | 26/11 | Tickets touchés comptés d'après les seuls sujets de commit : 6 pour Remy, pour 36 tickets assignés | écart avec les assignations | titres et noms de branche des PR ajoutés (8) ; limite déclarée |
 | 26/11 | Couverture du PDF du rapport V1 : « Version 0 du 19 octobre 2026, à compléter jusqu'à la V1 », bandeau écrit dans la chaîne de conversion et jamais mis à jour | lecture du texte de la première page du PDF | bandeau corrigé, PDF régénéré |
+| 26/11 | Fusion de la #177 lancée avec `--match-head-commit` et un identifiant de commit dont j'avais complété la fin de mémoire : GitHub a répondu « Head branch was modified », message qui laisse croire que la tête avait changé | la tête complète relue avec `gh pr view` commençait bien par `b32c03f` ; l'identifiant saisi était faux | fusion refaite avec l'identifiant lu ; rien n'avait été fusionné avec le faux |
+| 26/11 | Fermeture du #176 lancée avec une option `--comment-file` qui n'existe pas dans `gh issue close` ; la sortie tronquée ne disait pas si la commande avait réussi | état du ticket relu : toujours ouvert, sans commentaire | commentaire puis fermeture en deux commandes, état relu après chacune |
+| 26/11 | Contrôle du site publié : une requête relevée après le chargement, que j'aurais pu attribuer au site | lecture de la liste des requêtes : elle venait du script de contrôle, qui testait le favicon par `fetch` | requête attribuée à l'outil ; aucune requête du site pendant l'ouverture de la fenêtre ni pendant une question |
+| 26/11 | Montage de la vidéo du volet A lancé avec un dossier relatif : ffmpeg sort en erreur 254, la liste de fichiers étant lue depuis son propre dossier | échec à l'exécution | chemin absolu ; piège consigné dans le README de l'outil |
+| 26/11 | README de la vidéo : « neuf rubriques » pour la fenêtre de confidentialité, parce que le script comptait le titre avec les huit rubriques | relecture contre la liste des titres relevés | « huit rubriques et un titre » |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
