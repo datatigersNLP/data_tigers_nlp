@@ -9,11 +9,12 @@ import * as maquette from "./maquette.js";
 export const MAQUETTE = import.meta.env.MODE === "maquette";
 const api = MAQUETTE ? maquette : couche;
 
-// questions de calibration de la #85 (jeu-questions-v1), reprises mot pour mot ; le scénario de démonstration
-// (étape 4 de #111) fixera les questions définitives
+// questions du scénario de démonstration (docs/etudes/demonstration/scenario_demo_111.md, #158), écrites pour la
+// démo et absentes des jeux de test ; elles remplacent Q036 et Q003, reprises avec leurs fautes de frappe
 const EXEMPLES_CHAINE = [
-  { question: "Quelles sont les obligations légales de l'empoyeur en période de forte chaleur ?", libelle: null },
-  { question: "Un fonctionnaire peut-il avoir une autre activité à coté de son travail ?", libelle: null },
+  { question: "Combien de jours de congés payés ai-je par an ?", libelle: null },
+  { question: "Ma période d'essai peut-elle être renouvelée ?", libelle: null },
+  { question: "Comment est calculée la pension de retraite d'un fonctionnaire ?", libelle: null },
 ];
 
 export function useChaine() {
