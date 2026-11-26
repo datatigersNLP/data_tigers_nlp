@@ -88,6 +88,9 @@ Oui, sur ce qu'elle visait : dans la chaîne de démonstration, sur le jeu v2, 5
 **Les réponses sont-elles plus exactes ?** (Maïmouna ou Vaneck)
 Non. Jugées à l'aveugle par Maïmouna et Vaneck, sur 20 réponses par modèle, celles du modèle adapté sont nettement mieux appuyées sur leurs passages (20 et 19 sur 20, contre 11 et 12), mais pas plus exactes (6 et 5 sur 20 entièrement exactes, contre 12 et 8, écart non démontré). Le modèle adapté, entraîné à recopier un passage, donne des réponses plus souvent incomplètes ; le modèle d'origine généralise ou confond (annexe A4).
 
+**Dans la vidéo, la réponse sur les congés payés donne 2,5 jours par mois, pas le nombre de jours par an ?** (Jibril)
+Exact : la réponse est juste et citée, mais incomplète. Le total annuel, 30 jours ouvrables (cinq semaines) pour une année complète, figure dans un autre passage fourni au modèle (P1, relevé par Maïmouna sur la #158). C'est le défaut que les juges ont relevé chez le modèle adapté : entraîné à recopier un passage, il s'arrête souvent au premier qui répond.
+
 **Pourquoi l'accord entre vos juges est-il si faible ?** (Vaneck)
 Kappa de 0,36 sur l'exactitude : « partiellement exacte » est une notion difficile, et nous ne sommes pas juristes. Nous ne retenons donc que ce qui va dans le même sens chez les deux juges. Le critère « conditions et exceptions » est inexploitable : les juges n'ont pas compris « sans objet » de la même façon.
 

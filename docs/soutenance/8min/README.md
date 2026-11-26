@@ -40,7 +40,7 @@
 
 **Pour la soutenance** :
 - `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et une répartition proposée des orateurs ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger.
-- `questions_reponses.md` : 42 questions probables du jury, avec une réponse courte, chiffrée et sourcée.
+- `questions_reponses.md` : 43 questions probables du jury, avec une réponse courte, chiffrée et sourcée.
 
 ## Des schémas animés construits sur des données réelles
 
