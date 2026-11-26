@@ -43,7 +43,7 @@ A3 constitue la couche de récupération de B1 : corpus, découpage, encodage et
 | 4. Allègement du modèle servi | `scripts/allegement/` | `scripts/allegement/README.md` |
 | 5. Ajustement de l'encodeur, servi depuis le 15 novembre (#164) | `scripts/adaptation/`, mesure `scripts/evaluation/ajustement_05.py` | `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md`, protocole `docs/etudes/evaluation/05_protocole_ajustement.md`, résultats `docs/etudes/evaluation/05_resultats_ajustement.md` |
 | 6. Volet B : première inférence locale (Qwen2.5-7B-Instruct, Q4_K_M), réussie le 27 septembre (#31) | `scripts/inference/` | `docs/etudes/inference_locale_qwen.md` |
-| 7. Volet B : chaîne RAG complète (#51) | à intégrer | en cours |
+| 7. Volet B : chaîne RAG (#51), adaptation du modèle (#49) et interface de démonstration | `scripts/rag/`, `scripts/adaptation_qwen/`, `demo_b/` | `docs/etudes/rag_51.md`, `demo_b/README.md` |
 
 Les dossiers de `scripts/` déclarent leurs dépendances dans `requirements.txt`, en Python 3.12, et la plupart en
 figent toutes les versions dans `requirements-lock.txt`. Les données brutes et intermédiaires vont dans `data/`, qui
@@ -104,6 +104,32 @@ la règle principale, qui n'avait qu'un positif dans l'échantillon. Tout est de
   35,0 % pour BM25 ; en moyenne, un tiers seulement des passages pertinents d'une requête (32,7 %) figure dans les
   5 premiers de l'ajusté.
 - Détail, contrôles et limites : `docs/etudes/evaluation/09_resultats_jugement_mutualise.md`.
+
+## Résultats au 21 novembre 2026 (protocole 10, #171)
+
+Mesures sur le jeu de questions v2 : 121 questions du corpus et 40 hors corpus, écrites par des sous-agents Claude
+sur autorisation de l'enseignant, avec un protocole figé avant toute génération. Les résultats obtenus sur ce jeu
+sont signalés comme tels et ne remplacent pas le jeu humain.
+
+- **Chaîne de démonstration du volet B, de bout en bout** (10 passages, fusion avec BM25 et reclasseur) : la réponse
+  cite un passage pertinent pour 52,9 % des questions du corpus (63 sur 119). Sur les 118 questions communes avec
+  l'ancienne chaîne à 5 passages, 52,5 % contre 35,6 %, soit +16,9 points [+6,4 ; +27,3], démontré (p = 0,003).
+  Abstention correcte sur les 39 questions hors corpus évaluées, hors corpus au sens du protocole (contrôle des 10
+  premiers passages par un juge d'IA, pas de tout le corpus). Avec le modèle d'origine, non adapté, la même
+  chaîne ne cite un passage pertinent que pour 10,1 % des questions. Prix : 11,8 s par question en médiane, contre
+  4,9 s.
+- **Fusion avec BM25 dans le site** (#173) : permise par la règle (+5,0 points sur le jeu v2, +2,6 sur le CDTN),
+  mais aucun gain n'est démontré et les questions humaines du lot de test reculent de 6,8 points ; l'équipe y
+  renonce.
+- **Encodeurs nourris de questions synthétiques** (#167) : ni la v2-T (2 289 paires, questions du modèle témoin)
+  ni la v3-C (2 420 paires, questions de Claude Sonnet relues par Claude Opus, amendement A3 figé avant toute
+  génération) ne sont servies. La v3-C gagne 12,4 points démontrés sur le jeu v2, écrit par Claude, mais recule
+  sur le CDTN (−2,2) et sur le lot de test (−5,5) : le gain tient au style des questions. L'encodeur ajusté du
+  15 novembre reste servi.
+- **Confidentialité** (#176, PR #177 en relecture) : le site ne contacte que son propre domaine, n'envoie rien
+  après une question, ne dépose aucun cookie et ne garde en cache que les fichiers du modèle ; dans la
+  configuration de la démonstration, l'assistant local ne journalise ni question ni réponse.
+- Détail, contrôles et limites : `docs/etudes/evaluation/10_resultats.md` (PR #174).
 
 ## Organisation du dépôt
 
