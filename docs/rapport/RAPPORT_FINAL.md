@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Enseignant** Adrian ROSARI
-**Version** V1 en cours de rédaction, état du 22 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
+**Version** V1, état du 26 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
 
 **Objet.** Ce rapport suit la section 11 du sujet : analyse technique, retour d'expérience, axes de progression et cinq outils novateurs. La V0 a été écrite à la fin du volet A, le 19 octobre. Cette V1 ajoute le volet B, adapté et mesuré, les améliorations du volet A servies depuis le 15 novembre, la justification du passage de 5 à 10 passages demandée par l'enseignant (section 2.4), les essais d'encodeurs entraînés sur des questions synthétiques, non retenus (section 2.3), et les mentions de confidentialité ajoutées aux deux interfaces (section 2.2). Ce qui reste à mesurer ou à rédiger est signalé explicitement (section 6).
 
@@ -25,7 +25,7 @@
 
 Le corpus est commun : les 261 fiches pratiques du ministère du Travail, découpées en 4 240 passages, instantané SocialGouv du 11 septembre 2026, sous Licence Ouverte Etalab 2.0. Le cas A3 constitue la couche de récupération du cas B1 : le découpage, l'encodage et l'index sont écrits une fois et servent aux deux volets.
 
-La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octobre 2026 sur `main` (`8955962`). Le site en ligne est déployé depuis `dev`. Depuis le 15 novembre, il sert l'encodeur ajusté par l'équipe et affiche 10 passages regroupés par fiche (#164, PR #165). À la demande de l'enseignant, les deux interfaces affichent le logo de l'équipe et une fenêtre de confidentialité (#176, PR #177, en relecture).
+La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octobre 2026 sur `main` (`8955962`). Le site en ligne est déployé depuis `dev`. Depuis le 15 novembre, il sert l'encodeur ajusté par l'équipe et affiche 10 passages regroupés par fiche (#164, PR #165). À la demande de l'enseignant, les deux interfaces affichent le logo de l'équipe et une fenêtre de confidentialité (#176, PR #177).
 
 ## 2. Analyse technique
 
@@ -70,7 +70,7 @@ Pour le volet A, la qualité est celle de l'encodeur ajusté, servi depuis le 15
 
 **Abstention.** Le volet A signale les questions hors du périmètre par un seuil de similarité, fixé sur un jeu externe (CDTN) avant la mesure, et avertit dans une zone grise juste au-dessus. Avec l'encodeur ajusté servi, le score sépare assez bien les questions hors corpus (AUC 0,865). Le seuil conserve 70 des 73 questions du corpus du lot de test et rejette 10 des 24 questions hors corpus ; 13 autres reçoivent l'avertissement. Il repère surtout les saisies sans rapport avec le droit du travail, et l'interface ne promet pas davantage.
 
-**Confidentialité.** À la demande de l'enseignant, chaque interface ouvre une fenêtre de confidentialité (#176, PR #177, en relecture). Elle décrit ce qui a été vérifié le 21 novembre :
+**Confidentialité.** À la demande de l'enseignant, chaque interface ouvre une fenêtre de confidentialité (#176, PR #177). Elle décrit ce qui a été vérifié le 21 novembre :
 - le site en ligne ne contacte que son propre domaine, n'envoie rien quand on pose une question, ne dépose aucun cookie et ne garde dans le cache du navigateur que les fichiers du modèle, environ 100 Mo ;
 - l'hébergeur, GitHub Pages, journalise les adresses IP pour sa sécurité ;
 - dans la configuration de la démonstration, l'assistant local ne journalise ni les questions ni les réponses ;
@@ -184,7 +184,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 192 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 196 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -375,20 +375,20 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 - **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 192 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 196 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #168, #169, #179, #181, #183 et #184 sont fusionnées ; les #180, #185 et #186 sont intégrées dans celle-ci. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #178, #179, #181, #183 et #184 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Relecture des PR #174, #166, #175 et #177 | Jibril | 27/11 |
-| Relecture de la PR #162 (support) et de celle-ci | Remy, Vaneck | 27/11 |
-| Capture du board | Jibril | 27/11 |
-| Fusion des PR approuvées, puis de celle-ci | Mahé | 27/11 |
-| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
+| Approbation et fusion de la PR #177 (logo et confidentialité), puis contrôle du site déployé | Jibril ou Remy ; Mahé | 27/11 |
+| Approbation et fusion de la PR #187 (charges de Maïmouna), puis ajout à la section 3.3 | Mahé | 27/11 |
+| Capture du board, absente à ce jour | Jibril | 27/11 |
+| PR de `dev` vers `main` et tag final | Mahé | 28/11 |
+| Relecture croisée de cette version, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
 
 ## Annexe. Chiffres et sources
 
@@ -401,7 +401,7 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | Recall@5, IC, non-infériorité, bonne fiche 83,6 %, AUC, seuil | `docs/etudes/evaluation/03_evaluation.md` |
 | ajustement : 109 paires, 2 époques, 185,5 s | `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` |
 | volet B : 4,36 Gio, 37,7 s, 19,1 s, 47 à 67 tokens/s, VRAM | `docs/etudes/inference_locale_qwen.md` |
-| chaîne RAG, Q036 et Q003 | PR #85 (brouillon), `docs/etudes/rag_51.md` sur sa branche |
+| chaîne RAG, Q036 et Q003 | PR #85 (fusionnée) ; `docs/etudes/rag_51.md` |
 | 61,3 Mio, 20,1 s, 21 ms (19 à 24), 46 ms | mesure du site en ligne `7e2ce07`, le 19/10/2026, Chromium, profil neuf |
 | rôles, domaines, réunions, charges | `docs/suivi/SUIVI.md`, `docs/reunions/README.md`, tickets #2, #6, #9, #10, #11, #26 |
 | PR, revues, commits | API GitHub et `git log` de `dev`, relevés le 19/10/2026 |
@@ -409,6 +409,6 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | abstention de l'encodeur ajusté : AUC 0,865, 70 sur 73, 10 sur 24, 13 avertissements | `docs/etudes/evaluation/05_resultats_ajustement.md`, section 5 |
 | chaîne de démonstration de bout en bout : 52,9 %, +16,9 points, 10,1 %, 11,8 s et 4,9 s | `docs/etudes/evaluation/10_resultats.md`, section 6 (PR #174) ; `data/evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json` |
 | fusion du volet A : +5,0, +2,6 et −6,8 points | `10_resultats.md`, section 4 (PR #174) |
-| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` (PR #179) |
+| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` (PR #179, fusionnée) |
 | exactitude jugée à l'aveugle : 6 et 5 sur 20 contre 12 et 8, 20 et 19 sur 20 contre 11 et 12, kappa 0,36 | #52, commentaire du 26 novembre ; grilles des juges et clé hors dépôt (`data/`) |
 | confidentialité des deux interfaces | PR #177 : `front/src/composants/Confidentialite.jsx`, `demo_b/src/composants/Confidentialite.jsx` |

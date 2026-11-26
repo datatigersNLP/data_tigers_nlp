@@ -46,7 +46,7 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
 | ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
 | Claude Fable 5.2 et Claude Haiku 5.5 | modèles de langage, exécutés comme sous-agents indépendants par Claude Code | Mahé BEGNIS (session 68) | juge de contrôle des questions du jeu v2 (Fable) ; juges d'étalonnage du jugement mutualisé du #139 (Fable et Haiku), sur autorisation de l'enseignant (section 1) |
-| Claude Sonnet 5.5 | modèle de langage, exécuté comme sous-agent indépendant par Claude Code | Mahé BEGNIS (session 69) | écriture des 2 420 paires d'entraînement de l'encodeur v3-C (amendement A3), relues par deux sous-agents Claude Opus 5.5 |
+| Claude Sonnet 5.5 | modèle de langage, exécuté comme sous-agent indépendant par Claude Code, puis modèle de la session principale à la fin de la session 73 | Mahé BEGNIS (sessions 69 et 73) | écriture des 2 420 paires d'entraînement de l'encodeur v3-C (amendement A3), relues par deux sous-agents Claude Opus 5.5 |
 | Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN et compilation du PDF du journal (sessions 17 à 19) ; mesure QLoRA du Legion et son bilan (session 43) ; développement, tests, analyse des sorties et documentation Agent0 (session 40 et sessions 48 à 54) |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
@@ -2191,7 +2191,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Dans `conditions_exceptions`, six « non » voulaient dire « sans objet » : je les ai remplacés (J03, J24, J27, J30, J33, J39) et signalés à Mahé. L'assistant avait signalé, par un contrôle mécanique, que J33 n'avait pas de défaut ; je lui ai ensuite collé ma grille, et il n'a proposé aucune notation.
 - La connexion a coupé pendant l'envoi de la branche.
 
-### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
 
 **Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114).
 
@@ -2203,6 +2203,10 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - PR #162 : 17 annexes hors des 8 minutes, textes à dire allégés, script oral généré depuis le support, 43 questions préparées (`c0cf440`, `7a8dedf`) ; artefact privé mis à jour.
 - Fusions, avec l'accord de Mahé du 26/11 : #161, #183, #184, #169, #158, #179, #168 et #181. Les #186, #185 et #180, en conflit avec les précédentes, sont intégrées dans la #178, leurs commits intacts ; conflits de la #174 (avec la #179) et de la #166 (avec la #168) résolus ; neuf relectures publiées au nom de Mahé.
 - Section 4.1 du rapport relue à la demande de Mahé : nombre de sessions, date du test resté en échec, Weekly 7 tenu par écrit.
+- Après les approbations de Jibril et de Remy : fusion des #174, #175, #166, #162 et #178 ; les #186, #185 et #180 sont marquées fusionnées par GitHub avec la #178. Conflit de la #177 avec la #175 résolu (`b32c03f`) et approbation redemandée.
+- Tickets fermés avec une synthèse chacun : #138, #163, #167, #171, #172 et #139, dont la charge réelle de Mahé reste à déclarer. Description de la #174 alignée sur la qualification du hors corpus.
+- Relecture de la #187 (charges de Maïmouna) : texte préparé, approbation laissée à Mahé.
+- PR de finitions du rapport : corrections signalées par Remy sur la #178 (date de l'en-tête, deux lignes d'annexe), formulation « très probablement » retirée de `10_resultats.md`, section 6 à jour.
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2220,7 +2224,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Passer Vite à 8.3.5 dans le site avant la soutenance : l'alerte ne touche que le serveur de développement, pas le site publié.
 - Pour la démonstration du volet B en direct : la question de la diapositive 2 et le refus d'une rupture conventionnelle, où le modèle adapté s'abstient.
 
-**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Décisions attendues de Mahé : intégration du correctif de Jibril dans la #175, approbation de la #161, ordre de fusion.
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 en attente d'une approbation.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -2230,6 +2234,8 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - 16 paires de PR en conflit, sur la fiche des assistants d'IA, le journal et le README : un ordre de fusion est proposé.
 - Les PR de coéquipiers en conflit entre elles ne pouvaient pas être fusionnées sans pousser sur leurs branches : elles passent par la #178.
 - Conflit de la #174 avec la #179 : les versions de la #174 sont gardées, car mesures_10.py fige leur empreinte (gel de A3).
+- Le classifieur de sécurité a refusé l'approbation de la #187 au nom de Mahé, qui n'avait demandé que les neuf relectures précises : texte préparé, publication laissée à Mahé.
+- Le modèle de la session principale est passé de Claude Opus 5.5 à Claude Sonnet 5.5 (commande /model de Mahé) en cours de session.
 
 ---
 
@@ -2431,6 +2437,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/11 | Annexe et questions préparées annonçant 72 sessions et plus de 170 erreurs, sans la session 73 du jour | préparation du journal | 73 sessions, plus de 180 erreurs |
 | 26/11 | Commande enchaînée sans arrêt sur erreur : le script de résolution du conflit de la #186 a échoué, mais `git add` et le commit ont enregistré le journal avec ses marqueurs de conflit | lecture du commit local, avant tout envoi | commit corrigé ; scripts suivants arrêtés à la moindre anomalie |
 | 26/11 | Description de la #178 renvoyée inchangée : une chaîne de remplacement ne correspondait pas au texte | assertion du script | renvoyée corrigée, contenu vérifié en ligne |
+| 26/11 | Description de la PR #174 : « abstention correcte sur 39 questions hors corpus sur 39 » sans la qualification déjà ajoutée aux résultats, au rapport et au README | revue de Jibril sur la #174 | description alignée avant la fusion |
+| 26/11 | Résultats du protocole 10 : questions « très probablement hors corpus », une probabilité que rien ne mesure | revue de Jibril sur la #174 | formulation retirée dans la PR de finitions |
+| 26/11 | `git fetch` avec une refspec explicite : elle remplace la refspec par défaut, `origin/dev` n'a pas été mis à jour et les conflits des PR restantes ont été jugés contre une tête de `dev` antérieure de quatre fusions | résultat incohérent (dev à 989a645 après les fusions de 14 h 30) | `fetch` refait sans refspec explicite, tests de fusion refaits |
+| 26/11 | Rapport V1 approuvé avec un en-tête daté du 22/11, une ligne d'annexe sur la PR #85 « en brouillon » et la PR #179 « à fusionner » | revue de Remy sur la #178 | corrigés dans la PR de finitions |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

@@ -126,7 +126,7 @@ sont signalés comme tels et ne remplacent pas le jeu humain.
   génération) ne sont servies. La v3-C gagne 12,4 points démontrés sur le jeu v2, écrit par Claude, mais recule
   sur le CDTN (−2,2) et sur le lot de test (−5,5) : le gain tient au style des questions. L'encodeur ajusté du
   15 novembre reste servi.
-- **Confidentialité** (#176, PR #177 en relecture) : le site ne contacte que son propre domaine, n'envoie rien
+- **Confidentialité** (#176, PR #177) : le site ne contacte que son propre domaine, n'envoie rien
   après une question, ne dépose aucun cookie et ne garde en cache que les fichiers du modèle ; dans la
   configuration de la démonstration, l'assistant local ne journalise ni question ni réponse.
 - Détail, contrôles et limites : `docs/etudes/evaluation/10_resultats.md` (PR #174).
