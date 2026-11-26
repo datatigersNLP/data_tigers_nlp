@@ -1,4 +1,4 @@
-"""Pilote de la page d'encodage dans le navigateur (protocole 05, amendements A1 (#164) et A2 (#167)).
+"""Pilote de la page d'encodage dans le navigateur (protocole 05 et son amendement A1, #164).
 
 Sert la racine du dépôt sur 127.0.0.1 seulement, ouvre `scripts/evaluation/encodage_navigateur.html` dans Chrome sans
 interface, avec un profil temporaire vierge, et reçoit les vecteurs que la page renvoie (paramètre `envoi=1`). Le
@@ -36,12 +36,13 @@ AUTORISES = re.compile(r"^/(scripts/evaluation/encodage_navigateur\.html"
                        r"|data/indexation/controle/(fidelite_navigateur|requetes_controle)\.json"
                        r"|data/evaluation/notebook03/questions_navigateur\.json"
                        r"|data/evaluation/cdtn/(questions_cdtn|formulations_mesure)\.json"
+                       r"|data/evaluation/jeu_v2/questions_navigateur\.json"
                        r"|data/adaptation/navigateur/vecteurs/vecteurs_controle_ajuste(_v2)?\.json"
-                       r"|data/adaptation/navigateur/(base|ajuste|ajuste_v2)/[A-Za-z0-9_./-]+"
+                       r"|data/adaptation/navigateur/(base|ajuste|ajuste_v2|ajuste_v3)/[A-Za-z0-9_./-]+"
                        r"|front/public/(index|index_ajuste|index_ajuste_v2)/index_m2\.json"
                        r"|front/public/modele/multilingual-e5-small-[a-z0-9-]+/[A-Za-z0-9_./-]+)$")
-NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle)(_(base|ajuste|ajuste_v2))?"
-                        r"|controle_navigateur(_ajuste|_ajuste_v2)?)\.json$")
+NOM_SORTIE = re.compile(r"^(vecteurs_(navigateur|cdtn|cdtn_mesure|controle|jeu_v2)(_(base|ajuste|ajuste_v2|ajuste_v3))?"
+                        r"|controle_navigateur(_ajuste|_ajuste_v2|_ajuste_v3)?)\.json$")
 
 
 class Gestionnaire(SimpleHTTPRequestHandler):
@@ -120,10 +121,10 @@ def encoder(modele: str | None, lot: str | None, delai: int = 900, page: str = "
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--page", choices=tuple(PAGES), default="encodage")
-    p.add_argument("--modele", choices=("base", "ajuste", "ajuste_v2"))
-    p.add_argument("--lot", choices=("cdtn", "cdtn_mesure", "controle"))
-    p.add_argument("--index", choices=("index", "index_ajuste", "index_ajuste_v2"))
-    p.add_argument("--reference", choices=("ajuste", "ajuste_v2"))
+    p.add_argument("--modele", choices=("base", "ajuste", "ajuste_v2", "ajuste_v3"))
+    p.add_argument("--lot", choices=("cdtn", "cdtn_mesure", "controle", "jeu_v2"))
+    p.add_argument("--index", choices=("index", "index_ajuste"))
+    p.add_argument("--reference", choices=("ajuste",))
     a = p.parse_args(argv)
     encoder(a.modele, a.lot, page=a.page, index=a.index, reference=a.reference)
     return 0
