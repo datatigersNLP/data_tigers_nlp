@@ -1,0 +1,25 @@
+{
+ "protocole": "docs/etudes/evaluation/10_protocole_jeu_v2.md",
+ "sha256_protocole": "8d1236134ef89da9f7e09c232429232db976e8b4a338a56e90c6366cc11270f6",
+ "questions_v2_csv": "316d82816e924a8a474653240ce2372e0ec2a85e16870dfd6354f24db521f17f",
+ "fichiers_de_travail": {
+  "juge/feuille_j_1.json": "fe8e182e8e8829071956eda7156a4a9ddb45d6e7eab89a5ee40646a2db7ceabd",
+  "juge/feuille_j_2.json": "57fd6180ad3413eebba4bc8f056cb3cc5d9a48e691240c588711d3ff6b8f23d0",
+  "juge/feuille_v.json": "f7cf792e0b6795c7b5fbcc8d6076b9cba709a38c7c9c390e85c2302519ba9634",
+  "lots/rang_1.json": "75d99d1c37abf27f823895d511215186504176bca351ea2cc9b690fd62cf82a5",
+  "lots/rang_2.json": "99d04b9066ea5228473cb11e103d7bdae77e58b5ab53cd915ac1db96ba675f79",
+  "lots/rang_3.json": "e23089bb547a4647d36fc138475e5dad4dfef570b214c48f841abd3c832276bb",
+  "lots/titres_fiches.json": "8afd236127d5540990041763616fa27236756392af9b8b9107d68f3ffcad7872",
+  "sorties/generateur_rang_1.json": "172f873c9813c728c0293a4236319c85414c2a17c99df69b80fa03ffe0c10d96",
+  "sorties/generateur_rang_2.json": "ff2cdc69a587362ff54f14fdd607a0fa5ad0c534cd6f463e63f6cf9e5276f60d",
+  "sorties/generateur_rang_3.json": "ecf70310e0f15cb5f9637f53e4d3fcad0f6034e2b6da48dbf32b083e7be1c6cd",
+  "sorties/hors_corpus_generateur.json": "a62a074caa1ed758f14693a6b7902c64f0d2e35c6afb56e716f02c1ef3a7a048",
+  "sorties/verdicts_j_1.json": "d644942f7a724c3170371128484db0368f692474c18eb9075e3a086a27882587",
+  "sorties/verdicts_j_2.json": "e2baf6f13102058d344cb2924767088d4635b2ecee706f7ae72369784c4086f0",
+  "sorties/verdicts_v_1.json": "cc07c2b056bba259fe42a927c834c89eedd6e9cca3768e02c603697e814a741e",
+  "sorties/verdicts_v_2.json": "f9dbb1c5fc1d5ad840a6c559ba6913b647b02846c2876e650ee01c16a85d5a0c",
+  "candidats.json": "9e323d189a0a8d3edb06e174725a3076392bb383501a1d109ae0a1e41712c148",
+  "controles_mecaniques.json": "5a74447d1f06fe52b43898f6bb2b39fd25932abb0cf5414350f5e18d24f35954",
+  "journal_selection.json": "25a4053d33e934c63d33199d189db224cd751cf177c0e7565854cee13a63db41"
+ }
+}

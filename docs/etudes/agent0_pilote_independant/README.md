@@ -1,5 +1,11 @@
 # Préparer le pilote exploratoire Agent0
 
+## Décision de livraison du 23 novembre 2026
+
+Jibril confirme le **gel du développement Agent0 pour la remise**. Ce dossier reste une préparation documentaire : aucune génération de ce pilote, relecture de ses candidats, constitution de lot figé, exécution RAG ou boucle ciblée n'est engagée avant la remise. Les étapes ci-dessous décrivent une suite possible après une nouvelle décision de reprise, sans échéance active. Le gel porte sur le développement, pas sur un jeu de questions accepté.
+
+Le contrôle encodeur #153 a été approuvé par Mahé sur `ed1c74d` le 13 novembre puis fusionné le 16 novembre. Les mentions antérieures de relecture de ce complément en attente sont historiques. Pour la présentation, utiliser le [bilan actualisé pour le rapport et l'oral](../agent0_bilan_rapport_oral.md), qui sépare réalisé, préparation et ouverture.
+
 Révision 2 du 9 novembre 2026, #95/#96, préparée à la demande de Jibril. **25 emplacements, aucune question générée, aucun verdict humain, aucun gel ni essai RAG.** Le dossier est prêt pour examiner les sources, la méthode et le contrat ; la validation humaine reste à effectuer.
 
 ## Relecteurs et règle de validation Agent0
@@ -83,7 +89,8 @@ Après revue du code, du lot et autorisation de l'essai réel borné, utiliser u
 - [x] Contrat, sources et méthode approuvés dans #144/#145 ; ce complément conserve sa propre relecture à effectuer.
 - [x] Contrôle technique du fichier encodeur conforme et contrôle Qwen rapporté par Mahé, avec sources et limites distinctes.
 - [x] Mahé et Remy désignés comme relecteurs ; une validation de l'un des deux suffit pour chaque livrable examiné.
-- [ ] Relecture effective du complément encodeur, puis des futurs candidats une fois générés.
+- [x] Relecture du complément encodeur #153, approuvé puis fusionné ; aucun verdict attribué aux futurs candidats.
+- [ ] Suite reportée : génération et relecture effective des futurs candidats après décision de reprise.
 - [ ] Configuration du générateur et environnement arrêtés avant génération.
 - [ ] Candidats produits, relus, puis lot figé avant RAG.
 

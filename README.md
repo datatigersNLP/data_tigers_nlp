@@ -74,6 +74,37 @@ n'est jamais versionné : les notebooks et les scripts les reconstruisent.
   et 10 des 24 questions hors corpus rejetées ; 13 autres reçoivent l'avertissement de la zone grise.
 - Détail, contrôles et limites : `docs/etudes/evaluation/05_resultats_ajustement.md`.
 
+## Volet B, chaîne v2 : résultats au 15 novembre 2026 (#163)
+
+- **Chaîne v2 non adoptée** (protocole 08, figé avant la mesure, une seule exécution, analyse descriptive) : avec le
+  modèle adapté, la récupération v2, la consigne v2 et l'abstention par le reclasseur, une citation pertinente est
+  donnée pour 27 des 73 questions du corpus, contre 18 sur 72 pour B2. Mais seules 18 des 24 questions hors corpus
+  sont refusées, contre 20 pour B2 ; la règle écrite d'avance en exigeait au moins 19. B2 reste la chaîne de
+  référence.
+- **Ce qui progresse** : un passage pertinent figure dans le contexte pour 53 questions sur 73, contre 33 sur 72 en
+  B2 ; le modèle adapté en exploite à peu près la même part (27 sur 53 contre 18 sur 33).
+- Détail, contrôles et limites : `docs/etudes/evaluation/08_resultats_chaine_v2.md`.
+
+## Mesure corrigée au 16 novembre 2026 (#139, provisoire)
+
+La règle D4 ne reconnaît qu'un extrait par question : elle sous-estime tous les systèmes. Le protocole 09, figé
+avant tout jugement, fait juger à l'aveugle les 617 paires (question, passage montré par un système et non reconnu
+par D4) par deux modèles d'IA déclarés comme tels. L'étalonnage du 17 novembre, sur 100 paires, a été fait par deux
+autres modèles d'IA, pas par des humains : il confirme la règle large (kappa 0,89) mais ne permet pas de conclure sur
+la règle principale, qui n'avait qu'un positif dans l'échantillon. Tout est descriptif : aucune décision passée ne change.
+
+- **Volet A** : avec la règle principale (les deux juges jugent que le passage répond), l'encodeur ajusté place un
+  passage pertinent dans les 5 premiers pour 74,0 % des questions (63,0 % selon D4), et dans les 10 passages du
+  site pour 84,9 % (74,0 %). Son gain sur la base passe de +19,2 à +13,7 points [+3,2 ; +25,0].
+- **Volet B** : le contexte de B2 contient un passage pertinent pour 62,5 % des questions (45,8 % selon D4), celui de
+  la récupération v2 pour 89,0 % (72,6 %). M4, qui mesure la traçabilité et non l'exactitude, vaut 30,6 % pour B2 et
+  52,1 % pour V2. Avec la récupération v2, la plupart des échecs restants viennent du modèle, qui s'abstient ou cite
+  un autre passage alors qu'un passage pertinent est fourni.
+- **CDTN, plusieurs passages pertinents par requête** : nDCG@10 de 41,5 % pour l'ajusté, 35,9 % pour la base et
+  35,0 % pour BM25 ; en moyenne, un tiers seulement des passages pertinents d'une requête (32,7 %) figure dans les
+  5 premiers de l'ajusté.
+- Détail, contrôles et limites : `docs/etudes/evaluation/09_resultats_jugement_mutualise.md`.
+
 ## Organisation du dépôt
 
 ```

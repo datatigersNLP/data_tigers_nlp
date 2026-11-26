@@ -47,19 +47,24 @@ const parametres = new URLSearchParams(location.search);
 const lotCdtn = parametres.get("lot") === "cdtn";
 const lotCdtnMesure = parametres.get("lot") === "cdtn_mesure";
 const lotControle = parametres.get("lot") === "controle";
+// Protocole 10 (#171) : ?lot=jeu_v2 encode les 161 questions du jeu v2, écrites par scripts/evaluation/jeu_v2.py lot_navigateur
+const lotJeuV2 = parametres.get("lot") === "jeu_v2";
 // Protocole 05 (#49, #164) : ?modele=base ou ?modele=ajuste charge un q8 local, servi depuis data/adaptation/navigateur/,
 // avec le tokeniseur de l'encodeur de base ; sans ce paramètre, la page garde son comportement d'origine (le Hub).
 const MODELES_LOCAUX = {
   base: "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",    // q8 de Xenova, révision 761b726d
   ajuste: "934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047",  // q8 ajusté livré le 14 octobre
+  ajuste_v2: "09d304fed9960730defa7b9102b3436a136f1e88bc88581846ec4e4b431934cf",  // q8 ajusté v2 (#167, amendement A2)
+  ajuste_v3: "3d5a24e6a741e59d6c5a69b84eb6cebb99181a0d72e1ec17b05fa96a99b8db3a",  // q8 ajusté v3 (#167, amendement A3)
 };
 const modeleLocal = parametres.get("modele");
 const fichierQuestions = lotCdtn ? "../../data/evaluation/cdtn/questions_cdtn.json"
   : lotCdtnMesure ? "../../data/evaluation/cdtn/formulations_mesure.json"
   : lotControle ? "../../data/indexation/controle/requetes_controle.json"
+  : lotJeuV2 ? "../../data/evaluation/jeu_v2/questions_navigateur.json"
   : "../../data/evaluation/notebook03/questions_navigateur.json";
 const nomSortie = (lotCdtn ? "vecteurs_cdtn" : lotCdtnMesure ? "vecteurs_cdtn_mesure" : lotControle ? "vecteurs_controle"
-  : "vecteurs_navigateur") + (modeleLocal ? "_" + modeleLocal : "") + ".json";
+  : lotJeuV2 ? "vecteurs_jeu_v2" : "vecteurs_navigateur") + (modeleLocal ? "_" + modeleLocal : "") + ".json";
 
 try {
   if (modeleLocal !== null && !Object.hasOwn(MODELES_LOCAUX, modeleLocal)) throw new Error("modèle local inconnu : " + modeleLocal);

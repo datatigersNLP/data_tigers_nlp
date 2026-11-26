@@ -3,7 +3,9 @@
 **Équipe** Data Tigers
 **Module** NLP 2, Master 2 Data & IA, FGES
 **Ouvert le** 19 septembre 2026
-**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé ; 26 octobre 2026 : début du travail sur #52 daté, points opérationnels de #49, #52 et #107 ; soutenance avancée au 30/11 : jalon J4 au 30/11, #52 en J3, échéances resserrées ; revue de la #108 traitée, format des données d'adaptation proposé, PR #116, par Mahé ; 27 octobre 2026 : #85, #100, #101, #109 et #118 fusionnées, faisabilité du Legion, script de mesure, premier jet des supports de J3, par Mahé ; 30 octobre 2026 : #105, #116 et #117 fusionnées, décisions sur les machines, Agent0, #49 et le Weekly 9, protocole et script après la calibration, charges de #51 et #111, par Mahé ; 2 novembre 2026 : version d'Ollama arbitrée (0.40.13), protocole et script après la revue de Jibril, gel reporté, par Mahé ; 7 novembre 2026 : gel fait le 04/11, verrou approuvé, lot d'adaptation v2b, Weekly 7 et 8 non tenus, par Mahé)
+**Dernière mise à jour** 18 octobre 2026 (fermeture de #43 et #53, statuts de #11, #46, #50 et #56 alignés sur GitHub, tag `volet-a-v1` ; fermeture de #23, tickets #91 à #98 ajoutés, par Mahé ; 25 octobre 2026 : Vaneck ajouté à #51, tickets #107 et #111 ajoutés ; calendrier jusqu'à J4 reporté dans les tickets, tickets #112 à #114 ajoutés, jalons de #8, #52, #107 et #91 à #97, Maïmouna et Vaneck assignés à #52, par Mahé ; 26 octobre 2026 : début du travail sur #52 daté, points opérationnels de #49, #52 et #107 ; soutenance avancée au 30/11 : jalon J4 au 30/11, #52 en J3, échéances resserrées ; revue de la #108 traitée, format des données d'adaptation proposé, PR #116, par Mahé ; 27 octobre 2026 : #85, #100, #101, #109 et #118 fusionnées, faisabilité du Legion, script de mesure, premier jet des supports de J3, par Mahé ; 30 octobre 2026 : #105, #116 et #117 fusionnées, décisions sur les machines, Agent0, #49 et le Weekly 9, protocole et script après la calibration, charges de #51 et #111, par Mahé ; 2 novembre 2026 : version d'Ollama arbitrée (0.40.13), protocole et script après la revue de Jibril, gel reporté, par Mahé ; 7 novembre 2026 : gel fait le 04/11, verrou approuvé, lot d'adaptation v2b, Weekly 7 et 8 non tenus, par Mahé ; 22 novembre 2026 : charges réelles déclarées par Vaneck, par Vaneck)
+
+**Complément du 16 novembre 2026** : Weeklys 7 à 9 documentés puis clôturés ; états de réalisation et points de clôture des tâches rapprochés des preuves GitHub. Le relevé daté ci-dessous complète l'inventaire historique sans remplacer les estimations ou fabriquer des charges.
 
 **Objet.** Suivre les tâches, leurs responsables et leur chronologie, comme le demande le sujet. Ce classeur complète le board GitHub, qui porte l'état des tickets, en conservant ce que le board ne restitue pas : la charge estimée face à la charge réelle.
 
@@ -24,6 +26,41 @@
 7. Les valeurs sont conservées avec leur provenance. Une fermeture GitHub n'est pas à elle seule une preuve de validation du dernier livrable.
 
 **Légende.** NR = information non renseignée dans les sources consultées, sans conclusion sur sa valeur réelle. « non estimée » = absence d'estimation initiale explicitement déclarée. P = estimation provisoire de planification, à réviser ; elle n'est pas une charge réelle. Dans la colonne Clôturé, « - » = ticket ouvert. Dans la colonne Réel, « - » = ticket ouvert sans charge réelle déclarée ; cela ne signifie pas qu'aucun travail n'a commencé. Dans la colonne Jalon, « - » = aucun milestone GitHub affecté. Un écart NR ne vaut pas zéro.
+
+## Réconciliation documentaire du 16 novembre 2026
+
+Source : corps et commentaires des tickets et PR relus le 16/11, notamment #13/#14/#15, #49/#51/#52, #91 à #95, #107 et #112. Les états ci-dessous concernent les issues GitHub ; aucun statut de colonne du Project Board n'est déduit.
+
+| Ticket | Réalisation vérifiée | État au 16/11 et point restant |
+|---|---|---|
+| #13, Weekly 7 | Suivi écrit du 29/10 complété par les décisions datées du 30/10 et leurs suites | Fermé le 16/11 comme compte rendu complété, sans réunion synchrone |
+| #14, Weekly 8 | Non-tenue confirmée, points d'étape et suites écrites reconstitués depuis les sources | Fermé le 16/11 comme suivi documenté, sans présence ni vote inventés |
+| #15, Weekly 9 | Suivi écrit prévu le 12/11 complété rétrospectivement le 16/11 ; résultat du point d'arrêt expliqué | Fermé le 16/11 comme compte rendu, sans prétendre à un échange conjoint le 12/11 |
+| #49 | Ajustement, mesures et contrôles intégrés par #165 ; Recall@5 63,0 % contre 43,8 % | Fermé le 23/11 à la demande de Jibril ; présentation des résultats à l'équipe non attestée |
+| #51 | Socle #85, reproduction de Maïmouna publiée le 08/11 et acceptée par Mahé le 10/11, exemples commentés | Ouvert : présentation et bilan de charge. Les charges partielles restent attribuées à leurs déclarants |
+| #52 | Mesure avant du 09/11 et recalcul indépendant, puis résultats T/adapté du 11/11 publiés | Ouvert : présentation attestée, jugement humain consolidé/défauts et charge |
+| #91 | Schéma #99 relu et fusionné | Fermé le 23/11 ; charge active approximative déclarée ~3 h |
+| #92 | Sélection/provenance #100 relue et fusionnée | Fermé le 23/11 ; charge active approximative déclarée ~3 h |
+| #93 | Génération simple/reformulation #101 relue et fusionnée | Fermé le 23/11 ; ~5 h déclarées, candidats non validés humainement |
+| #94 | Périmètre technique réduit #103 relu et fusionné | Fermé le 23/11 ; ~6 h déclarées, aucune validation sémantique déduite |
+| #95 | Support #106 livré ; préparation #145 et contrôle encodeur #153 intégrés ensuite | Fermé le 23/11 ; ~4 h pour le support, pilote non déclaré relu ou figé |
+| #107 | Entraînement, export, service et mesures du 11/11 réalisés | Ouvert : jugement consolidé, défauts, feuille de route au rapport et charges |
+| #112 | Support assemblé #134, compléments #156/#157 et résultats #152 versionnés | Critères documentaires cochés ; ouvert pour le bilan de charge collectif |
+
+Les cases techniques de #49 et #51 sont cochées seulement pour les éléments étayés. La présentation effective n'est pas assimilée à un commentaire public. Les trois critères de #112 portent sur le contenu préparé/versionné ; ils ne certifient pas une présentation à l'enseignant.
+
+**Autres tâches conservées ouvertes au 16/11.** #8 attend la confirmation écrite du calendrier ; #96 à #98 ne disposent pas d'un lot synthétique relu et figé ni d'une évaluation achevée ; #111 attend le scénario corrigé, la vidéo et l'essai de démonstration sur le Legion ; #113/#114 attendent la livraison du rapport et de la soutenance. Mahé maintient #138 jusqu'à la fusion de #166 ; #140 attend le transfert/import pour la démonstration ; #163 attend les corrections de #166 ; #139 attend l'étalonnage humain ; #167 attend la décision de Mahé avant gel. Les Weeklys futurs ne sont pas complétés à l'avance.
+
+**Charges.** Les estimations et charges déjà déclarées sont conservées. Maïmouna déclare pour #51 2 h 30 de relecture, 1 h 30 de reproduction et 1 h 30 d'exemples ; Vaneck déclare 2 h de relecture. Ce sont des valeurs partielles, pas la charge totale de #51. Pour les comptes rendus clôturés, la charge réelle non déclarée reste NR. Aucune estimation historique, date de travail ou durée de modèle n'est convertie en temps actif.
+
+Les sections suivantes gardent les relevés datés et leur provenance ; les décisions anciennes remplacées sont signalées dans les tickets actuels.
+
+## Actualisation ciblée du 23 novembre 2026
+
+- **#49 :** Rémy a déclaré 14 h de travail actif pour sa part. L'écart Jaccard est accepté comme exception selon l'avis de Rémy et l'arbitrage rapporté par Jibril ; le ticket est fermé à la demande de Jibril le 23/11. La présentation des résultats à l'équipe reste à faire et n'est pas attestée par la clôture.
+- **#111 et #140 :** la vidéo de secours du volet B a été réalisée par Mahé et montrée ; Jibril la juge conforme pour cet usage ([#111](https://github.com/datatigersNLP/data_tigers_nlp/issues/111)). Le scénario #158 reste en PR ; le transfert des modèles vers le Legion n'est plus requis selon l'amendement communiqué par Mahé.
+- **#91 à #95 :** livrables techniques du périmètre retenu intégrés ; Jibril a validé des estimations rétrospectives de son temps actif : 3 h, 3 h, 5 h, 6 h et 4 h respectivement, non mesurées au fil de l'eau. **#96 à #98 :** suites reportées ; #144 a préparé le lanceur et #145 les sources, sans constituer une exécution réelle ni un lot humainement accepté et figé.
+- **Charges :** parts de Rémy consignées dans le tableau complémentaire ci-dessous ; celles de Vaneck sont proposées dans la PR #182. Elles ne sont pas des totaux d'équipe et leur intégration est à revoir après les fusions.
 
 ## Domaines
 
@@ -70,9 +107,9 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #10 | Weekly 4 - 7 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 07/10/2026 |
 | #11 | Weekly 5 - 14 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 14/10/2026 |
 | #12 | Weekly 6 - 21 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 26/10/2026 |
-| #13 | Weekly 7 - 28 octobre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
-| #14 | Weekly 8 - 4 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
-| #15 | Weekly 9 - 11 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
+| #13 | Weekly 7 - 28 octobre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 16/11/2026 |
+| #14 | Weekly 8 - 4 novembre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 16/11/2026 |
+| #15 | Weekly 9 - 11 novembre 2026 | transverse | Tous | J3 | Fermé | 20/09/2026 | 16/11/2026 |
 | #16 | Weekly 10 - 18 novembre 2026 | transverse | Tous | J3 | Ouvert | 20/09/2026 | - |
 | #17 | Weekly 11 - 25 novembre 2026 | transverse | Tous | J4 | Ouvert | 20/09/2026 | - |
 | #18 | Weekly 12 - 2 décembre 2026 | transverse | Tous | J4 | Ouvert | 20/09/2026 | - |
@@ -98,17 +135,17 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 | #46 | Évaluer la recherche du volet A sur le jeu de questions (notebook 03) | D2, D5 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #47 | Construire les références lexicales TF-IDF et BM25 | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 13/10/2026 |
 | #48 | Brancher la recherche sémantique dans le site du volet A | D3 | Mahé, Vaneck, Remy, Maïmouna | J3 | Fermé | 30/09/2026 | 12/10/2026 |
-| #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J4 | Ouvert | 30/09/2026 | - |
+| #49 | Ajuster finement l'encodeur sur le corpus | D2, D5 | Mahé, Remy, Jibril | J4 | Fermé | 30/09/2026 | 23/11/2026 |
 | #50 | Réduire le poids du modèle servi par réduction du vocabulaire | D2 | Mahé, Remy | J3 | Fermé | 30/09/2026 | 17/10/2026 |
 | #51 | Construire la chaîne RAG du volet B sur l'index commun | D4 | Remy, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
 | #52 | Mesurer le volet B avant adaptation | D5 | Mahé, Jibril, Maïmouna, Vaneck | J3 | Ouvert | 30/09/2026 | - |
 | #53 | Peaufiner l'interface et le parcours utilisateur du site du volet A | D3 | Vaneck, Jibril | J3 | Fermé | 30/09/2026 | 18/10/2026 |
 | #56 | Préparer le jeu complémentaire de requêtes du CDTN | D5 | Mahé, Vaneck, Jibril, Maïmouna | J3 | Fermé | 04/10/2026 | 14/10/2026 |
-| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
-| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
-| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | J3 | Ouvert | 18/10/2026 | - |
-| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
-| #95 | [Agent0 Light] A5 — Livrer le support vérifié de relecture des essais | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
+| #91 | [Agent0 Light] A1 — Définir le schéma et les règles du Challenge Set | D5 | Jibril | J3 | Fermé | 18/10/2026 | 23/11/2026 |
+| #92 | [Agent0 Light] A2 — Sélectionner et tracer les passages sources M2 | D5 | Jibril | J3 | Fermé | 18/10/2026 | 23/11/2026 |
+| #93 | [Agent0 Light] A3 — Générer localement des questions simples et reformulées | D5 | Jibril | J3 | Fermé | 18/10/2026 | 23/11/2026 |
+| #94 | [Agent0 Light] A4 — Ajouter les cas multi-passages, pièges et hors corpus | D5 | Jibril | J4 | Fermé | 18/10/2026 | 23/11/2026 |
+| #95 | [Agent0 Light] A5 — Livrer le support vérifié de relecture des essais | D5 | Jibril | J4 | Fermé | 18/10/2026 | 23/11/2026 |
 | #96 | [Agent0 Light] B1 — Exécuter le RAG sur un Challenge Set figé | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
 | #97 | [Agent0 Light] B2 — Mesurer les résultats et diagnostiquer les erreurs du RAG | D5 | Jibril | J4 | Ouvert | 18/10/2026 | - |
 | #98 | [Agent0 Light] C1 — Générer un nouveau lot ciblé sur les faiblesses détectées | D5 | Jibril | - | Ouvert | 18/10/2026 | - |
@@ -130,15 +167,15 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #4 | 19/09 | 19/09 | NR | NR | NR |
 | #5 | 19/09 | NR | NR | NR | NR |
 | #6 | 19/09 | NR | NR | NR | NR |
-| #7 | NR | NR | NR | NR | NR |
+| #7 | NR | NR | NR | Vaneck : 2 h (déclaré le 22/11) | NR |
 | #8 | NR | NR | NR | - | NR |
 | #9 | NR | NR | NR | NR | NR |
 | #10 | NR | NR | NR | NR | NR |
 | #11 | NR | NR | NR | - | NR |
 | #12 | NR | NR | NR | - | NR |
-| #13 | NR | NR | NR | - | NR |
-| #14 | NR | NR | NR | - | NR |
-| #15 | NR | NR | NR | - | NR |
+| #13 | NR | NR | NR | NR | NR |
+| #14 | NR | NR | NR | NR | NR |
+| #15 | NR | NR | NR | NR | NR |
 | #16 | NR | NR | NR | - | NR |
 | #17 | NR | NR | NR | - | NR |
 | #18 | NR | NR | NR | - | NR |
@@ -157,32 +194,32 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 | #31 | NR | NR | 4 | NR | NR |
 | #33 | NR | NR | NR | NR | NR |
 | #34 | NR | NR | NR | NR | NR |
-| #35 | NR | NR | NR | NR | NR |
+| #35 | NR | NR | NR | Vaneck : 8 h (déclaré le 22/11) | NR |
 | #43 | NR | NR | NR | - | NR |
 | #44 | 03/10 | 07/10 | non estimée | 18 | NR |
 | #45 | 03/10 | 03/10 | 4 | 3.5 | -0.5 |
 | #46 | NR | NR | NR | - | NR |
 | #47 | 04/10 | 04/10 | 4 | 3.5 | -0.5 |
-| #48 | NR | NR | NR | NR | NR |
+| #48 | NR | NR | NR | Vaneck : 3 h (déclaré le 22/11) | NR |
 | #49 | NR | NR | NR | - | NR |
 | #50 | NR | NR | NR | - | NR |
 | #51 | NR | NR | 16, plus 6 pour Vaneck et Maïmouna (28/10) | relectures de la #85 : Vaneck 2 h, Maïmouna 2 h 30 | NR |
-| #52 | 23/10 | NR | non estimée | - | NR |
-| #53 | NR | NR | 16 (P) | - | NR |
-| #56 | NR | NR | NR | - | NR |
-| #91 | 18/10 | NR | NR | - | NR |
-| #92 | 18/10 | NR | NR | - | NR |
-| #93 | 18/10 | NR | NR | - | NR |
-| #94 | NR | NR | NR | - | NR |
-| #95 | NR | NR | NR | - | NR |
+| #52 | 23/10 | NR | non estimée | Vaneck : 4 h (déclaré le 22/11) | NR |
+| #53 | NR | NR | 16 (P) | Vaneck : 10 h (déclaré le 22/11) | NR |
+| #56 | NR | NR | NR | Vaneck : 4 h (déclaré le 22/11) | NR |
+| #91 | 18/10 | NR | NR | Jibril : ~3 h (estimation rétrospective) | NR |
+| #92 | 18/10 | NR | NR | Jibril : ~3 h (estimation rétrospective) | NR |
+| #93 | 18/10 | NR | NR | Jibril : ~5 h (estimation rétrospective) | NR |
+| #94 | NR | NR | NR | Jibril : ~6 h (estimation rétrospective) | NR |
+| #95 | NR | NR | NR | Jibril : ~4 h (estimation rétrospective) | NR |
 | #96 | NR | NR | NR | - | NR |
 | #97 | NR | NR | NR | - | NR |
 | #98 | NR | NR | NR | - | NR |
 | #107 | 23/10 | NR | NR | - | NR |
-| #111 | NR | NR | 24, cumulées pour Vaneck et Maïmouna (28/10) | - | NR |
-| #112 | NR | NR | NR | - | NR |
-| #113 | NR | NR | NR | - | NR |
-| #114 | NR | NR | NR | - | NR |
+| #111 | NR | NR | 24, cumulées pour Vaneck et Maïmouna (28/10) | Vaneck : 24 h (déclaré le 22/11) | NR |
+| #112 | NR | NR | NR | Vaneck : 2 h (déclaré le 22/11) | NR |
+| #113 | NR | NR | NR | Vaneck : 6 h (déclaré le 22/11) | NR |
+| #114 | NR | NR | NR | Vaneck : 5 h (déclaré le 22/11) | NR |
 
 ### Provenance des valeurs connues
 
@@ -196,8 +233,58 @@ Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, m�
 - #53 : 16 h cumulées provisoires pour Vaneck et Jibril, inscrites le 13/10 à la demande de Jibril. Proposition assistée par IA : 4 h d'analyse et de choix UI/UX, 8 h de réalisation, 4 h de contrôles et documentation. Aucune répartition individuelle imposée ; à réviser après le cadrage et à distinguer du reste à faire si le travail a commencé.
 
 - #52 : travail commencé le 23/10, à l'ouverture de la PR #108 qui en écrit le protocole ; aucune estimation n'avait été déclarée avant, dans le ticket ni dans ses commentaires (vérifié le 26/10).
+- #7, #35, #48, #52, #53, #56, #111, #112, #113 et #114 : charges réelles individuelles déclarées par Vaneck le 22/11, en heures de travail actif. Elles ne couvrent que sa part : les autres membres de ces tickets ne sont pas comptés. Aucune estimation n'est reconstruite ; les écarts restent NR, faute d'estimation individuelle comparable (pour #53 et #111, les estimations sont cumulées pour deux membres, et celle de #53 est provisoire). Pour les tickets encore ouverts, la valeur est arrêtée au 22/11.
 
 Les charges déclarées cumulées pour plusieurs membres ne sont pas divisées automatiquement. Les durées d'exécution d'un modèle ou d'un script ne sont pas des charges de travail humain.
+
+- #91 à #95 : estimations rétrospectives de travail actif proposées avec l'assistance de Codex et validées par Jibril le 23/11 ; 3 h, 3 h, 5 h, 6 h et 4 h, soit environ 21 h. Elles ne proviennent pas d'un suivi chronométré. Les estimations initiales des tickets restent inchangées et les écarts ne sont pas calculés ici ; #95 couvre le support livré, pas la préparation ultérieure du pilote #145. Jibril accepte ces valeurs comme charges approximatives déclarées et les cinq tickets sont fermés le 23/11.
+
+### Autres charges individuelles estimées par Jibril
+
+Propositions rétrospectives divisées par deux à la demande de Jibril, puis validées par lui le 23/11/2026. Ce sont des approximations de travail humain actif, non des temps chronométrés ; elles portent sur sa part uniquement. Les durées passives sont exclues. Pour les tickets ouverts, ces valeurs constituent un relevé partiel, pas une clôture ni un total d'équipe. Les estimations initiales et charges des autres membres restent inchangées.
+
+| Ticket | Part de Jibril estimée | Périmètre de la proposition |
+|---|---:|---|
+| #31 | ~2 h | Première inférence locale |
+| #51 | ~5 h | Socle RAG et PR #85 |
+| #52 | ~3 h | Calibration, verrou et mesure avant |
+| #53 | ~2 h 30 | Analyse UI/UX et relectures |
+| #56 | ~2 h | Relecture CDTN et transmission |
+| #107 | ~2 h | Faisabilité QLoRA et suivi de l'adaptation |
+| #112 | ~1 h 30 | Contributions aux supports J3 |
+| #96 | ~2 h | Préparation du lanceur #144, sans évaluation réelle |
+| #163 | ~1 h 30 | Relecture et contre-relecture de #166 |
+| #171 | ~1 h | Relecture de #174 |
+| #172 | ~1 h | Relecture de #175 et proposition de correctif |
+| #176 | ~1 h | Relecture de #177 et essais sur le Legion |
+
+Les ~21 h de #91 à #95 ont été déclarées séparément dans le tableau principal : elles ne sont pas reprises dans ce tableau. Les 18 h collectives de #44 demeurent inchangées et ne sont pas réparties. Le tableau principal reste un relevé historique : ses cases vides ou NR ne contredisent pas ce complément daté. Aucun écart entre estimation et réel n'est calculé à partir de périmètres individuels et collectifs différents.
+
+### Charges individuelles déclarées par Rémy
+
+Relevé de Rémy transmis par Jibril le 23/11/2026, en heures de travail humain actif. Ce tableau conserve sa part individuelle ; il ne représente pas nécessairement la charge totale du ticket. Pour les tickets encore ouverts, il s'agit d'un relevé et non d'une clôture. Les lignes historiques et les écarts du tableau principal sont conservés jusqu'à consolidation des périmètres comparables.
+
+| Ticket | Réel déclaré par Rémy | Périmètre déclaré |
+|---|---:|---|
+| #1 | 0,5 h | Création du dépôt |
+| #4 | 2 h | Choix des embeddings |
+| #29 | 0,5 h | Soutien ; distinct des 1,5 h cumulées de Vaneck et Maïmouna déjà inscrites |
+| #30 | 4 h | Index précalculé et PIAF |
+| #31 | 3 h | Première inférence Qwen / Ollama |
+| #34 | 1 h | Régularisation de la session 9 du journal |
+| #45 | 3,5 h | Chaîne de mesure PIAF ; valeur déjà inscrite au tableau principal, non comptée deux fois |
+| #46 | 2 h | Revue de la mesure et PR #73 |
+| #47 | 3,5 h | Références TF-IDF / BM25 ; valeur déjà inscrite au tableau principal, non comptée deux fois |
+| #48 | 1,5 h | Soutien à l'intégration de la recherche front |
+| #49 | 14 h | 6 h paires et pipeline, 6,5 h export et contrôles, 1,5 h audits ; hors calculs passifs |
+| #50 | 1 h | Revue de parité de la PR #78 |
+| #51 | 2,5 h | Index commun, récupération et citations |
+| #107 | 4 h | Revues de faisabilité, séparation et runtime |
+| #112 | 8,5 h | Supports J3 et retours de relecture |
+| #113 | 6,5 h | Fiches outils et contribution au rapport |
+| #114 / transverse | 3 h | Revues J4 des PR #179, #168 et #162 ; périmètre transversal déclaré, pas de répartition supplémentaire par ticket |
+
+Le relevé des six postes #49, #51, #107, #112, #113 et revues J4 totalise 38,5 h selon Rémy ; il exclut les autres tickets de ce tableau. Ce total n'est pas une charge d'équipe. Pour #49, la charge déclarée ne confirme pas à elle seule la présentation à l'équipe mentionnée dans le ticket.
 
 ## Points opérationnels à suivre
 
@@ -237,6 +324,8 @@ Les dates de tenue, les participants et les décisions proviennent des comptes r
 | 30/09 | Weekly 3, #9 | NR | NR | Issue fermée, mais le compte rendu reste au stade du modèle : décisions et récapitulatif non renseignés. |
 | 07/10 | Weekly 4, #10 | NR | NR | Décisions documentées par Mahé en commentaire : protocole de #46, traitement des mesures exploratoires de #49, seuil CDTN, mesure après relecture, approbation obligatoire, noreply, suivi des charges. Volet A attendu le 18/10. |
 | 28/10 | Weekly 7, #13 | sans objet | sans objet | Réunion remplacée par un suivi écrit, rédigé le 29/10 par Jibril dans le ticket, sans décision. Décisions prises le 30/10 par Mahé (machines, Agent0, #49, Weekly 9), révisables au Weekly 8. |
+| 04/11 | Weekly 8, #14 | sans objet | sans objet | Réunion non tenue selon Mahé le 07/11 ; deux points d'étape sans décision consignée. Relevé complété et ticket clôturé le 16/11. |
+| 11/11 | Weekly 9, #15 | sans objet | sans objet | Remplacé par un suivi écrit prévu le 12/11, rédigé le 16/11. Mesures faites le 11/11 ; condition de repli du 12/11 non réunie. |
 | 21/10 | Weekly 6, #12 | sans objet | sans objet | Réunion non tenue. Consigné le 26/10 par Jibril dans le ticket, avec un état des lieux rétrospectif au 21/10, sans présence ni décision inventée ; ticket fermé comme non planifié. |
 
 La revue de #69 demande « non estimée » pour #44 ; cette précision est retenue malgré la case vide mentionnée dans le commentaire initial du Weekly 4. Les comptes rendus de #6 et #26 ont été rétablis : aucune nouvelle réouverture ou reconstruction n'est nécessaire ici.

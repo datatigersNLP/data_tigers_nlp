@@ -8,6 +8,11 @@ Index des réunions de l'équipe et de leurs supports. Le rapport final doit tra
 | 19/09/2026 | Weekly 2, réunion de cadrage | #6 | `03_SUPPORT_REUNION_J2.md` et son PDF | cas A3 et B1, environnement, corpus, machine cible, répartition ; consignées dans `docs/jalons/J2_decisions.md`, puis dans le rapport J2 |
 | 23/09/2026 | Réunion d'avancement | #26 | aucun | cinq premières actions de la section 5.6 du rapport J2 confirmées, responsables et échéances révisés (tickets #27 à #31) |
 | 30/09/2026 | Weekly 3 | #9 | aucun | compte rendu à compléter dans #9 |
+| 28/10/2026 (date prévue) | Weekly 7, suivi écrit | [#13](https://github.com/datatigersNLP/data_tigers_nlp/issues/13) | compte rendu dans le ticket, complété le 16/11 | Pas de réunion synchrone. Relevé du 29/10 et décisions de Mahé du 30/10 distingués. |
+| 04/11/2026 (date prévue) | Weekly 8 non tenu, points d'étape | [#14](https://github.com/datatigersNLP/data_tigers_nlp/issues/14) | relevé rétrospectif du 16/11 dans le ticket | Non-tenue confirmée par Mahé le 07/11. Discord et point oral sans décision consignée ; suites écrites attribuées au lead. |
+| 11/11/2026 (date prévue) | Weekly 9 remplacé par suivi écrit | [#15](https://github.com/datatigersNLP/data_tigers_nlp/issues/15) | prévu le 12/11, rédigé le 16/11 | Mesures du 11/11 antérieures au point d'arrêt du 12/11 ; aucune décision conjointe ou présence le 12/11 inventée. |
+
+**Complément du 16 novembre 2026.** Les dates ci-dessus sont les dates prévues des Weeklys, pas des preuves de réunion tenue. Les suivis #13/#14/#15 ont été complétés et clôturés le 16/11. Les tâches opérationnelles liées gardent leur propre état ; les durées de travail des comptes rendus ne sont pas reconstituées.
 
 ## Le support du 19/09
 
