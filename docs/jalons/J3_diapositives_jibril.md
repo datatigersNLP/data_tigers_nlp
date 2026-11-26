@@ -62,36 +62,37 @@ J'ai aussi développé Agent0 Light pour proposer des questions complémentaires
 
 ## Diapositive 8 : contribution orale de Jibril
 
-**Contenu et chiffres à afficher.** La source commune reste la section « Diapositive 8 » de `docs/jalons/J3_diapositives_mahe.md`, complétée dans la même PR. Rémy peut y reprendre le tableau et Vaneck le mettre en forme. Le tableau n'est pas recopié ici.
+**Contenu et chiffres à afficher.** La source commune reste la section « Diapositive 8 » de `docs/jalons/J3_diapositives_mahe.md`. Rémy peut y reprendre le tableau T/adapté et Vaneck le mettre en forme. Le tableau n'est pas recopié ici.
 
-**Répartition proposée.** Mahé présente le protocole et la comparaison avant/après prévue. Jibril présente l'exécution sur le Legion et ce que montre la mesure avant. Cette répartition orale reste à convenir avec Mahé.
+**Répartition proposée.** Mahé présente le protocole et l'adaptation. Jibril présente le verrou, la distinction entre les machines, les résultats principaux et leurs limites. Cette répartition orale reste à convenir avec Mahé.
 
 **Texte oral proposé.**
 
-J'ai exécuté la mesure avant le 9 novembre sur le Legion, avec les 97 questions de test. Le verrou empêche de modifier les éléments figés avant la mesure. Mahé a vérifié les fichiers et retrouvé les mêmes métriques. B2 s'abstient sur 20 des 24 questions hors corpus. Pour comprendre ses 45 abstentions sur les questions du corpus, il faut regarder les passages fournis : 28 surviennent sans passage pertinent selon D4. Parmi les 33 questions avec un passage pertinent, 17 reçoivent encore une abstention. Ce diagnostic distingue les difficultés de récupération des refus malgré un contexte pertinent, avec les limites de la règle D4. La suite se fera sur le Mac de Mahé : le modèle adapté sera comparé au témoin T sur cette même machine. La mesure du Legion restera descriptive, sans comparaison directe avec les résultats du Mac.
+J'ai réalisé la mesure avant sur le Legion, avec le protocole verrouillé. Mahé l'a vérifiée indépendamment. Pour la comparaison de l'adaptation, il a ensuite mesuré le témoin T et le modèle adapté sur son Mac, sur les mêmes questions. On évite ainsi de mélanger un effet de modèle et un changement de machine. Le résultat principal concerne les citations pertinentes : on passe de 10 à 18 questions sur 72, soit un gain de 11,1 points. L'intervalle prévu au protocole reste au-dessus de zéro, donc l'amélioration est démontrée sur ce critère. Hors corpus, les deux modèles s'abstiennent sur 20 questions sur 24. Ce taux identique ne prouve pas l'absence de dégradation, car l'intervalle reste large. Enfin, citer un passage pertinent ne garantit pas que toute la réponse soit juste. La relecture humaine à l'aveugle reste nécessaire.
 
 **Repères pour les questions du jury.**
 
-- Les 71 et 72 questions dans les dénominateurs de B1 et B2 viennent des erreurs techniques exclues. Le jeu compte toujours 73 questions du corpus et 24 hors corpus.
-- B2 change la consigne et ajoute le seuil par rapport à B1. Cette mesure ne permet pas d'attribuer tout l'écart au seul seuil.
-- « Passage pertinent » signifie pertinent selon la règle D4. Une citation pertinente ne prouve pas que chaque affirmation de la réponse est juste.
-- M2 reste 45/72 par rapport au corpus entier. Le diagnostic conditionnel au contexte est distinct : 28 de ces abstentions sans passage pertinent selon D4, et 17/33 avec passage pertinent (16 du modèle, une du seuil). D4 ne garantit pas qu'aucune autre réponse existe dans les contextes classés sans passage pertinent.
-- Le seuil déclenche 11 abstentions sur 65, les 54 autres viennent du modèle. Parmi les questions du corpus, il déclenche deux abstentions.
-- La mesure avant du Legion reste descriptive. L'analyse principale compare B2 adapté à B2 de T sur le Mac, avec des intervalles à 97,5 % sur M1 et M4, conformément à l'amendement M1 du 10 novembre dans #52.
-- Le réglage reste celui du protocole gelé. Nous ne déplaçons pas le seuil pour améliorer les résultats du lot de test.
+- Le protocole, les scripts, le jeu, le seuil et l'index sont contrôlés par dix empreintes. L'amendement M1 précise la machine de mesure sans modifier les fichiers gelés.
+- La comparaison principale porte sur B2 adapté contre B2 de T, sur le Mac. La mesure du Legion reste descriptive et n'entre pas dans cet écart.
+- Les 72 questions du corpus sont communes aux deux états, avec Q088 exclue pour une erreur technique de décompte des tokens. Les 24 questions hors corpus restent dans la comparaison.
+- M4 : huit questions gagnent une citation pertinente et aucune n'en perd. Le gain vaut +11,1 points, IC à 97,5 % [+2,1 ; +23,8], p exact de McNemar = 0,0078.
+- M1 : 20/24 dans les deux phases, écart nul, IC à 97,5 % [−20,5 ; +20,5]. Aucune amélioration ni absence de dégradation n'est démontrée.
+- M2 reste descriptif : 55,6 % d'abstentions dans le corpus pour l'adapté contre 70,8 % pour T. Cela reste plus de la moitié des questions. Le dénominateur porte sur le corpus entier, pas seulement sur les contextes pertinents.
+- Le diagnostic 28/45 et 17/33 décrit la mesure avant du Legion. Il n'est pas transposé aux résultats du Mac.
+- La récupération utilisée reste E5 seul avec cinq passages. Aucun gain de la récupération v2 n'est attribué à l'adaptation.
+- Maïmouna et Vaneck doivent relire à l'aveugle 20 réponses citées de T et 20 de l'adapté. M4 ne remplace pas cette vérification du sens.
 
-**Sources.** Section « Diapositive 8 » de `docs/jalons/J3_diapositives_mahe.md` ; protocole 06 ; journal de mesure du 9 novembre dans la PR #142. Les fichiers bruts et l'archive restent hors dépôt.
+**Sources.** Section « Diapositive 8 » de `docs/jalons/J3_diapositives_mahe.md` ; protocole 06 et amendement M1 ; [résultats publiés par Mahé le 11 novembre](https://github.com/datatigersNLP/data_tigers_nlp/issues/52#issuecomment-6797300311). Les fichiers bruts restent hors dépôt. Aucun recalcul de ces fichiers privés n'est revendiqué pour ce support.
 
-## Intégration et état documenté au 10 novembre
+## Intégration et état documenté au 11 novembre
 
-- Pour la diapositive 5 de la PR #134, reprendre la section correspondante ci-dessus et son texte oral.
-- Pour la diapositive 8, renvoyer à la source commune de Mahé et utiliser le texte oral proposé ici, afin de garder un seul tableau de résultats à maintenir.
-- Les deux grilles du lot v2b ont été reçues. Mahé a publié le 10 novembre une décision d'acceptation sans arbitrage commun, en retenant la sévérité maximale case par case (3 faux sur 30). Cette décision déroge à l'arbitrage initialement prévu et conserve le risque déclaré sur les abstentions injustifiées. Le lancement du 10 novembre a été interrompu avant toute sauvegarde et tout manifeste, puis reporté au 11 novembre (#107).
-- Les PR #131 et #130 sont fusionnées. Mahé confirme la réception des sept fichiers de la mesure avant et les mêmes métriques après recalcul indépendant. Le ZIP avait été décompressé automatiquement : son empreinte globale n'a pas été recalculée à réception.
-- Vaneck a corrigé le verrou du serveur et mis Vite à jour dans #128, au commit 8ba4524. La contre-relecture du 10 novembre approuve ces corrections après tests automatisés et reproduction du cas HTTP, sans inférence réelle. L'essai de démonstration sur la machine de présentation reste à réaliser.
-- #141 a été fusionnée par Mahé le 10 novembre. La contre-relecture du 10 novembre ne relève pas d'incompatibilité bloquante sur le format du contexte, les sources et le budget, avec 19 tests réussis et des contrôles complémentaires sur fixtures. Le branchement à la démonstration et le contrôle complet de l'abstention restent distincts ; aucun gain de récupération n'est assimilé à un gain de qualité des réponses.
-- Les phases de mesure restantes se font sur le Mac de Mahé. T ne sera pas transféré et Jibril ne lance plus de mesure (#52, amendement M1).
-- Les travaux Agent0 #144 et #145 restent en attente de revue après le 12 novembre. Le passage de la diapositive 5 présente le socle historique livré et ses limites, sans annoncer ce lanceur préparatoire comme validé.
-- Les supports sont attendus le 13 novembre selon #112. La date officielle de J3 reste à confirmer par écrit dans #8.
+- #142 et #143 sont fusionnées dans dev, sans nouveau commit sur leurs branches approuvées. Cette actualisation relève d'une nouvelle PR.
+- Pour la diapositive 5 de #134, reprendre la section ci-dessus. Son contenu technique et le bilan historique Agent0 restent inchangés.
+- Pour la diapositive 8, reprendre le tableau principal T/adapté de la source commune. Le tableau du Legion devient un repère historique dans les notes.
+- Mahé rapporte l'entraînement complet du lot v2b le 11 novembre, l'import des deux modèles et les mesures T/adapté. Sources : [entraînement #107](https://github.com/datatigersNLP/data_tigers_nlp/issues/107#issuecomment-6795651678) et #52. La validation indépendante du manifeste et les verdicts humains à l'aveugle ne sont pas attestés par cette contribution.
+- #128 et #141 sont fusionnées. Le branchement de la récupération v2 à la démonstration et la validation réelle de celle-ci restent distincts des résultats de l'adaptation.
+- #144 et #145 ont été relues et approuvées par Mahé le 11 novembre. Il confirme 184 tests du lanceur avec les versions du verrou et l'absence des 25 fiches du pilote dans les cinq lots privés de Qwen. Le contrôle des données d'entraînement de l'encodeur reste ouvert. Ces constats n'attestent ni un pilote exécuté ni la validation humaine des futurs candidats.
+- Toutes les mesures restantes relèvent de Mahé sur le Mac. Jibril n'a aucune mesure à lancer et T ne sera pas transféré.
+- Les supports sont attendus le 13 novembre selon #112. La date officielle du jalon J3 reste à confirmer par écrit dans #8.
 
-**Relectures attendues.** Jibril sur son texte et les formulations techniques, Mahé sur les résultats et la diapositive 8, puis Rémy et Vaneck pour l'assemblage et la mise en forme.
+**Relectures attendues.** Jibril sur son texte oral, Mahé sur les résultats et la répartition de parole, puis Rémy et Vaneck pour l'assemblage et la mise en forme.
