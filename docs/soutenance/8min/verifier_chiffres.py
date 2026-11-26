@@ -53,7 +53,8 @@ def main(argv=None) -> int:
     g = json.loads((D / "evaluation/recuperation/resultats_grille.json").read_text(encoding="utf-8"))["configurations"]
     conf = json.loads((D / "evaluation/recuperation/confirmation/resultats.json").read_text(encoding="utf-8"))["principal"]
     bb = json.loads((D / "evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json").read_text(encoding="utf-8"))
-    e3 = json.loads((D / "evaluation/protocole_10/famille_e_a3_20261121T162956Z.json").read_text(encoding="utf-8"))["candidats"]["v3_C"]
+    ea3 = json.loads((D / "evaluation/protocole_10/famille_e_a3_20261121T162956Z.json").read_text(encoding="utf-8"))["candidats"]
+    e3, ea3v2t = ea3["v3_C"], ea3["v2_T"]
     r10 = doc_premier("docs/etudes/evaluation/10_resultats.md", ("origin/docs/171-protocole-10", "origin/dev"))
     r05 = doc("docs/etudes/evaluation/05_resultats_ajustement.md")
     rapport = doc("docs/rapport/RAPPORT_FINAL.md")
@@ -104,6 +105,19 @@ def main(argv=None) -> int:
         ("2 289 et 2 420", "2 289 et 2 420" if "2 289 paires d'entraînement" in r10 and "2 420 paires d'entraînement" in r10 else None, "10_resultats, sections 7 et 7 bis"),
         ("12,4 points", f"{pc(e3['jeu_v2']['ecart_recall5']['ecart'])} points", "famille E, A3, v3-C, jeu v2"),
         ("recule de 5,5 points", f"recule de {pc(-e3['jeu_v1_test']['ecart_recall5']['ecart'])} points", "famille E, A3, v3-C, lot de test"),
+        # annexes (26/11) : mesure de bout en bout (A3) et encodeurs synthétiques (A5)
+        *[(f"{e['M' + m]['succes']} sur {e['M' + m]['effectif']}", f"{e['M' + m]['succes']} sur {e['M' + m]['effectif']}"
+           if "M" + m in e else None, f"bout en bout, {nom}, M{m}")
+          for nom, e in bb["etats"].items() for m in "1234"],
+        ("10,1 %", pc(bb["etats"]["R1_temoin"]["M4"]["proportion"]) + " %", "bout en bout, R1 témoin, M4"),
+        # ligne entière de l'annexe A3 : les deux états de R1 ont la même médiane arrondie, un contrôle de présence serait ambigu
+        ("Durée par question, médiane 4,9 s 11,8 s 11,8 s",
+         "Durée par question, médiane " + " ".join(f"{bb['etats'][k]['descriptif']['duree_totale_mediane_ns'] / 1e9:.1f}".replace(".", ",") + " s"
+                                                  for k in ("B2_adapte", "R1_adapte", "R1_temoin")), "bout en bout, durées médianes"),
+        ("62,8 %", pc(ea3v2t["jeu_v2"]["v2_T"]["recall@5"]) + " %", "famille E, v2-T, jeu v2"),
+        ("69,4 %", pc(e3["jeu_v2"]["v3_C"]["recall@5"]) + " %", "famille E, v3-C, jeu v2"),
+        ("70,0 %", pc(e3["cdtn"]["v3_C"]["recall@5"]) + " %", "famille E, v3-C, CDTN"),
+        ("57,5 %", pc(e3["jeu_v1_test"]["v3_C"]["recall@5"]) + " %", "famille E, v3-C, lot de test"),
     ]
     ecarts = 0
     for ecrit, source, nom in controles:

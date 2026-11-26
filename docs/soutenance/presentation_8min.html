@@ -242,6 +242,32 @@ table.compare { border-collapse: collapse; width: 100%; font-size: 23px; }
 .compare tbody th { color: var(--gris); font-weight: 650; width: 170px; }
 
 /* fin */
+/* annexes : hors des 8 minutes, consultées selon les questions */
+.annexe { padding: 84px 128px 140px; }
+.annexe .titre { font-size: 50px; margin: 0 0 26px; }
+.annexe .intro { font-size: 27px; line-height: 1.42; color: var(--texte2); margin: 0 0 22px; max-width: 1560px; }
+.annexe .liste-faits { gap: 12px; margin: 0 0 18px; }
+.annexe .liste-faits li { font-size: 27px; line-height: 1.38; }
+.annexe .liste-faits li b { color: var(--encre); }
+.annexe .deux-col { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; min-height: 0; }
+.annexe .deux-col h3 { font-size: 28px; margin: 0 0 12px; }
+table.tab { border-collapse: collapse; width: 100%; font-size: 25px; margin: 0 0 22px; }
+.tab th, .tab td { text-align: left; padding: 9px 14px; border-bottom: 2px solid var(--filet); vertical-align: top; line-height: 1.33; }
+.tab thead th { font-size: 23px; border-bottom: 4px solid var(--encre); color: var(--encre); }
+.tab td.n, .tab th.n { text-align: right; white-space: nowrap; }
+.tab tbody th { font-weight: 600; color: var(--texte2); }
+.tab.petit { font-size: 23px; }
+.tab .q { font-weight: 600; color: var(--encre); }
+.def { margin: auto 0 0; font-size: 22px; line-height: 1.45; color: var(--texte2); background: var(--papier-2); padding: 14px 20px; border-radius: 6px; }
+.def b { color: var(--encre); }
+.sommaire { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 64px; }
+.sommaire button { font: inherit; font-size: 27px; text-align: left; background: none; border: 0; border-bottom: 2px solid var(--filet);
+  padding: 11px 0; cursor: pointer; color: var(--encre); display: flex; gap: 18px; align-items: baseline; }
+.sommaire button:hover, .sommaire button:focus-visible { color: var(--vert); outline: none; border-bottom-color: var(--vert); }
+.sommaire button b { color: var(--vert); min-width: 44px; font-weight: 720; }
+.glossaire { columns: 3; column-gap: 48px; font-size: 20px; line-height: 1.38; }
+.glossaire p { margin: 0 0 9px; break-inside: avoid; color: var(--texte2); }
+.glossaire b { color: var(--encre); }
 .fin { flex-direction: row; align-items: center; gap: 110px; background: var(--nuit); color: #f3efe8; }
 .fin .tigre { width: 320px; height: 320px; flex: none; }
 .fin h2 { font-size: 104px; line-height: 1; margin: 0 0 30px; letter-spacing: -.03em; }
@@ -281,7 +307,7 @@ aside.texte-a-dire { display: none; }
 <main class="toile" id="toile" aria-roledescription="présentation">
 
 <!-- 1. Couverture -->
-<section class="diapo couverture" data-duree="15" aria-label="Couverture">
+<section class="diapo couverture" data-duree="20" aria-label="Couverture">
   <img class="tigre pixel" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48dGl0bGU+RGF0YSBUaWdlcnM8L3RpdGxlPjxwYXRoIGZpbGw9IiNGRkY0RDgiIGQ9Ik02IDIyaDl2MWgtOXpNMTcgMjJoOXYxaC05ek02IDIzaDF2MWgtMXpNMjUgMjNoMXYxaC0xek02IDI0aDl2MWgtOXpNMTcgMjRoOXYxaC05ek02IDI1aDF2MWgtMXpNMTMgMjVoMXYxaC0xek0xOCAyNWgxdjFoLTF6TTI0IDI1aDJ2MWgtMnpNNiAyNmg5djFoLTl6TTE3IDI2aDl2MWgtOXpNNiAyN2gxdjFoLTF6TTI1IDI3aDF2MWgtMXoiLz48cGF0aCBmaWxsPSIjMUUxOTE2IiBkPSJNOSAxMGgydjFoLTJ6TTIxIDEwaDJ2MWgtMnpNMTUgMTJoMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiMxNzYwNEEiIGQ9Ik01IDI3aDF2MWgtMXpNMjYgMjdoMXYxaC0xek02IDI4aDl2MWgtOXpNMTcgMjhoOXYxaC05eiIvPjxwYXRoIGZpbGw9IiMyQTFGMUEiIGQ9Ik00IDFoM3YxaC0zek0yNSAxaDN2MWgtM3pNMyAyaDF2MWgtMXpNNyAyaDF2MWgtMXpNMjQgMmgxdjFoLTF6TTI4IDJoMXYxaC0xek0zIDNoMXYxaC0xek04IDNoMXYxaC0xek0yMyAzaDF2MWgtMXpNMjggM2gxdjFoLTF6TTMgNGgxdjFoLTF6TTggNGgxNnYxaC0xNnpNMjggNGgxdjFoLTF6TTIgNWgxdjFoLTF6TTEyIDVoMXYxaC0xek0xNSA1aDJ2MWgtMnpNMTkgNWgxdjFoLTF6TTI5IDVoMXYxaC0xek0yIDZoMXYxaC0xek0xMiA2aDF2MWgtMXpNMTUgNmgydjFoLTJ6TTE5IDZoMXYxaC0xek0yOSA2aDF2MWgtMXpNMiA3aDN2MWgtM3pNMTUgN2gydjFoLTJ6TTI3IDdoM3YxaC0zek0yIDhoMXYxaC0xek00IDhoMnYxaC0yek0yNiA4aDJ2MWgtMnpNMjkgOGgxdjFoLTF6TTIgOWgxdjFoLTF6TTkgOWgydjFoLTJ6TTIxIDloMnYxaC0yek0yOSA5aDF2MWgtMXpNMiAxMGgxdjFoLTF6TTggMTBoMXYxaC0xek0xMSAxMGgxdjFoLTF6TTIwIDEwaDF2MWgtMXpNMjMgMTBoMXYxaC0xek0yOSAxMGgxdjFoLTF6TTIgMTFoMXYxaC0xek0yOSAxMWgxdjFoLTF6TTIgMTJoMXYxaC0xek0xNCAxMmgxdjFoLTF6TTE3IDEyaDF2MWgtMXpNMjkgMTJoMXYxaC0xek0yIDEzaDF2MWgtMXpNMTQgMTNoMXYxaC0xek0xNyAxM2gxdjFoLTF6TTI5IDEzaDF2MWgtMXpNMyAxNGgxdjFoLTF6TTE1IDE0aDJ2MWgtMnpNMjggMTRoMXYxaC0xek00IDE1aDF2MWgtMXpNMjcgMTVoMXYxaC0xek01IDE2aDIydjFoLTIyek00IDE3aDF2MWgtMXpNMTIgMTdoMXYxaC0xek0xOSAxN2gxdjFoLTF6TTI3IDE3aDF2MWgtMXpNMyAxOGgxdjFoLTF6TTE1IDE4aDJ2MWgtMnpNMjggMThoMXYxaC0xek0zIDE5aDF2MWgtMXpNMTUgMTloMnYxaC0yek0yOCAxOWgxdjFoLTF6TTMgMjBoMXYxaC0xek0yOCAyMGgxdjFoLTF6TTMgMjFoMXYxaC0xek01IDIxaDIydjFoLTIyek0yOCAyMWgxdjFoLTF6TTMgMjJoMXYxaC0xek01IDIyaDF2MWgtMXpNMTUgMjJoMnYxaC0yek0yNiAyMmgxdjFoLTF6TTI4IDIyaDF2MWgtMXpNMiAyM2gxdjFoLTF6TTUgMjNoMXYxaC0xek0xNSAyM2gydjFoLTJ6TTI2IDIzaDF2MWgtMXpNMjkgMjNoMXYxaC0xek0yIDI0aDF2MWgtMXpNNSAyNGgxdjFoLTF6TTE1IDI0aDJ2MWgtMnpNMjYgMjRoMXYxaC0xek0yOSAyNGgxdjFoLTF6TTIgMjVoMXYxaC0xek01IDI1aDF2MWgtMXpNMTUgMjVoMnYxaC0yek0yNiAyNWgxdjFoLTF6TTI5IDI1aDF2MWgtMXpNMiAyNmgxdjFoLTF6TTUgMjZoMXYxaC0xek0xNSAyNmgydjFoLTJ6TTI2IDI2aDF2MWgtMXpNMjkgMjZoMXYxaC0xek0zIDI3aDJ2MWgtMnpNMTUgMjdoMnYxaC0yek0yNyAyN2gydjFoLTJ6TTMgMjhoMXYxaC0xek0xNSAyOGgydjFoLTJ6TTI4IDI4aDF2MWgtMXpNMyAyOWgxdjFoLTF6TTYgMjloMjB2MWgtMjB6TTI4IDI5aDF2MWgtMXpNMyAzMGgxdjFoLTF6TTI4IDMwaDF2MWgtMXpNMyAzMWgyNnYxaC0yNnoiLz48cGF0aCBmaWxsPSIjQTA4QTYzIiBkPSJNNyAyM2g3djFoLTd6TTE4IDIzaDd2MWgtN3pNNyAyNWg2djFoLTZ6TTE5IDI1aDV2MWgtNXpNNyAyN2g2djFoLTZ6TTE5IDI3aDZ2MWgtNnoiLz48cGF0aCBmaWxsPSIjNUIzQTMzIiBkPSJNMTUgMTFoMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiNGMzlBMzMiIGQ9Ik01IDJoMnYxaC0yek0yNSAyaDJ2MWgtMnpNNCAzaDF2MWgtMXpNNyAzaDF2MWgtMXpNMjQgM2gxdjFoLTF6TTI3IDNoMXYxaC0xek00IDRoMXYxaC0xek03IDRoMXYxaC0xek0yNCA0aDF2MWgtMXpNMjcgNGgxdjFoLTF6TTUgNWg3djFoLTd6TTEzIDVoMnYxaC0yek0xNyA1aDJ2MWgtMnpNMjAgNWg3djFoLTd6TTQgNmg4djFoLTh6TTEzIDZoMnYxaC0yek0xNyA2aDJ2MWgtMnpNMjAgNmg4djFoLTh6TTUgN2gxMHYxaC0xMHpNMTcgN2gxMHYxaC0xMHpNMyA4aDF2MWgtMXpNNiA4aDIwdjFoLTIwek0yOCA4aDF2MWgtMXpNMyA5aDZ2MWgtNnpNMTEgOWgxMHYxaC0xMHpNMjMgOWg2djFoLTZ6TTUgMTBoM3YxaC0zek0xMiAxMGg4djFoLTh6TTI0IDEwaDN2MWgtM3pNNiAxMWg3djFoLTd6TTE5IDExaDd2MWgtN3pNNyAxMmg0djFoLTR6TTIxIDEyaDR2MWgtNHpNOCAxM2gzdjFoLTN6TTIxIDEzaDN2MWgtM3pNNiAxNGgydjFoLTJ6TTI0IDE0aDJ2MWgtMnpNOCAxNWgydjFoLTJ6TTIyIDE1aDJ2MWgtMnpNMyAyM2gydjFoLTJ6TTI3IDIzaDJ2MWgtMnpNMyAyNGgydjFoLTJ6TTI3IDI0aDJ2MWgtMnpNNCAyNWgxdjFoLTF6TTI3IDI1aDF2MWgtMXpNMyAyNmgydjFoLTJ6TTI3IDI2aDJ2MWgtMnoiLz48cGF0aCBmaWxsPSIjRjRBM0E4IiBkPSJNNSAzaDJ2MWgtMnpNMjUgM2gydjFoLTJ6TTUgNGgydjFoLTJ6TTI1IDRoMnYxaC0yek0xNSAxM2gydjFoLTJ6Ii8+PHBhdGggZmlsbD0iIzJCMkYzOCIgZD0iTTcgMTdoNXYxaC01ek0yMCAxN2g1djFoLTV6TTYgMThoN3YxaC03ek0xOSAxOGg3djFoLTd6TTUgMTloOHYxaC04ek0xOSAxOWg4djFoLTh6TTQgMjBoOXYxaC05ek0xNSAyMGgydjFoLTJ6TTE5IDIwaDl2MWgtOXpNNCAyMWgxdjFoLTF6TTI3IDIxaDF2MWgtMXpNNCAyMmgxdjFoLTF6TTI3IDIyaDF2MWgtMXpNNCAyOGgxdjFoLTF6TTI3IDI4aDF2MWgtMXpNNCAyOWgydjFoLTJ6TTI2IDI5aDJ2MWgtMnpNNSAzMGgyMnYxaC0yMnoiLz48cGF0aCBmaWxsPSIjRkZGOEVDIiBkPSJNMyAxMGgydjFoLTJ6TTI3IDEwaDJ2MWgtMnpNMyAxMWgzdjFoLTN6TTEzIDExaDJ2MWgtMnpNMTcgMTFoMnYxaC0yek0yNiAxMWgzdjFoLTN6TTMgMTJoNHYxaC00ek0xMSAxMmgzdjFoLTN6TTE4IDEyaDN2MWgtM3pNMjUgMTJoNHYxaC00ek00IDEzaDR2MWgtNHpNMTEgMTNoM3YxaC0zek0xOCAxM2gzdjFoLTN6TTI0IDEzaDR2MWgtNHpNOCAxNGg3djFoLTd6TTE3IDE0aDd2MWgtN3pNMTAgMTVoMTJ2MWgtMTJ6TTEzIDE3aDZ2MWgtNnpNMTMgMThoMnYxaC0yek0xNyAxOGgydjFoLTJ6TTEzIDE5aDJ2MWgtMnpNMTcgMTloMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiNGRkM0NkIiIGQ9Ik00IDJoMXYxaC0xek0yNyAyaDF2MWgtMXpNMyA1aDJ2MWgtMnpNMjcgNWgydjFoLTJ6TTMgNmgxdjFoLTF6TTI4IDZoMXYxaC0xek0zIDI1aDF2MWgtMXpNMjggMjVoMXYxaC0xeiIvPjxwYXRoIGZpbGw9IiNFQkQ5QjAiIGQ9Ik0xNCAyM2gxdjFoLTF6TTE3IDIzaDF2MWgtMXpNMTQgMjVoMXYxaC0xek0xNyAyNWgxdjFoLTF6TTEzIDI3aDJ2MWgtMnpNMTcgMjdoMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiMyQTg1NjQiIGQ9Ik01IDI4aDF2MWgtMXpNMjYgMjhoMXYxaC0xeiIvPjxwYXRoIGZpbGw9IiNEODc2MkEiIGQ9Ik0zIDEzaDF2MWgtMXpNMjggMTNoMXYxaC0xek00IDE0aDJ2MWgtMnpNMjYgMTRoMnYxaC0yek01IDE1aDN2MWgtM3pNMjQgMTVoM3YxaC0zeiIvPjxwYXRoIGZpbGw9IiM0NTRCNTciIGQ9Ik01IDE3aDJ2MWgtMnpNMjUgMTdoMnYxaC0yek00IDE4aDJ2MWgtMnpNMjYgMThoMnYxaC0yek00IDE5aDF2MWgtMXpNMjcgMTloMXYxaC0xek00IDMwaDF2MWgtMXpNMjcgMzBoMXYxaC0xeiIvPjxwYXRoIGZpbGw9IiNFNkQ4QzAiIGQ9Ik0xMyAyMGgydjFoLTJ6TTE3IDIwaDJ2MWgtMnoiLz48L3N2Zz4K" alt="Le tigre de l'équipe, en robe d'avocat, lit un livre ouvert" width="384" height="384">
   <div>
     <h1>Code du travail, en&nbsp;clair</h1>
@@ -290,7 +316,7 @@ aside.texte-a-dire { display: none; }
     <p class="cadre">Équipe Data Tigers. Master 2 Data &amp; IA, FGES. Module NLP 2.<br>Soutenance du 30 novembre 2026.</p>
   </div>
   <aside class="texte-a-dire" data-plan="Ouverture">
-    <p>Bonjour. Nous sommes l'équipe Data Tigers. Notre projet aide un salarié ou un employeur à trouver la réponse à une question de droit du travail dans les fiches officielles du ministère, de deux façons : un site qui trouve les bons passages, et un assistant local qui rédige une réponse en les citant.</p>
+    <p>Bonjour, nous sommes l'équipe Data Tigers. Notre projet retrouve, dans les fiches officielles du ministère du Travail, la réponse à une question de droit du travail : un site trouve les passages, un assistant local rédige une réponse qui les cite.</p>
   </aside>
 </section>
 
@@ -434,8 +460,8 @@ aside.texte-a-dire { display: none; }
   </div>
   <p class="note-bas e" data-e="3">Servi sur le site depuis le 15 novembre, selon une règle écrite avant la mesure. Deux versions nourries de 2&nbsp;289 et 2&nbsp;420 questions synthétiques, de Qwen puis de Claude, ne sont pas servies : celle de Claude gagne 12,4&nbsp;points sur un jeu écrit par Claude, mais recule de 5,5&nbsp;points sur les questions humaines.</p>
   <aside class="texte-a-dire" data-plan="Choix : ajuster l'encodeur">
-    <p>Premier choix technique : adapter l'encodeur à notre corpus. Il ne connaît pas nos fiches, et ses vecteurs se ressemblent tous. Nous avons fait écrire par Qwen une question pour 109 passages, hors des fiches du test. L'apprentissage contrastif rapproche chaque question de son passage et l'éloigne des autres passages du lot.</p>
-    <p>Résultat sur les questions de test : le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 %, soit 19 points de plus, un gain démontré. Avec dix passages regroupés par fiche, une fiche pertinente est affichée pour 93 % des questions. Nous avons ensuite essayé vingt fois plus de questions synthétiques, écrites par Qwen puis par Claude. La version de Claude gagne 12 points sur notre jeu écrit par Claude, mais recule sur les questions humaines : elle a appris le style de Claude, pas nos fiches. La règle écrite d'avance l'écarte ; nous gardons la première.</p>
+    <p>Premier choix : adapter l'encodeur à nos fiches. Nous avons fait écrire par Qwen une question pour 109 passages, hors des fiches du test. L'apprentissage contrastif rapproche chaque question de son passage et l'éloigne des autres. Sur nos questions de test, le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 % : 19 points de plus, un gain démontré. Avec dix passages regroupés par fiche, une fiche pertinente est affichée pour 93 % des questions.</p>
+    <p>Vingt fois plus de questions synthétiques, écrites par Qwen puis par Claude, n'ont pas fait mieux sur les questions humaines : la version de Claude a appris son style, pas nos fiches. La règle écrite d'avance l'écarte.</p>
     <ul><li>Perte : MultipleNegativesRankingLoss, lot de 16, taux 2e-5.</li><li>Sur le CDTN, jeu externe : 67,4 % puis 72,3 %.</li><li>Le nuage de points est un schéma, pas une projection réelle.</li><li>v2-T, 2 289 paires de Qwen : +5,8 points sur le jeu v2, non démontré ; égalité sur le CDTN.</li><li>v3-C, 2 420 paires écrites par Claude Sonnet et relues par deux juges Claude Opus, règle figée avant toute génération : jeu v2 +12,4 [+5,5 ; +20,3], démontré ; CDTN −2,2 ; lot de test −5,5 ; 5 questions hors corpus de plus au-dessus de la borne.</li></ul>
   </aside>
 </section>
@@ -611,7 +637,7 @@ aside.texte-a-dire { display: none; }
 </section>
 
 <!-- 11. Bilan -->
-<section class="diapo" data-duree="40" data-etapes="2" aria-label="Bilan">
+<section class="diapo" data-duree="45" data-etapes="2" aria-label="Bilan">
   <h2 class="titre">Des règles écrites avant de mesurer</h2>
   <div class="bilan">
     <ul class="regles e" data-e="1">
@@ -632,7 +658,8 @@ aside.texte-a-dire { display: none; }
     </table>
   </div>
   <aside class="texte-a-dire" data-plan="Bilan">
-    <p>Notre méthode tient en une phrase : écrire la règle avant de mesurer. Elle nous a fait renoncer à des choix que nous aimions : la base est restée servie un mois, une nouvelle consigne plus performante a été écartée, et notre encodeur ajusté n'apporte rien au volet B. Elle confirme aussi nos choix quand ils tiennent : la chaîne de démonstration, avec le modèle adapté, gagne 17 points sur l'ancienne. Les deux volets répondent au même besoin avec des compromis opposés : le site ne coûte rien, répond en vingt millisecondes et tout y est vérifiable ; l'assistant rédige une réponse, mais demande une machine et une douzaine de secondes, et son comportement vient de données que nous ne connaissons pas.</p>
+    <p>Notre méthode tient en une phrase : écrire la règle avant de mesurer. Elle nous a fait renoncer à des choix que nous aimions : la base est restée servie un mois, une consigne plus performante a été écartée, et l'encodeur ajusté n'apporte rien au volet B. Elle confirme aussi la chaîne de démonstration : 17 points de plus que l'ancienne.</p>
+    <p>Les deux volets ont des compromis opposés. Le site ne coûte rien, répond en vingt millisecondes, et tout y est vérifiable. L'assistant rédige une réponse, mais demande une machine, une douzaine de secondes, et son comportement vient de données que nous ne connaissons pas.</p>
     <ul><li>Latence du volet B : 11,8 s en médiane par question, chaîne de la démonstration (10 passages, reclasseur), mesurée le 21/11 sur le jeu v2 ; 4,9 s avec l'ancienne chaîne à 5 passages.</li><li>Les deux chiffres de qualité ne mesurent pas la même chose, ni sur le même jeu.</li></ul>
   </aside>
 </section>
@@ -646,8 +673,247 @@ aside.texte-a-dire { display: none; }
     <p><b>Dépôt</b> : github.com/datatigersNLP/data_tigers_nlp</p>
   </div>
   <aside class="texte-a-dire" data-plan="Questions">
-    <p>Merci. Nous pouvons montrer le site et l'assistant en direct pendant les questions.</p>
+    <p>Merci. Nous pouvons montrer le site en direct, et la vidéo de l'assistant, pendant les questions.</p>
+    <ul><li>Touche A : sommaire des annexes ; touche M : revenir ici.</li></ul>
   </aside>
+</section>
+
+<!-- Annexes : hors des 8 minutes ; touche A pour ce sommaire, touche M pour revenir à « Merci » -->
+<section class="diapo annexe" data-duree="0" data-annexe="0" aria-label="Annexes">
+  <h2 class="titre">Annexes, pour les questions</h2>
+  <div class="sommaire"><button type="button" data-annexe="1"><b>A1</b><span>Démonstration du volet A, en ligne</span></button><button type="button" data-annexe="2"><b>A2</b><span>Démonstration du volet B, en direct si besoin</span></button><button type="button" data-annexe="3"><b>A3</b><span>Volet B : la mesure de bout en bout</span></button><button type="button" data-annexe="4"><b>A4</b><span>Exactitude jugée à l'aveugle</span></button><button type="button" data-annexe="5"><b>A5</b><span>Des encodeurs nourris de questions synthétiques</span></button><button type="button" data-annexe="6"><b>A6</b><span>Les seuils d'abstention</span></button><button type="button" data-annexe="7"><b>A7</b><span>Les tests statistiques</span></button><button type="button" data-annexe="8"><b>A8</b><span>Le protocole de mesure du volet B</span></button><button type="button" data-annexe="9"><b>A9</b><span>Les données d'adaptation (lot v2b)</span></button><button type="button" data-annexe="10"><b>A10</b><span>La quantification et l'export</span></button><button type="button" data-annexe="11"><b>A11</b><span>Une limite corrigée : notre façon de mesurer</span></button><button type="button" data-annexe="12"><b>A12</b><span>Confidentialité</span></button><button type="button" data-annexe="13"><b>A13</b><span>Les machines et la mémoire</span></button><button type="button" data-annexe="14"><b>A14</b><span>Organisation et usage de l'IA</span></button><button type="button" data-annexe="15"><b>A15</b><span>Ce que les cinq outils nous ont appris</span></button><button type="button" data-annexe="16"><b>A16</b><span>Agent0 Light : un générateur de questions contrôlé</span></button><button type="button" data-annexe="17"><b>A17</b><span>Glossaire</span></button></div>
+  <p class="def">Cliquer un titre pour l'ouvrir. Touche A : revenir à ce sommaire ; touche M : revenir à la diapositive de fin.</p>
+  <aside class="texte-a-dire" data-plan="Sommaire des annexes"><p>Ouvrir l'annexe qui répond à la question posée, puis revenir ici avec la touche A.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="1" aria-label="Annexe 1. Démonstration du volet A, en ligne">
+  <h2 class="titre">Démonstration du volet A, en ligne</h2>
+  <p class="intro">datatigersnlp.github.io/data_tigers_nlp. Résultats relevés sur le site en ligne le 26 novembre. Ouvrir le site et poser une première question avant de commencer : la première visite télécharge le modèle.</p>
+  <table class="tab"><thead><tr><th>Question à taper</th><th>Ce que le site montre</th></tr></thead><tbody>
+  <tr><td class="q">Combien de jours de congés payés par an ?</td><td>une seule fiche, «&nbsp;Les congés payés&nbsp;», et ses 10 passages regroupés</td></tr>
+  <tr><td class="q">Ma période d'essai peut-elle être renouvelée ?</td><td>le passage exact en tête : renouvelable une fois si un accord de branche étendu le prévoit (similarité 0,888)</td></tr>
+  <tr><td class="q">Combien de jours de congé pour un mariage ?</td><td>la bonne fiche («&nbsp;quatre jours pour le mariage&nbsp;»), avec l'avertissement «&nbsp;correspondance moins nette&nbsp;»</td></tr>
+  <tr><td class="q">Comment est calculée la pension de retraite d'un fonctionnaire ?</td><td>refus : hors du périmètre des fiches ; bouton «&nbsp;Afficher quand même&nbsp;»</td></tr>
+  <tr><td class="q">J'aimerais m'absenter trois mois pour voyager sans être payé : mon employeur est-il obligé d'accepter ?</td><td>la limite : la recherche par le sens seule ne trouve pas la bonne fiche ; la recherche hybride du volet B la place en tête (diapositive 7)</td></tr>
+  </tbody></table>
+  <p class="def"><b>À dire</b> : le site ne rédige pas de réponse ; il montre les passages et leur fiche, avec le lien vers la source. Tout est calculé dans le navigateur.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 1. Démonstration du volet A, en ligne"><p>Taper les questions telles quelles. Montrer la fiche, le passage en tête et le lien vers la source. Sur la dernière, assumer la limite : c'est ce que corrige le volet B.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="2" aria-label="Annexe 2. Démonstration du volet B, en direct si besoin">
+  <h2 class="titre">Démonstration du volet B, en direct si besoin</h2>
+  <p class="intro">Par défaut, la vidéo de secours (64 s). En direct : lancer la démonstration sur le Mac cinq minutes avant ; modèle adapté sur 127.0.0.1:8765, témoin T sur 127.0.0.1:8766 ; de 12 à 26 s par réponse (essais du 26 novembre).</p>
+  <table class="tab"><thead><tr><th>Question à taper</th><th>Modèle</th><th>Attendu (essais des 22 et 26 novembre)</th></tr></thead><tbody>
+  <tr><td class="q">Combien de jours de congés payés ai-je par an ?</td><td>adapté</td><td>réponse qui cite P2 : 2,5 jours ouvrables par mois de travail effectif</td></tr>
+  <tr><td class="q">Ma période d'essai peut-elle être renouvelée ?</td><td>T, puis adapté</td><td>T s'abstient ; l'adapté répond et cite P1 : une fois, si un accord de branche étendu le prévoit</td></tr>
+  <tr><td class="q">Comment est calculée la pension de retraite d'un fonctionnaire ?</td><td>adapté</td><td>abstention : la question sort du corpus</td></tr>
+  <tr><td class="q">Combien de jours de congé pour un mariage ?</td><td>adapté</td><td>réserve : quatre jours pour le mariage ou un PACS, cite P1</td></tr>
+  </tbody></table>
+  <p class="def"><b>À éviter</b> : la question de la diapositive 2 (l'adapté s'abstient alors que le bon passage est en tête), la période d'essai d'un cadre (réponse en fragment), les 48 heures (dérogation attribuée à l'inspecteur du travail, alors que le passage dit la DREETS).</p>
+  <aside class="texte-a-dire" data-plan="Annexe 2. Démonstration du volet B, en direct si besoin"><p>Température nulle : les réponses filmées et répétées se reproduisent à l'identique. L'interface affiche sous chaque réponse le modèle qui l'a rédigée et sa durée réelle.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="3" aria-label="Annexe 3. Volet B : la mesure de bout en bout">
+  <h2 class="titre">Volet B : la mesure de bout en bout</h2>
+  <p class="intro">Jeu v2 (161 questions écrites par Claude, autorisées par l'enseignant), protocole 10, Mac M4 Pro, température nulle, une exécution par état.</p>
+  <table class="tab"><thead><tr><th>Questions sans erreur technique</th><th class="n">B2, adapté</th><th class="n">R1, adapté</th><th class="n">R1, témoin T</th></tr></thead><tbody>
+  <tr><th>Réponse citant un passage pertinent (M4)</th><td class="n">43 sur 120</td><td class="n"><b>63 sur 119 (52,9&nbsp;%)</b></td><td class="n">12 sur 119 (10,1&nbsp;%)</td></tr>
+  <tr><th>Réponse citée valide (M3)</th><td class="n">63 sur 120</td><td class="n">86 sur 119</td><td class="n">19 sur 119</td></tr>
+  <tr><th>Abstention à tort sur le corpus (M2)</th><td class="n">57 sur 120</td><td class="n">33 sur 119</td><td class="n">91 sur 119</td></tr>
+  <tr><th>Abstention correcte hors corpus (M1)</th><td class="n">39 sur 40</td><td class="n">39 sur 39</td><td class="n">38 sur 39</td></tr>
+  <tr><th>Durée par question, médiane</th><td class="n">4,9&nbsp;s</td><td class="n">11,8&nbsp;s</td><td class="n">11,8&nbsp;s</td></tr>
+  </tbody></table>
+  <ul class="liste-faits">
+  <li><b>R1 contre B2, modèle adapté</b> : +16,9 points [+6,4 ; +27,3], 31 questions gagnées contre 11, p = 0,003 après correction de Holm : démontré.</li>
+  <li><b>Effet de l'adaptation dans R1</b> : 54 questions gagnées, 3 perdues ; sans adaptation, Qwen s'abstient à tort sur 76,5&nbsp;% des questions du corpus.</li>
+  <li><b>Limites</b> : jeu synthétique ; M4 mesure la traçabilité, pas l'exactitude ; «&nbsp;hors corpus&nbsp;» au sens du protocole, contrôlé sur les 10 premiers passages par un juge d'IA, pas sur tout le corpus.</li>
+  </ul>
+  <aside class="texte-a-dire" data-plan="Annexe 3. Volet B : la mesure de bout en bout"><p>B2 : ancienne chaîne, 5 passages et seuil S. R1 : chaîne de la démonstration, fusion, reclasseur, 10 passages, sans seuil. Les erreurs techniques (1 à 3 sur 161) sont des écarts de comptage de tokens, retirés des comparaisons.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="4" aria-label="Annexe 4. Exactitude jugée à l'aveugle">
+  <h2 class="titre">Exactitude jugée à l'aveugle</h2>
+  <p class="intro">20 réponses citées par modèle (ancienne chaîne B2, lot de test), mélangées et anonymisées ; deux juges, Maïmouna et Vaneck, qui n'ont écrit ni la chaîne ni l'adaptation (#52). Résultats descriptifs.</p>
+  <table class="tab"><thead><tr><th>Réponses jugées</th><th class="n">Témoin T</th><th class="n">Modèle adapté</th></tr></thead><tbody>
+  <tr><th>Entièrement exactes, selon Maïmouna</th><td class="n">12 sur 20</td><td class="n">6 sur 20</td></tr>
+  <tr><th>Entièrement exactes, selon Vaneck</th><td class="n">8 sur 20</td><td class="n">5 sur 20</td></tr>
+  <tr><th>Entièrement appuyées sur leurs passages, selon Maïmouna</th><td class="n">11 sur 20</td><td class="n">20 sur 20</td></tr>
+  <tr><th>Entièrement appuyées sur leurs passages, selon Vaneck</th><td class="n">12 sur 20</td><td class="n">19 sur 20</td></tr>
+  </tbody></table>
+  <ul class="liste-faits">
+  <li><b>Mieux appuyées</b> : écart démontré chez les deux juges (+45 et +35 points). <b>Pas plus exactes</b> : écart non démontré.</li>
+  <li><b>Accord faible</b> entre les juges : kappa de 0,36 sur l'exactitude. Le critère «&nbsp;conditions et exceptions&nbsp;» est inexploitable.</li>
+  <li><b>Défauts</b> : réponses incomplètes pour le modèle adapté, entraîné à recopier un passage ; généralisations et confusions pour T.</li>
+  </ul>
+  <p class="def"><b>Kappa de Cohen</b> : accord entre deux juges corrigé du hasard (0 : hasard, 1 : accord parfait). <b>À l'aveugle</b> : les juges ignorent quel modèle a produit chaque réponse.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 4. Exactitude jugée à l'aveugle"><p>Seul ce qui va dans le même sens chez les deux juges est retenu. Le modèle adapté répond aussi à 8 questions où T s'abstenait, plus difficiles : il y obtient un score plus bas.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="5" aria-label="Annexe 5. Des encodeurs nourris de questions synthétiques">
+  <h2 class="titre">Des encodeurs nourris de questions synthétiques</h2>
+  <p class="intro">Même recette que l'encodeur servi ; seul le volume de questions générées change. Règles figées avant toute mesure (amendements A2 et A3).</p>
+  <table class="tab"><thead><tr><th>Recall@5</th><th class="n">v1 servie (109 paires)</th><th class="n">v2-T (2 289, Qwen)</th><th class="n">v3-C (2 420, Claude)</th></tr></thead><tbody>
+  <tr><th>Jeu v2, écrit par Claude</th><td class="n">57,0&nbsp;%</td><td class="n">62,8&nbsp;% (+5,8)</td><td class="n"><b>69,4&nbsp;% (+12,4, démontré)</b></td></tr>
+  <tr><th>CDTN, questions humaines</th><td class="n">72,3&nbsp;%</td><td class="n">72,3&nbsp;%</td><td class="n">70,0&nbsp;%</td></tr>
+  <tr><th>Lot de test, questions humaines</th><td class="n">63,0&nbsp;%</td><td class="n">57,5&nbsp;%</td><td class="n">57,5&nbsp;%</td></tr>
+  </tbody></table>
+  <ul class="liste-faits">
+  <li><b>Lecture</b> : la v3-C ne gagne que sur le jeu écrit par le même générateur ; elle a appris le style de Claude, pas nos fiches.</li>
+  <li><b>Décision</b> : aucune n'est servie ; l'encodeur ajusté du 15 novembre reste celui du site.</li>
+  <li><b>Contrôle</b> : 2 420 questions écrites par des sous-agents Claude Sonnet, relues par deux juges Claude Opus, chaque appel inscrit à un registre avant son lancement.</li>
+  </ul>
+  <aside class="texte-a-dire" data-plan="Annexe 5. Des encodeurs nourris de questions synthétiques"><p>Intervalle de l'écart de la v3-C sur le jeu v2 : [+5,5 ; +20,3], p de Holm 0,006. La règle A2 retenait la v2-T sans gain démontré ; nous avons préféré mesurer la v3-C.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="6" aria-label="Annexe 6. Les seuils d'abstention">
+  <h2 class="titre">Les seuils d'abstention</h2>
+  <ul class="liste-faits">
+  <li><b>Volet A, encodeur servi</b> : refus sous <b>0,7683</b>, 5e centile des scores maximaux de 479 variantes de questions du CDTN, jeu externe au test ; avertissement jusqu'à 0,8140 (25e centile).</li>
+  <li><b>Sur le lot de test</b> : AUC de 0,865 ; 70 questions couvertes gardées sur 73 ; 10 questions hors corpus refusées sur 24, et 13 autres signalées.</li>
+  <li><b>Avec l'encodeur de base</b> (avant le 15 novembre) : seuil de 0,8560 fixé le 10 octobre, avant la mesure ; AUC de 0,841 ; 9 refusées sur 24, 72 gardées sur 73.</li>
+  <li><b>Volet B, ancienne chaîne</b> : seuil S = 0,8565, même méthode, calcul en fp32. <b>Chaîne de la démonstration</b> : pas de seuil ; le modèle s'abstient seul.</li>
+  </ul>
+  <p class="def"><b>Score maximal</b> : similarité entre la question et le passage le plus proche. <b>5e centile</b> : valeur sous laquelle tombent 5&nbsp;% des scores. <b>AUC</b> : probabilité qu'une question couverte obtienne un score plus élevé qu'une question hors corpus.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 6. Les seuils d'abstention"><p>Le seuil repère surtout les saisies sans rapport avec le droit du travail ; l'interface ne promet pas davantage.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="7" aria-label="Annexe 7. Les tests statistiques">
+  <h2 class="titre">Les tests statistiques</h2>
+  <ul class="liste-faits">
+  <li><b>Données appariées, McNemar exact</b> : les deux systèmes répondent aux mêmes questions ; seules les discordantes comptent. Exemple : R1 contre B2, 31 contre 11, p = 0,003.</li>
+  <li><b>Grappes (Obuchowski, effet de plan)</b> : des questions d'une même fiche ne sont pas indépendantes ; on élargit les intervalles en conséquence.</li>
+  <li><b>Non-infériorité (score de Tango)</b> : au jalon J2, on rejette «&nbsp;le site est moins bon de 15 points ou plus&nbsp;» (z = 2,45, p = 0,007).</li>
+  <li><b>Holm</b> : plusieurs hypothèses à la fois (quatre pour les encodeurs v2-T et v3-C) ; les valeurs p sont ajustées pour garder 5&nbsp;% d'erreur au total.</li>
+  <li><b>Wilson, Newcombe, bootstrap</b> : intervalle d'une proportion, d'un écart entre deux proportions indépendantes (jugement à l'aveugle), et d'un kappa par 10 000 tirages.</li>
+  </ul>
+  <p class="def"><b>p</b> : probabilité d'observer un écart au moins aussi grand si les deux systèmes étaient équivalents. <b>Intervalle de confiance</b> : plage de valeurs compatibles avec les données ; un écart est démontré si sa borne basse dépasse 0.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 7. Les tests statistiques"><p>Les règles de décision, les tests et leurs seuils sont écrits dans chaque protocole avant la mesure.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="8" aria-label="Annexe 8. Le protocole de mesure du volet B">
+  <h2 class="titre">Le protocole de mesure du volet B</h2>
+  <div class="deux-col">
+  <div><h3>États mesurés (lot de test, 4 novembre)</h3>
+  <table class="tab petit"><tbody>
+  <tr><th>B0</th><td>modèle seul, sans passage</td></tr>
+  <tr><th>B1</th><td>RAG, sans consigne d'abstention</td></tr>
+  <tr><th>B2</th><td>RAG complet et seuil S</td></tr>
+  <tr><th>R+</th><td>répond toujours en citant P1</td></tr>
+  <tr><th>R−</th><td>s'abstient toujours</td></tr>
+  </tbody></table></div>
+  <div><h3>Métriques</h3>
+  <table class="tab petit"><tbody>
+  <tr><th>M1</th><td>abstention correcte, hors corpus</td></tr>
+  <tr><th>M2</th><td>abstention à tort, corpus</td></tr>
+  <tr><th>M3</th><td>citation valide</td></tr>
+  <tr><th>M4</th><td>citation pertinente (règle D4)</td></tr>
+  <tr><th>M5</th><td>réponse affirmative hors corpus</td></tr>
+  </tbody></table></div>
+  </div>
+  <ul class="liste-faits">
+  <li><b>Gel</b> le 4 novembre ; verrou de 10 empreintes (protocole, scripts, jeu, index, seuil), contrôlé à chaque exécution ; une seule exécution par état.</li>
+  <li><b>Validité</b> : un état est invalide au-delà de 5&nbsp;% d'erreurs techniques ; au 11 novembre, au plus 2,1&nbsp;% (2 sur 97).</li>
+  </ul>
+  <p class="def"><b>Règle D4</b> : un passage est pertinent s'il partage avec l'extrait annoté un fragment continu couvrant au moins la moitié de l'extrait. <b>R+ et R−</b> : références qui montrent qu'un taux élevé de citations valides ne prouve rien seul.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 8. Le protocole de mesure du volet B"><p>Sur le lot de test, l'adaptation fait passer M4 de 13,9 à 25,0 % (+11,1 points, 8 questions gagnées, aucune perdue).</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="9" aria-label="Annexe 9. Les données d'adaptation (lot v2b)">
+  <h2 class="titre">Les données d'adaptation (lot v2b)</h2>
+  <ul class="liste-faits">
+  <li><b>218 exemples</b> : 164 réponses citées et 54 abstentions hors corpus (24,8&nbsp;%) ; 198 pour l'entraînement, 20 pour la validation.</li>
+  <li><b>154 réponses écartées par les filtres</b> : 103 non recopiées, 33 sans citer le passage cible, 13 abstentions du modèle, 5 autres.</li>
+  <li><b>50 questions exclues</b> : déjà relues pour le lot v1, elles avaient servi à choisir le correctif.</li>
+  <li><b>Relecture</b> : 30 exemples tirés par strates, deux relecteurs indépendants, grille au plus sévère ; règle écrite d'avance : 10&nbsp;% de faux au plus. Résultat : 3 sur 30, après un premier lot refusé (8 sur 30).</li>
+  <li><b>Aucune fiche du lot de test</b> dans les données : un script le vérifie.</li>
+  </ul>
+  <p class="def"><b>Tirage par strates</b> : on tire séparément dans chaque type d'exemple, pour que chacun soit représenté. <b>Grille au plus sévère</b> : pour chaque case, on garde le verdict le plus défavorable des deux relecteurs.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 9. Les données d'adaptation (lot v2b)"><p>Le premier lot a été refusé parce que le modèle faisait dire aux passages ce qu'ils ne disent pas.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="10" aria-label="Annexe 10. La quantification et l'export">
+  <h2 class="titre">La quantification et l'export</h2>
+  <ul class="liste-faits">
+  <li><b>Entraînement</b> : LoRA sous MLX sur le Mac, base en 4 bits (groupes de 64 poids) ; 11,5 millions de paramètres appris, 0,15&nbsp;% du modèle.</li>
+  <li><b>Service</b> : Ollama refuse les adaptateurs LoRA ; le correctif est fusionné dans les poids bf16, puis compressé en Q4_K_M (4,91 bits par poids en moyenne, 4,36 Gio).</li>
+  <li><b>Pourquoi fusionner en bf16</b> : simulée, l'adaptation survit à la recompression à 97,5 à 99,9&nbsp;% par cette voie, contre 47 à 62&nbsp;% par la base 4 bits déquantifiée.</li>
+  <li><b>Témoin T</b> : le modèle d'origine passe par la même chaîne, avec un correctif nul ; la seule différence entre les deux modèles est l'adaptation.</li>
+  </ul>
+  <p class="def"><b>Quantification</b> : w ≈ échelle × q + décalage, avec q entier sur peu de bits. <b>GGUF</b> : format de fichier de modèle de llama.cpp, lu par Ollama.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 10. La quantification et l'export"><p>Les digests des deux modèles servis sont contrôlés à chaque lancement de la démonstration.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="11" aria-label="Annexe 11. Une limite corrigée : notre façon de mesurer">
+  <h2 class="titre">Une limite corrigée : notre façon de mesurer</h2>
+  <p class="intro">Notre jeu n'annote qu'un extrait par question ; un passage valable mais non annoté était compté faux. Le protocole 09 ajoute les passages que deux juges d'IA disent «&nbsp;répond&nbsp;» : on obtient une fourchette.</p>
+  <table class="tab"><thead><tr><th>Lot de test, questions couvertes</th><th class="n">Règle D4 (minorant)</th><th class="n">Jugé (majorant)</th></tr></thead><tbody>
+  <tr><th>Volet A, ajusté : bon passage dans les 5 premiers</th><td class="n">63,0&nbsp;%</td><td class="n">74,0&nbsp;%</td></tr>
+  <tr><th>Volet A : gain de l'ajusté sur la base, à 5</th><td class="n">+19,2 points</td><td class="n">+13,7 [+3,2 ; +25,0]</td></tr>
+  <tr><th>Volet B : passage pertinent fourni, B2 puis V2</th><td class="n">45,8 et 72,6&nbsp;%</td><td class="n">62,5 et 89,0&nbsp;%</td></tr>
+  <tr><th>Volet B : M4, B2 puis V2</th><td class="n">25,0 et 37,0&nbsp;%</td><td class="n">30,6 et 52,1&nbsp;%</td></tr>
+  </tbody></table>
+  <ul class="liste-faits">
+  <li><b>Juges</b> : 40 contrôles positifs sur 40 reconnus, aucun négatif accepté, kappa de 0,86 entre eux.</li>
+  <li><b>Étalonnage</b> (17 novembre, par deux autres juges d'IA) : règle large confirmée (kappa 0,89) ; règle principale non étalonnable, un seul cas positif sur 80. Les majorants restent provisoires ; aucune décision ne change.</li>
+  </ul>
+  <aside class="texte-a-dire" data-plan="Annexe 11. Une limite corrigée : notre façon de mesurer"><p>Pourquoi : deux annotateurs choisissent la même fiche 14 fois sur 15, mais les mêmes passages 7 fois seulement. Seuls les 617 passages montrés par nos systèmes sont jugés, ce qui suffit pour un succès à k.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="12" aria-label="Annexe 12. Confidentialité">
+  <h2 class="titre">Confidentialité</h2>
+  <div class="deux-col">
+  <div><h3>Site du volet A</h3>
+  <ul class="liste-faits">
+  <li>Le modèle s'exécute dans le navigateur : aucune requête quand on pose une question.</li>
+  <li>Ni cookie, ni outil de statistiques, ni stockage local ; seul le cache du navigateur garde les fichiers du modèle (environ 100 Mo).</li>
+  <li>Hébergé par GitHub Pages, qui journalise les adresses IP pour sa sécurité ; ce traitement relève de GitHub.</li>
+  </ul></div>
+  <div><h3>Assistant du volet B</h3>
+  <ul class="liste-faits">
+  <li>Tout s'exécute sur la machine : la question va au modèle local par 127.0.0.1, jamais sur Internet.</li>
+  <li>Dans la configuration de la démonstration, la couche locale et Ollama ne journalisent ni la question ni la réponse : vérifié le 22 novembre dans leurs journaux.</li>
+  <li>Les chats restent en mémoire et disparaissent au rechargement.</li>
+  </ul></div>
+  </div>
+  <p class="def">Demandé par l'enseignant (#176) : une fenêtre «&nbsp;Confidentialité et mentions&nbsp;» dans chaque interface, avec les mentions légales (éditeur, directeur de la publication, hébergeur). L'équipe ne collecte aucune donnée personnelle des utilisateurs.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 12. Confidentialité"><p>Vérifications faites dans le navigateur : requêtes réseau, cookies et stockages, avant et après une question.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="13" aria-label="Annexe 13. Les machines et la mémoire">
+  <h2 class="titre">Les machines et la mémoire</h2>
+  <ul class="liste-faits">
+  <li><b>PC Legion</b>, GPU RTX 5070 Laptop de 8 Gio : l'inférence de Qwen en Q4_K_M (4,36 Gio) y tient ; l'entraînement LoRA non (9,17 Gio demandés pour 7,96 Gio disponibles).</li>
+  <li><b>Mac M4 Pro</b>, 24 Gio de mémoire unifiée : entraînement LoRA avec un pic de 7,6 Gio ; Qwen sous Ollama génère environ 47 tokens par seconde.</li>
+  <li><b>Mesures finales sur une seule machine</b> : témoin T et modèle adapté mesurés sur le Mac, pour éviter tout écart dû au matériel.</li>
+  <li><b>Navigateur</b> : le site télécharge environ 61 Mio à la première visite, puis répond en 21 ms en médiane.</li>
+  </ul>
+  <p class="def"><b>Mémoire unifiée</b> : le processeur et le GPU du Mac partagent la même mémoire, d'où la place pour l'entraînement.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 13. Les machines et la mémoire"><p>La démonstration du volet B tourne sur le Mac de Mahé ; le Legion a servi aux premiers essais d'inférence.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="14" aria-label="Annexe 14. Organisation et usage de l'IA">
+  <h2 class="titre">Organisation et usage de l'IA</h2>
+  <ul class="liste-faits">
+  <li><b>GitHub</b> : une branche par ticket, des pull requests vers dev, une approbation exigée ; dev et main protégées. Jalons J1 à J4, réunions hebdomadaires, classeur de suivi des charges.</li>
+  <li><b>Journal d'usage de l'IA</b> : 72 sessions consignées, avec plus de 170 erreurs ou pièges détectés par la vérification et leur correction, y compris celles déjà publiées.</li>
+  <li><b>Assistants</b> : Claude Code (et des sous-agents Claude pour écrire et juger des questions sous protocole), Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local.</li>
+  <li><b>Règle</b> : aucune affirmation d'un assistant n'est reprise sans mesure, test ou source primaire ; aucune IA ne propose de verdict dans les jugements humains.</li>
+  </ul>
+  <p class="def">Le sujet le rappelle : chaque membre peut être interrogé sur n'importe quelle partie du code produit, y compris celle écrite avec un assistant.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 14. Organisation et usage de l'IA"><p>Le journal et ses erreurs sont dans docs/journal/JOURNAL_USAGE_IA.md.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="15" aria-label="Annexe 15. Ce que les cinq outils nous ont appris">
+  <h2 class="titre">Ce que les cinq outils nous ont appris</h2>
+  <table class="tab"><thead><tr><th>Outil</th><th>Apport</th><th>Limite observée</th></tr></thead><tbody>
+  <tr><td class="q">Transformers.js</td><td>recherche sans serveur, une vingtaine de millisecondes</td><td>sans options explicites, l'extracteur renvoie un vecteur par token</td></tr>
+  <tr><td class="q">ONNX Runtime</td><td>un seul fichier de modèle, en Python et sur le Web</td><td>le même q8 calcule autrement dans le navigateur : premier résultat identique au calcul exact pour 91,8&nbsp;% des requêtes, contre 96,5&nbsp;% en Python</td></tr>
+  <tr><td class="q">Playwright</td><td>parcours complets du site sous trois navigateurs</td><td>sous WebKit, l'interception capte aussi les URL blob:</td></tr>
+  <tr><td class="q">GitHub CLI</td><td>opérations reproductibles et scriptables</td><td>gh api passe de GET à POST dès qu'un champ -f est fourni</td></tr>
+  <tr><td class="q">Assistants d'IA</td><td>capacité de production et de mesure</td><td>affirmations plausibles mais fausses, rattrapées par la vérification</td></tr>
+  </tbody></table>
+  <p class="def">Retenus le 10 novembre. Chaque fiche (docs/suivi/outils/) décrit l'usage réel, l'apport, les limites et ce que la documentation ne dit pas.</p>
+  <aside class="texte-a-dire" data-plan="Annexe 15. Ce que les cinq outils nous ont appris"><p>Critique argumentée : celle des assistants d'IA, section 5.5 du rapport.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="16" aria-label="Annexe 16. Agent0 Light : un générateur de questions contrôlé">
+  <h2 class="titre">Agent0 Light : un générateur de questions contrôlé</h2>
+  <ul class="liste-faits">
+  <li><b>But</b> : proposer localement des questions synthétiques traçables, en cinq catégories ; Qwen propose une question et ses preuves, le programme contrôle le format, les sources et les extraits exacts.</li>
+  <li><b>Essais</b> : 18 essais historiques, 15 candidats, 3 rejets automatiques ; 149 tests du générateur, 184 avec le lanceur.</li>
+  <li><b>Limite</b> : un JSON valide ne garantit pas une bonne question. Exemple : le modèle affirme absentes des conditions qui figurent dans sa source. Les 15 candidats attendent une relecture humaine.</li>
+  <li><b>Décision</b> : développement gelé le 23 novembre ; la suite est une ouverture : un lot relu et figé, puis une évaluation du RAG.</li>
+  </ul>
+  <aside class="texte-a-dire" data-plan="Annexe 16. Agent0 Light : un générateur de questions contrôlé"><p>Travail de Jibril (#91 à #98). Aucun gain du RAG n'a été mesuré avec Agent0 : l'adaptation et la mesure du volet B ont leurs propres données et protocoles.</p></aside>
+</section>
+<section class="diapo annexe" data-duree="0" data-annexe="17" aria-label="Annexe 17. Glossaire">
+  <h2 class="titre">Glossaire</h2>
+  <div class="glossaire"><p><b>Abstention</b> : réponse fixe «&nbsp;Je ne peux pas répondre…&nbsp;» quand les passages ne suffisent pas.</p><p><b>AUC</b> : probabilité qu'un cas positif ait un score plus élevé qu'un cas négatif.</p><p><b>bf16</b> : nombres sur 16 bits, format des poids publiés de Qwen.</p><p><b>BM25</b> : recherche par mots-clés, sans apprentissage.</p><p><b>Citation pertinente</b> : la référence citée renvoie à un passage pertinent (règle D4).</p><p><b>Découpage</b> : coupure des fiches en passages comparables à une question.</p><p><b>E5</b> : encodeur qui transforme un texte en vecteur de 384 nombres.</p><p><b>Embedding, vecteur</b> : liste de nombres qui résume le sens d'un texte.</p><p><b>GGUF</b> : format de fichier de modèle lu par Ollama.</p><p><b>Intervalle de confiance</b> : plage plausible de la valeur réelle.</p><p><b>LoRA</b> : adaptation par un petit correctif appris, le modèle restant gelé.</p><p><b>McNemar</b> : test pour deux systèmes évalués sur les mêmes questions.</p><p><b>Minorant, majorant</b> : bornes basse et haute d'une valeur qu'on ne peut mesurer exactement.</p><p><b>Non-infériorité</b> : démontrer qu'on n'est pas moins bon qu'une marge donnée.</p><p><b>Ollama</b> : logiciel qui sert un modèle de langage en local.</p><p><b>Q4_K_M</b> : compression des poids à environ 4,9 bits.</p><p><b>Quantification</b> : stockage des poids sur moins de bits.</p><p><b>RAG</b> : réponse générée à partir de passages récupérés.</p><p><b>Recall@5</b> : part des questions avec un passage pertinent dans les 5 premiers.</p><p><b>Reclasseur</b> : modèle qui lit la question et un passage ensemble pour les réordonner.</p><p><b>Règle D4</b> : un passage est pertinent s'il reprend au moins la moitié de l'extrait annoté.</p><p><b>RRF</b> : fusion de classements par leurs rangs.</p><p><b>Seuil S</b> : score sous lequel on s'abstient sans appeler le modèle.</p><p><b>Témoin T</b> : modèle d'origine passé par la même chaîne, sans adaptation.</p><p><b>Token</b> : morceau de mot traité par un modèle.</p></div>
+  <aside class="texte-a-dire" data-plan="Annexe 17. Glossaire"></aside>
 </section>
 
 <footer class="pied" aria-hidden="true"><img class="pixel" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48dGl0bGU+RGF0YSBUaWdlcnM8L3RpdGxlPjxwYXRoIGZpbGw9IiNGRkY0RDgiIGQ9Ik02IDIyaDl2MWgtOXpNMTcgMjJoOXYxaC05ek02IDIzaDF2MWgtMXpNMjUgMjNoMXYxaC0xek02IDI0aDl2MWgtOXpNMTcgMjRoOXYxaC05ek02IDI1aDF2MWgtMXpNMTMgMjVoMXYxaC0xek0xOCAyNWgxdjFoLTF6TTI0IDI1aDJ2MWgtMnpNNiAyNmg5djFoLTl6TTE3IDI2aDl2MWgtOXpNNiAyN2gxdjFoLTF6TTI1IDI3aDF2MWgtMXoiLz48cGF0aCBmaWxsPSIjMUUxOTE2IiBkPSJNOSAxMGgydjFoLTJ6TTIxIDEwaDJ2MWgtMnpNMTUgMTJoMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiMxNzYwNEEiIGQ9Ik01IDI3aDF2MWgtMXpNMjYgMjdoMXYxaC0xek02IDI4aDl2MWgtOXpNMTcgMjhoOXYxaC05eiIvPjxwYXRoIGZpbGw9IiMyQTFGMUEiIGQ9Ik00IDFoM3YxaC0zek0yNSAxaDN2MWgtM3pNMyAyaDF2MWgtMXpNNyAyaDF2MWgtMXpNMjQgMmgxdjFoLTF6TTI4IDJoMXYxaC0xek0zIDNoMXYxaC0xek04IDNoMXYxaC0xek0yMyAzaDF2MWgtMXpNMjggM2gxdjFoLTF6TTMgNGgxdjFoLTF6TTggNGgxNnYxaC0xNnpNMjggNGgxdjFoLTF6TTIgNWgxdjFoLTF6TTEyIDVoMXYxaC0xek0xNSA1aDJ2MWgtMnpNMTkgNWgxdjFoLTF6TTI5IDVoMXYxaC0xek0yIDZoMXYxaC0xek0xMiA2aDF2MWgtMXpNMTUgNmgydjFoLTJ6TTE5IDZoMXYxaC0xek0yOSA2aDF2MWgtMXpNMiA3aDN2MWgtM3pNMTUgN2gydjFoLTJ6TTI3IDdoM3YxaC0zek0yIDhoMXYxaC0xek00IDhoMnYxaC0yek0yNiA4aDJ2MWgtMnpNMjkgOGgxdjFoLTF6TTIgOWgxdjFoLTF6TTkgOWgydjFoLTJ6TTIxIDloMnYxaC0yek0yOSA5aDF2MWgtMXpNMiAxMGgxdjFoLTF6TTggMTBoMXYxaC0xek0xMSAxMGgxdjFoLTF6TTIwIDEwaDF2MWgtMXpNMjMgMTBoMXYxaC0xek0yOSAxMGgxdjFoLTF6TTIgMTFoMXYxaC0xek0yOSAxMWgxdjFoLTF6TTIgMTJoMXYxaC0xek0xNCAxMmgxdjFoLTF6TTE3IDEyaDF2MWgtMXpNMjkgMTJoMXYxaC0xek0yIDEzaDF2MWgtMXpNMTQgMTNoMXYxaC0xek0xNyAxM2gxdjFoLTF6TTI5IDEzaDF2MWgtMXpNMyAxNGgxdjFoLTF6TTE1IDE0aDJ2MWgtMnpNMjggMTRoMXYxaC0xek00IDE1aDF2MWgtMXpNMjcgMTVoMXYxaC0xek01IDE2aDIydjFoLTIyek00IDE3aDF2MWgtMXpNMTIgMTdoMXYxaC0xek0xOSAxN2gxdjFoLTF6TTI3IDE3aDF2MWgtMXpNMyAxOGgxdjFoLTF6TTE1IDE4aDJ2MWgtMnpNMjggMThoMXYxaC0xek0zIDE5aDF2MWgtMXpNMTUgMTloMnYxaC0yek0yOCAxOWgxdjFoLTF6TTMgMjBoMXYxaC0xek0yOCAyMGgxdjFoLTF6TTMgMjFoMXYxaC0xek01IDIxaDIydjFoLTIyek0yOCAyMWgxdjFoLTF6TTMgMjJoMXYxaC0xek01IDIyaDF2MWgtMXpNMTUgMjJoMnYxaC0yek0yNiAyMmgxdjFoLTF6TTI4IDIyaDF2MWgtMXpNMiAyM2gxdjFoLTF6TTUgMjNoMXYxaC0xek0xNSAyM2gydjFoLTJ6TTI2IDIzaDF2MWgtMXpNMjkgMjNoMXYxaC0xek0yIDI0aDF2MWgtMXpNNSAyNGgxdjFoLTF6TTE1IDI0aDJ2MWgtMnpNMjYgMjRoMXYxaC0xek0yOSAyNGgxdjFoLTF6TTIgMjVoMXYxaC0xek01IDI1aDF2MWgtMXpNMTUgMjVoMnYxaC0yek0yNiAyNWgxdjFoLTF6TTI5IDI1aDF2MWgtMXpNMiAyNmgxdjFoLTF6TTUgMjZoMXYxaC0xek0xNSAyNmgydjFoLTJ6TTI2IDI2aDF2MWgtMXpNMjkgMjZoMXYxaC0xek0zIDI3aDJ2MWgtMnpNMTUgMjdoMnYxaC0yek0yNyAyN2gydjFoLTJ6TTMgMjhoMXYxaC0xek0xNSAyOGgydjFoLTJ6TTI4IDI4aDF2MWgtMXpNMyAyOWgxdjFoLTF6TTYgMjloMjB2MWgtMjB6TTI4IDI5aDF2MWgtMXpNMyAzMGgxdjFoLTF6TTI4IDMwaDF2MWgtMXpNMyAzMWgyNnYxaC0yNnoiLz48cGF0aCBmaWxsPSIjQTA4QTYzIiBkPSJNNyAyM2g3djFoLTd6TTE4IDIzaDd2MWgtN3pNNyAyNWg2djFoLTZ6TTE5IDI1aDV2MWgtNXpNNyAyN2g2djFoLTZ6TTE5IDI3aDZ2MWgtNnoiLz48cGF0aCBmaWxsPSIjNUIzQTMzIiBkPSJNMTUgMTFoMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiNGMzlBMzMiIGQ9Ik01IDJoMnYxaC0yek0yNSAyaDJ2MWgtMnpNNCAzaDF2MWgtMXpNNyAzaDF2MWgtMXpNMjQgM2gxdjFoLTF6TTI3IDNoMXYxaC0xek00IDRoMXYxaC0xek03IDRoMXYxaC0xek0yNCA0aDF2MWgtMXpNMjcgNGgxdjFoLTF6TTUgNWg3djFoLTd6TTEzIDVoMnYxaC0yek0xNyA1aDJ2MWgtMnpNMjAgNWg3djFoLTd6TTQgNmg4djFoLTh6TTEzIDZoMnYxaC0yek0xNyA2aDJ2MWgtMnpNMjAgNmg4djFoLTh6TTUgN2gxMHYxaC0xMHpNMTcgN2gxMHYxaC0xMHpNMyA4aDF2MWgtMXpNNiA4aDIwdjFoLTIwek0yOCA4aDF2MWgtMXpNMyA5aDZ2MWgtNnpNMTEgOWgxMHYxaC0xMHpNMjMgOWg2djFoLTZ6TTUgMTBoM3YxaC0zek0xMiAxMGg4djFoLTh6TTI0IDEwaDN2MWgtM3pNNiAxMWg3djFoLTd6TTE5IDExaDd2MWgtN3pNNyAxMmg0djFoLTR6TTIxIDEyaDR2MWgtNHpNOCAxM2gzdjFoLTN6TTIxIDEzaDN2MWgtM3pNNiAxNGgydjFoLTJ6TTI0IDE0aDJ2MWgtMnpNOCAxNWgydjFoLTJ6TTIyIDE1aDJ2MWgtMnpNMyAyM2gydjFoLTJ6TTI3IDIzaDJ2MWgtMnpNMyAyNGgydjFoLTJ6TTI3IDI0aDJ2MWgtMnpNNCAyNWgxdjFoLTF6TTI3IDI1aDF2MWgtMXpNMyAyNmgydjFoLTJ6TTI3IDI2aDJ2MWgtMnoiLz48cGF0aCBmaWxsPSIjRjRBM0E4IiBkPSJNNSAzaDJ2MWgtMnpNMjUgM2gydjFoLTJ6TTUgNGgydjFoLTJ6TTI1IDRoMnYxaC0yek0xNSAxM2gydjFoLTJ6Ii8+PHBhdGggZmlsbD0iIzJCMkYzOCIgZD0iTTcgMTdoNXYxaC01ek0yMCAxN2g1djFoLTV6TTYgMThoN3YxaC03ek0xOSAxOGg3djFoLTd6TTUgMTloOHYxaC04ek0xOSAxOWg4djFoLTh6TTQgMjBoOXYxaC05ek0xNSAyMGgydjFoLTJ6TTE5IDIwaDl2MWgtOXpNNCAyMWgxdjFoLTF6TTI3IDIxaDF2MWgtMXpNNCAyMmgxdjFoLTF6TTI3IDIyaDF2MWgtMXpNNCAyOGgxdjFoLTF6TTI3IDI4aDF2MWgtMXpNNCAyOWgydjFoLTJ6TTI2IDI5aDJ2MWgtMnpNNSAzMGgyMnYxaC0yMnoiLz48cGF0aCBmaWxsPSIjRkZGOEVDIiBkPSJNMyAxMGgydjFoLTJ6TTI3IDEwaDJ2MWgtMnpNMyAxMWgzdjFoLTN6TTEzIDExaDJ2MWgtMnpNMTcgMTFoMnYxaC0yek0yNiAxMWgzdjFoLTN6TTMgMTJoNHYxaC00ek0xMSAxMmgzdjFoLTN6TTE4IDEyaDN2MWgtM3pNMjUgMTJoNHYxaC00ek00IDEzaDR2MWgtNHpNMTEgMTNoM3YxaC0zek0xOCAxM2gzdjFoLTN6TTI0IDEzaDR2MWgtNHpNOCAxNGg3djFoLTd6TTE3IDE0aDd2MWgtN3pNMTAgMTVoMTJ2MWgtMTJ6TTEzIDE3aDZ2MWgtNnpNMTMgMThoMnYxaC0yek0xNyAxOGgydjFoLTJ6TTEzIDE5aDJ2MWgtMnpNMTcgMTloMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiNGRkM0NkIiIGQ9Ik00IDJoMXYxaC0xek0yNyAyaDF2MWgtMXpNMyA1aDJ2MWgtMnpNMjcgNWgydjFoLTJ6TTMgNmgxdjFoLTF6TTI4IDZoMXYxaC0xek0zIDI1aDF2MWgtMXpNMjggMjVoMXYxaC0xeiIvPjxwYXRoIGZpbGw9IiNFQkQ5QjAiIGQ9Ik0xNCAyM2gxdjFoLTF6TTE3IDIzaDF2MWgtMXpNMTQgMjVoMXYxaC0xek0xNyAyNWgxdjFoLTF6TTEzIDI3aDJ2MWgtMnpNMTcgMjdoMnYxaC0yeiIvPjxwYXRoIGZpbGw9IiMyQTg1NjQiIGQ9Ik01IDI4aDF2MWgtMXpNMjYgMjhoMXYxaC0xeiIvPjxwYXRoIGZpbGw9IiNEODc2MkEiIGQ9Ik0zIDEzaDF2MWgtMXpNMjggMTNoMXYxaC0xek00IDE0aDJ2MWgtMnpNMjYgMTRoMnYxaC0yek01IDE1aDN2MWgtM3pNMjQgMTVoM3YxaC0zeiIvPjxwYXRoIGZpbGw9IiM0NTRCNTciIGQ9Ik01IDE3aDJ2MWgtMnpNMjUgMTdoMnYxaC0yek00IDE4aDJ2MWgtMnpNMjYgMThoMnYxaC0yek00IDE5aDF2MWgtMXpNMjcgMTloMXYxaC0xek00IDMwaDF2MWgtMXpNMjcgMzBoMXYxaC0xeiIvPjxwYXRoIGZpbGw9IiNFNkQ4QzAiIGQ9Ik0xMyAyMGgydjFoLTJ6TTE3IDIwaDJ2MWgtMnoiLz48L3N2Zz4K" alt=""><span class="equipe">Data Tigers</span><div class="fil" id="fil"></div><span class="num" id="num"></span></footer>
@@ -666,7 +932,9 @@ const DONNEES = {"_source":"Calculé le 21/11/2026 sur les données du projet (i
   const notes = document.getElementById("notes");
   const annonce = document.getElementById("annonce");
   const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const total = diapos.reduce((s, d) => s + Number(d.dataset.duree || 0), 0);
+  const principales = diapos.filter((d) => !d.classList.contains("annexe"));
+  const annexes = diapos.filter((d) => d.classList.contains("annexe"));
+  const total = principales.reduce((s, d) => s + Number(d.dataset.duree || 0), 0);
   let i = 0, etape = 0, debut = null;
 
   // mise à l'échelle de la toile de 1920 x 1080 dans la fenêtre
@@ -678,7 +946,7 @@ const DONNEES = {"_source":"Calculé le 21/11/2026 sur les données du projet (i
   ajuster();
 
   // fil de progression : un segment par diapositive, de longueur proportionnelle à sa durée prévue
-  diapos.forEach((d) => { const s = document.createElement("span"); s.style.flex = d.dataset.duree; fil.append(s); });
+  principales.forEach((d) => { const s = document.createElement("span"); s.style.flex = d.dataset.duree; fil.append(s); });
 
   function afficher() {
     diapos.forEach((d, k) => {
@@ -689,9 +957,11 @@ const DONNEES = {"_source":"Calculé le 21/11/2026 sur les données du projet (i
     const d = diapos[i];
     d.querySelectorAll("[data-e]").forEach((el) => el.classList.toggle("vu", Number(el.dataset.e) <= etape));
     toile.classList.toggle("sombre", d.classList.contains("fin"));
-    [...fil.children].forEach((s, k) => { s.className = k < i ? "fait" : k === i ? "ici" : ""; });
-    num.textContent = `${i + 1} / ${diapos.length}`;
-    annonce.textContent = `Diapositive ${i + 1} sur ${diapos.length} : ${d.getAttribute("aria-label")}`;
+    const pi = principales.indexOf(d), ai = annexes.indexOf(d);
+    [...fil.children].forEach((s, k) => { s.className = pi < 0 || k < pi ? "fait" : k === pi ? "ici" : ""; });
+    num.textContent = pi >= 0 ? `${pi + 1} / ${principales.length}` : ai === 0 ? "annexes" : `A${ai} / ${annexes.length - 1}`;
+    annonce.textContent = pi >= 0 ? `Diapositive ${pi + 1} sur ${principales.length} : ${d.getAttribute("aria-label")}`
+      : `${d.getAttribute("aria-label")}`;
     crochets.forEach((f) => f(i, etape));
     ecrireNotes();
     // ouverte en fichier local (file://), l'adresse ne peut pas être réécrite : l'étape n'y est simplement pas gardée
@@ -718,11 +988,13 @@ const DONNEES = {"_source":"Calculé le 21/11/2026 sur les données du projet (i
     const d = diapos[i];
     const a = d.querySelector("aside.texte-a-dire");
     const ecoule = debut ? Math.round((Date.now() - debut) / 1000) : 0;
-    const prevu = diapos.slice(0, i + 1).reduce((s, x) => s + Number(x.dataset.duree || 0), 0);
+    const prevu = principales.slice(0, principales.indexOf(d) + 1).reduce((s, x) => s + Number(x.dataset.duree || 0), 0);
+    const annexe = d.classList.contains("annexe");
     const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-    notes.innerHTML = `<div class="tete"><span>${i + 1}. ${a?.dataset.plan || ""}</span><span class="chrono">${mmss(ecoule)}</span>` +
-      `<span class="cible">${d.dataset.duree} s pour cette diapositive ; ${mmss(prevu)} à la fin de celle-ci, sur ${mmss(total)}</span>` +
-      `<span class="aide">flèches ou espace : avancer ; N : notes ; F : plein écran ; R : remettre le chronomètre à zéro</span></div>` + (a ? a.innerHTML : "");
+    notes.innerHTML = `<div class="tete"><span>${annexe ? "" : principales.indexOf(d) + 1 + ". "}${a?.dataset.plan || ""}</span><span class="chrono">${mmss(ecoule)}</span>` +
+      (annexe ? `<span class="cible">annexe, hors des ${mmss(total)} de la présentation</span>`
+        : `<span class="cible">${d.dataset.duree} s pour cette diapositive ; ${mmss(prevu)} à la fin de celle-ci, sur ${mmss(total)}</span>`) +
+      `<span class="aide">flèches ou espace : avancer ; N : notes ; F : plein écran ; R : chronomètre à zéro ; A : annexes ; M : fin</span></div>` + (a ? a.innerHTML : "");
   }
   setInterval(ecrireNotes, 1000);
   addEventListener("keydown", (ev) => {
@@ -731,12 +1003,17 @@ const DONNEES = {"_source":"Calculé le 21/11/2026 sur les données du projet (i
     if (["ArrowRight", "ArrowDown", "PageDown", " ", "Enter"].includes(k)) { ev.preventDefault(); suivant(); }
     else if (["ArrowLeft", "ArrowUp", "PageUp", "Backspace"].includes(k)) { ev.preventDefault(); precedent(); }
     else if (k === "Home") aller(0, 0);
-    else if (k === "End") aller(diapos.length - 1, 0);
+    else if (k === "End" || k === "m" || k === "M") aller(diapos.indexOf(principales[principales.length - 1]), 0);
+    else if (k === "a" || k === "A") aller(diapos.indexOf(annexes[0]), 0);
     else if (k === "n" || k === "N") { notes.classList.toggle("ouvert"); ecrireNotes(); }
     else if (k === "f" || k === "F") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
     else if (k === "r" || k === "R") { debut = Date.now(); ecrireNotes(); }
   });
   toile.addEventListener("click", (ev) => { if (ev.target.closest("a, button")) return; ev.clientX > innerWidth / 3 ? suivant() : precedent(); });
+  // sommaire des annexes : chaque titre ouvre son annexe
+  toile.querySelectorAll(".sommaire button[data-annexe]").forEach((b) => b.addEventListener("click", () => {
+    aller(diapos.findIndex((d) => d.dataset.annexe === b.dataset.annexe), 0);
+  }));
 
   // contenus calculés à partir des données réelles (donnees.json)
   const D = DONNEES;

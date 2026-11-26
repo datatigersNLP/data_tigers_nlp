@@ -4,7 +4,8 @@
 **Ticket** #114 (préparer la soutenance J4 : pitch, présentation, vidéo de secours, répétition et envoi)  
 **Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date ; **mis à jour le** 16 novembre 2026 : encodeur ajusté servi (#164), chaîne v2 du volet B (#163), mesure corrigée par le jugement mutualisé, présentée comme une limite corrigée (#139, annexes 14 et 15)  
 **Usage** une seule source pour deux formats : les fichiers Marp donnent les PDF, et le même texte donne la version HTML animée.  
-**Nouveau format, 21 novembre 2026** : 8 minutes de présentation sans pitch, puis environ 5 minutes de questions. Le support à projeter est `presentation_8min.html` (voir `8min/README.md`) ; les fichiers Marp restent la réserve d'annexes pour les questions.
+**Nouveau format, 21 novembre 2026** : 8 minutes de présentation sans pitch, puis environ 5 minutes de questions. Le support à projeter est `presentation_8min.html` (voir `8min/README.md`).
+**Mis à jour le 26 novembre 2026** : les annexes utiles ont été reprises et mises à jour dans `presentation_8min.html` (17 annexes, hors des 8 minutes) ; le script oral (`8min/script_oral.md`) et les questions préparées (`8min/questions_reponses.md`) l'accompagnent. Les fichiers Marp (pitch, présentation, annexes) sont conservés pour mémoire, en l'état du 16 novembre : certains de leurs chiffres sont dépassés (jugement à l'aveugle, chaîne de démonstration, étalonnage) ; ne pas les projeter.
 
 ---
 

@@ -1,6 +1,6 @@
 # Support de la soutenance de 8 minutes
 
-**Établi le** 21 novembre 2026 par Mahé BEGNIS, après le nouveau format annoncé par l'enseignant : 8 minutes de présentation, sans pitch, puis environ 5 minutes de questions.
+**Établi le** 21 novembre 2026 par Mahé BEGNIS, après le nouveau format annoncé par l'enseignant : 8 minutes de présentation, sans pitch, puis environ 5 minutes de questions. **Complété le** 26 novembre : annexes, script oral, questions et réponses préparées.
 
 **Fichier à projeter** : `../presentation_8min.html`. Il fonctionne hors ligne et ne charge aucune ressource extérieure : police, logo et données sont embarqués.
 
@@ -9,29 +9,38 @@
 - **Navigation** :
   - flèche droite, espace ou clic dans les deux tiers droits : étape suivante ;
   - flèche gauche ou clic à gauche : étape précédente ;
-  - Origine et Fin : première et dernière diapositive.
+  - Origine : première diapositive ; Fin ou M : diapositive de fin (« Merci ») ;
+  - A : sommaire des annexes, dont chaque titre ouvre l'annexe.
 - **Notes de l'orateur** : la touche N affiche le texte à dire et la durée prévue de la diapositive. Un chronomètre démarre au premier appui ; la touche R le remet à zéro.
 - **Plein écran** : touche F.
 - **Reprendre à une étape** : ouvrir `presentation_8min.html#7.3` (diapositive 7, étape 3).
-- **Durée prévue** : 7 min 40 au total. La barre du bas a un segment par diapositive, de longueur proportionnelle à sa durée.
+- **Durée prévue** : 7 min 55 au total, pour 1 062 mots à dire (134 mots par minute). La barre du bas a un segment par diapositive, de longueur proportionnelle à sa durée.
+- **Annexes** : 17 diapositives après « Merci », hors des 8 minutes, de la barre et du numéro (« A3 / 17 ») ; leurs notes donnent la réponse type.
+- **Notes** : elles s'affichent sur la page projetée ; ne les ouvrir qu'en répétition, ou avec un second écran qui ne recopie pas le premier.
 - **Mouvement réduit** : si le système le demande, chaque étape s'affiche sans animation.
 
 ## Contenu
 
 | Diapositive | Sujet | Durée |
 |---|---|---:|
-| 1 | Couverture | 15 s |
+| 1 | Couverture | 20 s |
 | 2 | La question de départ et les deux volets | 40 s |
 | 3 | La préparation commune : découpage, encodage, index | 35 s |
 | 4 | Volet A : la recherche dans le navigateur | 45 s |
-| 5 | Choix : ajuster l'encodeur | 45 s |
+| 5 | Choix : ajuster l'encodeur | 50 s |
 | 6 | Volet B : l'assistant qui cite ses sources | 40 s |
 | 7 | Choix : la recherche hybride et le reclasseur | 60 s |
 | 8 | Choix : 10 passages plutôt que 5 | 35 s |
 | 9 | Choix : les trois modèles | 45 s |
 | 10 | Choix : les données synthétiques | 50 s |
-| 11 | Bilan : des règles écrites avant de mesurer | 40 s |
+| 11 | Bilan : des règles écrites avant de mesurer | 45 s |
 | 12 | Questions | 10 s |
+
+**Annexes** : A1 démonstration du volet A en ligne ; A2 démonstration du volet B en direct ; A3 mesure de bout en bout ; A4 exactitude jugée à l'aveugle ; A5 encodeurs synthétiques ; A6 seuils d'abstention ; A7 tests statistiques ; A8 protocole du volet B ; A9 données d'adaptation ; A10 quantification et export ; A11 mesure corrigée ; A12 confidentialité ; A13 machines ; A14 organisation et usage de l'IA ; A15 cinq outils ; A16 Agent0 ; A17 glossaire. Les questions de démonstration (A1, A2) ont été essayées le 26 novembre, sur le site en ligne et sur l'assistant local.
+
+**Pour la soutenance** :
+- `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et une répartition proposée des orateurs ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger.
+- `questions_reponses.md` : 42 questions probables du jury, avec une réponse courte, chiffrée et sourcée.
 
 ## Des schémas animés construits sur des données réelles
 
@@ -54,7 +63,8 @@ Depuis la racine du dépôt :
 
 ```
 python3 docs/soutenance/8min/construire.py          # écrit docs/soutenance/presentation_8min.html
-python3 docs/soutenance/8min/verifier_chiffres.py   # 40 chiffres contre leurs sources ; aucun tiret long
+python3 docs/soutenance/8min/verifier_chiffres.py   # 61 chiffres contre leurs sources ; aucun tiret long
+python3 docs/soutenance/8min/script_oral.py         # régénère script_oral.md depuis les notes du support
 ```
 
 `verifier_chiffres.py` relit les fichiers de résultats dans `data/` (option `--donnees`, par défaut la copie de mesure `~/NLP2_local/depot_v2/data`) et les documents publiés sur `dev`.
