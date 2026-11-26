@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 12 novembre 2026 ; sessions 1 à 63 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56 et 61 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 14 novembre 2026 ; sessions 1 à 67 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64 et 66 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -1896,6 +1896,129 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Un rechargement de la page pendant un calcul a bloqué les questions suivantes jusqu'à sa fin.
 - Une question tapée avec des apostrophes droites ne récupère pas les mêmes passages que le texte officiel.
 
+### Session 64, 2 et 4 novembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Maquette de l'interface de la démonstration du volet B (#111, étape 2) et corrections après revue ; approbation de la #124 ; plan des supports de J3 (#112).
+
+**Produit.**
+- 02/11 : dossier `demo_b/` (`a361590`, PR #128) : même parcours et même charte que le site du volet A, références `[Pk]` cliquables, affichage de chaque statut du contrat, mode maquette, convertisseur des traces de Jibril.
+- 04/11 : corrections des deux remarques de Jibril (`c7e95be`) ; nouvelle relecture demandée.
+- 04/11 : #124 approuvée sur `69d5d53` après relecture des commits de Mahé.
+- 04/11 : plan de 10 diapositives proposé à Remy sur #112.
+
+**Mesures exécutées.**
+- 02/11 : 12 tests réussis ; deux constructions (normale et maquette) ; parcours Playwright dans Chromium, à 1 280 et 375 px : exemples, clic et clavier sur P1 et P5, question libre ; aucune erreur JavaScript, aucune requête hors de 127.0.0.1.
+- 04/11 : 17 tests réussis, dont 5 sur un serveur HTTP local ; le test du corps bloqué échoue bien sur une copie sans la correction.
+- #124 : chiffres et sources modifiés vérifiés sur `dev`.
+
+**Résultats retenus.**
+- La maquette rejoue les traces Q036 et Q003 ; elle n'appelle aucun modèle. Un bandeau l'indique.
+- Le support de Remy parlait peu des blocages et de la démonstration, que J3 doit couvrir : deux diapositives ajoutées au plan.
+
+**Ce qui a été écarté, et pourquoi.**
+- Versionner les traces brutes de Jibril : seules les deux réponses converties le sont, avec son accord.
+
+**Ce que l'équipe a validé, et par qui.**
+- Versionnement des réponses converties : accord de Jibril (02/11).
+- #128 : modifications demandées par Jibril le 04/11 ; nouvelle relecture en attente au 7 novembre.
+- Plan de J3 : pas de réponse de Remy sur #112 au 7 novembre.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Paquet Playwright du dossier de travail incomplet : réinstallé.
+- Reproduction de la chaîne (#51) non faite le 04/11 : Ollama et Qwen sont absents de ma machine, et elle reste à faire sur le Legion.
+
+### Session 65, 7 novembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** couche locale de la démonstration (#111, étape 3) ; relecture des PR #132 et #133 ; journal.
+
+**Produit.**
+- `scripts/rag/serveur_demo.py`, ses tests et le README de `demo_b/` (`f49184a`, sur la branche de la #128), après la fusion de `dev` (`621af4f`).
+- Relance de Jibril sur la #128 ; #133 approuvée sur `dafea0a`.
+- Sessions 55 à 58 préparées pour Mahé, avec la déclaration du préremplissage de la grille du lot v1.
+
+**Mesures exécutées.**
+- Couche locale : 20 tests réussis avec Ollama et E5 simulés, tests de `scripts/rag` et de `demo_b` sans échec. Essai avec le vrai index (4 240 passages) et le vrai E5 : score de 0,862 pour P1 sur Q036, comme dans l'essai de la #85. Essai complet avec un Ollama simulé : réponse au format du contrat, lue par le client de l'interface ; Edge affiche « L'assistant est prêt ».
+- #133 : commits, approbations, fusions et section 4 vérifiés. #132 : chiffres vérifiés dans leurs sources.
+
+**Résultats retenus.**
+- La couche fonctionne sur ma machine jusqu'à l'appel d'Ollama. Le vrai Qwen n'a pas été essayé : il reste le branchement sur le Legion, où E5 et le tokeniseur Qwen doivent être en cache.
+
+**Ce qui a été écarté, et pourquoi.**
+- Un cadre web pour la couche : la bibliothèque standard de Python suffit, sans nouvelle dépendance.
+
+**Ce que l'équipe a validé, et par qui.**
+- La couche locale n'est pas encore relue.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Ollama et Qwen absents de ma machine : la génération a été simulée.
+- Je déclare avoir rempli ma grille du lot v2b moi-même et attendre Maïmouna pour la finaliser.
+
+### Session 66, 9 novembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Revue de Jibril du 9 novembre sur la #128 (#111) : verrou de la couche locale, version de Vite, description de la PR.
+
+**Produit.**
+- `02ccf78` : le verrou de `serveur_demo.py` est libéré dès la fin du calcul, avant l'envoi de la réponse, y compris en cas d'erreur ; test `test_verrou_libere_avant_l_envoi_de_la_reponse`.
+- `8ba4524` : Vite passe de 8.3.0 à 8.3.5 dans `demo_b/`.
+- PR #128 renommée « Démonstration du volet B : interface et couche locale », description réécrite, relectures redemandées à Jibril et Maïmouna.
+
+**Mesures exécutées.**
+- Le nouveau test échoue à chaque exécution sur l'ancien code, et passe avec la correction.
+- Fichier de tests de la couche passé trois fois de suite ; suite de `scripts/rag` : 96 tests réussis, 1 ignoré.
+- `demo_b/` : `npm audit` sans faille, 17 tests réussis, constructions normale et maquette réussies.
+
+**Résultats retenus.**
+- Le faux 409 relevé par Jibril venait du verrou encore pris pendant l'envoi de la réponse.
+- Les failles signalées touchent Vite 8.3.0 à 8.3.2 ; la 8.3.5 les corrige.
+
+**Ce qui a été écarté, et pourquoi.**
+- Vite 8.3.6 et 8.3.7 : publiées depuis moins d'une semaine ; la 8.3.5 date du 21 octobre.
+
+**Ce que l'équipe a validé, et par qui.**
+- #128 approuvée par Jibril le 10/11 et par Mahé le 11/11 sur `8ba4524`, puis fusionnée le 11/11.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Aucune.
+
+### Session 67, 14 novembre 2026, Vaneck DAGAR, Claude Opus 5.5 via Claude Code
+
+**Objet.** Demandes de Mahé du 14 novembre : diapositive 6 des supports de J3 (#112), scénario de la démonstration (#111), section 4.4 du rapport (#113), ligne de la fiche des assistants d'IA (#14).
+
+**Produit.**
+- Relecture des diapositives 2 et 6 de `J3_support_presentation.md` ; #156 de Remy fusionnée, après l'approbation de Mahé.
+- PR #158 : scénario de la démonstration (`docs/etudes/demonstration/scenario_demo_111.md`).
+- PR #160 : ma ligne dans `docs/suivi/outils/assistants-ia.md`.
+
+**Mesures exécutées.**
+- Récupération de la #85 (E5 en fp32, index de 4 240 passages) sur 19 questions candidates pour le scénario, écrites pour la démonstration et absentes de `jeu-questions-v1` ; lecture des passages renvoyés.
+- Diapositive 6 vérifiée contre `Reponse.jsx`, `Passage.jsx`, `serveur_demo.py`, le #52 et la revue de Maïmouna sur la #128.
+- Rapport : conversion avec `docs/latex/build.py` et XeLaTeX, 0 erreur, 0 débordement, 0 caractère manquant.
+
+**Résultats retenus.**
+- Questions du scénario : période d'essai d'un cadre (question directe) ; arrêt maladie, licenciement et indemnisation (deux passages) ; retraite d'un fonctionnaire (hors corpus) ; repos entre deux journées de travail pour comparer T et le modèle adapté, avec trois questions de réserve.
+
+**Ce qui a été écarté, et pourquoi.**
+- Questions dont les passages renvoyés ne contiennent pas la réponse (congé de paternité, chômage après démission ou rupture conventionnelle, prime de précarité, dates de congés imposées, durée maximale d'un CDD) ; questions dont la réponse est trop évidente pour montrer une différence entre les modèles (SMIC, règlement intérieur).
+- Mise en forme des supports de J3 : reprise par Mahé.
+
+**Ce que l'équipe a validé, et par qui.**
+- #157 à #160 : relectures en attente au 14 novembre.
+
+**Temps d'appropriation constaté.**
+- Aucun.
+
+**Difficultés rencontrées.**
+- Ollama et Qwen absents de ma machine : les questions du scénario n'ont été vérifiées que sur la récupération ; les réponses des modèles restent à voir lors de l'essai sur le Mac de Mahé.
+
 ---
 
 ## 4. Erreurs détectées par la vérification
@@ -1963,6 +2086,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 14/10 | Empreinte de `LICENSE` du modèle modifiée par la conversion des fins de ligne sous Windows | relecture de la #78 | règle `.gitattributes` proposée |
 | 14/10 | `scrollIntoView` faisant remonter tout le cadre de l'application | capture du scénario de la refonte | défilement limité à la zone du fil |
 | 14/10 | Progression calculée en Mio mais affichée en « Mo » | relecture lors du passage au modèle élagué | unité corrigée |
+| 14/10 | Relecture de la #78 affirmant qu'aucun nouveau commit n'avait été poussé, alors que `a9a71c5` venait d'arriver | nouvelle lecture de la PR | commit relu, réapprobation sur la fusion réelle |
 | 17/10 | Audit des adresses e-mail concluant à zéro exposition, `git log --since` ayant arrêté le parcours trop tôt | contradiction avec un commit connu | historique parcouru en entier : 62 commits concernés |
 | 17/10 | Revue publiée de la PR #80 affirmant « aucune requête vers jsDelivr », les requêtes ayant été écoutées au niveau de la page seulement | vérification de Jibril, puis essai avec le CDN bloqué : la recherche échoue | revue corrigée en demande de modification ; moteur d'exécution servi par le site (PR #81) |
 | 17/10 | README de la PR #82 donnant la première inférence locale « en cours », alors qu'elle a réussi le 27/09 (#31) et qu'elle est documentée : la liste des fichiers ne descendait que dans les sous-dossiers de `docs/etudes` | revue de Jibril | ligne corrigée, RAG complet distingué (`1216bd5`) |
@@ -2044,11 +2168,18 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 04/11 | Relance de l'enseignant donnée comme lançable, contre la décision du 27/10 d'attendre | relecture du #8 avant d'écrire la relance | retirée des tâches lançables |
 | 04/11 | Pilote du lot v2 : une phrase recopiée renvoyait à une phrase précédente (« À défaut… ») et ne répondait pas | lecture des 20 sorties du pilote | consigne complétée avant le lot complet |
 | 04/11 | Chiffres de J3 (#124) restés au 02/11 : lot v1 présenté comme données, B0 « à recalibrer », J4 sans réserve | revue de Jibril | réalisé, prévu et conditionnel distingués (`69d5d53`) |
+| 04/11 | Délai de `POST /api/question` supprimé dès les en-têtes : un corps bloqué laissait l'interface occupée | Jibril, revue de la #128 | délai étendu à la lecture du corps, test ajouté |
+| 04/11 | Encadré d'abstention affirmant que les passages ne contenaient pas l'information, sans contrôle | Jibril, revue de la #128 | texte décrivant le comportement du modèle |
 | 07/11 | Unités découpées aux « : » et « ; » : 10 fragments sans leur condition acceptés dans le lot v2 | revue de Jibril sur la #130 | découpage corrigé, lot v2b (`e383df5`) |
 | 07/11 | Reprise sans pilote acceptée sans le signaler | revue de Jibril sur la #130 | pilote exigé, ou absence déclarée |
+| 07/11 | Message du tokeniseur en anglais dans `/api/etat`, alors que le contrat le demande en français | essai du serveur réel | message en français |
+| 07/11 | Commande de lancement du README abîmée par un caractère de contrôle | contrôle du fichier avant le commit | commande corrigée |
 | 08/11 | Remarque sur la #128 attribuant au site du ministère le refus du lien « Voir dans la fiche » | nouvel essai de Maïmouna, connexion vérifiée | remarque retirée, le lien fonctionne |
 | 08/11 | Phrase de conclusion de la réponse sur les congés payés présentée comme inventée et contradictoire | question de Maïmouna, relecture des cinq passages | son contenu figure en P5, ainsi qu'en P1 et P3 ; seule l'absence de citation est retenue |
 | 08/11 | Fichier d'annotation complet, lot de test compris, ouvert par l'assistant dans l'éditeur au lieu des seules questions de calibration | relecture de la commande par l'assistant | onglet fermé sans lecture, copie locale supprimée et remplacée par les 8 questions de calibration |
+| 09/11 | Verrou de la couche locale libéré après l'envoi de la réponse : faux 409 possible sur la question suivante | Jibril, revue de la #128 | verrou libéré avant l'envoi, test ajouté |
+| 14/11 | Copie locale du dépôt détachée sur `origin/dev` par une commande de l'assistant | contrôle de la branche | branche d'origine rétablie, sans perte |
+| 14/11 | Première version de la diapositive 6 incohérente avec l'état du projet (essai attribué à tort, statuts, durées, scénario) | ma demande de revérification | diapositive réécrite avant la PR #157 |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 
