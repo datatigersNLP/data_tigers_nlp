@@ -3,8 +3,9 @@
 // de la chaîne. Ce qui change : la réponse est rédigée par Qwen et cite ses passages (composants/Reponse.jsx), l'attente
 // peut durer plusieurs dizaines de secondes, et un clic sur une référence [Pk] amène la carte de son passage.
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Barre from "./Barre.jsx";
+import Confidentialite from "./Confidentialite.jsx";
 import Reponse, { BulleAssistant, idCarte } from "./Reponse.jsx";
 import { numero } from "../citations.js";
 
@@ -82,6 +83,8 @@ export default function Conversation({ chaine }) {
   const [actuel, setActuel] = useState(() => chats[0].id);
   const [question, setQuestion] = useState("");
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [confidentialite, setConfidentialite] = useState(false);
+  const ouvreurConfidentialite = useRef(null);
   const dernier = useRef(null);
   const zoneFil = useRef(null);
   const saisie = useRef(null);
@@ -201,6 +204,22 @@ export default function Conversation({ chaine }) {
     requestAnimationFrame(() => saisie.current?.focus());
   }
 
+  // même comportement qu'au volet A : ouverte depuis le menu sur téléphone, la fenêtre le ferme d'abord, et à sa
+  // fermeture le focus revient au bouton qui l'a ouverte, ou au bouton du menu s'il a disparu avec lui
+  function ouvrirConfidentialite(ev) {
+    ouvreurConfidentialite.current = ev.currentTarget;
+    setMenuOuvert(false);
+    setConfidentialite(true);
+  }
+
+  const fermerConfidentialite = useCallback(() => {
+    setConfidentialite(false);
+    requestAnimationFrame(() => {
+      const ouvreur = ouvreurConfidentialite.current;
+      (ouvreur?.getClientRects().length ? ouvreur : boutonMenu.current)?.focus();
+    });
+  }, []);
+
   function utiliserExemple(q) {
     setMenuOuvert(false);
     requestAnimationFrame(() => saisie.current?.focus());
@@ -219,7 +238,9 @@ export default function Conversation({ chaine }) {
         exemples={chaine.exemples}
         utiliserExemple={utiliserExemple}
         occupe={occupe}
+        ouvrirConfidentialite={ouvrirConfidentialite}
       />
+      <Confidentialite ouvert={confidentialite} fermer={fermerConfidentialite} />
 
       <main inert={menuOuvert || undefined} className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-filet px-3 py-2 sm:px-7 sm:py-3.5">
@@ -339,7 +360,15 @@ export default function Conversation({ chaine }) {
             <p className="mt-2 text-center text-xs leading-normal text-gris">
               Réponses rédigées par un modèle exécuté sur cet ordinateur, à partir des fiches de travail-emploi.gouv.fr
               (instantané SocialGouv du 11 sept. 2026, Licence Ouverte Etalab 2.0). Projet étudiant, non officiel : ne
-              remplace pas un conseil juridique.
+              remplace pas un conseil juridique.{" "}
+              <button
+                type="button"
+                onClick={ouvrirConfidentialite}
+                aria-haspopup="dialog"
+                className="underline underline-offset-2 hover:text-encre focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                Confidentialité et mentions
+              </button>
             </p>
           </div>
         </div>
