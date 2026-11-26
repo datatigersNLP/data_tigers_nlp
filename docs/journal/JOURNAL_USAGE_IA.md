@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 26 novembre 2026 ; sessions 1 à 69 et 73 (70 à 72 en PR #186) ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64 et 66 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 26 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -2110,6 +2110,87 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - L'approbation de la #161 au nom de Mahé a été refusée par le classifieur de sécurité de Claude Code : le texte de la revue lui est remis, sans contournement.
 - Trois paires de PR entrent en conflit, repérées avant toute fusion : #161 et #178 (journal), #175 et #177 (`demo_b/README.md`), #174 et #179 (page d'encodage). Ordre de fusion proposé : la première de chaque paire, puis résolution dans la seconde.
 
+**Sessions 70 à 72, de Maïmouna SIGNATE.** Les sessions 70 et 71 sont consignées a posteriori, le 24 novembre, à partir de l'historique de la conversation avec l'assistant, des fichiers datés et des pull requests. La session 72 est consignée le 24 novembre. Les temps signalés « estimés après coup » n'ont pas été chronométrés : ils ont été proposés par l'assistant d'après le volume de travail, puis validés ou ajustés par moi.
+
+### Session 70, 12 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Reprise du corpus (#27) et du site (#29) dans des notebooks, pour les comprendre ; suite des revues des #136 et #137 ; section 4.5 du rapport (#113) ; relecture des diapositives 2 et 6 de J3 (#134). Consignée a posteriori.
+
+**Produit.**
+- Notebooks locaux, hors dépôt : `01_corpus.ipynb`, guidé par l'assistant et complété par moi, et `02_site.ipynb`, généré par l'assistant.
+- Commits des #136 et #137, préparés par l'assistant et relus par moi.
+- Section 4.5 du rapport (#154), écrite à partir de mes idées et de mes choix, avec l'aide de l'assistant, puis modifiée par moi.
+- Revue de la #134, en commentaire.
+
+**Mesures exécutées.**
+- Règles de filtrage rejouées : 5 702 passages au départ, 5 284 après les règles, 40 doublons marqués.
+- Recherche du site rejouée en Python ; un octet modifié dans l'index est refusé par le contrôle SHA-256.
+
+**Résultats retenus.** `text` retenu plutôt que `chunk_text` : aucun passage au-delà de 512 tokens, contre 637.
+
+**Ce qui a été écarté, et pourquoi.** Une formulation présentant `npm audit` comme relancé par moi, dans la revue de la #134 : l'assistant l'avait lancé.
+
+**Ce que l'équipe a validé, et par qui.** #136 et #154 fusionnées le 13/11, #137 le 14/11.
+
+**Temps d'appropriation constaté.** Section 4.5 et relecture de la #105 : 2 h 30 ; relecture de la #134 : 45 min. Estimés après coup.
+
+**Difficultés rencontrées.**
+- La première règle sur les sections oubliait une variante (5 286 passages au lieu de 5 284) : je l'ai repérée.
+- La #154 a été ouverte vers `main` ; la base a été corrigée en `dev`.
+
+### Session 71, du 12 au 16 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Jugement à l'aveugle (#52), rendu le 14/11 ; conflit de la #137 après la fusion de la #135 ; préparation d'un point avec l'enseignant, le 16/11. Consignée a posteriori.
+
+**Produit.**
+- Grille de 40 réponses, puis version complétée le 14/11 à 16 h après les demandes de Mahé ; première version conservée.
+- Commit de fusion `57dd8d4` (#137), préparé par l'assistant.
+- Récapitulatif HTML du projet, généré par l'assistant, hors dépôt.
+
+**Mesures exécutées.** Contrôles de forme de la grille par l'assistant : 40 lignes, codes, en-tête, séparateur, encodage et valeurs admises, sans affichage des verdicts.
+
+**Résultats retenus.** L'assistant n'a proposé aucun verdict ni défaut. Il m'a expliqué les critères, avec un exemple inventé sur un sujet absent des 40 réponses, ainsi que l'import dans Excel.
+
+**Ce qui a été écarté, et pourquoi.**
+- Page HTML de saisie créée par l'assistant sans que je l'aie demandée : non utilisée.
+- Rédaction des défauts et relecture de mes notations par l'assistant, que j'ai demandées : refusées par lui, les consignes du jugement l'excluant.
+
+**Ce que l'équipe a validé, et par qui.** Mahé a trouvé la forme de la grille correcte et demandé des précisions sur 10 lignes.
+
+**Temps d'appropriation constaté.** Jugement et précisions : 3 h 15, estimés après coup.
+
+**Difficultés rencontrées.**
+- J'ai collé les fiches à juger dans la conversation, et une capture d'écran montrait quelques cases de ma grille : l'assistant ne les a pas commentées.
+- Excel a ajouté une ligne d'en-tête et des majuscules au CSV.
+
+### Session 72, 23 et 24 novembre 2026, Maïmouna SIGNATE, Claude Opus 5.5 via Claude Code
+
+**Objet.** Version finale de la grille (#52) ; relecture du scénario de démonstration (#158) ; décision dans la fiche des assistants d'IA (#185) ; charges réelles.
+
+**Produit.**
+- Grille finale transmise à Mahé ; l'assistant en a retiré une ligne ajoutée par Excel.
+- Revue de la #158, en commentaire : texte proposé par l'assistant d'après ses contrôles, modifié et posté par moi.
+- PR #185 ; charges transmises à Jibril.
+
+**Mesures exécutées, par l'assistant sur ma machine.**
+- Récupération R1 (code de la #175, `6dcdd0a`) rejouée pour les trois questions du scénario.
+- 17 tests de l'interface et construction, sur `3057dd2`.
+- Absence des trois questions dans `jeu-questions-v1` et dans le jeu v2.
+
+**Résultats retenus.**
+- Congés payés : P2 donne 2,5 jours par mois, le total annuel est en P1 ; remarque posée sur la #158.
+- Renouvellement de la période d'essai : la réponse est en P1. Retraite d'un fonctionnaire : aucun des 10 passages ne parle de fonctionnaires.
+
+**Ce qui a été écarté, et pourquoi.** Toute conclusion sur les réponses des modèles : le modèle adapté et T ne sont pas sur ma machine.
+
+**Ce que l'équipe a validé, et par qui.** En attente au 24/11.
+
+**Temps d'appropriation constaté.** Relecture de la #158 : 1 h, estimée après coup.
+
+**Difficultés rencontrées.**
+- Dans `conditions_exceptions`, six « non » voulaient dire « sans objet » : je les ai remplacés (J03, J24, J27, J30, J33, J39) et signalés à Mahé. L'assistant avait signalé, par un contrôle mécanique, que J33 n'avait pas de défaut ; je lui ai ensuite collé ma grille, et il n'a proposé aucune notation.
+- La connexion a coupé pendant l'envoi de la branche.
+
 ### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
 
 **Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114).
@@ -2305,8 +2386,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 08/11 | Phrase de conclusion de la réponse sur les congés payés présentée comme inventée et contradictoire | question de Maïmouna, relecture des cinq passages | son contenu figure en P5, ainsi qu'en P1 et P3 ; seule l'absence de citation est retenue |
 | 08/11 | Fichier d'annotation complet, lot de test compris, ouvert par l'assistant dans l'éditeur au lieu des seules questions de calibration | relecture de la commande par l'assistant | onglet fermé sans lecture, copie locale supprimée et remplacée par les 8 questions de calibration |
 | 09/11 | Verrou de la couche locale libéré après l'envoi de la réponse : faux 409 possible sur la question suivante | Jibril, revue de la #128 | verrou libéré avant l'envoi, test ajouté |
+| 12/11 | Notebook du corpus : liste exacte de sections proposée par l'assistant, une variante oubliée (5 286 passages au lieu de 5 284) | question de Maïmouna | comparaison sur le début du titre de section |
 | 14/11 | Copie locale du dépôt détachée sur `origin/dev` par une commande de l'assistant | contrôle de la branche | branche d'origine rétablie, sans perte |
 | 14/11 | Première version de la diapositive 6 incohérente avec l'état du projet (essai attribué à tort, statuts, durées, scénario) | ma demande de revérification | diapositive réécrite avant la PR #157 |
+| 16/11 | Script oral et récapitulatif local présentant le lot v2b et le jugement du #52 comme faits « sans IA » | relecture de l'assistant, le 23/11 | « aucun verdict proposé par l'IA ; aide sur les critères et la forme » |
 | 17/11 | Rappel du contexte de l'E5 de base à 10 passages sur le CDTN annoncé à 77,7 %, publié à 77,6 % le 9 novembre | recoupement avec le commentaire du #138 | valeur exacte relue (0,77649), 77,6 % |
 | 17/11 | Empreinte du cache du reclasseur publiée comme celle d'un résultat, alors que le cache grandit à chaque mesure | empreinte relue après la préparation du bout en bout | empreinte retirée, le cache est décrit comme tel |
 | 17/11 | Recall@5 identique de la base et de l'ajusté sur le jeu v2 (57,0 %), soupçonné d'être un même calcul | comparaison des listes question par question | coïncidence vérifiée : 9 succès propres à chacun, jamais les mêmes 5 passages |
@@ -2315,6 +2398,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 21/11 | Identifiant `m2-article375981-*` recopié de travers par les sous-agents générateurs des lots 23 et 41 | contrôle d'ingestion du script | lots inscrits non conformes, relancés une fois comme le prévoit A3, puis conformes |
 | 21/11 | Commentaire de gel du #167 annonçant 20 tests de mesure au lieu de 19 | recomptage après publication | commentaire corrigé |
 | 21/11 | Registre de la v3-C annoncé à 143 événements au lieu de 144 | recomptage des lignes du registre | corrigé, avec son empreinte |
+| 21/11 | Durée médiane du témoin dans R1 publiée à 11,9 s au lieu de 11,8 s (11,8496 s) dans `10_resultats.md` | vérificateur de chiffres du support, le 26/11 | corrigé (`be86a63`), et dans l'annexe |
 | 22/11 | Rapport : v2-T dite écartée par les règles écrites d'avance, alors que la règle A2 la retenait | recoupement avec `10_resultats.md`, section 7 | phrase corrigée avant commit |
 | 22/11 | Rapport : cache du site décrit comme contenant le modèle et l'index | recoupement avec le texte de la fenêtre de confidentialité (PR #177) | « les fichiers du modèle » |
 | 22/11 | Message de commit du journal annonçant quatorze erreurs ajoutées à la section 4, au lieu de dix | recomptage des lignes avant envoi | message corrigé avant envoi |
@@ -2329,7 +2413,7 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 22/11 | Carton de fin de la vidéo effacé avant la dernière image | planche de contrôle | carton maintenu jusqu'au repère de fin, capture refaite |
 | 22/11 | Vidéo encodée en plage pleine (`yuvj420p`), couleurs non déclarées | lecture des propriétés du flux | conversion en plage vidéo, BT.709 déclarée |
 | 22/11 | Contrôle d'un remplacement de code faux : le mot cherché figurait dans le commentaire ajouté | assertion en échec avant toute écriture | contrôle réécrit sur les appels eux-mêmes |
-| 21/11 | Durée médiane du témoin dans R1 publiée à 11,9 s au lieu de 11,8 s (11,8496 s) dans `10_resultats.md` | vérificateur de chiffres du support, le 26/11 | corrigé (`be86a63`), et dans l'annexe |
+| 24/11 | Assistant demandant de refaire les 10 précisions du #52, déjà faites le 14/11 | remarque de Maïmouna, contrôle des fichiers datés | fichiers du 14/11 à 16 h retrouvés |
 | 26/11 | Même piège zsh : une liste de PR dans une variable, non découpée par la boucle | message « integer expression expected » | tableau zsh |
 | 26/11 | Contrôle de mise en page qui ne changeait que l'ancre : le support ne la lit qu'au chargement, les 30 contrôles ont porté sur la diapositive 1 | toutes les lignes du rapport titrées « Couverture » | page rechargée à chaque ancre |
 | 26/11 | Contrôle négatif du détecteur de débordement fait avec un bloc vide, rétréci par la mise en page : faux « non détecté » | relecture du résultat | refait avec 40 paragraphes : détecté |
