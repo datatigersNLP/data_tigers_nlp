@@ -113,10 +113,10 @@ R2 n'étant pas maintenue, la chaîne de démonstration est R1 : la mesure de bo
 | R1 adapté moins B2 adapté (118 questions, 39 hors corpus) | +16,9 [+6,4 ; +27,3] | 31, 11 | p = 0,003 | 39 contre 38 |
 | R1 témoin moins R1 adapté (119 questions, 39 hors corpus) | −42,9 [−52,8 ; −32,5] | 3, 54 | p < 0,001 | 38 contre 39 |
 
-* **Décision, par le critère de la section 7** : avec le modèle adapté, la chaîne de démonstration améliore M4 de 16,9 points sur B2, et la borne basse de l'intervalle dépasse 0 : l'amélioration est démontrée. M1 ne baisse pas : 39 abstentions correctes sur 39, contre 38. La chaîne R1 est confirmée pour la démonstration.
+* **Décision, par le critère de la section 7** : avec le modèle adapté, la chaîne de démonstration améliore M4 de 16,9 points sur B2, et la borne basse de l'intervalle dépasse 0 : l'amélioration est démontrée. M1 ne baisse pas : 39 abstentions correctes sur 39, contre 38, sur des questions hors corpus au sens du protocole (section 9). La chaîne R1 est confirmée pour la démonstration.
 * **L'adaptation est décisive dans cette chaîne** : le témoin T, dans les mêmes conditions, s'abstient à tort sur 76,5 % des questions du corpus et ne cite un passage pertinent que pour 10,1 % d'entre elles.
 * **Le coût est la durée** : 10 passages et un reclasseur font passer la durée médiane de 4,9 à 11,8 secondes par question.
-* **Limites** : le jeu v2 est synthétique ; M4 mesure la traçabilité d'une réponse, pas son exactitude ; un seul passage est annoté par question.
+* **Limites** : le jeu v2 est synthétique ; M4 mesure la traçabilité d'une réponse, pas son exactitude ; un seul passage est annoté par question ; M1 porte sur des questions hors corpus au sens du protocole, sans preuve qu'aucun passage du corpus n'y réponde (section 9).
 
 ---
 
@@ -190,6 +190,7 @@ Effet de k seul, à récupération égale (descriptif ; `mesures_10.py effet_k`,
 * **Le CDTN n'est pas neutre entre R1 et R2** : la configuration de R1 a été choisie sur ce jeu par le protocole 07. Seul le jeu v2 est indépendant pour cette comparaison ; il donne le même sens.
 * **Questions générées par Claude** : proches du style d'un générateur, et un peu plus proches des mots du passage que les questions humaines. Le jeu v1 et le CDTN, écrits sans IA, servent de contrôle ; sur la famille A, le jeu v1 ne confirme pas le jeu v2, et sur la famille E, la v3-C, entraînée sur des questions de Claude, n'est démontrée meilleure que sur le jeu v2.
 * **Un seul passage annoté par question au jeu v2** : les critères sont des minorants.
+* **Questions hors corpus au sens du protocole, pas prouvées hors corpus** : une question est retenue si un juge d'IA ne trouve de réponse, même partielle, dans aucun des 10 premiers passages de la fusion E5 + BM25, sans reclasseur (protocole 10, section 4). Ce contrôle ne porte que sur ces 10 passages : il ne prouve pas qu'aucun des 4 240 passages ne réponde. M1 (« 39 abstentions correctes sur 39 ») mesure donc l'abstention sur des questions très probablement hors corpus ; une abstention sur une question qu'un passage non examiné couvrirait serait comptée correcte à tort. Remarque de Jibril sur la PR #174 (23/11) ; le jeu, gelé, n'est pas modifié.
 * **Puissance** : 121 questions et 61 fiches ne permettent de détecter que des écarts de plusieurs points ; une égalité à deux points près n'est pas exclue entre R1 et R2.
 
 ---

@@ -14,7 +14,7 @@
 - **161 questions** : 121 du corpus et 40 hors corpus, toutes au lot `test`.
 - **Questions du corpus** : sur les 61 fiches du lot de test v1, exclues de tous les entraînements du projet (encodeurs ajustés et adaptation LoRA). Deux questions par fiche, sauf une fiche qui n'en a qu'une (`les-missions-et-les-prerogatives-de-linspection-du-travail`). Rangs retenus : 51 de rang 1, 49 de rang 2, 21 de rang 3.
 - **Passage pertinent annoté** : le passage source (`passage_id`) ; l'extrait (`extrait`), recopié mot pour mot, permet d'appliquer la règle D4 comme au jeu v1.
-- **Questions hors corpus** : 40, choisies dans l'ordre du générateur parmi les 59 qu'aucun des 10 premiers passages de la fusion E5 + BM25 ne couvrait, même en partie. Une candidate a été écartée parce qu'un passage sur le compte personnel de formation mentionnait l'âge de départ à la retraite. La règle « les 40 premières » donne surtout la fonction publique, la retraite, la fiscalité, la protection sociale, la famille et le logement ; la consommation et la micro-entreprise ne sont pas représentées.
+- **Questions hors corpus** : 40, choisies dans l'ordre du générateur parmi les 59 qu'aucun des 10 premiers passages de la fusion E5 + BM25 ne couvrait, même en partie. Une candidate a été écartée parce qu'un passage sur le compte personnel de formation mentionnait l'âge de départ à la retraite. La règle « les 40 premières » donne surtout la fonction publique, la retraite, la fiscalité, la protection sociale, la famille et le logement ; la consommation et la micro-entreprise ne sont pas représentées. Ce contrôle ne porte que sur les 10 premiers passages : il ne prouve pas qu'aucun passage du corpus ne réponde (voir `docs/etudes/evaluation/10_resultats.md`, section 9).
 
 ## Contrôles
 
