@@ -75,15 +75,33 @@ class TestBlame(unittest.TestCase):
 class TestDepotJetable(unittest.TestCase):
     """Un dépôt de deux auteurs, une fusion, un fichier copié à l'identique et un carnet."""
 
-    def commit(self, depot, login, message, fichiers):
+    def commit(self, depot, login, message, fichiers, date=None):
         for chemin, contenu in fichiers.items():
             f = Path(depot, chemin)
             f.parent.mkdir(parents=True, exist_ok=True)
             f.write_text(contenu, encoding="utf-8")
         env = {**os.environ, "GIT_AUTHOR_NAME": login, "GIT_AUTHOR_EMAIL": f"1+{login}@users.noreply.github.com",
                "GIT_COMMITTER_NAME": login, "GIT_COMMITTER_EMAIL": f"1+{login}@users.noreply.github.com"}
+        if date:  # date de validation et d'écriture imposées (UTC), pour tester l'arrêt
+            env |= {"GIT_AUTHOR_DATE": date, "GIT_COMMITTER_DATE": date}
         subprocess.run(["git", "-C", depot, "add", "-A"], check=True, env=env)
         subprocess.run(["git", "-C", depot, "commit", "-q", "-m", message], check=True, env=env)
+
+    def test_arret_exclut_les_commits_plus_recents(self):
+        with tempfile.TemporaryDirectory() as depot:
+            subprocess.run(["git", "-C", depot, "init", "-q", "-b", "dev"], check=True)
+            self.commit(depot, "mahebegnis", "feat(1): avant", {"scripts/a.py": "x = 1\n"}, date="2026-11-26T10:00:00Z")
+            self.commit(depot, "jibzzou", "feat(2): pile à l'arrêt", {"scripts/b.py": "y = 2\n"}, date="2026-11-26T12:00:00Z")
+            self.commit(depot, "mahebegnis", "feat(3): après", {"scripts/c.py": "z = 3\nw = 4\n"}, date="2026-11-26T12:00:01Z")
+            subprocess.run(["git", "-C", depot, "update-ref", "refs/remotes/origin/dev", "HEAD"], check=True)
+            sans, _, vus_sans = c.commits(depot, {}, {1, 2, 3})
+            avec, touches, vus_avec = c.commits(depot, {}, {1, 2, 3}, arret="2026-11-26T12:00:00Z")
+            self.assertEqual((len(vus_sans), sans["Mahé"]["commits"], sans["Mahé"]["ajouts_code"]), (3, 2, 3))
+            self.assertEqual(len(vus_avec), 2, "le commit postérieur à l'arrêt ne compte pas, celui daté de l'arrêt compte")
+            self.assertEqual((avec["Mahé"]["commits"], avec["Mahé"]["ajouts_code"], avec["Jibril"]["commits"]), (1, 1, 1))
+            self.assertEqual(touches["Mahé"], {1})
+            self.assertEqual(c.commits_de_la_reference(depot, "origin/dev", {}, "2026-11-26T12:00:00Z")["Mahé"], 1)
+            self.assertEqual(c.commits_de_la_reference(depot, "origin/dev", {})["Mahé"], 2)
 
     def test_chaine_complete(self):
         with tempfile.TemporaryDirectory() as depot:
@@ -144,6 +162,49 @@ class TestGithub(unittest.TestCase):
         self.assertEqual(t["Jibril"]["pr_fusionnees"], 0)
         self.assertEqual(t["Mahé"]["relectures"], 1)  # son propre commentaire sur la PR 10 ne compte pas
         self.assertEqual(t["Jibril"]["relectures"], 1)
+        self.assertEqual((t["Mahé"]["pr_relues"], t["Jibril"]["pr_relues"]), (1, 1))
+
+    def test_plusieurs_revues_sur_une_meme_pr_ne_font_qu_une_pr_relue(self):
+        rev = lambda login: {"author": {"login": login}}
+        prs = [{"number": 10, "state": "OPEN", "author": {"login": "mahebegnis"}, "title": "t", "headRefName": "b",
+                "reviews": [rev("JIBZZOU"), rev("JIBZZOU"), rev("JIBZZOU")]},
+               {"number": 11, "state": "OPEN", "author": {"login": "mahebegnis"}, "title": "t", "headRefName": "b",
+                "reviews": [rev("JIBZZOU")]}]
+        t, _ = c.mesures_github([], prs)
+        self.assertEqual((t["Jibril"]["relectures"], t["Jibril"]["pr_relues"]), (4, 2))
+
+    def test_existe_et_format_de_l_arret(self):
+        self.assertTrue(c.existe("2026-11-26T12:00:00Z", None))
+        self.assertTrue(c.existe(None, None))
+        self.assertTrue(c.existe("2026-11-26T12:00:00Z", "2026-11-26T12:00:00Z"))
+        self.assertFalse(c.existe("2026-11-26T12:00:01Z", "2026-11-26T12:00:00Z"))
+        self.assertFalse(c.existe(None, "2026-11-26T12:00:00Z"), "un événement sans date ne compte pas avec un arrêt")
+        self.assertTrue(c.FORMAT_ARRET.match("2026-11-26T12:00:00Z"))
+        self.assertIsNone(c.FORMAT_ARRET.match("2026-11-26 12:00:00"))
+        self.assertIsNone(c.FORMAT_ARRET.match("2026-11-26T12:00:00+01:00"))
+
+    def test_mesures_github_a_un_arret(self):
+        arret = "2026-11-26T12:00:00Z"
+        tickets = [{"number": 1, "state": "CLOSED", "stateReason": "COMPLETED", "author": {"login": "mahebegnis"}, "assignees": [{"login": "mahebegnis"}],
+                    "createdAt": "2026-11-01T08:00:00Z", "closedAt": "2026-11-26T12:00:01Z"},   # fermé après l'arrêt : encore ouvert
+                   {"number": 2, "state": "CLOSED", "stateReason": "COMPLETED", "author": {"login": "jibzzou"}, "assignees": [{"login": "jibzzou"}],
+                    "createdAt": "2026-11-02T08:00:00Z", "closedAt": "2026-11-26T11:59:59Z"},   # fermé avant : terminé
+                   {"number": 3, "state": "OPEN", "author": {"login": "jibzzou"}, "assignees": [{"login": "jibzzou"}],
+                    "createdAt": "2026-11-26T12:00:01Z", "closedAt": None}]                      # créé après : n'existe pas
+        rev = lambda login, quand: {"author": {"login": login}, "submittedAt": quand}
+        prs = [{"number": 10, "state": "MERGED", "author": {"login": "mahebegnis"}, "title": "feat(1): x", "headRefName": "b",
+                "createdAt": "2026-11-25T08:00:00Z", "mergedAt": "2026-11-26T13:00:00Z",         # fusionnée après : seulement ouverte
+                "reviews": [rev("JIBZZOU", "2026-11-26T11:00:00Z"), rev("JIBZZOU", "2026-11-26T14:00:00Z")]},
+               {"number": 11, "state": "OPEN", "author": {"login": "mahebegnis"}, "title": "feat(3): y", "headRefName": "b",
+                "createdAt": "2026-11-26T12:30:00Z", "mergedAt": None, "reviews": [rev("JIBZZOU", "2026-11-26T12:45:00Z")]}]  # créée après
+        t, touches = c.mesures_github(tickets, prs, arret)
+        self.assertEqual((t["Mahé"]["tickets_assignes"], t["Mahé"]["tickets_termines"]), (1, 0))
+        self.assertEqual((t["Jibril"]["tickets_assignes"], t["Jibril"]["tickets_termines"], t["Jibril"]["tickets_crees"]), (1, 1, 1))
+        self.assertEqual((t["Mahé"]["pr_ouvertes"], t["Mahé"]["pr_fusionnees"]), (1, 0))
+        self.assertEqual((t["Jibril"]["relectures"], t["Jibril"]["pr_relues"]), (1, 1))
+        self.assertEqual(touches["Mahé"], {1}, "le ticket 3, créé après l'arrêt, ne peut pas être cité")
+        t2, _ = c.mesures_github(tickets, prs)
+        self.assertEqual((t2["Mahé"]["pr_fusionnees"], t2["Jibril"]["relectures"], t2["Jibril"]["pr_relues"]), (1, 3, 2))
 
 
 if __name__ == "__main__":
