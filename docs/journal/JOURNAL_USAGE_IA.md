@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 26 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 27 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -2191,9 +2191,9 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Dans `conditions_exceptions`, six « non » voulaient dire « sans objet » : je les ai remplacés (J03, J24, J27, J30, J33, J39) et signalés à Mahé. L'assistant avait signalé, par un contrôle mécanique, que J33 n'avait pas de défaut ; je lui ai ensuite collé ma grille, et il n'a proposé aucune notation.
 - La connexion a coupé pendant l'envoi de la branche.
 
-### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
+### Session 73, 26 et 27 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
 
-**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A et contrôle du site déployé ; répartition des contributions mesurée (#113).
+**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A et contrôle du site déployé ; répartition des contributions mesurée (#113) ; le 27/11, contrôle du dépôt, revue de Jibril sur la #188, mise à jour du support, du script oral et des questions.
 
 **Produit.**
 - #52 : grille finale de Maïmouna contrôlée ligne à ligne contre celle du 14 novembre ; analyse à deux juges refaite selon le plan figé, les deux versions rapportées (commentaire du #52) ; résultats repris dans le rapport ; dernière case du #107 cochée.
@@ -2214,6 +2214,9 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - #177 approuvée par Jibril sur `b32c03f` puis fusionnée dans `dev` (`6acc699`), avec l'accord général de Mahé du 26/11 ; workflow de déploiement réussi ; site contrôlé en ligne par un script de lecture seule (version affichée, logo, fenêtre de confidentialité, requêtes, cookies, stockages, cache).
 - Vidéo de secours du volet A définitive (69,8 s), filmée sur le site déployé, logo et fenêtre de confidentialité visibles ; la version provisoire est rangée en archive ; fiche du jour J et README de l'outil de capture mis à jour.
 - #176 et #111 fermés avec un commentaire chacun ; #114 mis à jour (deux cases cochées, état du 26/11) ; sections 2.2 et 6 du rapport mises à jour.
+- Contrôle du dépôt le 27/11 : `dev` inchangé depuis la fusion de la #177 (`6acc699`), `main` toujours au 19/10, la #188 seule PR ouverte, trois tickets ouverts (#140, #18, #19). Jibril a fermé onze tickets le 26/11, de 20 h 19 à 20 h 26 (heure de Paris), dont #113 et #114 dont les critères ne sont pas remplis (V1 non livrée, `main` et tag, envoi des supports, répétitions).
+- Revue de Jibril sur la #188 (commentaire du 26/11, tête `721b3a1`) : ses cinq remarques vérifiées dans le code et dans les chiffres, toutes confirmées. `scripts/suivi/contributions.py` : option `--arret` (état à un instant) et colonne « PR distinctes relues », 17 tests ; `CONTRIBUTIONS.md` réécrit (trois sources distinguées, limites ajoutées, contrôle de reproduction) ; section 3.3 du rapport et CSV du relevé à jour.
+- Support de 8 minutes, script oral et questions : annexes A1 (vidéo de secours du volet A), A12 (revérification du 26/11) et A14 (répartition mesurée, plus de 200 erreurs) ; script oral (deux vidéos de secours) ; question sur la répartition du travail (44 questions) ; README ; support reconstruit, script régénéré.
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2226,12 +2229,15 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Site déployé : version `6acc699`, un seul hôte contacté, aucune requête refusée, aucune requête pendant l'ouverture de la fenêtre ni pendant une question (réponse en 88 ms), aucun cookie, aucune entrée de `localStorage`, `sessionStorage` ni IndexedDB, un cache `transformers-cache` de 95,5 Mio.
 - Vidéo du volet A définitive : 2 943 images, 69,8 s, H.264 High, 1 920 × 1 080, 30 images par seconde, BT.709, sans son ; une seule origine, 0 requête refusée, 61,4 Mio reçus à froid ; résultats affichés identiques à ceux de l'annexe A1 (similarités 0,863, 0,888 et 0,814).
 - Code exécuté par la démonstration du volet B : arbres Git de `demo_b` (tête de la #177) et de `scripts/rag` (tête de la #175) identiques à ceux de `dev` ; dans `scripts/recuperation`, seuls le README, `chaine_v2.py` et son test diffèrent, et la chaîne de démonstration ne les importe pas.
+- Reproduction du relevé du 26/11 : `--reference ff21f4b --arret 2026-11-26T16:15:00Z` retrouve les 20 colonnes du CSV sans écart (arrêts essayés à 16 h 13, 16 h 15 et 16 h 19 UTC) ; sans arrêt, le relevé du 27/11 diffère : 175 tickets terminés au lieu de 132, 465 commits au lieu de 462.
+- Support : 61 chiffres contre leurs sources, 0 écart ; 30 diapositives sans dépassement avant et après les modifications, détecteur validé par un contrôle négatif (annexe A14 gonflée : 1 768 px de contenu sur 1 080).
 
 **Résultats retenus.**
 - #52 : réponses du modèle adapté mieux appuyées sur leurs passages chez les deux juges, pas plus exactes ; kappa de 0,36 sur l'exactitude.
 - Démonstration du volet A : congés payés, renouvellement de la période d'essai, congé pour un mariage, retraite d'un fonctionnaire (refus), et la question de la diapositive 2 comme limite de la recherche par le sens.
 - Contributions mesurées : Mahé 201 commits et 19 083 lignes de code ajoutées, Jibril 134 et 5 813, Remy 53 et 2 810, Vaneck 50 et 4 105, Maïmouna 24 et 0 ; relectures des PR des autres : 73, 48, 31, 21 et 13.
 - Site en ligne conforme aux affirmations de la fenêtre de confidentialité (Chromium, première visite) ; le cache annoncé « environ 100 Mo » mesure 95,5 Mio.
+- Revues déposées et PR distinctes relues : Mahé 73 et 48, Jibril 48 et 29, Remy 31 et 25, Vaneck 21 et 18, Maïmouna 13 et 12 ; le classement est le même dans les deux colonnes.
 
 **Ce qui a été écarté, et pourquoi.**
 - Compter les défauts du #52 par un classement automatique : ce serait un verdict d'IA sur un jugement humain ; les défauts sont décrits par des exemples.
@@ -2240,7 +2246,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Les heures déclarées comme base de comparaison entre membres : trois méthodes différentes, aucune charge pour Mahé (décision de Mahé, le 26/11).
 - Le temps de présence en session avec l'assistant comme mesure de l'effort : il passe de 41 h à 101 h selon le seuil d'inactivité, et comprend l'attente de calculs.
 
-**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 approuvée par Jibril le 26/11 à 20 h 10, puis fusionnée avec l'accord général de Mahé.
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 approuvée par Jibril le 26/11 à 20 h 10, puis fusionnée avec l'accord général de Mahé. Question sur la répartition du travail : proposition de l'assistant, à valider par Mahé. Réouverture éventuelle de #113 et #114 : décision de Mahé.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -2253,7 +2259,8 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Le classifieur de sécurité a refusé l'approbation de la #187 au nom de Mahé, qui n'avait demandé que les neuf relectures précises : texte préparé, publication laissée à Mahé.
 - Le modèle de la session principale est passé de Claude Opus 5.5 à Claude Sonnet 5.5 (commande /model de Mahé) en cours de session.
 - Le classifieur de sécurité a refusé deux fois l'approbation de la #187 au nom de Mahé, malgré sa délégation générale : Mahé l'a publiée lui-même.
-- Quinze erreurs rattrapées avant la fusion de la #188 (section 4) : dix de la synthèse des charges, de la première mesure des lignes et de la couverture du PDF du rapport ; cinq de la fusion de la #177, du contrôle du site, de la fermeture des tickets et du montage de la vidéo.
+- Vingt et une erreurs rattrapées avant la fusion de la #188 (section 4) : dix de la synthèse des charges, de la première mesure des lignes et de la couverture du PDF du rapport ; cinq de la fusion de la #177, du contrôle du site, de la fermeture des tickets et du montage de la vidéo ; six de la mesure des contributions, relevées par la revue de Jibril ou par la relance du 27/11.
+- Onze tickets fermés par un coéquipier en sept minutes, dont #113 et #114 sans que leurs critères soient remplis : signalé à Mahé, rien rouvert sans sa décision.
 
 ---
 
@@ -2474,6 +2481,12 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/11 | Contrôle du site publié : une requête relevée après le chargement, que j'aurais pu attribuer au site | lecture de la liste des requêtes : elle venait du script de contrôle, qui testait le favicon par `fetch` | requête attribuée à l'outil ; aucune requête du site pendant l'ouverture de la fenêtre ni pendant une question |
 | 26/11 | Montage de la vidéo du volet A lancé avec un dossier relatif : ffmpeg sort en erreur 254, la liste de fichiers étant lue depuis son propre dossier | échec à l'exécution | chemin absolu ; piège consigné dans le README de l'outil |
 | 26/11 | README de la vidéo : « neuf rubriques » pour la fenêtre de confidentialité, parce que le script comptait le titre avec les huit rubriques | relecture contre la liste des titres relevés | « huit rubriques et un titre » |
+| 27/11 | Relevé des contributions présenté comme portant « sur `dev` au commit `ff21f4b` », alors que les commits et les lignes ajoutées viennent de toutes les branches, des tags et des têtes de PR | revue de Jibril sur la #188 | trois sources distinguées dans `CONTRIBUTIONS.md` et la section 3.3 : référence figée, arrêt des données, état courant |
+| 27/11 | Colonne « Relectures des PR des autres » qui comptait des revues déposées : plusieurs revues d'une même personne sur une même PR comptaient chacune (73 revues de Mahé pour 48 PR) | revue de Jibril sur la #188 | colonne « PR distinctes relues » ajoutée, définitions renommées |
+| 27/11 | Relevé présenté comme refaisable par une commande, alors qu'il change à chaque relance : tickets terminés de 132 à 175, commits de 462 à 465 | relance du script le lendemain | option `--arret` ; relevé rejoué sans écart avec `--reference ff21f4b --arret 2026-11-26T16:15:00Z` |
+| 27/11 | Tickets touchés présentés comme une mesure qui ne peut que sous-compter : un numéro cité comme simple contexte la fait sur-compter | revue de Jibril sur la #188 | limite dans les deux sens ajoutée aux deux documents |
+| 27/11 | Tests de la mesure lancés avec `python3 -I` : le mode isolé retire le dossier courant du chemin d'import | `ModuleNotFoundError` à l'exécution | lancés sans `-I`, depuis le dossier du script |
+| 27/11 | Contrôle négatif du détecteur de débordement trop faible : un texte de 770 caractères dans l'annexe A14 ne faisait rien dépasser, ce qui aurait pu passer pour un détecteur aveugle ou pour une preuve | lecture des hauteurs mesurées : l'annexe a de la place libre | contrôle refait avec 3 850 caractères : dépassement détecté (1 768 px sur 1 080) |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

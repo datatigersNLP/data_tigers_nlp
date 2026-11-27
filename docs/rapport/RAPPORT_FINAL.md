@@ -186,7 +186,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 211 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 217 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -250,16 +250,16 @@ Le seul dépassement (#27) est attribué au mauvais découpage du corpus source,
 
 **Charges déclarées après coup.** Les 22 et 23 novembre, puis le 26, des parts individuelles ont été ajoutées au classeur de suivi (PR #182, #169 et #187) : Vaneck, 68 h sur 10 tickets, dont 24 h pour la démonstration du volet B (#111) et 10 h pour l'interface du volet A (#53) ; Remy, 14 h sur l'ajustement de l'encodeur (#49) ; Jibril, environ 21 h sur Agent0 (#91 à #95), en estimations rétrospectives non chronométrées ; Maïmouna, 22 h 45 sur 8 tickets, dont six estimations rétrospectives. Aucune charge n'a été inscrite pour Mahé. Ce sont des parts individuelles, sans estimation initiale comparable, établies par trois méthodes différentes : elles documentent l'effort, mais ne permettent ni d'élargir l'analyse des écarts ni de comparer les membres.
 
-**Répartition des contributions, mesurée.** Pour comparer les membres, Mahé a décidé le 26 novembre de remplacer ces heures par des quantités que GitHub et Git comptent : tickets, commits et lignes. Le relevé porte sur `dev` au commit `ff21f4b`, avec 462 commits uniques hors fusions ; il est refait par `scripts/suivi/contributions.py`, et sa méthode, ses limites et ses contrôles sont dans `docs/suivi/CONTRIBUTIONS.md`.
+**Répartition des contributions, mesurée.** Pour comparer les membres, Mahé a décidé le 26 novembre de remplacer ces heures par des quantités que GitHub et Git comptent : tickets, commits et lignes. Le relevé est celui du 26 novembre à 16 h 15 UTC. Les lignes conservées sont lues sur `dev` au commit `ff21f4b`, qui ne change pas. Les 462 commits uniques hors fusions viennent de toutes les branches, des tags et des têtes de PR ; les PR, les revues et les tickets viennent de l'API de GitHub à cet instant. Le relevé se rejoue par `scripts/suivi/contributions.py` avec l'option `--arret` : le contrôle du 27 novembre retrouve sans écart les 20 colonnes du CSV. La méthode, les limites et les contrôles sont dans `docs/suivi/CONTRIBUTIONS.md`.
 
-| Membre | Tickets assignés | dont terminés | Tickets touchés | PR fusionnées | Relectures des PR des autres | Commits |
-|---|---:|---:|---:|---:|---:|---:|
-| Mahé | 52 | 38 | 36 | 58 | 73 | 201 |
-| Jibril | 44 | 28 | 17 | 24 | 48 | 134 |
-| Remy | 36 | 25 | 8 | 11 | 31 | 53 |
-| Vaneck | 33 | 21 | 10 | 15 | 21 | 50 |
-| Maïmouna | 32 | 20 | 4 | 5 | 13 | 24 |
-| Total | 197 | 132 | 75 | 113 | 186 | 462 |
+| Membre | Tickets assignés | dont terminés | Tickets touchés | PR fusionnées | Revues déposées | PR relues | Commits |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Mahé | 52 | 38 | 36 | 58 | 73 | 48 | 201 |
+| Jibril | 44 | 28 | 17 | 24 | 48 | 29 | 134 |
+| Remy | 36 | 25 | 8 | 11 | 31 | 25 | 53 |
+| Vaneck | 33 | 21 | 10 | 15 | 21 | 18 | 50 |
+| Maïmouna | 32 | 20 | 4 | 5 | 13 | 12 | 24 |
+| Total | 197 | 132 | 75 | 113 | 186 | 132 | 462 |
 
 | Membre | Lignes de code ajoutées | Lignes de code conservées | Lignes de documentation ajoutées | Lignes de documentation conservées |
 |---|---:|---:|---:|---:|
@@ -272,9 +272,10 @@ Le seul dépassement (#27) est attribué au mauvais découpage du corpus source,
 
 Ces chiffres se lisent avec leurs limites :
 - **Un volume n'est pas une valeur.** Une ligne de code, une ligne de diapositives et une ligne de documentation ne se valent pas.
-- **Le travail assisté par une IA est compté au membre qui commite.** Les cinq membres déclarent utiliser un assistant, à des degrés que la mesure ne distingue pas.
+- **L'attribution est celle de Git.** Un commit est compté à son auteur, une ligne conservée à l'auteur du commit qui l'a introduite. Cela ne dit pas qui a conçu la ligne : une reprise, une collaboration ou un assistant sont comptés au membre dont le nom figure sur le commit. Les cinq membres déclarent utiliser un assistant, à des degrés que la mesure ne distingue pas.
 - **Les commits n'ont pas la même taille.** Jibril a poussé 134 commits pour 5 813 lignes de code, Vaneck 50 pour 4 105.
-- **Une assignation n'est pas du travail fait.** 47 des 68 tickets assignés ont au moins deux responsables. Les tickets touchés, cités par un commit ou une PR du membre, s'en rapprochent mais peuvent sous-compter.
+- **Une assignation n'est pas du travail fait.** 47 des 68 tickets assignés ont au moins deux responsables. Les tickets touchés, cités par un commit ou une PR du membre, s'en rapprochent mais peuvent se tromper dans les deux sens : sous-compter quand le numéro n'est pas cité, sur-compter quand il n'est cité que comme contexte.
+- **Une revue déposée n'est pas une PR relue.** Plusieurs revues d'une même personne sur une même PR comptent chacune : Mahé a déposé 73 revues sur 48 PR distinctes, Jibril 48 sur 29. Le classement est le même dans les deux colonnes ; aucune ne mesure la qualité d'une relecture.
 - **Git ne voit pas tout.** Les jugements du #52, les reproductions sur machine (#51), les réunions et l'annotation hors fichier ne laissent presque pas de lignes : les 0 ligne de code de Maïmouna n'en disent rien. Les carnets et les données sont hors totaux.
 
 ### 3.4 Enseignements
@@ -404,7 +405,7 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 - **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 211 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 217 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
@@ -432,7 +433,7 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | 61,3 Mio, 20,1 s, 21 ms (19 à 24), 46 ms | mesure du site en ligne `7e2ce07`, le 19/10/2026, Chromium, profil neuf |
 | rôles, domaines, réunions, charges | `docs/suivi/SUIVI.md`, `docs/reunions/README.md`, tickets #2, #6, #9, #10, #11, #26 |
 | PR, revues, commits | API GitHub et `git log` de `dev`, relevés le 19/10/2026 |
-| répartition des contributions : tickets, PR, relectures, commits, lignes | `docs/suivi/CONTRIBUTIONS.md`, `docs/suivi/contributions_20261126.csv`, `scripts/suivi/contributions.py` ; relevé du 26/11/2026 sur `dev` à `ff21f4b` |
+| répartition des contributions : tickets, PR, relectures, commits, lignes | `docs/suivi/CONTRIBUTIONS.md`, `docs/suivi/contributions_20261126.csv`, `scripts/suivi/contributions.py` ; relevé du 26/11/2026 à 16 h 15 UTC, lignes conservées sur `dev` à `ff21f4b`, rejouable avec `--arret` |
 | erreurs détectées | `docs/journal/JOURNAL_USAGE_IA.md`, section 4 |
 | abstention de l'encodeur ajusté : AUC 0,865, 70 sur 73, 10 sur 24, 13 avertissements | `docs/etudes/evaluation/05_resultats_ajustement.md`, section 5 |
 | chaîne de démonstration de bout en bout : 52,9 %, +16,9 points, 10,1 %, 11,8 s et 4,9 s | `docs/etudes/evaluation/10_resultats.md`, section 6 (PR #174) ; `data/evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json` |
