@@ -95,7 +95,7 @@ def main() -> None:
          "- Ouvrir `docs/soutenance/presentation_8min.html` (hors ligne), touche F pour le plein écran.",
          "- Les notes (touche N) s'affichent sur la page projetée : ne les ouvrir qu'en répétition, ou avec un second écran qui ne recopie pas le premier.",
          "- Ouvrir à l'avance, dans un autre onglet, le site du volet A, et y poser une première question : la première visite télécharge le modèle.",
-         "- Avoir la vidéo de secours du volet B prête (64 s), et, si une démonstration en direct est prévue, l'assistant lancé sur le Mac cinq minutes avant.",
+         "- Avoir les deux vidéos de secours prêtes (volet A, 70 s ; volet B, 64 s), et, si une démonstration en direct est prévue, l'assistant lancé sur le Mac cinq minutes avant.",
          "- Avancer d'un appui (flèche droite ou espace) à chaque nouvel élément évoqué : l'ordre des apparitions est indiqué sous chaque diapositive.", "",
          "## Déroulé", "",
          "| Diapositive | Début | Durée | Orateur |", "|---|---:|---:|---|"]
@@ -123,7 +123,7 @@ def main() -> None:
             l.append("")
         t += d["duree"]
     l += ["## Pendant les questions : la démonstration", "",
-          "- **Volet A, en direct** : annexe A1 du support (touche A, puis A1). Taper les questions telles quelles ; la dernière montre la limite de la recherche par le sens seule.",
+          "- **Volet A, en direct** : annexe A1 du support (touche A, puis A1). Taper les questions telles quelles ; la dernière montre la limite de la recherche par le sens seule. Sans Internet : lire la vidéo de secours du volet A (70 s).",
           "- **Volet B** : lire la vidéo de secours (64 s). En direct seulement si le jury le demande et si l'assistant est déjà lancé : annexe A2, questions et réponses attendues.",
           "- **Autres questions** : sommaire des annexes (touche A) ; réponses préparées dans `questions_reponses.md`.", "",
           "## Chronométrage", "",

@@ -138,8 +138,11 @@ Les versions sont épinglées ; une alerte récente vise le serveur de développ
 **Comment vous êtes-vous organisés ?** (Jibril)
 Un ticket et une branche par tâche, des pull requests vers dev avec une approbation obligatoire, dev et main protégées, des jalons et un classeur de suivi des charges. Les réunions qui n'ont pas eu lieu sont documentées comme telles, avec les décisions écrites qui les ont remplacées.
 
+**Comment le travail a-t-il été réparti, et les contributions sont-elles équilibrées ?** (Mahé)
+Nous avons renoncé à comparer des heures, estimées après coup par trois méthodes différentes. La répartition est mesurée dans le dépôt, au 26 novembre : sur 462 commits, Mahé 201, Jibril 134, Remy 53, Vaneck 50, Maïmouna 24 ; sur les lignes de code ajoutées, 60 %, 18 %, 9 %, 13 % et 0 %. Elle n'est pas égale : Mahé, qui coordonnait le projet, en porte la plus grande part, et son travail avec l'assistant est compté à son nom. C'est un volume, pas une valeur, et Git ne voit ni les jugements humains de Maïmouna (#52), ni les mesures faites sur machine ; les relectures sont plus partagées : 186 revues déposées sur les PR des autres, par les cinq membres. Méthode, limites et commande pour rejouer le relevé : `docs/suivi/CONTRIBUTIONS.md` et section 3.3 du rapport.
+
 **Comment avez-vous utilisé l'IA ?** (Mahé)
-Claude Code, Antigravity avec Gemini, ChatGPT et Codex, et Qwen Coder en local, pour écrire du code, mesurer et rédiger. Tout est consigné dans le journal d'usage, session par session, avec plus de 180 erreurs ou pièges détectés par la vérification. Règle : aucune affirmation d'un assistant n'est reprise sans mesure, test ou source primaire (annexe A14).
+Claude Code, Antigravity avec Gemini, ChatGPT et Codex, et Qwen Coder en local, pour écrire du code, mesurer et rédiger. Tout est consigné dans le journal d'usage, session par session, avec plus de 200 erreurs ou pièges détectés par la vérification. Règle : aucune affirmation d'un assistant n'est reprise sans mesure, test ou source primaire (annexe A14).
 
 **Avez-vous compris le code écrit avec l'IA ?** (chacun, sur sa partie)
 Répondre sur sa partie, concrètement : ce que fait le code, comment il a été testé, et une erreur trouvée par la vérification. Le sujet prévoit que chacun peut être interrogé sur n'importe quelle partie : relire avant la soutenance les fichiers de son domaine et ceux qu'on présente.

@@ -1,6 +1,6 @@
 # Support de la soutenance de 8 minutes
 
-**Établi le** 21 novembre 2026 par Mahé BEGNIS, après le nouveau format annoncé par l'enseignant : 8 minutes de présentation, sans pitch, puis environ 5 minutes de questions. **Complété le** 26 novembre : annexes, script oral, questions et réponses préparées.
+**Établi le** 21 novembre 2026 par Mahé BEGNIS, après le nouveau format annoncé par l'enseignant : 8 minutes de présentation, sans pitch, puis environ 5 minutes de questions. **Complété le** 26 novembre : annexes, script oral, questions et réponses préparées. **Mis à jour le** 27 novembre : vidéo de secours du volet A, contrôle du site déployé après la #177, répartition mesurée des contributions, 44 questions.
 
 **Fichier à projeter** : `../presentation_8min.html`. Il fonctionne hors ligne et ne charge aucune ressource extérieure : police, logo et données sont embarqués.
 
@@ -40,7 +40,7 @@
 
 **Pour la soutenance** :
 - `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et une répartition proposée des orateurs ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger.
-- `questions_reponses.md` : 43 questions probables du jury, avec une réponse courte, chiffrée et sourcée.
+- `questions_reponses.md` : 44 questions probables du jury, avec une réponse courte, chiffrée et sourcée.
 
 ## Des schémas animés construits sur des données réelles
 
