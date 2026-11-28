@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 27 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 28 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -2191,9 +2191,9 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Dans `conditions_exceptions`, six « non » voulaient dire « sans objet » : je les ai remplacés (J03, J24, J27, J30, J33, J39) et signalés à Mahé. L'assistant avait signalé, par un contrôle mécanique, que J33 n'avait pas de défaut ; je lui ai ensuite collé ma grille, et il n'a proposé aucune notation.
 - La connexion a coupé pendant l'envoi de la branche.
 
-### Session 73, 26 et 27 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
+### Session 73, du 26 au 28 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
 
-**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A et contrôle du site déployé ; répartition des contributions mesurée (#113) ; le 27/11, contrôle du dépôt, revue de Jibril sur la #188, mise à jour du support, du script oral et des questions.
+**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A et contrôle du site déployé ; répartition des contributions mesurée (#113) ; le 27/11, contrôle du dépôt, revue de Jibril sur la #188, mise à jour du support, du script oral et des questions ; le 28/11, revue de Remy, capture du board, script et questions en PDF LaTeX, PDF de secours du support.
 
 **Produit.**
 - #52 : grille finale de Maïmouna contrôlée ligne à ligne contre celle du 14 novembre ; analyse à deux juges refaite selon le plan figé, les deux versions rapportées (commentaire du #52) ; résultats repris dans le rapport ; dernière case du #107 cochée.
@@ -2217,6 +2217,9 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Contrôle du dépôt le 27/11 : `dev` inchangé depuis la fusion de la #177 (`6acc699`), `main` toujours au 19/10, la #188 seule PR ouverte, trois tickets ouverts (#140, #18, #19). Jibril a fermé onze tickets le 26/11, de 20 h 19 à 20 h 26 (heure de Paris), dont #113 et #114 dont les critères ne sont pas remplis (V1 non livrée, `main` et tag, envoi des supports, répétitions).
 - Revue de Jibril sur la #188 (commentaire du 26/11, tête `721b3a1`) : ses cinq remarques vérifiées dans le code et dans les chiffres, toutes confirmées. `scripts/suivi/contributions.py` : option `--arret` (état à un instant) et colonne « PR distinctes relues », 17 tests ; `CONTRIBUTIONS.md` réécrit (trois sources distinguées, limites ajoutées, contrôle de reproduction) ; section 3.3 du rapport et CSV du relevé à jour.
 - Support de 8 minutes, script oral et questions : annexes A1 (vidéo de secours du volet A), A12 (revérification du 26/11) et A14 (répartition mesurée, plus de 200 erreurs) ; script oral (deux vidéos de secours) ; question sur la répartition du travail (44 questions) ; README ; support reconstruit, script régénéré.
+- Revue de Remy sur la tête `ad05f57` (28/11) : rien à signaler sur les annexes A1, A12 et A14, le script oral, la 44e question, la diapositive 5 et la section 3.3 ; une remarque, les dates « au 26 novembre » du rapport pour les sessions et les erreurs, alors que le journal court jusqu'au 27 : six dates de l'état du dépôt remplacées par « 28 novembre » (en-tête, sections 3.2, 3.3 et 5.5, section 6).
+- Capture du board transmise par Jibril, recadrée sans la barre de navigation de GitHub et versionnée (`docs/rapport/images/board_projet.png`) ; section 3.2 précisée d'après le board lu par l'API : 68 cartes, dont 66 tickets et la PR #32 en Done et un ticket en Todo (#140), les tickets #18 et #19 n'y figurant pas ; ligne de la section 6 retirée.
+- Script oral et questions préparées en PDF LaTeX (`docs/soutenance/8min`, 9 pages chacun) ; PDF de secours du support (`docs/soutenance/presentation_8min.pdf`, 61 pages, une par appui) et son script d'export `exporter_pdf.js`. Outils : `md2tex.py` (images, diapositives non numérotées, style des questions, heures sans espace, nombres insécables), `preambule.tex` (needspace), `build.py` (bandeaux), `script_oral.py` (en-tête, repères coupés à une limite de mot).
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2231,6 +2234,8 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Code exécuté par la démonstration du volet B : arbres Git de `demo_b` (tête de la #177) et de `scripts/rag` (tête de la #175) identiques à ceux de `dev` ; dans `scripts/recuperation`, seuls le README, `chaine_v2.py` et son test diffèrent, et la chaîne de démonstration ne les importe pas.
 - Reproduction du relevé du 26/11 : `--reference ff21f4b --arret 2026-11-26T16:15:00Z` retrouve les 20 colonnes du CSV sans écart (arrêts essayés à 16 h 13, 16 h 15 et 16 h 19 UTC) ; sans arrêt, le relevé du 27/11 diffère : 175 tickets terminés au lieu de 132, 465 commits au lieu de 462.
 - Support : 61 chiffres contre leurs sources, 0 écart ; 30 diapositives sans dépassement avant et après les modifications, détecteur validé par un contrôle négatif (annexe A14 gonflée : 1 768 px de contenu sur 1 080).
+- PDF du script oral et des questions : 0 erreur LaTeX, 0 avertissement de boîte, 0 caractère manquant ; PDF de secours : 61 pages, 5,9 Mo, polices intégrées, texte sélectionnable, aucune requête externe, rendu relu sur une planche de toutes les pages et sur la page de la diapositive 4.
+- Board lu par l'API de GitHub le 28/11 : 68 cartes ; 67 cartes de ticket sans écart avec l'état du ticket.
 
 **Résultats retenus.**
 - #52 : réponses du modèle adapté mieux appuyées sur leurs passages chez les deux juges, pas plus exactes ; kappa de 0,36 sur l'exactitude.
@@ -2246,7 +2251,7 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Les heures déclarées comme base de comparaison entre membres : trois méthodes différentes, aucune charge pour Mahé (décision de Mahé, le 26/11).
 - Le temps de présence en session avec l'assistant comme mesure de l'effort : il passe de 41 h à 101 h selon le seuil d'inactivité, et comprend l'attente de calculs.
 
-**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 approuvée par Jibril le 26/11 à 20 h 10, puis fusionnée avec l'accord général de Mahé. Question sur la répartition du travail : proposition de l'assistant, à valider par Mahé. Réouverture éventuelle de #113 et #114 : décision de Mahé.
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 approuvée par Jibril le 26/11 à 20 h 10, puis fusionnée avec l'accord général de Mahé. Remy a relu la tête `ad05f57` et attend le message « tête finale » pour approuver. Question sur la répartition du travail : proposition de l'assistant, à valider par Mahé. Réouverture éventuelle de #113 et #114 : décision de Mahé.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -2487,6 +2492,10 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 27/11 | Tickets touchés présentés comme une mesure qui ne peut que sous-compter : un numéro cité comme simple contexte la fait sur-compter | revue de Jibril sur la #188 | limite dans les deux sens ajoutée aux deux documents |
 | 27/11 | Tests de la mesure lancés avec `python3 -I` : le mode isolé retire le dossier courant du chemin d'import | `ModuleNotFoundError` à l'exécution | lancés sans `-I`, depuis le dossier du script |
 | 27/11 | Contrôle négatif du détecteur de débordement trop faible : un texte de 770 caractères dans l'annexe A14 ne faisait rien dépasser, ce qui aurait pu passer pour un détecteur aveugle ou pour une preuve | lecture des hauteurs mesurées : l'annexe a de la place libre | contrôle refait avec 3 850 caractères : dépassement détecté (1 768 px sur 1 080) |
+| 28/11 | Rapport : « 73 sessions » et « 217 erreurs au 26 novembre », alors que la session 73 et les six dernières erreurs du journal sont du 27/11 ; l'en-tête disait aussi « état du 26 novembre » | revue de Remy sur la #188 | six dates de l'état du dépôt remplacées par « 28 novembre » |
+| 28/11 | Heures du script oral composées « 0 :00 » : `babel-french` ajoute une espace avant les deux-points, et ni `\string:` ni `{:}` ne la retirent | lecture du PDF, puis mesure de la largeur sur un document minimal (20,6 pt contre 17,9 pt) | commande `\NoAutoSpacing` autour des deux-points placés entre deux chiffres |
+| 28/11 | Titres de diapositive et questions préparées isolés en bas de page, séparés de leur texte | planche de toutes les pages du PDF | paquet `needspace` et garde de saut de page avant chaque titre et chaque question |
+| 28/11 | `md2tex.py` : une barre oblique inverse du texte s'affichait « \{} », car le remplacement caractère par caractère échappait à leur tour les accolades de `\textbackslash{}` ; défaut présent depuis l'origine de l'outil | lecture du PDF du journal, où ma ligne sur `\string:` était illisible | échappement de tous les caractères spéciaux en un seul passage |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

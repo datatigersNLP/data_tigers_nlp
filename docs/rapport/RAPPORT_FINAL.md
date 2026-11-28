@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Enseignant** Adrian ROSARI
-**Version** V1, état du 26 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
+**Version** V1, état du 28 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
 
 **Objet.** Ce rapport suit la section 11 du sujet : analyse technique, retour d'expérience, axes de progression et cinq outils novateurs. La V0 a été écrite à la fin du volet A, le 19 octobre. Cette V1 ajoute le volet B, adapté et mesuré, les améliorations du volet A servies depuis le 15 novembre, la justification du passage de 5 à 10 passages demandée par l'enseignant (section 2.4), les essais d'encodeurs entraînés sur des questions synthétiques, non retenus (section 2.3), et les mentions de confidentialité ajoutées aux deux interfaces (section 2.2). Ce qui reste à mesurer ou à rédiger est signalé explicitement (section 6).
 
@@ -186,7 +186,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 217 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 221 erreurs ou pièges détectés par la vérification au 28 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -210,16 +210,18 @@ Les 8 PR fusionnées sans approbation enregistrée se répartissent ainsi :
 - une après une demande de modification traitée, sans approbation formelle (#32) ;
 - une intégrée par une autre PR approuvée (#86, par la #87).
 
-**Board de tickets.** Le board porte l'état des tickets ; le classeur de suivi le complète par les dates et les charges.
+**Board de tickets.** Le board (GitHub Projects) porte l'état des tickets sur sept colonnes : Backlog, Todo, In progress, Besoin d'aide, A discuter, Test et Done ; le classeur de suivi le complète par les dates et les charges. Au 28 novembre, il compte 68 cartes : 67 en Done (66 tickets et la PR #32) et une en Todo (#140, l'export de l'adaptateur), les autres colonnes étant vides. L'état de chacune des 67 cartes de ticket concorde avec celui du ticket ; deux tickets ouverts, les réunions hebdomadaires des 2 et 9 décembre (#18 et #19), n'y figurent pas.
+
+![Vue Board du projet GitHub, transmise par Jibril : une carte en Todo, 67 en Done (début de la colonne). Contenu identique à celui lu par l'API de GitHub le 28 novembre.](images/board_projet.png)
 
 Le pilotage a été réel pour la création des tickets, mais rétrospectif pour les charges :
 - **Création préalable** : les 54 tickets ont été créés par vagues de planification (19 le 20/09, 6 le 23/09, 11 le 30/09, 8 le 18/10). Les 25 PR qui citent un ticket dans leur titre ont toutes été ouvertes après la création de ce ticket.
 - **Charges rétrospectives** : au 19 octobre, 45 tickets sur 54 n'ont pas d'estimation dans le classeur de suivi.
-- **Capture absente** : la capture du board attendue au mi-parcours n'a pas été versionnée.
+- **Capture tardive** : la capture du board attendue au mi-parcours n'a pas été versionnée ; elle l'est dans cette version, le 28 novembre.
 
 **Relecture par un tiers.** La relecture croisée a trouvé des erreurs que l'auteur n'avait pas vues. Sur les 19 erreurs des sessions de Mahé entre le 11 et le 18 octobre, 4 ont été trouvées par Jibril en relecture. Vaneck en a relevé deux dans des PR de Mahé (#76 et #78). Les revues de Jibril sur les PR documentaires (#82, #89, #102) ont vérifié les chiffres contre l'API GitHub et contre le rendu du PDF.
 
-**Assistants d'IA.** Leur usage est consigné session par session : 73 sessions au 26 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
+**Assistants d'IA.** Leur usage est consigné session par session : 73 sessions au 28 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
 
 ### 3.3 Difficultés
 
@@ -403,18 +405,17 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 ### 5.5 Assistants de développement par IA
 
-- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
+- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 28 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 217 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 221 erreurs ou pièges détectés par la vérification au 28 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #177, #178, #179, #181, #183, #184 et #187 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. La #177 a été déployée et le site contrôlé le 26 novembre au soir (section 2.2). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 28 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #177, #178, #179, #181, #183, #184 et #187 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. La #177 a été déployée et le site contrôlé le 26 novembre au soir (section 2.2). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Capture du board, absente à ce jour | Jibril | 27/11 |
 | PR de `dev` vers `main` et tag final | Mahé | 28/11 |
 | Relecture croisée de cette version, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
 
