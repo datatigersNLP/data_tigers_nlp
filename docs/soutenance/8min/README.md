@@ -14,7 +14,7 @@
 - **Notes de l'orateur** : la touche N affiche le texte à dire et la durée prévue de la diapositive. Un chronomètre démarre au premier appui ; la touche R le remet à zéro.
 - **Plein écran** : touche F.
 - **Reprendre à une étape** : ouvrir `presentation_8min.html#7.3` (diapositive 7, étape 3).
-- **Durée prévue** : 7 min 36 au total sur 8 minutes au plus : 4 min 11 pour les neuf diapositives (541 mots, 129 mots par minute), 1 min 25 de démonstration du volet A, 1 min 50 de démonstration du volet B, 10 s de clôture. La barre du bas a un segment par diapositive, de longueur proportionnelle à sa durée ; elle ne compte pas les démonstrations, dont la durée figure dans les notes (touche N) et dans le chronomètre.
+- **Durée prévue** : 7 min 36 au total sur 8 minutes au plus : 4 min 11 pour les neuf diapositives (539 mots, 129 mots par minute), 1 min 25 de démonstration du volet A, 1 min 50 de démonstration du volet B, 10 s de clôture. La barre du bas a un segment par diapositive, de longueur proportionnelle à sa durée ; elle ne compte pas les démonstrations, dont la durée figure dans les notes (touche N) et dans le chronomètre.
 - **Annexes** : 17 diapositives après la dernière, hors de la barre et du numéro (« A3 / 17 ») ; leurs notes donnent la réponse type. Les annexes A1 et A2 sont les démonstrations en direct : leur texte est public, leurs notes contiennent le texte à dire, et leur durée compte dans les 8 minutes.
 - **Notes** : elles s'affichent sur la page projetée ; ne les ouvrir qu'en répétition, ou avec un second écran qui ne recopie pas le premier.
 - **Mouvement réduit** : si le système le demande, chaque étape s'affiche sans animation.
@@ -29,14 +29,14 @@
 | Diapositive 4 | Volet A : la recherche dans le navigateur | 29 s |
 | Diapositive 5 | Choix : ajuster l'encodeur | 33 s |
 | Diapositive 6 | Volet B : l'assistant qui cite ses sources | 26 s |
-| Diapositive 7 | Choix : la recherche hybride et le reclasseur | 40 s |
+| Diapositive 7 | Choix : la recherche hybride et le reclasseur | 37 s |
 | Diapositive 8 | Choix : 10 passages plutôt que 5 | 19 s |
-| Diapositive 9 | Choix : les trois modèles, avec le résultat avant et après adaptation | 37 s |
+| Diapositive 9 | Choix : les trois modèles, avec le résultat avant et après adaptation | 40 s |
 | Annexe A1 | Démonstration du volet A, en ligne | 85 s |
 | Annexe A2 | Démonstration du volet B, en direct | 110 s |
 | Clôture | Remerciement et questions | 10 s |
 
-Les anciennes diapositives 10 (données synthétiques), 11 (bilan) et 12 (questions) sont supprimées depuis le 28 novembre : leur contenu reste dans les annexes A3, A5, A9 et A11, le résultat avant et après adaptation est dit à la diapositive 9.
+Les anciennes diapositives 10 (données synthétiques), 11 (bilan) et 12 (questions) sont supprimées depuis le 28 novembre : leur contenu reste dans les annexes A3, A5, A9 et A11, le résultat avant et après adaptation est dit et affiché à la diapositive 9 (bandeau « 10,1 % puis 52,9 % », quatrième appui).
 
 **Annexes** : A1 démonstration du volet A en ligne ; A2 démonstration du volet B en direct ; A3 mesure de bout en bout ; A4 exactitude jugée à l'aveugle ; A5 encodeurs synthétiques ; A6 seuils d'abstention ; A7 tests statistiques ; A8 protocole du volet B ; A9 données d'adaptation ; A10 quantification et export ; A11 mesure corrigée ; A12 confidentialité ; A13 machines ; A14 organisation et usage de l'IA ; A15 cinq outils ; A16 Agent0 ; A17 glossaire. Les questions de démonstration (A1, A2) ont été essayées le 26 novembre, sur le site en ligne et sur l'assistant local.
 
@@ -66,7 +66,7 @@ Depuis la racine du dépôt :
 
 ```
 python3 docs/soutenance/8min/construire.py          # écrit docs/soutenance/presentation_8min.html
-python3 docs/soutenance/8min/verifier_chiffres.py   # 57 chiffres contre leurs sources ; aucun tiret long
+python3 docs/soutenance/8min/verifier_chiffres.py   # 57 chiffres contre leurs sources, et ceux de la diapositive 9 à l'écran ; aucun tiret long
 python3 docs/soutenance/8min/script_oral.py         # régénère script_oral.md depuis les notes du support
 ```
 
@@ -82,12 +82,12 @@ Supprimer ensuite les `.tex` intermédiaires : seuls le Markdown et le PDF sont 
 
 `verifier_chiffres.py` relit les fichiers de résultats dans `data/` (option `--donnees`, par défaut la copie de mesure `~/NLP2_local/depot_v2/data`) et les documents publiés sur `dev`.
 
-**Limite du vérificateur** : il contrôle qu'un chiffre écrit correspond à sa source et figure dans le support, pas chaque occurrence. Un chiffre répété (86,0 % apparaît deux fois) n'est donc vérifié qu'une fois. Le contrôle négatif du 21/11 a détecté une altération d'un chiffre unique (+28,9 points).
+**Limite du vérificateur** : il contrôle qu'un chiffre écrit correspond à sa source et figure dans le support, pas chaque occurrence ; seuls les chiffres de la diapositive 9 sont aussi contrôlés à l'écran, hors notes. Le contrôle de chaque chiffre du texte à dire contre l'écran rendu (schémas calculés compris) a été fait le 28/11 dans Chromium. Un chiffre répété (86,0 % apparaît deux fois) n'est donc vérifié qu'une fois. Le contrôle négatif du 21/11 a détecté une altération d'un chiffre unique (+28,9 points).
 
 ## Contrôles faits le 21/11 puis le 28/11, dans Chromium à 1920 x 1080
 
 - Aucune erreur JavaScript, et aucun contenu ne dépasse la zone utile, sur les 9 diapositives et les 18 annexes (28/11).
-- 34 appuis mènent de la première à la dernière diapositive : 8 changements de diapositive et 26 étapes.
+- 35 appuis mènent de la première à la dernière diapositive : 8 changements de diapositive et 27 étapes.
 - Le reclassement de la diapositive 7 et le nuage de la diapositive 5 s'animent en avant comme en arrière.
 - Les contrastes du texte sont d'au moins 4,5:1 ; l'orange, réservé au texte grand ou gras, est d'au moins 3,5:1.
 - Ouvert en fichier local, le support fonctionne, mais l'adresse ne garde pas l'étape (le navigateur l'interdit dans ce cas).

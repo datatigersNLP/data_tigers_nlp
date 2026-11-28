@@ -152,6 +152,12 @@ svg .e { transform-box: fill-box; transform-origin: center; }
 .resultat-ligne .apres { font-size: 88px; font-weight: 760; color: var(--vert); letter-spacing: -.02em; }
 .resultat-ligne .fleche { width: 64px; height: 30px; }
 .precisions { font-size: 25px; line-height: 1.42; color: var(--texte2); margin: 10px 0 0; }
+/* diapositive 9 : le résultat de l'adaptation, en bandeau sous les trois modèles */
+.verdict { display: flex; align-items: center; gap: 44px; border-top: 3px solid var(--encre); padding-top: 12px; margin-top: 2px; }
+.verdict .resultat-ligne { flex: none; gap: 16px; }
+.verdict .resultat-ligne .avant { font-size: 44px; }
+.verdict .resultat-ligne .apres { font-size: 66px; }
+.verdict .precisions { margin: 0; font-size: 23px; line-height: 1.34; }
 .liste-faits { margin: 0 0 30px; padding: 0; list-style: none; display: grid; gap: 14px; }
 .liste-faits li { font-size: 26px; line-height: 1.4; padding-left: 26px; position: relative; color: var(--texte2); }
 .liste-faits li::before { content: ""; position: absolute; left: 0; top: 13px; width: 12px; height: 12px; background: var(--vert); }
@@ -526,7 +532,7 @@ aside.texte-a-dire { display: none; }
 </section>
 
 <!-- 7. Recherche hybride -->
-<section class="diapo" data-duree="40" data-etapes="4" aria-label="Choix : chercher par le sens et par les mots">
+<section class="diapo" data-duree="37" data-etapes="4" aria-label="Choix : chercher par le sens et par les mots">
   <h2 class="titre">Chercher par le sens et par les mots</h2>
   <p class="hybride-q" id="qh"></p>
   <div class="colonnes">
@@ -541,9 +547,9 @@ aside.texte-a-dire { display: none; }
     <div><div class="chiffres"><small>70,9&nbsp;%</small><svg class="mini-fleche" viewBox="0 0 40 20" aria-label="puis"><path d="M0 10H32M24 3L34 10L24 17" fill="none" stroke="#5e5a55" stroke-width="3"/></svg>85,1&nbsp;%</div><p>CDTN, jeu externe : +14,2 points</p></div>
   </div>
   <aside class="texte-a-dire" data-plan="Choix : recherche hybride">
-    <p>Deuxième choix : ne pas chercher seulement par le sens. Sur cette question, la recherche par le sens classe le bon passage 59e. BM25, qui cherche les mots, le place 2e ; la fusion des rangs le remonte au 6e ; le reclasseur le place en tête, avec 0,66 contre 0,09 pour le suivant.</p>
+    <p>Deuxième choix : ne pas chercher seulement par le sens. Sur cette question, la recherche par le sens classe le bon passage 59e. BM25, qui cherche les mots, le place 2e ; la fusion des rangs le remonte au 6e ; le reclasseur le place en tête.</p>
     <p>Sur l'ensemble, les questions dont le contexte contient un passage pertinent passent de 45 à 73 % sur nos questions de test, et de 57 à 86 % sur le jeu v2.</p>
-    <ul><li>Fusion RRF : k = 60, la valeur de l'article de Cormack et al. (2009), jamais réglée.</li><li>Nos mots vides gardent les négations (ne, pas, sans) : elles comptent en droit.</li><li>Les trois écarts sont démontrés (McNemar exact, p &lt; 0,001 sur le jeu v2 et le lot de test).</li></ul>
+    <ul><li>Le reclasseur donne 0,66 à ce passage, contre 0,09 au suivant.</li><li>Fusion RRF : k = 60, la valeur de l'article de Cormack et al. (2009), jamais réglée.</li><li>Nos mots vides gardent les négations (ne, pas, sans) : elles comptent en droit.</li><li>Les trois écarts sont démontrés (McNemar exact, p &lt; 0,001 sur le jeu v2 et le lot de test).</li></ul>
   </aside>
 </section>
 
@@ -569,7 +575,7 @@ aside.texte-a-dire { display: none; }
 </section>
 
 <!-- 9. Modèles -->
-<section class="diapo" data-duree="37" data-etapes="3" aria-label="Choix : trois modèles">
+<section class="diapo" data-duree="40" data-etapes="4" aria-label="Choix : trois modèles">
   <h2 class="titre">Trois modèles, choisis pour la machine qui les exécute</h2>
   <div class="modeles">
     <div class="modele m-a e" data-e="1">
@@ -600,9 +606,13 @@ aside.texte-a-dire { display: none; }
       </dl>
     </div>
   </div>
+  <div class="verdict e" data-e="4">
+    <div class="resultat-ligne"><span class="avant">10,1&nbsp;%</span><svg class="fleche" viewBox="0 0 64 30"><path d="M0 15H54M44 4L58 15L44 26" fill="none" stroke="#1c1b1a" stroke-width="4"/></svg><span class="apres">52,9&nbsp;%</span></div>
+    <p class="precisions">des réponses citent un passage pertinent, sans l'adaptation (témoin T), puis avec : <b>12 sur 119 contre 63 sur 119</b>, 54 questions gagnées, 3 perdues (jeu v2, chaîne de la démonstration). Mesure de traçabilité, pas d'exactitude.</p>
+  </div>
   <aside class="texte-a-dire" data-plan="Choix : les modèles">
     <p>Chaque modèle est choisi pour sa machine. Dans le navigateur, E5-small, dont nous retirons les alphabets non latins sans changer un résultat. Sur le Mac, le reclasseur bge-m3, le seul des trois testés qui apporte un gain, et Qwen2.5-7B, adapté par LoRA, fusionné puis compressé.</p>
-    <p>Avec la chaîne de la démonstration, sur le jeu v2, le modèle adapté cite un passage pertinent dans 52,9 % de ses réponses, le témoin sans adaptation dans 10,1 % : c'est ce que montre la démonstration.</p>
+    <p>Sur le jeu v2, avec la chaîne de la démonstration, le témoin sans adaptation cite un passage pertinent dans 10,1 % de ses réponses, le modèle adapté dans 52,9 %. C'est une mesure de traçabilité, pas d'exactitude : la démonstration le montre.</p>
     <ul><li>Génération mesurée : 46,9 tokens par seconde en médiane sur le Mac.</li><li>Le témoin T : modèle d'origine, même fusion et même compression, sans correctif.</li><li>52,9 % (63 sur 119) pour le modèle adapté, 10,1 % (12 sur 119) pour le modèle d'origine : 54 questions gagnées, 3 perdues ; chaîne de la démonstration, jeu v2 (annexe A3).</li></ul>
   </aside>
 </section>

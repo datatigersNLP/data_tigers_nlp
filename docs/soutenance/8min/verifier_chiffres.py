@@ -124,6 +124,16 @@ def main(argv=None) -> int:
         if not (present and conforme):
             ecarts += 1
         print(f"{'OK ' if present and conforme else 'NON'} {ecrit:22s} source : {source!s:22s} ({nom})")
+    # chiffres annoncés à l'oral : ils doivent figurer à l'écran de la diapositive, pas seulement dans ses notes (28/11 :
+    # les 52,9 % et 10,1 % de la diapositive 9 n'étaient que dans les notes). Texte HTML statique, sans les schémas calculés.
+    a_l_ecran = [("Choix : trois modèles", ("10,1", "52,9", "12 sur 119", "63 sur 119", "témoin"))]
+    for titre, nombres in a_l_ecran:
+        section = re.search(r'<section class="diapo"[^>]*aria-label="%s">(.*?)</section>' % re.escape(titre), gabarit, re.S).group(1)
+        ecran = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<aside.*?</aside>", "", section, flags=re.S)).replace("&nbsp;", " "))
+        for n in nombres:
+            present = n in ecran
+            ecarts += 0 if present else 1
+            print(f"{'OK ' if present else 'NON'} à l'écran de « {titre} » : {n}")
     # données des schémas
     h = donnees["hybride"]
     if (h["rangs"]["dense_base"], h["rangs"]["bm25"], h["rangs"]["fusion"], h["rangs"]["reclasseur"]) != (59, 2, 6, 1):

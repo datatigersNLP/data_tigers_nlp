@@ -2,7 +2,7 @@
 
 **Source** le texte à dire est celui des notes de `deck.html`, mot pour mot ; ce fichier est généré par `script_oral.py` : ne pas le modifier à la main, modifier le support puis relancer le script.
 
-**Durée prévue** 7:36 sur 8:00 au plus, marge de 24 s : présentation de 9 diapositives 4:11 (541 mots, 129 mots par minute), démonstration du volet A 1:25, démonstration du volet B 1:50, clôture 0:10.
+**Durée prévue** 7:36 sur 8:00 au plus, marge de 24 s : présentation de 9 diapositives 4:11 (539 mots, 129 mots par minute), démonstration du volet A 1:25, démonstration du volet B 1:50, clôture 0:10.
 
 **Orateurs** répartition proposée, à valider en équipe : les diapositives suivent les domaines du classeur de suivi ; chaque démonstration revient à un responsable du ticket de l'interface (#53 pour le site, #111 pour l'assistant), celui qui parle le moins ; Mahé tient le clavier pendant toute la soutenance.
 
@@ -28,9 +28,9 @@
 | Diapositive 4. Volet A : tout se calcule dans le navigateur | 1:07 | 29 s | Vaneck |
 | Diapositive 5. Ajuster l'encodeur à nos fiches | 1:36 | 33 s | Remy |
 | Diapositive 6. Volet B : un assistant qui cite ses sources | 2:09 | 26 s | Jibril |
-| Diapositive 7. Chercher par le sens et par les mots | 2:35 | 40 s | Jibril |
-| Diapositive 8. Pourquoi 10 passages plutôt que 5 | 3:15 | 19 s | Jibril |
-| Diapositive 9. Trois modèles, choisis pour la machine qui les exécute | 3:34 | 37 s | Mahé |
+| Diapositive 7. Chercher par le sens et par les mots | 2:35 | 37 s | Jibril |
+| Diapositive 8. Pourquoi 10 passages plutôt que 5 | 3:12 | 19 s | Jibril |
+| Diapositive 9. Trois modèles, choisis pour la machine qui les exécute | 3:31 | 40 s | Mahé |
 | Démonstration du volet A, en direct | 4:11 | 85 s | Vaneck |
 | Démonstration du volet B, en direct | 5:36 | 110 s | Maïmouna |
 | Clôture | 7:26 | 10 s | Remy |
@@ -130,7 +130,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 7 : Chercher par le sens et par les mots
 
-**Jibril**, de 2:35 à 3:15 (40 s, 86 mots).
+**Jibril**, de 2:35 à 3:12 (37 s, 79 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -139,19 +139,20 @@ Apparitions, dans l'ordre des appuis :
 - Appui 3 : Fusion des rangs
 - Appui 4 : 45,2 % 72,6 % lot de test : un passage pertinent dans le contexte 57,0 % 86,0 % jeu v2, 121 questions : +28,9 … ; puis Reclasseur lit question et passage
 
-> Deuxième choix : ne pas chercher seulement par le sens. Sur cette question, la recherche par le sens classe le bon passage 59e. BM25, qui cherche les mots, le place 2e ; la fusion des rangs le remonte au 6e ; le reclasseur le place en tête, avec 0,66 contre 0,09 pour le suivant.
+> Deuxième choix : ne pas chercher seulement par le sens. Sur cette question, la recherche par le sens classe le bon passage 59e. BM25, qui cherche les mots, le place 2e ; la fusion des rangs le remonte au 6e ; le reclasseur le place en tête.
 >
 > Sur l'ensemble, les questions dont le contexte contient un passage pertinent passent de 45 à 73 % sur nos questions de test, et de 57 à 86 % sur le jeu v2.
 
 À savoir si on vous interrompt :
 
+- Le reclasseur donne 0,66 à ce passage, contre 0,09 au suivant.
 - Fusion RRF : k = 60, la valeur de l'article de Cormack et al. (2009), jamais réglée.
 - Nos mots vides gardent les négations (ne, pas, sans) : elles comptent en droit.
 - Les trois écarts sont démontrés (McNemar exact, p < 0,001 sur le jeu v2 et le lot de test).
 
 ### Diapositive 8 : Pourquoi 10 passages plutôt que 5
 
-**Jibril**, de 3:15 à 3:34 (19 s, 42 mots).
+**Jibril**, de 3:12 à 3:31 (19 s, 42 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -167,17 +168,18 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 9 : Trois modèles, choisis pour la machine qui les exécute
 
-**Mahé**, de 3:34 à 4:11 (37 s, 82 mots).
+**Mahé**, de 3:31 à 4:11 (40 s, 87 mots).
 
 Apparitions, dans l'ordre des appuis :
 
 - Appui 1 : dans le navigateur multilingual-e5-small Taille 118 millions de paramètres, vecteurs de 384 nombres Pourquoi …
 - Appui 2 : sur le Mac bge-reranker-v2-m3 Rôle lit la question et un passage ensemble, et note leur accord Pourquoi lui …
 - Appui 3 : sur le Mac, servi par Ollama Qwen2.5-7B-Instruct Pourquoi lui poids ouverts sous licence Apache 2.0, bon en …
+- Appui 4 : 10,1 % 52,9 % des réponses citent un passage pertinent, sans l'adaptation (témoin T), puis avec : 12 sur 119 …
 
 > Chaque modèle est choisi pour sa machine. Dans le navigateur, E5-small, dont nous retirons les alphabets non latins sans changer un résultat. Sur le Mac, le reclasseur bge-m3, le seul des trois testés qui apporte un gain, et Qwen2.5-7B, adapté par LoRA, fusionné puis compressé.
 >
-> Avec la chaîne de la démonstration, sur le jeu v2, le modèle adapté cite un passage pertinent dans 52,9 % de ses réponses, le témoin sans adaptation dans 10,1 % : c'est ce que montre la démonstration.
+> Sur le jeu v2, avec la chaîne de la démonstration, le témoin sans adaptation cite un passage pertinent dans 10,1 % de ses réponses, le modèle adapté dans 52,9 %. C'est une mesure de traçabilité, pas d'exactitude : la démonstration le montre.
 
 À savoir si on vous interrompt :
 
