@@ -87,6 +87,28 @@ class TestDepotJetable(unittest.TestCase):
         subprocess.run(["git", "-C", depot, "add", "-A"], check=True, env=env)
         subprocess.run(["git", "-C", depot, "commit", "-q", "-m", message], check=True, env=env)
 
+    def test_un_renommage_n_est_pas_un_fichier_ajoute(self):
+        with tempfile.TemporaryDirectory() as depot:
+            subprocess.run(["git", "-C", depot, "init", "-q", "-b", "dev"], check=True)
+            self.commit(depot, "mahebegnis", "feat(1): crée", {"scripts/ancien.py": "a = 1\nb = 2\nc = 3\nd = 4\n"}, date="2026-11-26T10:00:00Z")
+            subprocess.run(["git", "-C", depot, "mv", "scripts/ancien.py", "scripts/nouveau.py"], check=True)
+            self.commit(depot, "jibzzou", "refactor: renomme", {}, date="2026-11-26T11:00:00Z")
+            self.commit(depot, "jibzzou", "feat(2): modifie", {"scripts/nouveau.py": "a = 1\nb = 2\nc = 3\nd = 4\ne = 5\n"}, date="2026-11-26T12:00:00Z")
+            subprocess.run(["git", "-C", depot, "update-ref", "refs/remotes/origin/dev", "HEAD"], check=True)
+            stats, _, _ = c.commits(depot, {}, {1, 2})
+            self.assertEqual((stats["Mahé"]["fichiers_ajoutes"], stats["Jibril"]["fichiers_ajoutes"]), (1, 0))
+
+    def test_les_fichiers_ajoutes_suivent_l_arret(self):
+        with tempfile.TemporaryDirectory() as depot:
+            subprocess.run(["git", "-C", depot, "init", "-q", "-b", "dev"], check=True)
+            self.commit(depot, "mahebegnis", "feat(1): avant", {"scripts/a.py": "x = 1\n", "docs/é.md": "un\n"}, date="2026-11-26T10:00:00Z")
+            self.commit(depot, "mahebegnis", "feat(2): après", {"scripts/b.py": "y = 2\n"}, date="2026-11-26T14:00:00Z")
+            subprocess.run(["git", "-C", depot, "update-ref", "refs/remotes/origin/dev", "HEAD"], check=True)
+            tout, _, _ = c.commits(depot, {}, {1, 2})
+            avant, _, _ = c.commits(depot, {}, {1, 2}, arret="2026-11-26T12:00:00Z")
+            self.assertEqual((tout["Mahé"]["fichiers_ajoutes"], avant["Mahé"]["fichiers_ajoutes"]), (3, 2))
+            self.assertEqual(avant["Mahé"]["fichiers_ajoutes_documentation"], 1, "un nom de fichier accentué est bien classé")
+
     def test_arret_exclut_les_commits_plus_recents(self):
         with tempfile.TemporaryDirectory() as depot:
             subprocess.run(["git", "-C", depot, "init", "-q", "-b", "dev"], check=True)
@@ -121,6 +143,10 @@ class TestDepotJetable(unittest.TestCase):
             self.assertEqual(stats["Jibril"]["ajouts_notebooks"], 3)
             self.assertEqual(stats["Jibril"]["ajouts_donnees"], 1)
             self.assertEqual(touches["Mahé"], {7})
+            # fichiers créés : a.py et n.md pour Mahé (la modification de a.py n'en crée pas), trois pour Jibril
+            self.assertEqual((stats["Mahé"]["fichiers_ajoutes"], stats["Mahé"]["fichiers_ajoutes_code"], stats["Mahé"]["fichiers_ajoutes_documentation"]), (2, 1, 1))
+            self.assertEqual((stats["Jibril"]["fichiers_ajoutes"], stats["Jibril"]["fichiers_ajoutes_code"],
+                              stats["Jibril"]["fichiers_ajoutes_notebooks"], stats["Jibril"]["fichiers_ajoutes_donnees"]), (3, 1, 1, 1))
             self.assertEqual(stats["Mahé"]["sans_ticket"], 1)
             cons = c.lignes_conservees(depot, "origin/dev", {})
             # a.py garde 3 lignes non vides, toutes à Mahé. b.py a le contenu qu'avait a.py avant sa modification : ce n'est

@@ -1,7 +1,7 @@
 # Contributions mesurées, relevé du 26 novembre 2026
 
 **Équipe** Data Tigers
-**Relevé par** `scripts/suivi/contributions.py` (17 tests : `scripts/suivi/test_contributions.py`) ; données brutes : `docs/suivi/contributions_20261126.csv`
+**Relevé par** `scripts/suivi/contributions.py` (19 tests : `scripts/suivi/test_contributions.py`) ; données brutes : `docs/suivi/contributions_20261126.csv`
 **Instant du relevé** 26 novembre 2026, 16 h 15 UTC (`--arret 2026-11-26T16:15:00Z`), après la fusion de la PR #187
 **Référence figée** `ff21f4b`, le commit de `dev` après cette fusion
 
@@ -9,7 +9,7 @@ Le relevé n'a pas une seule source. Les lignes conservées et la colonne « don
 
 ## Pourquoi cette mesure
 
-Le classeur de suivi contient des heures par membre et par ticket. Elles sont presque toutes des estimations rétrospectives, non chronométrées, établies par trois méthodes différentes : déclarations des intéressés, estimations proposées avec un assistant puis relues, estimations de Jibril divisées par deux à sa demande (`SUIVI.md`). Aucune charge n'a été inscrite pour Mahé. Elles ne permettent donc pas de comparer les membres. Le 26 novembre, Mahé a décidé de comparer les contributions sur des quantités comptées par GitHub et par Git : tickets, commits et lignes. Les heures restent dans `SUIVI.md`, à titre indicatif.
+La répartition des contributions entre les membres est mesurée par des quantités que Git et GitHub comptent : tickets, commits, lignes de code et de documentation, fichiers ajoutés. Le classeur de suivi contient aussi des heures, mais elles sont presque toutes des estimations rétrospectives, non chronométrées, établies par des méthodes différentes, et aucune n'a été inscrite pour Mahé : elles ne permettent pas de comparer les membres, et le rapport n'en tire aucune répartition (décision de Mahé, les 26 et 28 novembre).
 
 ## Ce qui est compté
 
@@ -25,6 +25,7 @@ Le classeur de suivi contient des heures par membre et par ticket. Elles sont pr
 | Commits poussés | commits uniques hors fusions, sur toutes les branches du dépôt GitHub, les tags et les têtes de PR (branches supprimées comprises) ; les commits qui ne sont pas sur GitHub ne comptent pas ; un commit compte pour son auteur, avec sa date de validation pour l'arrêt |
 | Lignes ajoutées | cumul de `git log --numstat` (renommages détectés), par catégorie de fichier |
 | Lignes conservées | lignes non vides encore présentes dans la référence, attribuées par `git blame -w -M -C` à l'auteur du commit qui les a introduites ; deux fichiers au contenu identique ne comptent qu'une fois |
+| Fichiers ajoutés | fichiers créés, d'après le statut A de `git log --diff-filter=A` : un renommage ou une modification n'en est pas un ; un fichier supprimé puis recréé compte deux fois ; rangés par les mêmes catégories que les lignes |
 
 Catégories de fichiers : le code (Python, JavaScript, JSX, CSS, HTML hors `docs/`, scripts shell, YAML), la documentation (Markdown, LaTeX, texte, et les pages HTML de `docs/`, qui sont des diapositives), les carnets Jupyter, les données et fichiers de verrouillage (JSON, CSV, SVG, `package-lock.json`, `requirements*.txt`). Les carnets, qui comptent leur JSON brut, sortie des cellules comprise, et les données ne sont pas comparés en lignes : ils sont donnés à part.
 
@@ -76,6 +77,17 @@ Le total des PR distinctes relues est la somme des membres : une PR relue par de
 | Maïmouna | 202 (1 %) | 118 (1 %) |
 | Total | 28 152 | 18 832 |
 
+**Fichiers ajoutés** (créés, renommages exclus).
+
+| Membre | Fichiers ajoutés, tous types | dont code | dont documentation | dont carnets | dont données et verrous | dont autres |
+|---|---:|---:|---:|---:|---:|---:|
+| Mahé | 209 (55 %) | 75 (52 %) | 59 (45 %) | 3 (100 %) | 40 (60 %) | 32 (94 %) |
+| Jibril | 85 (23 %) | 24 (17 %) | 44 (34 %) | 0 (0 %) | 17 (25 %) | 0 (0 %) |
+| Remy | 25 (7 %) | 13 (9 %) | 10 (8 %) | 0 (0 %) | 1 (1 %) | 1 (3 %) |
+| Vaneck | 58 (15 %) | 31 (22 %) | 17 (13 %) | 0 (0 %) | 9 (13 %) | 1 (3 %) |
+| Maïmouna | 0 (0 %) | 0 (0 %) | 0 (0 %) | 0 (0 %) | 0 (0 %) | 0 (0 %) |
+| Total | 377 | 143 | 130 | 3 | 67 | 34 |
+
 **Hors totaux, en volume brut.**
 
 | Membre | Lignes ajoutées dans les carnets (JSON brut) | Lignes ajoutées dans les données et verrous |
@@ -95,6 +107,7 @@ Le total des PR distinctes relues est la somme des membres : une PR relue par de
 - **Une assignation n'est pas du travail fait.** 47 des 68 tickets assignés ont au moins deux responsables : le nombre de tickets assignés mesure la responsabilité attribuée.
 - **Les tickets touchés peuvent se tromper dans les deux sens.** Ils sous-comptent quand le numéro n'est pas cité : une plage écrite « #91 à #95 » ne donne que ses deux bornes. Ils sur-comptent quand le numéro est cité comme contexte, sans que l'auteur ait travaillé sur ce ticket.
 - **Une revue déposée n'est pas une PR relue.** Plusieurs revues d'un même membre sur une même PR comptent chacune : Mahé a déposé 73 revues sur 48 PR distinctes, Jibril 48 sur 29, Remy 31 sur 25, Vaneck 21 sur 18, Maïmouna 13 sur 12. Les deux colonnes sont données, et le classement ne change pas. Ni l'une ni l'autre ne mesure la qualité d'une relecture.
+- **Un fichier créé n'est pas une unité de travail.** Un fichier de données, de configuration ou un document de dix lignes comptent chacun pour un. Maïmouna n'a créé aucun fichier : ses 24 commits modifient des fichiers déjà existants (journal d'usage, fiches des assistants et des outils, rapport, questions annotées).
 - **Ce que Git ne voit pas.** Les jugements humains du #52 et leurs grilles, qui sont hors dépôt (`data/`), les reproductions sur une machine (#51), l'annotation des questions autrement que par le fichier versionné, les réunions et les relectures faites hors GitHub. Le total de lignes de code de Maïmouna (0) ne dit rien de ce travail.
 - **Un instant, pas un état permanent.** Relancé sans `--arret`, le script compte aussi ce qui suit le 26 novembre.
 
@@ -105,7 +118,8 @@ Le total des PR distinctes relues est la somme des membres : une PR relue par de
 - **Lignes conservées** : 25 572 lignes de code et 18 832 de documentation, égales au comptage direct des lignes non vides de chaque fichier de `dev`, fait sans `blame` : aucune ligne n'est perdue ni attribuée deux fois.
 - **Catégories** : la première version rangeait en code trois pages HTML de diapositives (3 380 lignes de Mahé) et en documentation les fichiers de dépendances ; l'examen des plus gros fichiers de chaque membre les a fait remonter. Les catégories ont été refaites, sans changer le total.
 - **Identités** : une adresse inconnue arrête le script. Les adresses qui ne sont pas des adresses GitHub « noreply » se déclarent dans un fichier d'alias non versionné.
-- **Reproduction, le 27 novembre** : le relevé a été rejoué avec `--reference ff21f4b --arret 2026-11-26T16:15:00Z`. Les 20 colonnes du CSV du 26 novembre sont retrouvées sans aucun écart, sur les cinq membres et le total ; il en est de même aux arrêts essayés à 16 h 13 et à 16 h 19 UTC. La fenêtre se termine à la fusion de `dev` dans la branche de la PR #188, datée de 16 h 19 UTC, qui ajoute une fusion au décompte de Mahé. Les responsables des tickets n'étant pas historisés, ce contrôle suppose qu'aucune assignation n'a changé depuis.
+- **Fichiers ajoutés** : 377 fichiers créés, la somme des six catégories égale le total. Recoupés par une autre commande (`git log --name-status`) sur `dev` jusqu'à `ff21f4b` : 368 créations, soit 85 pour Jibril, 25 pour Remy et 58 pour Vaneck, comme dans le relevé, et 200 pour Mahé, contre 209 dans le relevé qui compte aussi les branches et les têtes de PR hors de `dev`. Les 363 fichiers présents dans `dev` à `ff21f4b` sont moins nombreux que les 368 créations, ce qui est attendu (fichiers supprimés ou renommés depuis).
+- **Reproduction, le 27 novembre** : le relevé a été rejoué avec `--reference ff21f4b --arret 2026-11-26T16:15:00Z`. Les 20 colonnes du CSV du 26 novembre sont retrouvées sans aucun écart, sur les cinq membres et le total (le 28 novembre, avec les fichiers ajoutés en plus, les 21 colonnes déjà publiées sont inchangées) ; il en est de même aux arrêts essayés à 16 h 13 et à 16 h 19 UTC. La fenêtre se termine à la fusion de `dev` dans la branche de la PR #188, datée de 16 h 19 UTC, qui ajoute une fusion au décompte de Mahé. Les responsables des tickets n'étant pas historisés, ce contrôle suppose qu'aucune assignation n'a changé depuis.
 - **Sans arrêt, le résultat change** : relancé le 27 novembre sans `--arret`, le même script donne 175 tickets terminés au lieu de 132 (13 tickets fermés le 26 novembre entre 19 h 19 et 19 h 26 UTC, après le relevé), 465 commits au lieu de 462 et 59 PR fusionnées de Mahé au lieu de 58 (la #177). C'est pourquoi le CSV et l'instant du relevé font foi.
 
 ## Refaire le relevé
