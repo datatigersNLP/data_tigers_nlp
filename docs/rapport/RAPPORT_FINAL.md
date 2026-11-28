@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Enseignant** Adrian ROSARI
-**Version** V1 en cours de rédaction, état du 22 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
+**Version** V1, état du 28 novembre 2026 (V0 du 19 octobre), à remettre strictement avant le jalon J4
 
 **Objet.** Ce rapport suit la section 11 du sujet : analyse technique, retour d'expérience, axes de progression et cinq outils novateurs. La V0 a été écrite à la fin du volet A, le 19 octobre. Cette V1 ajoute le volet B, adapté et mesuré, les améliorations du volet A servies depuis le 15 novembre, la justification du passage de 5 à 10 passages demandée par l'enseignant (section 2.4), les essais d'encodeurs entraînés sur des questions synthétiques, non retenus (section 2.3), et les mentions de confidentialité ajoutées aux deux interfaces (section 2.2). Ce qui reste à mesurer ou à rédiger est signalé explicitement (section 6).
 
@@ -25,7 +25,7 @@
 
 Le corpus est commun : les 261 fiches pratiques du ministère du Travail, découpées en 4 240 passages, instantané SocialGouv du 11 septembre 2026, sous Licence Ouverte Etalab 2.0. Le cas A3 constitue la couche de récupération du cas B1 : le découpage, l'encodage et l'index sont écrits une fois et servent aux deux volets.
 
-La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octobre 2026 sur `main` (`8955962`). Le site en ligne est déployé depuis `dev`. Depuis le 15 novembre, il sert l'encodeur ajusté par l'équipe et affiche 10 passages regroupés par fiche (#164, PR #165). À la demande de l'enseignant, les deux interfaces affichent le logo de l'équipe et une fenêtre de confidentialité (#176, PR #177, en relecture).
+La fin du volet A est marquée par le tag annoté `volet-a-v1`, posé le 18 octobre 2026 sur `main` (`8955962`). Le site en ligne est déployé depuis `dev`. Depuis le 15 novembre, il sert l'encodeur ajusté par l'équipe et affiche 10 passages regroupés par fiche (#164, PR #165). À la demande de l'enseignant, les deux interfaces affichent le logo de l'équipe et une fenêtre de confidentialité (#176, PR #177).
 
 ## 2. Analyse technique
 
@@ -70,11 +70,13 @@ Pour le volet A, la qualité est celle de l'encodeur ajusté, servi depuis le 15
 
 **Abstention.** Le volet A signale les questions hors du périmètre par un seuil de similarité, fixé sur un jeu externe (CDTN) avant la mesure, et avertit dans une zone grise juste au-dessus. Avec l'encodeur ajusté servi, le score sépare assez bien les questions hors corpus (AUC 0,865). Le seuil conserve 70 des 73 questions du corpus du lot de test et rejette 10 des 24 questions hors corpus ; 13 autres reçoivent l'avertissement. Il repère surtout les saisies sans rapport avec le droit du travail, et l'interface ne promet pas davantage.
 
-**Confidentialité.** À la demande de l'enseignant, chaque interface ouvre une fenêtre de confidentialité (#176, PR #177, en relecture). Elle décrit ce qui a été vérifié le 21 novembre :
+**Confidentialité.** À la demande de l'enseignant, chaque interface ouvre une fenêtre de confidentialité (#176, PR #177). Elle décrit ce qui a été vérifié le 21 novembre :
 - le site en ligne ne contacte que son propre domaine, n'envoie rien quand on pose une question, ne dépose aucun cookie et ne garde dans le cache du navigateur que les fichiers du modèle, environ 100 Mo ;
 - l'hébergeur, GitHub Pages, journalise les adresses IP pour sa sécurité ;
 - dans la configuration de la démonstration, l'assistant local ne journalise ni les questions ni les réponses ;
 - les mentions légales nomment le directeur de la publication, Mahé BEGNIS, et l'hébergeur.
+
+Après la fusion de la #177, ces points ont été revérifiés le 26 novembre sur le site déployé (version `6acc699`) : un seul domaine contacté, aucune requête pendant l'ouverture de la fenêtre ni pendant une question, aucun cookie ni entrée dans le stockage local du navigateur, et un cache de 95,5 Mio, soit environ 100 Mo comme annoncé. Ce contrôle a été fait sous Chromium seulement ; il ne dit rien de la valeur juridique du texte.
 
 ### 2.3 Ce que les mesures ont appris
 
@@ -184,7 +186,7 @@ Cet usage s'écarte de la règle que l'équipe s'était donnée, qui réservait 
 
 Leur utilité constatée est surtout de deux ordres :
 - **Décider sans débat a posteriori** : les protocoles figés ont permis d'appliquer la règle de repli.
-- **Rattraper des erreurs** : le journal recense 192 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
+- **Rattraper des erreurs** : le journal recense 221 erreurs ou pièges détectés par la vérification au 28 novembre (68 au 18 octobre, dont 32 du 11 au 18 octobre).
 
 Les PDF sont produits depuis le Markdown par une chaîne LaTeX commune (`docs/latex`).
 
@@ -208,16 +210,18 @@ Les 8 PR fusionnées sans approbation enregistrée se répartissent ainsi :
 - une après une demande de modification traitée, sans approbation formelle (#32) ;
 - une intégrée par une autre PR approuvée (#86, par la #87).
 
-**Board de tickets.** Le board porte l'état des tickets ; le classeur de suivi le complète par les dates et les charges.
+**Board de tickets.** Le board (GitHub Projects) porte l'état des tickets sur sept colonnes : Backlog, Todo, In progress, Besoin d'aide, A discuter, Test et Done ; le classeur de suivi le complète par les dates et les charges. Au 28 novembre, il compte 68 cartes : 67 en Done (66 tickets et la PR #32) et une en Todo (#140, l'export de l'adaptateur), les autres colonnes étant vides. L'état de chacune des 67 cartes de ticket concorde avec celui du ticket ; deux tickets ouverts, les réunions hebdomadaires des 2 et 9 décembre (#18 et #19), n'y figurent pas.
+
+![Vue Board du projet GitHub, transmise par Jibril : une carte en Todo, 67 en Done (début de la colonne). Contenu identique à celui lu par l'API de GitHub le 28 novembre.](images/board_projet.png)
 
 Le pilotage a été réel pour la création des tickets, mais rétrospectif pour les charges :
 - **Création préalable** : les 54 tickets ont été créés par vagues de planification (19 le 20/09, 6 le 23/09, 11 le 30/09, 8 le 18/10). Les 25 PR qui citent un ticket dans leur titre ont toutes été ouvertes après la création de ce ticket.
 - **Charges rétrospectives** : au 19 octobre, 45 tickets sur 54 n'ont pas d'estimation dans le classeur de suivi.
-- **Capture absente** : la capture du board attendue au mi-parcours n'a pas été versionnée.
+- **Capture tardive** : la capture du board attendue au mi-parcours n'a pas été versionnée ; elle l'est dans cette version, le 28 novembre.
 
 **Relecture par un tiers.** La relecture croisée a trouvé des erreurs que l'auteur n'avait pas vues. Sur les 19 erreurs des sessions de Mahé entre le 11 et le 18 octobre, 4 ont été trouvées par Jibril en relecture. Vaneck en a relevé deux dans des PR de Mahé (#76 et #78). Les revues de Jibril sur les PR documentaires (#82, #89, #102) ont vérifié les chiffres contre l'API GitHub et contre le rendu du PDF.
 
-**Assistants d'IA.** Leur usage est consigné session par session : 73 sessions au 26 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
+**Assistants d'IA.** Leur usage est consigné session par session : 73 sessions au 28 novembre. Les outils déclarés sont Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, et, comme sous-agents de Claude Code, d'autres modèles Claude (Sonnet, Fable et Haiku) pour écrire et juger des questions sous protocole (sessions 68 et 69). La règle d'équipe est que tout élément produit avec un assistant soit relu et vérifié par une mesure avant d'être publié. La section 5 en fait le bilan critique.
 
 ### 3.3 Difficultés
 
@@ -246,7 +250,35 @@ Le pilotage a été réel pour la création des tickets, mais rétrospectif pour
 
 Le seul dépassement (#27) est attribué au mauvais découpage du corpus source, repris ensuite (#35). L'échantillon est trop petit pour analyser les causes de sous-estimation. La cause principale est en amont : les estimations n'ont pas été saisies avant le travail, et une charge réelle ne se reconstitue pas après coup. C'est la lacune de méthode la plus nette du projet à ce stade.
 
-**Charges déclarées après coup.** Les 22 et 23 novembre, des parts individuelles ont été ajoutées au classeur de suivi (PR #182 et #169) : Vaneck, 68 h sur 10 tickets, dont 24 h pour la démonstration du volet B (#111) et 10 h pour l'interface du volet A (#53) ; Remy, 14 h sur l'ajustement de l'encodeur (#49) ; Jibril, environ 21 h sur Agent0 (#91 à #95), en estimations rétrospectives non chronométrées. Ce sont des parts individuelles, sans estimation initiale comparable : elles documentent l'effort, mais ne permettent pas d'élargir l'analyse des écarts.
+**Charges déclarées après coup.** Les 22 et 23 novembre, puis le 26, des parts individuelles ont été ajoutées au classeur de suivi (PR #182, #169 et #187) : Vaneck, 68 h sur 10 tickets, dont 24 h pour la démonstration du volet B (#111) et 10 h pour l'interface du volet A (#53) ; Remy, 14 h sur l'ajustement de l'encodeur (#49) ; Jibril, environ 21 h sur Agent0 (#91 à #95), en estimations rétrospectives non chronométrées ; Maïmouna, 22 h 45 sur 8 tickets, dont six estimations rétrospectives. Aucune charge n'a été inscrite pour Mahé. Ce sont des parts individuelles, sans estimation initiale comparable, établies par trois méthodes différentes : elles documentent l'effort, mais ne permettent ni d'élargir l'analyse des écarts ni de comparer les membres.
+
+**Répartition des contributions, mesurée.** Pour comparer les membres, Mahé a décidé le 26 novembre de remplacer ces heures par des quantités que GitHub et Git comptent : tickets, commits et lignes. Le relevé est celui du 26 novembre à 16 h 15 UTC. Les lignes conservées sont lues sur `dev` au commit `ff21f4b`, qui ne change pas. Les 462 commits uniques hors fusions viennent de toutes les branches, des tags et des têtes de PR ; les PR, les revues et les tickets viennent de l'API de GitHub à cet instant. Le relevé se rejoue par `scripts/suivi/contributions.py` avec l'option `--arret` : le contrôle du 27 novembre retrouve sans écart les 20 colonnes du CSV. La méthode, les limites et les contrôles sont dans `docs/suivi/CONTRIBUTIONS.md`.
+
+| Membre | Tickets assignés | dont terminés | Tickets touchés | PR fusionnées | Revues déposées | PR relues | Commits |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Mahé | 52 | 38 | 36 | 58 | 73 | 48 | 201 |
+| Jibril | 44 | 28 | 17 | 24 | 48 | 29 | 134 |
+| Remy | 36 | 25 | 8 | 11 | 31 | 25 | 53 |
+| Vaneck | 33 | 21 | 10 | 15 | 21 | 18 | 50 |
+| Maïmouna | 32 | 20 | 4 | 5 | 13 | 12 | 24 |
+| Total | 197 | 132 | 75 | 113 | 186 | 132 | 462 |
+
+| Membre | Lignes de code ajoutées | Lignes de code conservées | Lignes de documentation ajoutées | Lignes de documentation conservées |
+|---|---:|---:|---:|---:|
+| Mahé | 19 083 | 15 644 | 15 616 | 11 593 |
+| Jibril | 5 813 | 4 993 | 7 169 | 4 809 |
+| Remy | 2 810 | 1 802 | 2 499 | 592 |
+| Vaneck | 4 105 | 3 133 | 2 666 | 1 720 |
+| Maïmouna | 0 | 0 | 202 | 118 |
+| Total | 31 811 | 25 572 | 28 152 | 18 832 |
+
+Ces chiffres se lisent avec leurs limites :
+- **Un volume n'est pas une valeur.** Une ligne de code, une ligne de diapositives et une ligne de documentation ne se valent pas.
+- **L'attribution est celle de Git.** Un commit est compté à son auteur, une ligne conservée à l'auteur du commit qui l'a introduite. Cela ne dit pas qui a conçu la ligne : une reprise, une collaboration ou un assistant sont comptés au membre dont le nom figure sur le commit. Les cinq membres déclarent utiliser un assistant, à des degrés que la mesure ne distingue pas.
+- **Les commits n'ont pas la même taille.** Jibril a poussé 134 commits pour 5 813 lignes de code, Vaneck 50 pour 4 105.
+- **Une assignation n'est pas du travail fait.** 47 des 68 tickets assignés ont au moins deux responsables. Les tickets touchés, cités par un commit ou une PR du membre, s'en rapprochent mais peuvent se tromper dans les deux sens : sous-compter quand le numéro n'est pas cité, sur-compter quand il n'est cité que comme contexte.
+- **Une revue déposée n'est pas une PR relue.** Plusieurs revues d'une même personne sur une même PR comptent chacune : Mahé a déposé 73 revues sur 48 PR distinctes, Jibril 48 sur 29. Le classement est le même dans les deux colonnes ; aucune ne mesure la qualité d'une relecture.
+- **Git ne voit pas tout.** Les jugements du #52, les reproductions sur machine (#51), les réunions et l'annotation hors fichier ne laissent presque pas de lignes : les 0 ligne de code de Maïmouna n'en disent rien. Les carnets et les données sont hors totaux.
 
 ### 3.4 Enseignements
 
@@ -373,22 +405,19 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 ### 5.5 Assistants de développement par IA
 
-- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 26 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
+- **Usage.** Claude Code, Google Antigravity avec Gemini, ChatGPT et Codex, Qwen Coder en local, sur l'ensemble du projet : 73 sessions consignées au 28 novembre. En fin de projet, des sous-agents Claude ont aussi écrit le jeu de test v2 et les paires d'entraînement de la v3-C, sous un protocole figé d'avance.
 - **Apport.** Une capacité de production et de mesure qui a rendu possible le périmètre du projet.
-- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 192 erreurs ou pièges détectés par la vérification au 26 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
+- **Critique argumentée.** L'assistant produit des affirmations plausibles et fausses, y compris dans des documents publiés. Le journal recense 221 erreurs ou pièges détectés par la vérification au 28 novembre (68 au 18 octobre). Sur les 19 erreurs des sessions de Mahé du 11 au 18 octobre, 11 figuraient déjà dans une PR, une revue ou un document publiés. Deux exemples : une revue affirmant qu'aucune requête ne partait vers jsDelivr, et une description de PR affirmant que le focus ne sortait jamais du menu. Ces erreurs ont été trouvées par une mesure, un essai, une revue ou la lecture d'une source primaire, et 4 d'entre elles par un relecteur de l'équipe, non par l'assistant. L'assistant ne dispense donc ni de la vérification, ni de la compréhension du code : le sujet rappelle que tout membre peut être interrogé sur n'importe quelle portion du code produit.
 - **Ce que la documentation ne dit pas.** La vérification doit être conçue pour échouer quand l'affirmation est fausse. Les essais qui ont laissé passer les erreurs ci-dessus étaient trop permissifs : requêtes écoutées au mauvais niveau, focus sur le document jugé acceptable.
 
 ## 6. Ce qui reste avant la V1
 
-État au 26 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #168, #169, #179, #181, #183 et #184 sont fusionnées ; les #180, #185 et #186 sont intégrées dans celle-ci. L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 28 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #177, #178, #179, #181, #183, #184 et #187 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. La #177 a été déployée et le site contrôlé le 26 novembre au soir (section 2.2). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
-| Relecture des PR #174, #166, #175 et #177 | Jibril | 27/11 |
-| Relecture de la PR #162 (support) et de celle-ci | Remy, Vaneck | 27/11 |
-| Capture du board | Jibril | 27/11 |
-| Fusion des PR approuvées, puis de celle-ci | Mahé | 27/11 |
-| Relecture croisée, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
+| PR de `dev` vers `main` et tag final | Mahé | 28/11 |
+| Relecture croisée de cette version, PDF régénéré, livraison de la V1 | Mahé (coordination), toute l'équipe | 28/11 |
 
 ## Annexe. Chiffres et sources
 
@@ -401,14 +430,15 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 | Recall@5, IC, non-infériorité, bonne fiche 83,6 %, AUC, seuil | `docs/etudes/evaluation/03_evaluation.md` |
 | ajustement : 109 paires, 2 époques, 185,5 s | `docs/etudes/adaptation/01_ajustement_encodeur_contrastif.md` |
 | volet B : 4,36 Gio, 37,7 s, 19,1 s, 47 à 67 tokens/s, VRAM | `docs/etudes/inference_locale_qwen.md` |
-| chaîne RAG, Q036 et Q003 | PR #85 (brouillon), `docs/etudes/rag_51.md` sur sa branche |
+| chaîne RAG, Q036 et Q003 | PR #85 (fusionnée) ; `docs/etudes/rag_51.md` |
 | 61,3 Mio, 20,1 s, 21 ms (19 à 24), 46 ms | mesure du site en ligne `7e2ce07`, le 19/10/2026, Chromium, profil neuf |
 | rôles, domaines, réunions, charges | `docs/suivi/SUIVI.md`, `docs/reunions/README.md`, tickets #2, #6, #9, #10, #11, #26 |
 | PR, revues, commits | API GitHub et `git log` de `dev`, relevés le 19/10/2026 |
+| répartition des contributions : tickets, PR, relectures, commits, lignes | `docs/suivi/CONTRIBUTIONS.md`, `docs/suivi/contributions_20261126.csv`, `scripts/suivi/contributions.py` ; relevé du 26/11/2026 à 16 h 15 UTC, lignes conservées sur `dev` à `ff21f4b`, rejouable avec `--arret` |
 | erreurs détectées | `docs/journal/JOURNAL_USAGE_IA.md`, section 4 |
 | abstention de l'encodeur ajusté : AUC 0,865, 70 sur 73, 10 sur 24, 13 avertissements | `docs/etudes/evaluation/05_resultats_ajustement.md`, section 5 |
 | chaîne de démonstration de bout en bout : 52,9 %, +16,9 points, 10,1 %, 11,8 s et 4,9 s | `docs/etudes/evaluation/10_resultats.md`, section 6 (PR #174) ; `data/evaluation/protocole_10/bout_en_bout_analyse_20261121T134041Z.json` |
 | fusion du volet A : +5,0, +2,6 et −6,8 points | `10_resultats.md`, section 4 (PR #174) |
-| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` (PR #179) |
+| encodeurs v2-T et v3-C : 2 289 et 2 420 paires, +12,4, −2,2 et −5,5 points | `10_resultats.md`, sections 7 et 7 bis (PR #174) ; `docs/etudes/evaluation/05_amendement_A2.md` et `05_amendement_A3.md` (PR #179, fusionnée) |
 | exactitude jugée à l'aveugle : 6 et 5 sur 20 contre 12 et 8, 20 et 19 sur 20 contre 11 et 12, kappa 0,36 | #52, commentaire du 26 novembre ; grilles des juges et clé hors dépôt (`data/`) |
 | confidentialité des deux interfaces | PR #177 : `front/src/composants/Confidentialite.jsx`, `demo_b/src/composants/Confidentialite.jsx` |

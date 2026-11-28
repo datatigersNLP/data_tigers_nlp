@@ -1,0 +1,7 @@
+membre,tickets_assignes,tickets_termines,tickets_crees,tickets_touches,pr_ouvertes,pr_fusionnees,relectures,pr_relues,commits,commits_reference,fusions,ajouts_code,suppr_code,conservees_code,ajouts_documentation,suppr_documentation,conservees_documentation,ajouts_notebooks,ajouts_donnees,ajouts_autres,binaires
+Mahé,52,38,37,36,61,58,73,48,201,197,87,19083,1015,15644,15616,919,11593,11071,3013,59,110
+Jibril,44,28,32,17,25,24,48,29,134,133,43,5813,154,4993,7169,780,4809,0,6989,0,5
+Remy,36,25,0,8,13,11,31,25,53,53,16,2810,146,1802,2499,1511,592,0,13,6,12
+Vaneck,33,21,0,10,15,15,21,18,50,50,14,4105,538,3133,2666,417,1720,0,4324,8,6
+Maïmouna,32,20,0,4,5,5,13,12,24,24,3,0,0,0,202,27,118,0,70,0,3
+total,197,132,69,75,119,113,186,132,462,457,163,31811,1853,25572,28152,3654,18832,11071,14409,73,136

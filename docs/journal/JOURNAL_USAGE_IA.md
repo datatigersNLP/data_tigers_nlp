@@ -6,7 +6,7 @@
 **Formation** Master 2 Data & IA, FGES, Université Catholique de Lille
 **Année universitaire** 2026-2027
 **Ouvert le** 18 septembre 2026
-**Dernière mise à jour** 26 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
+**Dernière mise à jour** 28 novembre 2026 ; sessions 1 à 73 ; sessions 22 à 25, 28 à 31, 33, 34, 36, 55, 56, 61, 64, 66, 70 et 71 consignées a posteriori ; sessions 48 à 53 consolidées le 2 novembre depuis les notes datées (section 3)
 
 **Objet.** Ce journal consigne l'usage des assistants IA sur le projet, conformément à la règle du sujet : « L'usage d'assistants IA est autorisé et encouragé. En contrepartie, le journal des usages doit être tenu, et tout membre de l'équipe peut être interrogé en soutenance sur n'importe quelle portion du code produit. »
 
@@ -46,7 +46,7 @@ L'équipe utilise l'IA pour trois choses, et refuse de l'utiliser pour une quatr
 | Gemini 3.8 Flash (High) | modèle de langage multimodal rapide, exécuté sous Google Antigravity | Remy RAYANE | raisonnement, génération de scripts, analyse de contextes |
 | ChatGPT | interface conversationnelle web | les autres membres | brainstorming, reformulations, documentation ponctuelle |
 | Claude Fable 5.2 et Claude Haiku 5.5 | modèles de langage, exécutés comme sous-agents indépendants par Claude Code | Mahé BEGNIS (session 68) | juge de contrôle des questions du jeu v2 (Fable) ; juges d'étalonnage du jugement mutualisé du #139 (Fable et Haiku), sur autorisation de l'enseignant (section 1) |
-| Claude Sonnet 5.5 | modèle de langage, exécuté comme sous-agent indépendant par Claude Code | Mahé BEGNIS (session 69) | écriture des 2 420 paires d'entraînement de l'encodeur v3-C (amendement A3), relues par deux sous-agents Claude Opus 5.5 |
+| Claude Sonnet 5.5 | modèle de langage, exécuté comme sous-agent indépendant par Claude Code, puis modèle de la session principale à la fin de la session 73 | Mahé BEGNIS (sessions 69 et 73) | écriture des 2 420 paires d'entraînement de l'encodeur v3-C (amendement A3), relues par deux sous-agents Claude Opus 5.5 |
 | Codex dans ChatGPT Work | agent de code exécuté dans ChatGPT Work | Jibril BENSALEM | suivi des charges, relecture du CDTN et compilation du PDF du journal (sessions 17 à 19) ; mesure QLoRA du Legion et son bilan (session 43) ; développement, tests, analyse des sorties et documentation Agent0 (session 40 et sessions 48 à 54) |
 
 La divergence entre Claude Code et Google Antigravity est déclarée dans le rapport de jalon J2. Elle est motivée par le fait que l'abonnement Claude n'est pas détenu par toute l'équipe. Elle constitue aussi un terrain de comparaison qui alimentera la section des cinq outils novateurs du rapport final.
@@ -2191,9 +2191,9 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Dans `conditions_exceptions`, six « non » voulaient dire « sans objet » : je les ai remplacés (J03, J24, J27, J30, J33, J39) et signalés à Mahé. L'assistant avait signalé, par un contrôle mécanique, que J33 n'avait pas de défaut ; je lui ai ensuite collé ma grille, et il n'a proposé aucune notation.
 - La connexion a coupé pendant l'envoi de la branche.
 
-### Session 73, 26 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 via Claude Code
+### Session 73, du 26 au 28 novembre 2026, Mahé BEGNIS, Claude Opus 5.5 puis Claude Sonnet 5.5 via Claude Code
 
-**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114).
+**Objet.** Audit du dépôt depuis le 22 novembre ; analyse finale du jugement à l'aveugle (#52) ; réponses aux revues de Jibril (#174, #175, #166, #177) ; support final de la soutenance, avec ses annexes, le script oral et les questions préparées (#114) ; vidéo de secours du volet A et contrôle du site déployé ; répartition des contributions mesurée (#113) ; le 27/11, contrôle du dépôt, revue de Jibril sur la #188, mise à jour du support, du script oral et des questions ; le 28/11, revue de Remy, capture du board, script et questions en PDF LaTeX, PDF de secours du support.
 
 **Produit.**
 - #52 : grille finale de Maïmouna contrôlée ligne à ligne contre celle du 14 novembre ; analyse à deux juges refaite selon le plan figé, les deux versions rapportées (commentaire du #52) ; résultats repris dans le rapport ; dernière case du #107 cochée.
@@ -2203,6 +2203,23 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - PR #162 : 17 annexes hors des 8 minutes, textes à dire allégés, script oral généré depuis le support, 43 questions préparées (`c0cf440`, `7a8dedf`) ; artefact privé mis à jour.
 - Fusions, avec l'accord de Mahé du 26/11 : #161, #183, #184, #169, #158, #179, #168 et #181. Les #186, #185 et #180, en conflit avec les précédentes, sont intégrées dans la #178, leurs commits intacts ; conflits de la #174 (avec la #179) et de la #166 (avec la #168) résolus ; neuf relectures publiées au nom de Mahé.
 - Section 4.1 du rapport relue à la demande de Mahé : nombre de sessions, date du test resté en échec, Weekly 7 tenu par écrit.
+- Après les approbations de Jibril et de Remy : fusion des #174, #175, #166, #162 et #178 ; les #186, #185 et #180 sont marquées fusionnées par GitHub avec la #178. Conflit de la #177 avec la #175 résolu (`b32c03f`) et approbation redemandée.
+- Tickets fermés avec une synthèse chacun : #138, #163, #167, #171, #172 et #139, dont la charge réelle de Mahé reste à déclarer. Description de la #174 alignée sur la qualification du hors corpus.
+- Relecture de la #187 (charges de Maïmouna) : texte préparé, approbation laissée à Mahé.
+- PR de finitions du rapport : corrections signalées par Remy sur la #178 (date de l'en-tête, deux lignes d'annexe), formulation « très probablement » retirée de `10_resultats.md`, section 6 à jour.
+- #170 (démonstration sur la machine Legion) fermée sans fusion, avec un commentaire : la démonstration tourne sur le Mac de Mahé depuis le 16/11.
+- #187 approuvée et fusionnée par Mahé (charges de Maïmouna) ; veille de lecture seule armée sur les PR #177 et #188.
+- Vidéo de secours du volet A, version provisoire de 64,7 s filmée sur le site en ligne, avec l'outil de capture écrit pour elle ; fiche du jour J (fichiers, vérifications, plan B par panne). La version définitive a été refaite après le déploiement de la #177 (voir plus bas).
+- Répartition des contributions : les heures déclarées sont écartées de la comparaison, et `scripts/suivi/contributions.py` (13 tests) mesure les tickets, les commits et les lignes. Résultats, méthode, limites et contrôles dans `docs/suivi/CONTRIBUTIONS.md` ; synthèse en section 3.3 du rapport.
+- #177 approuvée par Jibril sur `b32c03f` puis fusionnée dans `dev` (`6acc699`), avec l'accord général de Mahé du 26/11 ; workflow de déploiement réussi ; site contrôlé en ligne par un script de lecture seule (version affichée, logo, fenêtre de confidentialité, requêtes, cookies, stockages, cache).
+- Vidéo de secours du volet A définitive (69,8 s), filmée sur le site déployé, logo et fenêtre de confidentialité visibles ; la version provisoire est rangée en archive ; fiche du jour J et README de l'outil de capture mis à jour.
+- #176 et #111 fermés avec un commentaire chacun ; #114 mis à jour (deux cases cochées, état du 26/11) ; sections 2.2 et 6 du rapport mises à jour.
+- Contrôle du dépôt le 27/11 : `dev` inchangé depuis la fusion de la #177 (`6acc699`), `main` toujours au 19/10, la #188 seule PR ouverte, trois tickets ouverts (#140, #18, #19). Jibril a fermé onze tickets le 26/11, de 20 h 19 à 20 h 26 (heure de Paris), dont #113 et #114 dont les critères ne sont pas remplis (V1 non livrée, `main` et tag, envoi des supports, répétitions).
+- Revue de Jibril sur la #188 (commentaire du 26/11, tête `721b3a1`) : ses cinq remarques vérifiées dans le code et dans les chiffres, toutes confirmées. `scripts/suivi/contributions.py` : option `--arret` (état à un instant) et colonne « PR distinctes relues », 17 tests ; `CONTRIBUTIONS.md` réécrit (trois sources distinguées, limites ajoutées, contrôle de reproduction) ; section 3.3 du rapport et CSV du relevé à jour.
+- Support de 8 minutes, script oral et questions : annexes A1 (vidéo de secours du volet A), A12 (revérification du 26/11) et A14 (répartition mesurée, plus de 200 erreurs) ; script oral (deux vidéos de secours) ; question sur la répartition du travail (44 questions) ; README ; support reconstruit, script régénéré.
+- Revue de Remy sur la tête `ad05f57` (28/11) : rien à signaler sur les annexes A1, A12 et A14, le script oral, la 44e question, la diapositive 5 et la section 3.3 ; une remarque, les dates « au 26 novembre » du rapport pour les sessions et les erreurs, alors que le journal court jusqu'au 27 : six dates de l'état du dépôt remplacées par « 28 novembre » (en-tête, sections 3.2, 3.3 et 5.5, section 6).
+- Capture du board transmise par Jibril, recadrée sans la barre de navigation de GitHub et versionnée (`docs/rapport/images/board_projet.png`) ; section 3.2 précisée d'après le board lu par l'API : 68 cartes, dont 66 tickets et la PR #32 en Done et un ticket en Todo (#140), les tickets #18 et #19 n'y figurant pas ; ligne de la section 6 retirée.
+- Script oral et questions préparées en PDF LaTeX (`docs/soutenance/8min`, 9 pages chacun) ; PDF de secours du support (`docs/soutenance/presentation_8min.pdf`, 61 pages, une par appui) et son script d'export `exporter_pdf.js`. Outils : `md2tex.py` (images, diapositives non numérotées, style des questions, heures sans espace, nombres insécables), `preambule.tex` (needspace), `build.py` (bandeaux), `script_oral.py` (en-tête, repères coupés à une limite de mot).
 
 **Mesures exécutées.**
 - Analyse à deux juges, graine 20261114, 10 000 tirages, sur les deux versions de la grille de Maïmouna.
@@ -2210,17 +2227,31 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - Tests de `chaine_v2.py` : 18 réussis ; sans la réservation, 3 échouent.
 - Questions de démonstration : 8 sur le site en ligne, 3 sur l'assistant local.
 - Support : 61 chiffres contre leurs sources, 0 écart ; mise en page des 30 diapositives contrôlée dans Chromium, détecteur validé par un contrôle négatif.
+- Vidéo du volet A : une seule origine contactée, 0 requête refusée, 61,4 Mio reçus à froid ; résultats affichés identiques à ceux de l'annexe A1.
+- Contributions : 462 commits uniques hors fusions recoupés par `git shortlog` ; 85 516 lignes ajoutées, total identique à celui du script du 16/11 ; lignes conservées de `blame` égales, pour le code (25 572) et pour la documentation (18 832), au comptage direct des fichiers de `dev`.
+- Site déployé : version `6acc699`, un seul hôte contacté, aucune requête refusée, aucune requête pendant l'ouverture de la fenêtre ni pendant une question (réponse en 88 ms), aucun cookie, aucune entrée de `localStorage`, `sessionStorage` ni IndexedDB, un cache `transformers-cache` de 95,5 Mio.
+- Vidéo du volet A définitive : 2 943 images, 69,8 s, H.264 High, 1 920 × 1 080, 30 images par seconde, BT.709, sans son ; une seule origine, 0 requête refusée, 61,4 Mio reçus à froid ; résultats affichés identiques à ceux de l'annexe A1 (similarités 0,863, 0,888 et 0,814).
+- Code exécuté par la démonstration du volet B : arbres Git de `demo_b` (tête de la #177) et de `scripts/rag` (tête de la #175) identiques à ceux de `dev` ; dans `scripts/recuperation`, seuls le README, `chaine_v2.py` et son test diffèrent, et la chaîne de démonstration ne les importe pas.
+- Reproduction du relevé du 26/11 : `--reference ff21f4b --arret 2026-11-26T16:15:00Z` retrouve les 20 colonnes du CSV sans écart (arrêts essayés à 16 h 13, 16 h 15 et 16 h 19 UTC) ; sans arrêt, le relevé du 27/11 diffère : 175 tickets terminés au lieu de 132, 465 commits au lieu de 462.
+- Support : 61 chiffres contre leurs sources, 0 écart ; 30 diapositives sans dépassement avant et après les modifications, détecteur validé par un contrôle négatif (annexe A14 gonflée : 1 768 px de contenu sur 1 080).
+- PDF du script oral et des questions : 0 erreur LaTeX, 0 avertissement de boîte, 0 caractère manquant ; PDF de secours : 61 pages, 5,9 Mo, polices intégrées, texte sélectionnable, aucune requête externe, rendu relu sur une planche de toutes les pages et sur la page de la diapositive 4.
+- Board lu par l'API de GitHub le 28/11 : 68 cartes ; 67 cartes de ticket sans écart avec l'état du ticket.
 
 **Résultats retenus.**
 - #52 : réponses du modèle adapté mieux appuyées sur leurs passages chez les deux juges, pas plus exactes ; kappa de 0,36 sur l'exactitude.
 - Démonstration du volet A : congés payés, renouvellement de la période d'essai, congé pour un mariage, retraite d'un fonctionnaire (refus), et la question de la diapositive 2 comme limite de la recherche par le sens.
+- Contributions mesurées : Mahé 201 commits et 19 083 lignes de code ajoutées, Jibril 134 et 5 813, Remy 53 et 2 810, Vaneck 50 et 4 105, Maïmouna 24 et 0 ; relectures des PR des autres : 73, 48, 31, 21 et 13.
+- Site en ligne conforme aux affirmations de la fenêtre de confidentialité (Chromium, première visite) ; le cache annoncé « environ 100 Mo » mesure 95,5 Mio.
+- Revues déposées et PR distinctes relues : Mahé 73 et 48, Jibril 48 et 29, Remy 31 et 25, Vaneck 21 et 18, Maïmouna 13 et 12 ; le classement est le même dans les deux colonnes.
 
 **Ce qui a été écarté, et pourquoi.**
 - Compter les défauts du #52 par un classement automatique : ce serait un verdict d'IA sur un jugement humain ; les défauts sont décrits par des exemples.
 - Passer Vite à 8.3.5 dans le site avant la soutenance : l'alerte ne touche que le serveur de développement, pas le site publié.
 - Pour la démonstration du volet B en direct : la question de la diapositive 2 et le refus d'une rupture conventionnelle, où le modèle adapté s'abstient.
+- Les heures déclarées comme base de comparaison entre membres : trois méthodes différentes, aucune charge pour Mahé (décision de Mahé, le 26/11).
+- Le temps de présence en session avec l'assistant comme mesure de l'effort : il passe de 41 h à 101 h selon le seuil d'inactivité, et comprend l'attente de calculs.
 
-**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Décisions attendues de Mahé : intégration du correctif de Jibril dans la #175, approbation de la #161, ordre de fusion.
+**Ce que l'équipe a validé, et par qui.** Répartition des orateurs et questions préparées : propositions de l'assistant, à valider en équipe. Intégration du correctif de Jibril dans la #175 : faite par Mahé. Approbations et fusions du 26/11 : accord explicite de Mahé. Remplacement des heures par des mesures comptées pour la répartition des contributions : décision de Mahé, le 26/11. #174, #175 et #166 approuvées par Jibril, #162 et #178 par Remy ; #177 approuvée par Jibril le 26/11 à 20 h 10, puis fusionnée avec l'accord général de Mahé. Remy a relu la tête `ad05f57` et attend le message « tête finale » pour approuver. Question sur la répartition du travail : proposition de l'assistant, à valider par Mahé. Réouverture éventuelle de #113 et #114 : décision de Mahé.
 
 **Temps d'appropriation constaté.** Non mesuré ; à renseigner par Mahé.
 
@@ -2230,6 +2261,11 @@ Les sessions 48 à 53 sont reprises le 2 novembre depuis les notes datées conse
 - 16 paires de PR en conflit, sur la fiche des assistants d'IA, le journal et le README : un ordre de fusion est proposé.
 - Les PR de coéquipiers en conflit entre elles ne pouvaient pas être fusionnées sans pousser sur leurs branches : elles passent par la #178.
 - Conflit de la #174 avec la #179 : les versions de la #174 sont gardées, car mesures_10.py fige leur empreinte (gel de A3).
+- Le classifieur de sécurité a refusé l'approbation de la #187 au nom de Mahé, qui n'avait demandé que les neuf relectures précises : texte préparé, publication laissée à Mahé.
+- Le modèle de la session principale est passé de Claude Opus 5.5 à Claude Sonnet 5.5 (commande /model de Mahé) en cours de session.
+- Le classifieur de sécurité a refusé deux fois l'approbation de la #187 au nom de Mahé, malgré sa délégation générale : Mahé l'a publiée lui-même.
+- Vingt et une erreurs rattrapées avant la fusion de la #188 (section 4) : dix de la synthèse des charges, de la première mesure des lignes et de la couverture du PDF du rapport ; cinq de la fusion de la #177, du contrôle du site, de la fermeture des tickets et du montage de la vidéo ; six de la mesure des contributions, relevées par la revue de Jibril ou par la relance du 27/11.
+- Onze tickets fermés par un coéquipier en sept minutes, dont #113 et #114 sans que leurs critères soient remplis : signalé à Mahé, rien rouvert sans sa décision.
 
 ---
 
@@ -2431,6 +2467,35 @@ Cette section est tenue volontairement. Elle documente ce que la relecture syst�
 | 26/11 | Annexe et questions préparées annonçant 72 sessions et plus de 170 erreurs, sans la session 73 du jour | préparation du journal | 73 sessions, plus de 180 erreurs |
 | 26/11 | Commande enchaînée sans arrêt sur erreur : le script de résolution du conflit de la #186 a échoué, mais `git add` et le commit ont enregistré le journal avec ses marqueurs de conflit | lecture du commit local, avant tout envoi | commit corrigé ; scripts suivants arrêtés à la moindre anomalie |
 | 26/11 | Description de la #178 renvoyée inchangée : une chaîne de remplacement ne correspondait pas au texte | assertion du script | renvoyée corrigée, contenu vérifié en ligne |
+| 26/11 | Description de la PR #174 : « abstention correcte sur 39 questions hors corpus sur 39 » sans la qualification déjà ajoutée aux résultats, au rapport et au README | revue de Jibril sur la #174 | description alignée avant la fusion |
+| 26/11 | Résultats du protocole 10 : questions « très probablement hors corpus », une probabilité que rien ne mesure | revue de Jibril sur la #174 | formulation retirée dans la PR de finitions |
+| 26/11 | `git fetch` avec une refspec explicite : elle remplace la refspec par défaut, `origin/dev` n'a pas été mis à jour et les conflits des PR restantes ont été jugés contre une tête de `dev` antérieure de quatre fusions | résultat incohérent (dev à 989a645 après les fusions de 14 h 30) | `fetch` refait sans refspec explicite, tests de fusion refaits |
+| 26/11 | Rapport V1 approuvé avec un en-tête daté du 22/11, une ligne d'annexe sur la PR #85 « en brouillon » et la PR #179 « à fusionner » | revue de Remy sur la #178 | corrigés dans la PR de finitions |
+| 26/11 | Synthèse des charges : « 84 relectures de Mahé, plus que les quatre autres réunis (113) » | recalcul : 84 est inférieur à 113 | remplacé par « 84 sur 197 (43 %) » |
+| 26/11 | Relectures de Mahé comptées 84 : le relevé comprenait 12 commentaires qu'il avait déposés sur ses propres PR | nouvelle définition du relevé, qui exclut l'auteur de la PR | 73 relectures des PR des autres, 186 au total hors robot |
+| 26/11 | Même synthèse : « de 1 à 5 heures par commit », alors que les heures déclarées par commit vont de 0,3 à 1,4 | recalcul sur les données du classeur | corrigé, puis heures écartées de la comparaison (décision de Mahé) |
+| 26/11 | Temps de présence en session présenté comme un repère de l'effort, alors qu'il passe de 41 h à 101 h selon le seuil d'inactivité | variation du seuil | donné en fourchette avec ses réserves, puis écarté |
+| 26/11 | Table d'identités des commits sans trois adresses de Remy : 0 commit pour lui | résultat invraisemblable | table complétée, 53 commits |
+| 26/11 | Script de la synthèse des charges : 2 h de relecture de Vaneck (#51) et les charges collectives omises | recoupement avec le classeur | script corrigé, tableaux complémentaires |
+| 26/11 | Script Python lancé en heredoc derrière un tube : le heredoc a remplacé l'entrée standard | erreur de syntaxe à l'exécution | script écrit dans un fichier |
+| 26/11 | Première mesure des lignes : trois pages HTML de diapositives rangées en code (3 380 lignes de Mahé) et les fichiers de dépendances en documentation | examen des plus gros fichiers de chaque membre | catégories refaites, 85 516 lignes inchangées au total |
+| 26/11 | Tickets touchés comptés d'après les seuls sujets de commit : 6 pour Remy, pour 36 tickets assignés | écart avec les assignations | titres et noms de branche des PR ajoutés (8) ; limite déclarée |
+| 26/11 | Couverture du PDF du rapport V1 : « Version 0 du 19 octobre 2026, à compléter jusqu'à la V1 », bandeau écrit dans la chaîne de conversion et jamais mis à jour | lecture du texte de la première page du PDF | bandeau corrigé, PDF régénéré |
+| 26/11 | Fusion de la #177 lancée avec `--match-head-commit` et un identifiant de commit dont j'avais complété la fin de mémoire : GitHub a répondu « Head branch was modified », message qui laisse croire que la tête avait changé | la tête complète relue avec `gh pr view` commençait bien par `b32c03f` ; l'identifiant saisi était faux | fusion refaite avec l'identifiant lu ; rien n'avait été fusionné avec le faux |
+| 26/11 | Fermeture du #176 lancée avec une option `--comment-file` qui n'existe pas dans `gh issue close` ; la sortie tronquée ne disait pas si la commande avait réussi | état du ticket relu : toujours ouvert, sans commentaire | commentaire puis fermeture en deux commandes, état relu après chacune |
+| 26/11 | Contrôle du site publié : une requête relevée après le chargement, que j'aurais pu attribuer au site | lecture de la liste des requêtes : elle venait du script de contrôle, qui testait le favicon par `fetch` | requête attribuée à l'outil ; aucune requête du site pendant l'ouverture de la fenêtre ni pendant une question |
+| 26/11 | Montage de la vidéo du volet A lancé avec un dossier relatif : ffmpeg sort en erreur 254, la liste de fichiers étant lue depuis son propre dossier | échec à l'exécution | chemin absolu ; piège consigné dans le README de l'outil |
+| 26/11 | README de la vidéo : « neuf rubriques » pour la fenêtre de confidentialité, parce que le script comptait le titre avec les huit rubriques | relecture contre la liste des titres relevés | « huit rubriques et un titre » |
+| 27/11 | Relevé des contributions présenté comme portant « sur `dev` au commit `ff21f4b` », alors que les commits et les lignes ajoutées viennent de toutes les branches, des tags et des têtes de PR | revue de Jibril sur la #188 | trois sources distinguées dans `CONTRIBUTIONS.md` et la section 3.3 : référence figée, arrêt des données, état courant |
+| 27/11 | Colonne « Relectures des PR des autres » qui comptait des revues déposées : plusieurs revues d'une même personne sur une même PR comptaient chacune (73 revues de Mahé pour 48 PR) | revue de Jibril sur la #188 | colonne « PR distinctes relues » ajoutée, définitions renommées |
+| 27/11 | Relevé présenté comme refaisable par une commande, alors qu'il change à chaque relance : tickets terminés de 132 à 175, commits de 462 à 465 | relance du script le lendemain | option `--arret` ; relevé rejoué sans écart avec `--reference ff21f4b --arret 2026-11-26T16:15:00Z` |
+| 27/11 | Tickets touchés présentés comme une mesure qui ne peut que sous-compter : un numéro cité comme simple contexte la fait sur-compter | revue de Jibril sur la #188 | limite dans les deux sens ajoutée aux deux documents |
+| 27/11 | Tests de la mesure lancés avec `python3 -I` : le mode isolé retire le dossier courant du chemin d'import | `ModuleNotFoundError` à l'exécution | lancés sans `-I`, depuis le dossier du script |
+| 27/11 | Contrôle négatif du détecteur de débordement trop faible : un texte de 770 caractères dans l'annexe A14 ne faisait rien dépasser, ce qui aurait pu passer pour un détecteur aveugle ou pour une preuve | lecture des hauteurs mesurées : l'annexe a de la place libre | contrôle refait avec 3 850 caractères : dépassement détecté (1 768 px sur 1 080) |
+| 28/11 | Rapport : « 73 sessions » et « 217 erreurs au 26 novembre », alors que la session 73 et les six dernières erreurs du journal sont du 27/11 ; l'en-tête disait aussi « état du 26 novembre » | revue de Remy sur la #188 | six dates de l'état du dépôt remplacées par « 28 novembre » |
+| 28/11 | Heures du script oral composées « 0 :00 » : `babel-french` ajoute une espace avant les deux-points, et ni `\string:` ni `{:}` ne la retirent | lecture du PDF, puis mesure de la largeur sur un document minimal (20,6 pt contre 17,9 pt) | commande `\NoAutoSpacing` autour des deux-points placés entre deux chiffres |
+| 28/11 | Titres de diapositive et questions préparées isolés en bas de page, séparés de leur texte | planche de toutes les pages du PDF | paquet `needspace` et garde de saut de page avant chaque titre et chaque question |
+| 28/11 | `md2tex.py` : une barre oblique inverse du texte s'affichait « \{} », car le remplacement caractère par caractère échappait à leur tour les accolades de `\textbackslash{}` ; défaut présent depuis l'origine de l'outil | lecture du PDF du journal, où ma ligne sur `\string:` était illisible | échappement de tous les caractères spéciaux en un seul passage |
 
 **Bilan intermédiaire.** Seize erreurs ou pièges détectés et traités en deux jours. **Cinq d'entre elles figuraient déjà dans un livrable rédigé** et ont été rattrapées avant l'envoi : le nombre de fichiers audités, le rang du dépôt ECC, le seuil de réussite sans fondement, les milestones et labels inexistants, et le rendu des tirets dans le PDF composé.
 

@@ -66,13 +66,18 @@ def diapositives(deck: str) -> list[dict]:
         titre = re.search(r'<h[12][^>]*>(.*?)</h[12]>', visible, re.S)
         analyse = Etapes()
         analyse.feed(visible)
-        etapes = [(e, (x[:110] + "…") if len(x) > 110 else (x or "élément du schéma")) for e, x in analyse.trouves]
+        etapes = [(e, abrege(x) if x else "élément du schéma") for e, x in analyse.trouves]
         nb = int(re.search(r'data-etapes="(\d+)"', attributs).group(1)) if "data-etapes" in attributs else 0
         par_etape = [(k, [x for e, x in sorted(set(etapes)) if e == k] or ["animation du schéma, sans nouvel élément"])
                      for k in range(1, nb + 1)]
         sortie.append({"nom": nom, "duree": duree, "titre": texte(titre.group(1)) if titre else nom, "dire": dire,
                        "a_savoir": a_savoir, "etapes": par_etape})
     return sortie
+
+
+def abrege(x: str, n: int = 110) -> str:
+    """Texte coupé à une limite de mot, jamais au milieu d'un mot."""
+    return x if len(x) <= n else x[:n].rsplit(" ", 1)[0].rstrip(" ,;:") + " …"
 
 
 def mmss(s: int) -> str:
@@ -85,17 +90,18 @@ def main() -> None:
     total = sum(d["duree"] for d in ds)
     mots = sum(len(" ".join(d["dire"]).split()) for d in ds)
     l = ["# Script oral de la soutenance (8 minutes)", "",
-         f"**Généré** par `script_oral.py` depuis `deck.html` : le texte à dire est celui des notes du support, mot pour mot. "
-         f"Ne pas modifier ce fichier à la main : modifier le support, puis relancer le script.", "",
-         f"**Durée prévue** : {mmss(total)} pour {len(ds)} diapositives ; {mots} mots, soit {mots / total * 60:.0f} mots par minute "
+         f"**Source** le texte à dire est celui des notes de `deck.html`, mot pour mot ; ce fichier est généré par `script_oral.py` : "
+         f"ne pas le modifier à la main, modifier le support puis relancer le script.", "",
+         f"**Durée prévue** {mmss(total)} pour {len(ds)} diapositives ; {mots} mots, soit {mots / total * 60:.0f} mots par minute "
          f"(à {MOTS_PAR_MINUTE} mots par minute, {mmss(round(mots / MOTS_PAR_MINUTE * 60))}). Marge restante sur 8 minutes : "
          f"{480 - total} s, pour les changements d'orateur.", "",
-         "**Orateurs** : répartition proposée par domaine du classeur de suivi, à valider en équipe.", "",
+         "**Orateurs** répartition proposée par domaine du classeur de suivi, à valider en équipe.", "",
+         "---", "",
          "## Avant de commencer", "",
          "- Ouvrir `docs/soutenance/presentation_8min.html` (hors ligne), touche F pour le plein écran.",
          "- Les notes (touche N) s'affichent sur la page projetée : ne les ouvrir qu'en répétition, ou avec un second écran qui ne recopie pas le premier.",
          "- Ouvrir à l'avance, dans un autre onglet, le site du volet A, et y poser une première question : la première visite télécharge le modèle.",
-         "- Avoir la vidéo de secours du volet B prête (64 s), et, si une démonstration en direct est prévue, l'assistant lancé sur le Mac cinq minutes avant.",
+         "- Avoir les deux vidéos de secours prêtes (volet A, 70 s ; volet B, 64 s), et, si une démonstration en direct est prévue, l'assistant lancé sur le Mac cinq minutes avant.",
          "- Avancer d'un appui (flèche droite ou espace) à chaque nouvel élément évoqué : l'ordre des apparitions est indiqué sous chaque diapositive.", "",
          "## Déroulé", "",
          "| Diapositive | Début | Durée | Orateur |", "|---|---:|---:|---|"]
@@ -107,7 +113,7 @@ def main() -> None:
     t = 0
     for k, d in enumerate(ds, 1):
         n = len(" ".join(d["dire"]).split())
-        l += [f"### {k}. {d['titre']}", "",
+        l += [f"### Diapositive {k} : {d['titre']}", "",
               f"**{ORATEURS.get(k, 'à définir')}**, de {mmss(t)} à {mmss(t + d['duree'])} ({d['duree']} s, {n} mots).", ""]
         if d["etapes"]:
             l.append("Apparitions, dans l'ordre des appuis :")
@@ -123,7 +129,7 @@ def main() -> None:
             l.append("")
         t += d["duree"]
     l += ["## Pendant les questions : la démonstration", "",
-          "- **Volet A, en direct** : annexe A1 du support (touche A, puis A1). Taper les questions telles quelles ; la dernière montre la limite de la recherche par le sens seule.",
+          "- **Volet A, en direct** : annexe A1 du support (touche A, puis A1). Taper les questions telles quelles ; la dernière montre la limite de la recherche par le sens seule. Sans Internet : lire la vidéo de secours du volet A (70 s).",
           "- **Volet B** : lire la vidéo de secours (64 s). En direct seulement si le jury le demande et si l'assistant est déjà lancé : annexe A2, questions et réponses attendues.",
           "- **Autres questions** : sommaire des annexes (touche A) ; réponses préparées dans `questions_reponses.md`.", "",
           "## Chronométrage", "",

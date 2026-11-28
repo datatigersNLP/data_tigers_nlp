@@ -1,6 +1,6 @@
 # Support de la soutenance de 8 minutes
 
-**Établi le** 21 novembre 2026 par Mahé BEGNIS, après le nouveau format annoncé par l'enseignant : 8 minutes de présentation, sans pitch, puis environ 5 minutes de questions. **Complété le** 26 novembre : annexes, script oral, questions et réponses préparées.
+**Établi le** 21 novembre 2026 par Mahé BEGNIS, après le nouveau format annoncé par l'enseignant : 8 minutes de présentation, sans pitch, puis environ 5 minutes de questions. **Complété le** 26 novembre : annexes, script oral, questions et réponses préparées. **Mis à jour le** 27 novembre : vidéo de secours du volet A, contrôle du site déployé après la #177, répartition mesurée des contributions, 44 questions. **Le 28 novembre** : script oral et questions en PDF LaTeX, PDF de secours du support.
 
 **Fichier à projeter** : `../presentation_8min.html`. Il fonctionne hors ligne et ne charge aucune ressource extérieure : police, logo et données sont embarqués.
 
@@ -39,8 +39,9 @@
 **Annexes** : A1 démonstration du volet A en ligne ; A2 démonstration du volet B en direct ; A3 mesure de bout en bout ; A4 exactitude jugée à l'aveugle ; A5 encodeurs synthétiques ; A6 seuils d'abstention ; A7 tests statistiques ; A8 protocole du volet B ; A9 données d'adaptation ; A10 quantification et export ; A11 mesure corrigée ; A12 confidentialité ; A13 machines ; A14 organisation et usage de l'IA ; A15 cinq outils ; A16 Agent0 ; A17 glossaire. Les questions de démonstration (A1, A2) ont été essayées le 26 novembre, sur le site en ligne et sur l'assistant local.
 
 **Pour la soutenance** :
-- `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et une répartition proposée des orateurs ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger.
-- `questions_reponses.md` : 43 questions probables du jury, avec une réponse courte, chiffrée et sourcée.
+- `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et une répartition proposée des orateurs ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger. Version imprimable : `script_oral.pdf`.
+- `questions_reponses.md` : 44 questions probables du jury, avec une réponse courte, chiffrée et sourcée. Version imprimable : `questions_reponses.pdf`.
+- `../presentation_8min.pdf` : PDF de secours du support, une page par appui comme à l'écran (61 pages : les 12 diapositives pas à pas, le sommaire des annexes et les 17 annexes), à ouvrir en plein écran si le navigateur ne peut pas afficher le HTML. Les notes de l'orateur n'y figurent pas : elles sont dans le script.
 
 ## Des schémas animés construits sur des données réelles
 
@@ -66,6 +67,16 @@ python3 docs/soutenance/8min/construire.py          # écrit docs/soutenance/pre
 python3 docs/soutenance/8min/verifier_chiffres.py   # 61 chiffres contre leurs sources ; aucun tiret long
 python3 docs/soutenance/8min/script_oral.py         # régénère script_oral.md depuis les notes du support
 ```
+
+Les PDF :
+
+```
+python3 docs/latex/build.py docs/soutenance/8min/script_oral.md
+(cd docs/soutenance/8min && latexmk -xelatex -interaction=nonstopmode -halt-on-error script_oral.tex)     # idem pour questions_reponses
+PLAYWRIGHT_CORE=<chemin de playwright-core> node docs/soutenance/8min/exporter_pdf.js docs/soutenance/presentation_8min.html docs/soutenance/presentation_8min.pdf
+```
+
+Supprimer ensuite les `.tex` intermédiaires : seuls le Markdown et le PDF sont versionnés. Contrôler dans le journal de compilation (`^! `, `Overfull`, `Underfull`, `Missing character`) qu'il n'y a rien. L'export du support exige `playwright-core` 1.60.0 avec son Chromium et `pdfunite` ; il refuse toute requête hors du fichier local.
 
 `verifier_chiffres.py` relit les fichiers de résultats dans `data/` (option `--donnees`, par défaut la copie de mesure `~/NLP2_local/depot_v2/data`) et les documents publiés sur `dev`.
 
