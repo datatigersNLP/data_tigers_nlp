@@ -41,7 +41,7 @@ Les anciennes diapositives 10 (données synthétiques), 11 (bilan) et 12 (questi
 **Annexes** : A1 démonstration du volet A en ligne ; A2 démonstration du volet B en direct ; A3 mesure de bout en bout ; A4 exactitude jugée à l'aveugle ; A5 encodeurs synthétiques ; A6 seuils d'abstention ; A7 tests statistiques ; A8 protocole du volet B ; A9 données d'adaptation ; A10 quantification et export ; A11 mesure corrigée ; A12 confidentialité ; A13 machines ; A14 organisation et usage de l'IA ; A15 cinq outils ; A16 Agent0 ; A17 glossaire. Les questions de démonstration (A1, A2) ont été essayées le 26 novembre, sur le site en ligne et sur l'assistant local.
 
 **Pour la soutenance** :
-- `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et une répartition proposée des orateurs ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger. Version imprimable : `script_oral.pdf`.
+- `script_oral.md` : le texte exact à dire, diapositive par diapositive, avec le minutage, l'ordre des apparitions et la répartition des orateurs retenue le 28/11 ; généré depuis les notes du support par `script_oral.py`, il ne peut pas en diverger. Version imprimable : `script_oral.pdf`.
 - `questions_reponses.md` : 44 questions probables du jury, avec une réponse courte, chiffrée et sourcée. Version imprimable : `questions_reponses.pdf`.
 - `../presentation_8min.pdf` : PDF de secours du support, une page par appui comme à l'écran (les 9 diapositives pas à pas, le sommaire des annexes et les 17 annexes), à ouvrir en plein écran si le navigateur ne peut pas afficher le HTML. Les notes de l'orateur n'y figurent pas : elles sont dans le script.
 
