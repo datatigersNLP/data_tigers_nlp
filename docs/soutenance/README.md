@@ -4,7 +4,7 @@
 **Ticket** #114 (préparer la soutenance J4 : pitch, présentation, vidéo de secours, répétition et envoi)  
 **Établi le** 14 novembre 2026 par Mahé BEGNIS ; chaque chiffre relu dans sa source à cette date ; **mis à jour le** 16 novembre 2026 : encodeur ajusté servi (#164), chaîne v2 du volet B (#163), mesure corrigée par le jugement mutualisé, présentée comme une limite corrigée (#139, annexes 14 et 15)  
 **Usage** une seule source pour deux formats : les fichiers Marp donnent les PDF, et le même texte donne la version HTML animée.  
-**Nouveau format, 21 novembre 2026** : 8 minutes de présentation sans pitch, puis environ 5 minutes de questions. Le support à projeter est `presentation_8min.html` (voir `8min/README.md`).
+**Nouveau format, 21 novembre 2026** : 8 minutes de présentation sans pitch, puis environ 5 minutes de questions. Le support à projeter est `presentation_8min.html` (voir `8min/README.md`). **Depuis le 28 novembre**, les 8 minutes comprennent les démonstrations en direct, que l'enseignant préfère à la présentation : neuf diapositives (4 min 11), démonstration du volet A (1 min 25), démonstration du volet B (1 min 50), clôture (10 s).
 **Mis à jour le 26 novembre 2026** : les annexes utiles ont été reprises et mises à jour dans `presentation_8min.html` (17 annexes, hors des 8 minutes) ; le script oral (`8min/script_oral.md`) et les questions préparées (`8min/questions_reponses.md`) l'accompagnent. Les fichiers Marp (pitch, présentation, annexes) sont conservés pour mémoire, en l'état du 16 novembre : certains de leurs chiffres sont dépassés (jugement à l'aveugle, chaîne de démonstration, étalonnage) ; ne pas les projeter.
 
 ---
@@ -17,7 +17,7 @@
 | `presentation.md` | démonstration (1 diapositive, 3 min 50), présentation (10 diapositives, 7 min 57), annexes (15 diapositives, pour les questions) |
 | `pitch.pdf`, `presentation.pdf` | rendus Marp de ces deux fichiers |
 | `soutenance.html` | les 31 diapositives en une page animée, sans aucune ressource externe |
-| `presentation_8min.html` | **support du format de 8 minutes annoncé le 21/11** : 12 diapositives animées, schémas construits sur des données réelles, notes et chronomètre (touche N) ; source et contrôles dans `8min/` |
+| `presentation_8min.html` | **support du format de 8 minutes** : 9 diapositives animées et 17 annexes dont les deux démonstrations en direct, schémas construits sur des données réelles, notes et chronomètre (touche N) ; source et contrôles dans `8min/`. `presentation_8min.pdf` en est le PDF de secours, une page par appui |
 | `figures/*.svg` | les 8 figures, générées par `outils/figures.py` ; ne pas les modifier à la main |
 | `outils/figures.py` | génère les figures ; échelles exactes et contrôle de la largeur des textes |
 | `outils/construire_html.py` | construit `soutenance.html` à partir des deux fichiers Marp |

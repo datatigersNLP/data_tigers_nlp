@@ -4,7 +4,7 @@
 
 **Contenu** 44 questions probables du jury, en six rubriques. Chaque réponse tient en deux à quatre phrases, avec ses chiffres et sa source ; l'annexe du support qui l'illustre est indiquée (touche A, puis le numéro).
 
-**Qui répond** la personne entre parenthèses suit les domaines du classeur de suivi : à ajuster en équipe.
+**Qui répond** la personne entre parenthèses prépare la réponse, d'après les domaines du classeur de suivi. Le sujet laisse à l'enseignant le choix du répondant : chacun doit pouvoir répondre à toutes les questions.
 
 > **Règles pour répondre.** Commencer par la réponse, puis le chiffre, puis la limite. Ne jamais présenter une citation comme une preuve d'exactitude, ni un résultat descriptif comme démontré. Si on ne sait pas : le dire, et dire où l'information se trouve (rapport, protocole, ticket).
 
@@ -174,11 +174,11 @@ Les versions sont épinglées ; une alerte récente vise le serveur de développ
 
 **Comment vous êtes-vous organisés ?** (Jibril)
 
-Un ticket et une branche par tâche, des pull requests vers dev avec une approbation obligatoire, dev et main protégées, des jalons et un classeur de suivi des charges. Les réunions qui n'ont pas eu lieu sont documentées comme telles, avec les décisions écrites qui les ont remplacées.
+Un ticket et une branche par tâche, des pull requests vers dev avec une approbation obligatoire, dev et main protégées, des jalons, un classeur de suivi, et une répartition des contributions mesurée par les tickets, les commits, les lignes et les fichiers ajoutés. Les réunions qui n'ont pas eu lieu sont documentées comme telles, avec les décisions écrites qui les ont remplacées.
 
-**Comment le travail a-t-il été réparti, et les contributions sont-elles équilibrées ?** (Mahé)
+**Comment le travail a-t-il été réparti, et les contributions sont-elles équilibrées ?** (Jibril)
 
-Nous avons renoncé à comparer des heures, estimées après coup par trois méthodes différentes. La répartition est mesurée dans le dépôt, au 26 novembre : sur 462 commits, Mahé 201, Jibril 134, Remy 53, Vaneck 50, Maïmouna 24 ; sur les lignes de code ajoutées, 60 %, 18 %, 9 %, 13 % et 0 %. Elle n'est pas égale : Mahé, qui coordonnait le projet, en porte la plus grande part, et son travail avec l'assistant est compté à son nom. C'est un volume, pas une valeur, et Git ne voit ni les jugements humains de Maïmouna (#52), ni les mesures faites sur machine ; les relectures sont plus partagées : 186 revues déposées sur les PR des autres, par les cinq membres. Méthode, limites et commande pour rejouer le relevé : `docs/suivi/CONTRIBUTIONS.md` et section 3.3 du rapport.
+Nous avons renoncé à comparer des heures, estimées après coup par des méthodes différentes. La répartition est mesurée dans le dépôt, au 26 novembre : sur 462 commits, Mahé 201, Jibril 134, Remy 53, Vaneck 50, Maïmouna 24 ; sur les lignes de code ajoutées, 60 %, 18 %, 9 %, 13 % et 0 % ; sur les 377 fichiers créés, 209, 85, 25, 58 et 0. Elle n'est pas égale : Mahé, qui coordonnait le projet, en porte la plus grande part, et son travail avec l'assistant est compté à son nom. C'est un volume, pas une valeur, et Git ne voit ni les jugements humains de Maïmouna (#52), ni les mesures faites sur machine ; les relectures sont plus partagées : 186 revues déposées sur les PR des autres, par les cinq membres. Méthode, limites et commande pour rejouer le relevé : `docs/suivi/CONTRIBUTIONS.md` et section 3.3 du rapport.
 
 **Comment avez-vous utilisé l'IA ?** (Mahé)
 

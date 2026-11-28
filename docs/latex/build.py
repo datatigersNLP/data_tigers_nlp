@@ -26,7 +26,7 @@ BANDEAU = {
      "Version 1 du 28 novembre 2026, à remettre avant le jalon J4"),
  "script_oral": ("Script oral de la soutenance",
      "Équipe Data Tigers \\textbullet{} NLP~2 \\textbullet{} M2 Data \\& IA \\textbullet{} FGES",
-     "Soutenance du 30 novembre 2026 \\textemdash{} 8 minutes de présentation"),
+     "Soutenance du 30 novembre 2026 \\textemdash{} 8 minutes, démonstrations comprises"),
  "questions_reponses": ("Questions du jury",
      "Équipe Data Tigers \\textbullet{} NLP~2 \\textbullet{} M2 Data \\& IA \\textbullet{} FGES",
      "Réponses préparées \\textemdash{} environ 5 minutes de questions"),
