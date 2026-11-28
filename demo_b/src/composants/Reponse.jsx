@@ -7,26 +7,19 @@
 
 import { useEffect, useState } from "react";
 import Passage from "./Passage.jsx";
+import { Logo } from "./Barre.jsx";
 import { blocs, numero, referencesValides } from "../citations.js";
 
 const secondes = (ns) => (ns / 1e9).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
 
 export const idCarte = (echangeId, reference) => `passage-${echangeId}-${numero(reference)}`;
 
-function IconeAssistant() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4 5h16v11H9l-5 4z" />
-      <path d="M8 9h8M8 12h5" />
-    </svg>
-  );
-}
-
+// l'assistant a le visage du logo (#176) : le tigre qui lit les passages et rédige la réponse
 export function BulleAssistant({ children }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-0.5 hidden h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-accent-clair text-accent sm:flex" aria-hidden="true">
-        <IconeAssistant />
+      <span className="mt-0.5 hidden shrink-0 sm:flex" aria-hidden="true">
+        <Logo />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-3">{children}</div>
     </div>

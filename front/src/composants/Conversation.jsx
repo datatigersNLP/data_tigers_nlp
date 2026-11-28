@@ -5,8 +5,9 @@
 // Depuis #164 : dix passages regroupés par fiche (A2), et un avertissement quand le meilleur passage n'est qu'assez
 // proche de la question (zone grise, A3), sans rien masquer.
 
-import { useEffect, useRef, useState } from "react";
-import Barre from "./Barre.jsx";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Barre, { Logo } from "./Barre.jsx";
+import Confidentialite from "./Confidentialite.jsx";
 import Fiche from "./Fiche.jsx";
 import { messageErreur } from "../recherche/useMoteur.js";
 import { regrouperParFiche } from "../recherche/moteur.js";
@@ -37,20 +38,12 @@ const mio = (octets) =>
 let compteur = 0;
 const nouvelId = () => ++compteur;
 
-function IconeRecherche() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" />
-      <path d="M20 20l-3.5-3.5" />
-    </svg>
-  );
-}
-
+// l'assistant a le visage du logo (#176) : le tigre qui lit les fiches et répond
 function BulleAssistant({ children }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-0.5 hidden h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-accent-clair text-accent sm:flex" aria-hidden="true">
-        <IconeRecherche />
+      <span className="mt-0.5 hidden shrink-0 sm:flex" aria-hidden="true">
+        <Logo />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-3">{children}</div>
     </div>
@@ -261,6 +254,8 @@ export default function Conversation({ moteur }) {
   const [actuel, setActuel] = useState(() => chats[0].id);
   const [question, setQuestion] = useState("");
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [confidentialite, setConfidentialite] = useState(false);
+  const ouvreurConfidentialite = useRef(null);
   const dernier = useRef(null);
   const zoneFil = useRef(null);
   const saisie = useRef(null);
@@ -366,6 +361,22 @@ export default function Conversation({ moteur }) {
     requestAnimationFrame(() => saisie.current?.focus());
   }
 
+  // ouverte depuis le menu sur téléphone, la fenêtre le ferme d'abord : le panneau gère lui-même la tabulation et Échap
+  function ouvrirConfidentialite(ev) {
+    ouvreurConfidentialite.current = ev.currentTarget;
+    setMenuOuvert(false);
+    setConfidentialite(true);
+  }
+
+  // à la fermeture, le focus revient au bouton qui l'a ouverte ; s'il a disparu avec le menu, au bouton du menu
+  const fermerConfidentialite = useCallback(() => {
+    setConfidentialite(false);
+    requestAnimationFrame(() => {
+      const ouvreur = ouvreurConfidentialite.current;
+      (ouvreur?.getClientRects().length ? ouvreur : boutonMenu.current)?.focus();
+    });
+  }, []);
+
   function utiliserExemple(q) {
     setMenuOuvert(false);
     // le menu se ferme sur téléphone : le focus irait sinon se perdre sur la page
@@ -385,7 +396,9 @@ export default function Conversation({ moteur }) {
         exemples={EXEMPLES}
         utiliserExemple={utiliserExemple}
         occupe={occupe}
+        ouvrirConfidentialite={ouvrirConfidentialite}
       />
+      <Confidentialite ouvert={confidentialite} fermer={fermerConfidentialite} />
 
       {/* menu ouvert sur téléphone : le reste de la page est inerte, ni le focus ni les lecteurs d'écran n'atteignent
           plus la conversation ; la tabulation boucle dans le panneau (Barre.jsx) */}
@@ -526,7 +539,15 @@ export default function Conversation({ moteur }) {
                 <span className="sr-only"> (nouvel onglet)</span>
               </a>
               , instantané SocialGouv du 11 sept. 2026, Licence Ouverte Etalab 2.0. Projet étudiant, non officiel : ne
-              remplace pas un conseil juridique.
+              remplace pas un conseil juridique.{" "}
+              <button
+                type="button"
+                onClick={ouvrirConfidentialite}
+                aria-haspopup="dialog"
+                className="underline underline-offset-2 hover:text-encre focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                Confidentialité et mentions légales
+              </button>
             </p>
           </div>
         </div>

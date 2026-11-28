@@ -4,14 +4,12 @@
 // et l'encart de confidentialité décrit l'exécution sur cet ordinateur.
 
 import { useEffect, useRef } from "react";
+import logoTigre from "../assets/logo-tigre.svg";
 
-export function Logo({ className = "h-[30px] w-[30px]" }) {
-  return (
-    <svg viewBox="0 0 32 32" className={`${className} shrink-0`} aria-hidden="true">
-      <rect width="32" height="32" rx="9" className="fill-accent" />
-      <path d="M10 11h12M10 16h12M10 21h7" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
-    </svg>
-  );
+// logo de l'équipe (#176), le même qu'au volet A : tigre en pixel art sur une grille de 32 pixels
+// (docs/charte/logo/tigre.py), affiché à 32 px ou à un multiple pour garder des pixels nets
+export function Logo({ className = "h-8 w-8" }) {
+  return <img src={logoTigre} alt="" width="32" height="32" className={`${className} shrink-0`} />;
 }
 
 // éléments activables et visibles d'un conteneur, dans l'ordre de tabulation du document
@@ -23,7 +21,7 @@ const titreRubrique = "mb-2 px-1.5 text-xs font-semibold uppercase tracking-wide
 const elementListe =
   "w-full rounded-[9px] px-2.5 py-[9px] text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent";
 
-export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauChat, exemples, utiliserExemple, occupe }) {
+export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauChat, exemples, utiliserExemple, occupe, ouvrirConfidentialite }) {
   const premier = useRef(null);
   const panneau = useRef(null);
   // chats de la session qui ont au moins une question, le plus récent en haut ; titre : leur première question
@@ -156,6 +154,14 @@ export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauC
             Vos questions restent sur cet ordinateur : la recherche et le modèle qui rédige la réponse s'y exécutent,
             aucune n'est envoyée à un service en ligne.
           </p>
+          <button
+            type="button"
+            onClick={ouvrirConfidentialite}
+            aria-haspopup="dialog"
+            className="px-1 text-left text-[13px] font-medium text-accent-texte underline underline-offset-2 hover:text-encre focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            Confidentialité et mentions
+          </button>
           <p className="px-1 font-mono text-[11px] text-gris">
             version {__VERSION__} · construite le {__DATE_CONSTRUCTION__}
           </p>
