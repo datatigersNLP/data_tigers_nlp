@@ -24,11 +24,19 @@ ESC = [('\\', r'\textbackslash{}'), ('&', r'\&'), ('%', r'\%'), ('$', r'\$'),
        ('#', r'\#'), ('_', r'\_'), ('{', r'\{'), ('}', r'\}'),
        ('~', r'\textasciitilde{}'), ('^', r'\textasciicircum{}')]
 
+_ESC = dict(ESC)
+_ESC_RE = re.compile('[' + re.escape(''.join(k for k, _ in ESC)) + ']')
+
 def esc(s):
     s = s.replace('️', '')                    # sélecteur de variante
-    for a, b in ESC: s = s.replace(a, b)
+    # un seul passage : en remplaçant caractère après caractère, les accolades de \textbackslash{} étaient échappées à leur tour
+    s = _ESC_RE.sub(lambda m: _ESC[m.group(0)], s)
     for a, b in SYM.items(): s = s.replace(a, b + '{}')
     for a, b in UNI.items(): s = s.replace(a, b)
+    # une heure (7:55) s'écrit sans espace avant les deux-points, que babel-french ajouterait (\string: n'y change rien)
+    s = re.sub(r'(?<=\d):(?=\d)', lambda m: r'{\NoAutoSpacing :}', s)
+    # un nombre à espace (4 240) ne se coupe pas en fin de ligne
+    s = re.sub(r'(?<=\d) (?=\d{3}(?!\d))', '~', s)
     return s
 
 def esc_code(s):
@@ -194,8 +202,10 @@ def convert(md):
             lvl, txt = len(m.group(1)), m.group(2).strip()
             txt = re.sub(r'^\d+(\.\d+)*\.?\s*[—-]?\s*', '', txt)
             cmd = {1: 'section', 2: 'section', 3: 'subsection', 4: 'subsubsection*'}[lvl]
-            # une annexe n'est pas numérotée, mais figure au sommaire
+            # une annexe n'est pas numérotée, mais figure au sommaire ; de même une diapositive du script oral,
+            # dont le numéro est celui du support et non celui d'une sous-section
             annexe = (cmd == 'section' and re.match(r'^Annexe\b', txt))
+            diapo = (cmd == 'subsection' and re.match(r'^Diapositive\s+\d+\b', txt))
             rendu = inline(txt)
             if any(c in rendu for c in ('$', '\\S{}', 'mark{}', '\\code')):
                 plain = strip_md(txt)
@@ -208,12 +218,22 @@ def convert(md):
             if annexe:
                 out += ['', r'\section*{%s}' % rendu,
                         r'\addcontentsline{toc}{section}{%s}' % rendu]
+            elif diapo:
+                out += ['', r'\Needspace{14\baselineskip}', r'\subsection*{%s}' % rendu,
+                        r'\addcontentsline{toc}{subsection}{%s}' % rendu]
             else:
                 out += ['', r'\%s{%s}' % (cmd, rendu)]
             i += 1; continue
         # filet horizontal
         if re.match(r'^-{3,}\s*$', ln):
             out.append(r'\rulebreak'); i += 1; continue
+        # image seule sur sa ligne : ![légende](chemin relatif au document), à la largeur du texte, légende dessous
+        m = re.match(r'^!\[([^\]]*)\]\(([^)\s]+)\)\s*$', ln.strip())
+        if m:
+            out += ['', r'\begin{center}\begin{minipage}{\linewidth}\centering',
+                    r'\includegraphics[width=\linewidth]{%s}\par\smallskip' % m.group(2),
+                    r'{\small\color{gris} %s}' % inline(m.group(1)), r'\end{minipage}\end{center}']
+            i += 1; continue
         # tableau
         if ln.strip().startswith('|'):
             j = i
@@ -250,10 +270,19 @@ def convert(md):
         # paragraphe
         if ln.strip():
             j = i; buf = []
-            while j < len(L) and L[j].strip() and not L[j].strip().startswith(('|','>','```','#')) \
+            while j < len(L) and L[j].strip() and not L[j].strip().startswith(('|','>','```','#','![')) \
                   and not re.match(r'^(\s*)([-*]|\d+\.)\s+', L[j]) and not re.match(r'^-{3,}\s*$', L[j]):
                 buf.append(L[j].strip()); j += 1
-            out += ['', inline(' '.join(buf))]; i = j; continue
+            para = ' '.join(buf)
+            # question préparée (questions_reponses.md) : « **Question ?** (qui répond) » seul sur sa ligne
+            mq = re.match(r'^\*\*([^*]+\?)\*\*\s*(?:\(([^()]+)\))?$', para)
+            if mq:
+                out += ['', r'\Needspace{6\baselineskip}', r'\par\bigskip\noindent{\bfseries\color{accent}%s}\par\nopagebreak\smallskip' % inline(mq.group(1))]
+                if mq.group(2):
+                    out.append(r'{\small\color{gris} Répond : %s}\par\nopagebreak\smallskip' % inline(mq.group(2)))
+            else:
+                out += ['', inline(para)]
+            i = j; continue
         i += 1
     return '\n'.join(out)
 

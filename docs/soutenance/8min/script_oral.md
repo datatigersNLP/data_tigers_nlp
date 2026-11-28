@@ -1,10 +1,12 @@
 # Script oral de la soutenance (8 minutes)
 
-**Généré** par `script_oral.py` depuis `deck.html` : le texte à dire est celui des notes du support, mot pour mot. Ne pas modifier ce fichier à la main : modifier le support, puis relancer le script.
+**Source** le texte à dire est celui des notes de `deck.html`, mot pour mot ; ce fichier est généré par `script_oral.py` : ne pas le modifier à la main, modifier le support puis relancer le script.
 
-**Durée prévue** : 7:55 pour 12 diapositives ; 1062 mots, soit 134 mots par minute (à 130 mots par minute, 8:10). Marge restante sur 8 minutes : 5 s, pour les changements d'orateur.
+**Durée prévue** 7:55 pour 12 diapositives ; 1062 mots, soit 134 mots par minute (à 130 mots par minute, 8:10). Marge restante sur 8 minutes : 5 s, pour les changements d'orateur.
 
-**Orateurs** : répartition proposée par domaine du classeur de suivi, à valider en équipe.
+**Orateurs** répartition proposée par domaine du classeur de suivi, à valider en équipe.
+
+---
 
 ## Avant de commencer
 
@@ -32,26 +34,26 @@
 | 12. Merci. Vos questions ? | 7:45 | 10 s | Mahé |
 | Fin | 7:55 | | |
 
-### 1. Code du travail, en clair
+### Diapositive 1 : Code du travail, en clair
 
 **Maïmouna**, de 0:00 à 0:20 (20 s, 41 mots).
 
 > Bonjour, nous sommes l'équipe Data Tigers. Notre projet retrouve, dans les fiches officielles du ministère du Travail, la réponse à une question de droit du travail : un site trouve les passages, un assistant local rédige une réponse qui les cite.
 
-### 2. Une question de travail, 261 fiches officielles
+### Diapositive 2 : Une question de travail, 261 fiches officielles
 
 **Maïmouna**, de 0:20 à 1:00 (40 s, 87 mots).
 
 Apparitions, dans l'ordre des appuis :
 
-- Appui 1 : Répondre depuis les sources les fiches pratiques du ministère, pas la mémoire d'un modèle Montrer d'où vient l…
-- Appui 2 : 261 fiches pratiques de travail-emploi.gouv.fr, découpées en 4 240 passages. Instantané du 11 septembre 2026, … ; puis Volet A, en ligne Un petit modèle que nous maîtrisons, exécuté dans le navigateur du visiteur, trouve les pass…
+- Appui 1 : Répondre depuis les sources les fiches pratiques du ministère, pas la mémoire d'un modèle Montrer d'où vient …
+- Appui 2 : 261 fiches pratiques de travail-emploi.gouv.fr, découpées en 4 240 passages. Instantané du 11 septembre 2026 … ; puis Volet A, en ligne Un petit modèle que nous maîtrisons, exécuté dans le navigateur du visiteur, trouve les …
 
 > Prenez cette question, tirée de notre jeu de test. La réponse existe : elle est dans une fiche du ministère. Le défi est de la retrouver parmi 261 fiches, de montrer d'où elle vient, et de se taire quand la question sort du sujet, plutôt que d'inventer.
 >
 > Le sujet impose deux volets. Le volet A, en ligne, sert un petit modèle que nous maîtrisons entièrement, dans le navigateur. Le volet B, local, emprunte un grand modèle de langage, que nous adaptons pour qu'il rédige des réponses sourcées.
 
-### 3. Une préparation commune aux deux volets
+### Diapositive 3 : Une préparation commune aux deux volets
 
 **Vaneck**, de 1:00 à 1:35 (35 s, 70 mots).
 
@@ -60,11 +62,11 @@ Apparitions, dans l'ordre des appuis :
 - Appui 1 : 4 240 passages 512 tokens au plus, avec leur en-tête
 - Appui 2 : Encodage E5 un vecteur de 384 nombres par passage
 - Appui 3 : Index contrôlé par empreinte
-- Appui 4 : Un choix de conception : la recherche du volet A est la première moitié du volet B. Le découpage, l'encodage e… ; puis Volet A le site, dans le navigateur Volet B l'assistant, sur le Mac
+- Appui 4 : Un choix de conception : la recherche du volet A est la première moitié du volet B. Le découpage, l'encodage … ; puis Volet A le site, dans le navigateur Volet B l'assistant, sur le Mac
 
 > Les deux volets partagent leur préparation. Nous découpons les 261 fiches selon leurs sections, en 4 240 passages d'au plus 512 tokens, chacun précédé de son en-tête : fiche, section, intertitres. Chaque passage est encodé une fois en un vecteur de 384 nombres, et l'index est contrôlé par empreinte. Le site du volet A cherche dans cet index ; l'assistant du volet B part de la même recherche, puis génère.
 
-### 4. Volet A : tout se calcule dans le navigateur
+### Diapositive 4 : Volet A : tout se calcule dans le navigateur
 
 **Vaneck**, de 1:35 à 2:20 (45 s, 114 mots).
 
@@ -84,15 +86,15 @@ Apparitions, dans l'ordre des appuis :
 - Les 21 ms ont été mesurées le 19/10 sur le site, avec l'encodeur de base, de même architecture et de même taille.
 - Les scores vont de 0,525 à 0,859 pour cette question ; sous 0,7683, le site refuse de répondre.
 
-### 5. Ajuster l'encodeur à nos fiches
+### Diapositive 5 : Ajuster l'encodeur à nos fiches
 
 **Remy**, de 2:20 à 3:10 (50 s, 118 mots).
 
 Apparitions, dans l'ordre des appuis :
 
-- Appui 1 : 109 paires question et passage : Qwen écrit une question pour un passage tiré de nos fiches. Apprentissage con…
+- Appui 1 : 109 paires question et passage : Qwen écrit une question pour un passage tiré de nos fiches. Apprentissage …
 - Appui 2 : animation du schéma, sans nouvel élément
-- Appui 3 : 43,8 % 63,0 % des questions de test trouvent un bon passage dans les 5 premiers : +19,2 points , intervalle à … ; puis Servi sur le site depuis le 15 novembre, selon une règle écrite avant la mesure. Deux versions nourries de 2 2…
+- Appui 3 : 43,8 % 63,0 % des questions de test trouvent un bon passage dans les 5 premiers : +19,2 points , intervalle à … ; puis Servi sur le site depuis le 15 novembre, selon une règle écrite avant la mesure. Deux versions nourries de 2 …
 
 > Premier choix : adapter l'encodeur à nos fiches. Nous avons fait écrire par Qwen une question pour 109 passages, hors des fiches du test. L'apprentissage contrastif rapproche chaque question de son passage et l'éloigne des autres. Sur nos questions de test, le bon passage est dans les cinq premiers pour 63 % des questions, contre 43,8 % : 19 points de plus, un gain démontré. Avec dix passages regroupés par fiche, une fiche pertinente est affichée pour 93 % des questions.
 >
@@ -106,7 +108,7 @@ Apparitions, dans l'ordre des appuis :
 - v2-T, 2 289 paires de Qwen : +5,8 points sur le jeu v2, non démontré ; égalité sur le CDTN.
 - v3-C, 2 420 paires écrites par Claude Sonnet et relues par deux juges Claude Opus, règle figée avant toute génération : jeu v2 +12,4 [+5,5 ; +20,3], démontré ; CDTN −2,2 ; lot de test −5,5 ; 5 questions hors corpus de plus au-dessus de la borne.
 
-### 6. Volet B : un assistant qui cite ses sources
+### Diapositive 6 : Volet B : un assistant qui cite ses sources
 
 **Jibril**, de 3:10 à 3:50 (40 s, 78 mots).
 
@@ -124,7 +126,7 @@ Apparitions, dans l'ordre des appuis :
 - La consigne interdit de compléter avec des connaissances générales.
 - Pas de seuil d'abstention dans la démonstration : le modèle décide seul.
 
-### 7. Chercher par le sens et par les mots
+### Diapositive 7 : Chercher par le sens et par les mots
 
 **Jibril**, de 3:50 à 4:50 (60 s, 125 mots).
 
@@ -145,7 +147,7 @@ Apparitions, dans l'ordre des appuis :
 - Nos mots vides gardent les négations (ne, pas, sans) : elles comptent en droit.
 - Les trois écarts sont démontrés (McNemar exact, p < 0,001 sur le jeu v2 et le lot de test).
 
-### 8. Pourquoi 10 passages plutôt que 5
+### Diapositive 8 : Pourquoi 10 passages plutôt que 5
 
 **Jibril**, de 4:50 à 5:25 (35 s, 82 mots).
 
@@ -161,15 +163,15 @@ Apparitions, dans l'ordre des appuis :
 - Coût et précision mesurés sur le CDTN, pour la chaîne retenue.
 - Sur le lot de test : E5 seul 45,2 puis 58,9 % ; chaîne retenue 68,5 puis 72,6 %.
 
-### 9. Trois modèles, choisis pour la machine qui les exécute
+### Diapositive 9 : Trois modèles, choisis pour la machine qui les exécute
 
 **Mahé**, de 5:25 à 6:10 (45 s, 106 mots).
 
 Apparitions, dans l'ordre des appuis :
 
-- Appui 1 : dans le navigateur multilingual-e5-small Taille 118 millions de paramètres, vecteurs de 384 nombres Pourquoi l…
-- Appui 2 : sur le Mac bge-reranker-v2-m3 Rôle lit la question et un passage ensemble, et note leur accord Pourquoi lui le…
-- Appui 3 : sur le Mac, servi par Ollama Qwen2.5-7B-Instruct Pourquoi lui poids ouverts sous licence Apache 2.0, bon en fr…
+- Appui 1 : dans le navigateur multilingual-e5-small Taille 118 millions de paramètres, vecteurs de 384 nombres Pourquoi …
+- Appui 2 : sur le Mac bge-reranker-v2-m3 Rôle lit la question et un passage ensemble, et note leur accord Pourquoi lui …
+- Appui 3 : sur le Mac, servi par Ollama Qwen2.5-7B-Instruct Pourquoi lui poids ouverts sous licence Apache 2.0, bon en …
 
 > Chaque modèle est choisi pour la machine qui l'exécute. Dans le navigateur, E5-small : multilingue, 118 millions de paramètres ; l'essentiel de son poids est son vocabulaire, dont nous retirons les alphabets non latins sans changer un résultat. Sur le Mac, le reclasseur bge-m3, le seul des trois testés qui apporte un gain. Et Qwen2.5-7B : poids ouverts, bon en français, et quatre gigas en 4 bits. Nous l'adaptons par LoRA, en n'apprenant que 0,15 % de ses paramètres. Ollama refusant les LoRA, nous fusionnons le correctif dans les poids avant de compresser, et un témoin passe par la même chaîne pour isoler l'effet de l'adaptation.
 
@@ -178,15 +180,15 @@ Apparitions, dans l'ordre des appuis :
 - Génération mesurée : 46,9 tokens par seconde en médiane sur le Mac.
 - Le témoin T : modèle d'origine, même fusion et même compression, sans correctif.
 
-### 10. Des questions écrites par des modèles, toujours contrôlées
+### Diapositive 10 : Des questions écrites par des modèles, toujours contrôlées
 
 **Mahé**, de 6:10 à 7:00 (50 s, 120 mots).
 
 Apparitions, dans l'ordre des appuis :
 
-- Appui 1 : pour entraîner l'encodeur Une question par passage Qwen écrit la question qu'un salarié poserait ; des filtres…
-- Appui 2 : pour adapter Qwen Répondre en recopiant, ou s'abstenir 218 exemples dans les conditions réelles : la réponse r…
-- Appui 3 : pour évaluer Un jeu de test neuf 161 questions écrites par Claude et vérifiées par un second modèle, sur autor…
+- Appui 1 : pour entraîner l'encodeur Une question par passage Qwen écrit la question qu'un salarié poserait ; des …
+- Appui 2 : pour adapter Qwen Répondre en recopiant, ou s'abstenir 218 exemples dans les conditions réelles : la réponse …
+- Appui 3 : pour évaluer Un jeu de test neuf 161 questions écrites par Claude et vérifiées par un second modèle, sur …
 
 > Nous manquions de données annotées : nous en avons fait produire par des modèles, sans jamais les croire sur parole. Pour l'encodeur, Qwen écrit une question par passage. Pour adapter Qwen, 218 exemples reproduisent l'usage réel : la réponse recopie le passage et le cite, ou s'abstient. Deux membres les relisent : le premier lot a été refusé, car le modèle faisait dire aux passages ce qu'ils ne disent pas. L'adaptation fait passer les réponses citant un passage pertinent de 14 à 25 %, un gain démontré ; jugées à l'aveugle, elles sont mieux appuyées, mais pas plus exactes. Enfin, pour évaluer sur un jeu neuf, Claude a écrit 161 questions, contrôlées par un second modèle, avec l'autorisation de l'enseignant.
 
@@ -196,14 +198,14 @@ Apparitions, dans l'ordre des appuis :
 - Abstention correcte hors corpus : 83,3 % avant et après adaptation (lot de test).
 - Intervalle à 97,5 % de l'écart : de +2,1 à +23,8 points ; 8 questions gagnées, aucune perdue.
 
-### 11. Des règles écrites avant de mesurer
+### Diapositive 11 : Des règles écrites avant de mesurer
 
 **Mahé**, de 7:00 à 7:45 (45 s, 105 mots).
 
 Apparitions, dans l'ordre des appuis :
 
-- Appui 1 : Base servie jusqu'au 15 novembre l'encodeur ajusté n'était pas mesuré à temps : la règle de repli s'est appliq…
-- Appui 2 : Volet A, recherche Volet B, assistant Coût aucun serveur une machine dédiée Latence 21 ms par recherche 11,8 s…
+- Appui 1 : Base servie jusqu'au 15 novembre l'encodeur ajusté n'était pas mesuré à temps : la règle de repli s'est …
+- Appui 2 : Volet A, recherche Volet B, assistant Coût aucun serveur une machine dédiée Latence 21 ms par recherche 11,8 …
 
 > Notre méthode tient en une phrase : écrire la règle avant de mesurer. Elle nous a fait renoncer à des choix que nous aimions : la base est restée servie un mois, une consigne plus performante a été écartée, et l'encodeur ajusté n'apporte rien au volet B. Elle confirme aussi la chaîne de démonstration : 17 points de plus que l'ancienne.
 >
@@ -214,7 +216,7 @@ Apparitions, dans l'ordre des appuis :
 - Latence du volet B : 11,8 s en médiane par question, chaîne de la démonstration (10 passages, reclasseur), mesurée le 21/11 sur le jeu v2 ; 4,9 s avec l'ancienne chaîne à 5 passages.
 - Les deux chiffres de qualité ne mesurent pas la même chose, ni sur le même jeu.
 
-### 12. Merci. Vos questions ?
+### Diapositive 12 : Merci. Vos questions ?
 
 **Mahé**, de 7:45 à 7:55 (10 s, 16 mots).
 
