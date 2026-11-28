@@ -7,11 +7,9 @@ du support.
 Format du 28 novembre 2026 : 8 minutes au plus, démonstrations comprises. Neuf diapositives d'architecture, puis les
 démonstrations en direct du volet A (annexe A1) et du volet B (annexe A2), puis une clôture de quelques secondes.
 
-La répartition des orateurs est une proposition, à valider en équipe :
-- les diapositives suivent les domaines du classeur de suivi (D1 à D5) ;
-- chaque démonstration est confiée à un responsable du ticket de l'interface correspondante (#53 pour le site, #111 pour
-  l'assistant), celui qui parle le moins par ailleurs ;
-- une seule personne tient le clavier.
+Répartition des orateurs, retenue par Mahé le 28 novembre 2026 : Remy ouvre (diapositives 1 à 4) et conclut, Mahé dit les
+diapositives 5 à 7, Jibril les diapositives 8 et 9, Vaneck fait la démonstration du volet A, Maïmouna celle du volet B. Une
+seule personne tient le clavier (Mahé). Le texte de la répartition écrit dans le script est tiré de ces constantes.
 """
 from __future__ import annotations
 
@@ -21,7 +19,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 ICI = Path(__file__).resolve().parent
-ORATEURS = {1: "Maïmouna", 2: "Maïmouna", 3: "Vaneck", 4: "Vaneck", 5: "Remy", 6: "Jibril", 7: "Jibril", 8: "Jibril", 9: "Mahé"}
+ORATEURS = {1: "Remy", 2: "Remy", 3: "Remy", 4: "Remy", 5: "Mahé", 6: "Mahé", 7: "Mahé", 8: "Jibril", 9: "Jibril"}
 ORATEUR_DEMO = {"1": "Vaneck", "2": "Maïmouna"}
 ORATEUR_CLOTURE = "Remy"
 CLAVIER = "Mahé"
@@ -109,6 +107,20 @@ def demonstrations(deck: str) -> list[dict]:
     return sortie
 
 
+def plages(orateurs: dict[int, str]) -> list[str]:
+    """Diapositives consécutives d'un même orateur, en une phrase : « Remy les diapositives 1 à 4 »."""
+    sortie, debut = [], 1
+    for k in range(1, len(orateurs) + 1):
+        if k == len(orateurs) or orateurs[k + 1] != orateurs[k]:
+            if debut == k:
+                texte_plage = f"la diapositive {k}"
+            else:
+                texte_plage = f"les diapositives {debut} {'et' if k - debut == 1 else 'à'} {k}"
+            sortie.append(f"{orateurs[k]} {texte_plage}")
+            debut = k + 1
+    return sortie
+
+
 def mmss(s: int) -> str:
     return f"{s // 60}:{s % 60:02d}"
 
@@ -134,8 +146,8 @@ def main() -> None:
          f"**Durée prévue** {mmss(total)} sur {mmss(LIMITE)} au plus, marge de {LIMITE - total} s : présentation de {len(ds)} diapositives {mmss(t_pres)} "
          f"({mots_pres} mots, {mots_pres / t_pres * 60:.0f} mots par minute), démonstration du volet A {mmss(demos[0]['duree'])}, "
          f"démonstration du volet B {mmss(demos[1]['duree'])}, clôture {mmss(t_cloture)}.", "",
-         "**Orateurs** répartition proposée, à valider en équipe : les diapositives suivent les domaines du classeur de suivi ; "
-         "chaque démonstration revient à un responsable du ticket de l'interface (#53 pour le site, #111 pour l'assistant), celui qui parle le moins ; "
+         "**Orateurs** répartition retenue par Mahé le 28 novembre : " + ", ".join(plages(ORATEURS))
+         + f", {ORATEUR_DEMO['1']} la démonstration du volet A, {ORATEUR_DEMO['2']} la démonstration du volet B, {ORATEUR_CLOTURE} la clôture ; "
          f"{CLAVIER} tient le clavier pendant toute la soutenance.", "",
          "---", "",
          "## Avant de commencer", "",

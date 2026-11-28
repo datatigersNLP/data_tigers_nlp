@@ -4,7 +4,7 @@
 
 **Durée prévue** 7:36 sur 8:00 au plus, marge de 24 s : présentation de 9 diapositives 4:11 (539 mots, 129 mots par minute), démonstration du volet A 1:25, démonstration du volet B 1:50, clôture 0:10.
 
-**Orateurs** répartition proposée, à valider en équipe : les diapositives suivent les domaines du classeur de suivi ; chaque démonstration revient à un responsable du ticket de l'interface (#53 pour le site, #111 pour l'assistant), celui qui parle le moins ; Mahé tient le clavier pendant toute la soutenance.
+**Orateurs** répartition retenue par Mahé le 28 novembre : Remy les diapositives 1 à 4, Mahé les diapositives 5 à 7, Jibril les diapositives 8 et 9, Vaneck la démonstration du volet A, Maïmouna la démonstration du volet B, Remy la clôture ; Mahé tient le clavier pendant toute la soutenance.
 
 ---
 
@@ -22,15 +22,15 @@
 
 | Partie | Début | Durée | Orateur |
 |---|---:|---:|---|
-| Diapositive 1. Code du travail, en clair | 0:00 | 12 s | Maïmouna |
-| Diapositive 2. Une question de travail, 261 fiches officielles | 0:12 | 34 s | Maïmouna |
-| Diapositive 3. Une préparation commune aux deux volets | 0:46 | 21 s | Vaneck |
-| Diapositive 4. Volet A : tout se calcule dans le navigateur | 1:07 | 29 s | Vaneck |
-| Diapositive 5. Ajuster l'encodeur à nos fiches | 1:36 | 33 s | Remy |
-| Diapositive 6. Volet B : un assistant qui cite ses sources | 2:09 | 26 s | Jibril |
-| Diapositive 7. Chercher par le sens et par les mots | 2:35 | 37 s | Jibril |
+| Diapositive 1. Code du travail, en clair | 0:00 | 12 s | Remy |
+| Diapositive 2. Une question de travail, 261 fiches officielles | 0:12 | 34 s | Remy |
+| Diapositive 3. Une préparation commune aux deux volets | 0:46 | 21 s | Remy |
+| Diapositive 4. Volet A : tout se calcule dans le navigateur | 1:07 | 29 s | Remy |
+| Diapositive 5. Ajuster l'encodeur à nos fiches | 1:36 | 33 s | Mahé |
+| Diapositive 6. Volet B : un assistant qui cite ses sources | 2:09 | 26 s | Mahé |
+| Diapositive 7. Chercher par le sens et par les mots | 2:35 | 37 s | Mahé |
 | Diapositive 8. Pourquoi 10 passages plutôt que 5 | 3:12 | 19 s | Jibril |
-| Diapositive 9. Trois modèles, choisis pour la machine qui les exécute | 3:31 | 40 s | Mahé |
+| Diapositive 9. Trois modèles, choisis pour la machine qui les exécute | 3:31 | 40 s | Jibril |
 | Démonstration du volet A, en direct | 4:11 | 85 s | Vaneck |
 | Démonstration du volet B, en direct | 5:36 | 110 s | Maïmouna |
 | Clôture | 7:26 | 10 s | Remy |
@@ -38,13 +38,13 @@
 
 ### Diapositive 1 : Code du travail, en clair
 
-**Maïmouna**, de 0:00 à 0:12 (12 s, 25 mots).
+**Remy**, de 0:00 à 0:12 (12 s, 25 mots).
 
 > Bonjour, nous sommes l'équipe Data Tigers. Notre projet retrouve, dans les fiches du ministère du Travail, la réponse à une question de droit du travail.
 
 ### Diapositive 2 : Une question de travail, 261 fiches officielles
 
-**Maïmouna**, de 0:12 à 0:46 (34 s, 75 mots).
+**Remy**, de 0:12 à 0:46 (34 s, 75 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -57,7 +57,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 3 : Une préparation commune aux deux volets
 
-**Vaneck**, de 0:46 à 1:07 (21 s, 45 mots).
+**Remy**, de 0:46 à 1:07 (21 s, 45 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -70,7 +70,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 4 : Volet A : tout se calcule dans le navigateur
 
-**Vaneck**, de 1:07 à 1:36 (29 s, 59 mots).
+**Remy**, de 1:07 à 1:36 (29 s, 59 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -90,7 +90,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 5 : Ajuster l'encodeur à nos fiches
 
-**Remy**, de 1:36 à 2:09 (33 s, 70 mots).
+**Mahé**, de 1:36 à 2:09 (33 s, 70 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -112,7 +112,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 6 : Volet B : un assistant qui cite ses sources
 
-**Jibril**, de 2:09 à 2:35 (26 s, 57 mots).
+**Mahé**, de 2:09 à 2:35 (26 s, 57 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -130,7 +130,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 7 : Chercher par le sens et par les mots
 
-**Jibril**, de 2:35 à 3:12 (37 s, 79 mots).
+**Mahé**, de 2:35 à 3:12 (37 s, 79 mots).
 
 Apparitions, dans l'ordre des appuis :
 
@@ -168,7 +168,7 @@ Apparitions, dans l'ordre des appuis :
 
 ### Diapositive 9 : Trois modèles, choisis pour la machine qui les exécute
 
-**Mahé**, de 3:31 à 4:11 (40 s, 87 mots).
+**Jibril**, de 3:31 à 4:11 (40 s, 87 mots).
 
 Apparitions, dans l'ordre des appuis :
 
