@@ -205,7 +205,7 @@ def convert(md):
             # une annexe n'est pas numérotée, mais figure au sommaire ; de même une diapositive du script oral,
             # dont le numéro est celui du support et non celui d'une sous-section
             annexe = (cmd == 'section' and re.match(r'^Annexe\b', txt))
-            diapo = (cmd == 'subsection' and re.match(r'^Diapositive\s+\d+\b', txt))
+            diapo = (cmd == 'subsection' and re.match(r'^(Diapositive\s+\d+|Démonstration|Clôture)\b', txt))
             rendu = inline(txt)
             if any(c in rendu for c in ('$', '\\S{}', 'mark{}', '\\code')):
                 plain = strip_md(txt)
@@ -222,7 +222,8 @@ def convert(md):
                 out += ['', r'\Needspace{14\baselineskip}', r'\subsection*{%s}' % rendu,
                         r'\addcontentsline{toc}{subsection}{%s}' % rendu]
             else:
-                out += ['', r'\%s{%s}' % (cmd, rendu)]
+                # un titre n'est jamais seul en bas de page
+                out += ['', r'\Needspace{6\baselineskip}', r'\%s{%s}' % (cmd, rendu)]
             i += 1; continue
         # filet horizontal
         if re.match(r'^-{3,}\s*$', ln):

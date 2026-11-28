@@ -157,7 +157,7 @@ La colonne « Assignés GitHub » inclut les responsables et les soutiens sans l
 
 ## Charges et dates de travail
 
-Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, même lorsque sa charge n'est pas renseignée. Les dates de clôture GitHub de l'inventaire ne sont pas recopiées comme dates de fin de travail.
+Charges en heures, dates de travail en 2026. Chaque issue possède une ligne, même lorsque sa charge n'est pas renseignée. Ces charges alimentent l'analyse des écarts entre charge estimée et charge réelle ; elles ne servent pas à répartir le travail entre les membres, qui est mesuré par les tickets, les commits, les lignes et les fichiers ajoutés (`docs/suivi/CONTRIBUTIONS.md`, décision du 28 novembre 2026). Les dates de clôture GitHub de l'inventaire ne sont pas recopiées comme dates de fin de travail.
 
 | Ticket | Début du travail | Fin du travail | Estimé | Réel | Écart |
 |---|---|---|---|---|---|

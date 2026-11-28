@@ -82,7 +82,6 @@ def main(argv=None) -> int:
         ("70,9 %", pc(q("e5+k5")["rappel_contexte"]["moyenne"]) + " %", "grille 07, e5+k5"),
         ("85,1 %", pc(q("rrf+k10+bge-m3@20")["rappel_contexte"]["moyenne"]) + " %", "grille 07, retenue"),
         ("+14,2 points", f"+{pc(q('rrf+k10+bge-m3@20')['ecart_rappel_vs_reference']['moyenne'])} points", "grille 07, écart"),
-        ("84,3 %", pc(b["jeu_v2"]["systemes"]["R2"]["rappel_contexte"]) + " %", "famille B, jeu v2, R2"),
         ("66,1 %", pc(k["jeu_v2"]["E5 de base"]["k10"]) + " %", "effet de k, E5, k10"),
         ("66,9 %", pc(k["jeu_v2"]["RRF sans reclasseur"]["k5"]) + " %", "effet de k, fusion, k5"),
         ("76,9 %", pc(k["jeu_v2"]["RRF sans reclasseur"]["k10"]) + " %", "effet de k, fusion, k10"),
@@ -92,13 +91,10 @@ def main(argv=None) -> int:
         ("23,4 %", pc(q("rrf+k10+bge-m3@20")["precision_contexte"]["moyenne"]) + " %", "grille 07, précision k10"),
         ("31,4 %", pc(q("rrf+k5+bge-m3@20")["precision_contexte"]["moyenne"]) + " %", "grille 07, précision k5"),
         ("6 889 tokens", f"{q('e5+k15')['tokens_max']:,} tokens".replace(",", " "), "grille 07, e5+k15, maximum"),
-        ("13,9 puis 25,0 %", "13,9 puis 25,0 %" if "| 18/72 (25,0 %) | 10/72 (13,9 %)" in j3 else None, "J3, diapositive 8"),
         ("+11,1 points", "+11,1 points" if "+11,1" in j3 else None, "J3, diapositive 8"),
         ("4,36 Gio", "4,36 Gio" if "4,36 Gio" in rapport else None, "rapport, 2.1"),
         ("81,6 %", "81,6 %" if "81,6 %" in rapport else None, "rapport, 2.3"),
         ("218 exemples", "218 exemples" if "218 exemples" in j3 else None, "J3, diapositive 7"),
-        ("8 faux sur 30", "8 faux sur 30", "PR #162, présentation (lot v1 refusé)"),
-        ("121 + 40", "121 + 40", "jeu v2 figé (8bfd9fb) : 121 du corpus, 40 hors corpus"),
         ("52,9 %", pc(bb["etats"]["R1_adapte"]["M4"]["proportion"]) + " %", "bout en bout, R1 adapté, M4"),
         ("+16,9 points", f"+{pc(bb['comparaisons']['R1_adapte_moins_B2_adapte']['M4']['ecart'])} points", "bout en bout, M4, R1 moins B2"),
         ("11,8 s", f"{bb['etats']['R1_adapte']['descriptif']['duree_totale_mediane_ns'] / 1e9:.1f}".replace(".", ",") + " s", "bout en bout, R1 adapté, durée médiane"),
@@ -106,6 +102,7 @@ def main(argv=None) -> int:
         ("12,4 points", f"{pc(e3['jeu_v2']['ecart_recall5']['ecart'])} points", "famille E, A3, v3-C, jeu v2"),
         ("recule de 5,5 points", f"recule de {pc(-e3['jeu_v1_test']['ecart_recall5']['ecart'])} points", "famille E, A3, v3-C, lot de test"),
         # annexes (26/11) : mesure de bout en bout (A3) et encodeurs synthétiques (A5)
+        # (28/11 : les diapositives 10 à 12 sont supprimées ; les contrôles qui ne portaient que sur elles le sont aussi : 84,3 %, 13,9 puis 25,0 %, 8 faux sur 30, 121 + 40)
         *[(f"{e['M' + m]['succes']} sur {e['M' + m]['effectif']}", f"{e['M' + m]['succes']} sur {e['M' + m]['effectif']}"
            if "M" + m in e else None, f"bout en bout, {nom}, M{m}")
           for nom, e in bb["etats"].items() for m in "1234"],
@@ -127,6 +124,16 @@ def main(argv=None) -> int:
         if not (present and conforme):
             ecarts += 1
         print(f"{'OK ' if present and conforme else 'NON'} {ecrit:22s} source : {source!s:22s} ({nom})")
+    # chiffres annoncés à l'oral : ils doivent figurer à l'écran de la diapositive, pas seulement dans ses notes (28/11 :
+    # les 52,9 % et 10,1 % de la diapositive 9 n'étaient que dans les notes). Texte HTML statique, sans les schémas calculés.
+    a_l_ecran = [("Choix : trois modèles", ("10,1", "52,9", "12 sur 119", "63 sur 119", "témoin"))]
+    for titre, nombres in a_l_ecran:
+        section = re.search(r'<section class="diapo"[^>]*aria-label="%s">(.*?)</section>' % re.escape(titre), gabarit, re.S).group(1)
+        ecran = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<aside.*?</aside>", "", section, flags=re.S)).replace("&nbsp;", " "))
+        for n in nombres:
+            present = n in ecran
+            ecarts += 0 if present else 1
+            print(f"{'OK ' if present else 'NON'} à l'écran de « {titre} » : {n}")
     # données des schémas
     h = donnees["hybride"]
     if (h["rangs"]["dense_base"], h["rangs"]["bm25"], h["rangs"]["fusion"], h["rangs"]["reclasseur"]) != (59, 2, 6, 1):

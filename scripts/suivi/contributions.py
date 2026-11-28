@@ -1,7 +1,7 @@
 """Contributions par membre, mesurées dans le dépôt : tickets, commits et lignes.
 
-Les heures déclarées du classeur de suivi sont des estimations rétrospectives (voir le rapport, section 3.3) : elles ne
-servent pas à comparer les membres. Ce script ne compte que ce que GitHub et Git enregistrent.
+Les heures du classeur de suivi sont des estimations rétrospectives : elles ne servent pas à comparer les membres. Ce
+script ne compte que ce que GitHub et Git enregistrent.
 
 Usage :
     git fetch origin --prune --tags
@@ -16,6 +16,8 @@ Trois mesures, chacune avec sa définition :
   * lignes : « ajoutées » = cumul de `git log --numstat` ; « conservées » = lignes non vides encore présentes dans la
     référence d'après `git blame -w -M -C`. Les lignes sont rangées par catégorie : code, documentation, notebooks
     (JSON brut, hors totaux), données et fichiers de verrouillage (hors totaux), autres.
+  * fichiers : « ajoutés » = fichiers créés, d'après le statut A de `git log --diff-filter=A` (un renommage ou une
+    modification n'en est pas un), par les mêmes catégories.
 
 Trois sources, d'état différent. La référence (`--reference`, un commit pour un relevé figé) fixe les lignes conservées
 et la colonne « dont dans la référence ». Les commits, les lignes ajoutées, les PR, les revues et les tickets sont lus
@@ -148,6 +150,18 @@ def commits(depot, alias, tickets, arret=None):
         c = categorie(chemin)
         stats[courant][f"ajouts_{c}"] += int(ajout)
         stats[courant][f"suppr_{c}"] += int(suppr)
+    # fichiers créés : statut A de git (un renommage est un statut R, un fichier modifié un statut M), par catégorie
+    courant = None
+    flux = git(depot, "-c", "core.quotepath=false", "log", *refs, "--no-merges", "-M", "--diff-filter=A", "--name-only",
+               "--format=@@\x1f%H\x1f%aE")
+    for ligne in flux.splitlines():
+        if ligne.startswith("@@\x1f"):
+            _, sha, adresse = ligne.split("\x1f", 2)
+            assert sha in vus, "commit absent de la passe précédente"
+            courant = membre(adresse, alias)
+        elif ligne.strip():
+            stats[courant]["fichiers_ajoutes"] += 1
+            stats[courant][f"fichiers_ajoutes_{categorie(ligne.strip())}"] += 1
     return stats, touches, vus
 
 
@@ -271,7 +285,8 @@ def main():
             "ajouts_documentation": s["ajouts_documentation"], "suppr_documentation": s["suppr_documentation"],
             "conservees_documentation": conservees["documentation"][m],
             "ajouts_notebooks": s["ajouts_notebooks"], "ajouts_donnees": s["ajouts_donnees"], "ajouts_autres": s["ajouts_autres"],
-            "binaires": s["binaires"]})
+            "binaires": s["binaires"], "fichiers_ajoutes": s["fichiers_ajoutes"],
+            **{f"fichiers_ajoutes_{c}": s[f"fichiers_ajoutes_{c}"] for c in CATEGORIES}})
     colonnes = list(ligne["Mahé"].keys())
     with open(a.csv, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -286,6 +301,9 @@ def main():
         ("Commits et lignes de code", ["commits", "commits_reference", "ajouts_code", "conservees_code"],
          ["Commits poussés", "dont dans la référence", "Lignes de code ajoutées", "Lignes de code conservées"]),
         ("Documentation", ["ajouts_documentation", "conservees_documentation"], ["Lignes de documentation ajoutées", "Lignes de documentation conservées"]),
+        ("Fichiers ajoutés (créés, renommages exclus)", ["fichiers_ajoutes", "fichiers_ajoutes_code", "fichiers_ajoutes_documentation",
+                                                           "fichiers_ajoutes_notebooks", "fichiers_ajoutes_donnees", "fichiers_ajoutes_autres"],
+         ["Fichiers ajoutés, tous types", "dont code", "dont documentation", "dont carnets", "dont données et verrous", "dont autres"]),
         ("Hors totaux (volume brut, non comparable)", ["ajouts_notebooks", "ajouts_donnees"],
          ["Lignes ajoutées dans les carnets (JSON brut)", "Lignes ajoutées dans les données et verrous"]),
     ]
