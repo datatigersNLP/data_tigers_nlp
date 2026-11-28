@@ -411,7 +411,7 @@ Chaque fiche complète figure dans `docs/suivi/outils/`. Les autres candidats so
 
 ## 6. Ce qui reste avant la V1
 
-État au 28 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #177, #178, #179, #181, #183, #184 et #187 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. La #177 a été déployée et le site contrôlé le 26 novembre au soir (section 2.2). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
+État au 28 novembre. La mesure de bout en bout de la chaîne de démonstration (section 2.5), la mesure des encodeurs v2-T et v3-C (section 2.3), l'analyse à deux juges de l'exactitude (#52, sections 2.2 et 2.5), les sections 4 et 5 sont faites. Les fiches des outils sont complètes : chaque membre y a sa ligne et sa décision. Les PR #158, #161, #162, #166, #168, #169, #174, #175, #177, #178, #179, #181, #183, #184, #187 et #188 sont fusionnées ; les #180, #185 et #186 l'ont été avec la #178. La #177 a été déployée et le site contrôlé le 26 novembre au soir (section 2.2). L'échéance du 19 novembre pour la V1 n'a pas été tenue.
 
 | Élément | Responsables | Échéance |
 |---|---|---|
