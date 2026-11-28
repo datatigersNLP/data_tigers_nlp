@@ -1,0 +1,518 @@
+{
+  "format": "agent0-pilot-sources-preparation-v2",
+  "date_preparation": "2026-11-09",
+  "nature": "Sources preparatoires ; 25 ancrages dont 5 paires ; aucun candidat ni gel devaluation.",
+  "corpus": {
+    "git_commit_reference": "a294d252d1ecc285dfd7df88e43a3ec5df891fe7",
+    "sha256_entete": "586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23",
+    "sha256_passages": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d",
+    "sha256_index": "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
+    "nb_passages": 4240,
+    "nb_fiches": 261
+  },
+  "fiches_mise_au_point_exclues": [
+    "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail",
+    "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+    "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail"
+  ],
+  "sources": [
+    {
+      "source": {
+        "passage_id": "m2-article100982-0028",
+        "titre_fiche": "Le contrat de travail temporaire",
+        "section_titre": "Quel délai entre deux contrats de travail temporaire ?",
+        "chemin": [
+          "Situations dans lesquelles le délai de carence est exclu"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire",
+        "url_citation": "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire#:~:text=La%20convention%20ou%20l%E2%80%99accord%20de%20branche%20%C3%A9tendu%20de",
+        "date_maj": "2025-07-03",
+        "texte": "La convention ou l’accord de branche étendu de l’entreprise utilisatrice peut prévoir les cas dans lesquels le délai de carence n’est pas applicable.\nÀ défaut de stipulation dans cette convention ou cet accord de branche étendu, le délai de carence n'est pas applicable :\n1. Lorsque le contrat de mission est conclu pour assurer le remplacement d'un salarié temporairement absent ou dont le contrat de travail est suspendu, en cas de nouvelle absence du salarié remplacé ;\n2. Lorsque le contrat de mission est conclu pour l'exécution de travaux urgents nécessités par des mesures de sécurité ;\n3. Lorsque le contrat de travail à durée déterminée est conclu pour pourvoir un emploi à caractère saisonnier ou pour lequel, dans certains secteurs d'activité définis par décret ou par voie de convention ou d'accord collectif étendu, il est d'usage constant de ne pas recourir au contrat de travail à durée indéterminée en raison de la nature de l'activité exercée et du caractère par nature temporaire de cet emploi ;\n4. Lorsque le contrat est conclu pour assurer le remplacement de l'une des personnes mentionnées aux 4° et 5° de l'article L. 1251-6 du Code du travail (chef d’entreprise artisanale, industrielle ou commerciale, profession libérale, chef d’exploitation agricole, aide familial... ) ;\n5. Lorsque le salarié est à l'initiative d'une rupture anticipée du contrat ;\n6. Lorsque le salarié refuse le renouvellement de son contrat de mission, pour la durée du contrat non renouvelé.",
+        "articles": [
+          "LEGIARTI000035652955"
+        ]
+      },
+      "sha256_texte": "ccd9bf14e2cc0df6d1c180fb5cd7cb46930f753564e7d11d4cc0d99c60c4523f"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article100986-0005",
+        "titre_fiche": "Le travail saisonnier",
+        "section_titre": "La clause de reconduction",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-travail-saisonnier",
+        "url_citation": "https://travail-emploi.gouv.fr/le-travail-saisonnier#:~:text=Le%20salari%C3%A9%20a%20effectu%C3%A9%20au%20moins%20deux%20m%C3%AAmes",
+        "date_maj": "2023-12-06",
+        "texte": "- Le salarié a effectué au moins deux mêmes saisons dans cette entreprise sur deux années consécutives ;\n- L’employeur dispose d'un emploi saisonnier à pourvoir, compatible avec la qualification du salarié. Dans une telle situation, l’employeur informe le salarié de son droit à la reconduction de son contrat, par tout moyen permettant de conférer date certaine à cette information, dès lors que les conditions mentionnées ci-dessus sont réunies, sauf motif dûment fondé.\nPour le calcul de l'ancienneté du salarié, il est fait cumul des durées des contrats de travail à caractère saisonnier successifs qu'il a effectué dans une même entreprise.",
+        "articles": []
+      },
+      "sha256_texte": "6bf3d368b8473c53b8a335a05aad5ce5c4b2cb8eda2afe626642993cfd2f901d"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article100988-0003",
+        "titre_fiche": "La modification du contrat de travail",
+        "section_titre": "L'employeur peut-il modifier le contrat de travail ?",
+        "chemin": [
+          "Exemples",
+          "Le lieu de travail"
+        ],
+        "url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail#:~:text=Le%20changement%20de%20lieu%20de%20travail%20constitue%20une",
+        "date_maj": "2025-04-16",
+        "texte": "Le changement de lieu de travail constitue une modification du contrat de travail si le nouveau lieu de travail se situe dans un secteur géographique différent. Même dans ce cas, il n’y a toutefois pas modification du contrat de travail si le salarié est soumis à une obligation contractuelle ou conventionnelle de mobilité. Le contrat de travail (ou un avenant à ce contrat) peut toutefois prévoir, par une clause claire et précise, que le salarié exécutera son travail exclusivement dans le lieu qu’il mentionne ; dans ce cas, tout changement de lieu de travail, y compris dans le même secteur géographique, constitue une modification d’un élément essentiel du contrat de travail qui ne peut être imposée au salarié. À noter également que la mise en œuvre du télétravail peut être considérée comme un aménagement du poste de travail, rendu nécessaire pour permettre la continuité de l'activité de l'entreprise et garantir la protection des salariés, lorsqu’elle intervient en cas de circonstances exceptionnelles, notamment de menace d'épidémie, ou en cas de force majeure.",
+        "articles": []
+      },
+      "sha256_texte": "6a3e2460a92df12b9b33799fdce230fc50b9bf33eedbf13e697efa29d3338fe2"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article101099-0001",
+        "titre_fiche": "La définition du licenciement pour motif économique",
+        "section_titre": "La définition du licenciement pour motif économique (Web série droit du travail)",
+        "chemin": [
+          "Lire la retranscription textuelle"
+        ],
+        "url": "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+        "url_citation": "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique#:~:text=Lire%20la%20retranscription%20textuelle",
+        "date_maj": "2023-11-14",
+        "texte": "La définition du licenciement pour motif économique a fait l'objet de nombreux débats et de plusieurs réformes.\nQuels sont les éléments de cette définition ? Quels en sont les périmètres d'appréciation et quels sont les critères d'ordre des licenciements ?\nC'est ce que nous allons voir.\nBonjour, c'est Honorine et aujourd'hui je vais vous présenter la définition du licenciement économique et les notions qui y sont liées.\nUn épisode d'une série consacrée au droit du travail.\nComme tout licenciement, le licenciement pour motif économique doit être motivé et justifié par une cause réelle et sérieuse.\nLe Code du travail en donne une définition assez longue. Pour bien la comprendre, le mieux est de distinguer la cause matérielle de la cause justificative.\nLa cause matérielle est le motif concret matérialisant la situation à l'origine du licenciement. La cause justificative est l'explication des raisons de cette situation.\nDébutons par la cause matérielle. Selon l'article L. 1233-33 du Code du travail, constitue un licenciement pour motif économique le licenciement effectué par un employeur pour un ou plusieurs motifs non inhérents à la personne du salarié, résultant d'une suppression ou transformation d'emploi ou d'une modification refusée par le salarié d'un élément essentiel du contrat de travail.\nReprenons ces trois éléments.\nTout d'abord, la suppression d'emploi : elle peut résulter d'une suppression de poste pure et simple, mais aussi de la répartition des tâches réalisées par le salarié licencié entre les autres salariés de l'entreprise.\nLa suppression de poste n'implique pas forcément une diminution d'effectif.\nUne réorganisation de l'entreprise peut exiger la création de nouveaux emplois parallèlement à la suppression de certaines fonctions.\nEn revanche, n'est pas fondé sur une cause économique le licenciement d'un salarié dont l'intégralité des tâches est reprise par son remplaçant.",
+        "articles": [
+          "LEGIARTI000035652923"
+        ]
+      },
+      "sha256_texte": "c80bcf3b3e2f8afbb5a522dbf9cfacbd3a6a403b1b8dd218e9cc0773d6428b80"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article101099-0004",
+        "titre_fiche": "La définition du licenciement pour motif économique",
+        "section_titre": "La définition du licenciement pour motif économique (Web série droit du travail)",
+        "chemin": [
+          "Lire la retranscription textuelle"
+        ],
+        "url": "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+        "url_citation": "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique#:~:text=Lire%20la%20retranscription%20textuelle",
+        "date_maj": "2023-11-14",
+        "texte": "Les difficultés économiques, les mutations technologiques ou la nécessité de sauvegarder la compétitivité de l'entreprise s'apprécient au niveau de cette entreprise si elle n'appartient pas à un groupe.\nDans le cas contraire, elle s'apprécie au niveau du secteur d'activité commun aux siens et à celui des entreprises du groupe auquel elle appartient, établies sur le territoire national, sauf fraude.\nLe secteur d'activité permettant d'apprécier la cause économique du licenciement est caractérisé notamment par la nature des produits, biens ou services délivrés, la clientèle ciblée, les réseaux et modes de distribution se rapportant à un même marché.\nLa cessation d'activité de l'entreprise, quatrième cause justificative, peut également justifier un licenciement pour motif économique.\nToutefois, le fait que la cessation d'activité de l'entreprise résulte de sa liquidation judiciaire ne prive pas le salarié de la possibilité d'invoquer l'existence d'une faute de l'employeur.\nS’il est démontré que des agissements fautifs de l'employeur sont à l'origine des difficultés économiques et de la liquidation judiciaire, le licenciement pourrait être considéré comme dépourvu de cause réelle et sérieuse.\nComme je vous l'indiquais, ces quatre causes ne sont pas exclusives puisque le Code du travail utilise l'adverbe « notamment ».\nJe vous propose maintenant un zoom sur l'ordre des licenciements.\nIl y a une étape obligatoire à tout projet de licenciement individuel ou collectif pour motif économique.\nC'est la détermination du ou des salariés susceptibles d'être licenciés.\nPour ce faire, l'employeur établit un ordre des licenciements tenant compte de critères légaux ou conventionnels.\nLe salarié doit, à sa demande, en être informé. L'inobservation des règles relatives à l'ordre des licenciements expose, sur le plan pénal, l'employeur au paiement de l'amende prévue pour les contraventions de quatrième classe.",
+        "articles": []
+      },
+      "sha256_texte": "8371d30d3a1d1a7a5cf4839e3ecdb2a7942bad8501325961e42a01b934324ec9"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article101105-0000",
+        "titre_fiche": "La priorité de réembauche",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-priorite-de-reembauche",
+        "url_citation": "https://travail-emploi.gouv.fr/la-priorite-de-reembauche#:~:text=La%20priorit%C3%A9%20de%20r%C3%A9embauche%20%2D%20obligatoirement%20mentionn%C3%A9e%20dans",
+        "date_maj": "2025-04-16",
+        "texte": "La priorité de réembauche - obligatoirement mentionnée dans la lettre de licenciement - peut être mise en œuvre pendant un an à compter de la rupture du contrat de travail au profit de tout salarié licencié pour motif économique qui en fait la demande auprès de l'ancien employeur. Ce dernier doit alors l'informer de tout emploi disponible.\nLa priorité de réembauche s’applique à l’occasion de tout licenciement économique, quels que soient l'ampleur du licenciement ou l'effectif de l'entreprise.\nLe non respect de cette priorité est passible de sanctions.",
+        "articles": []
+      },
+      "sha256_texte": "61296657232065ba11422fd46fdb5ce916212082a7c813cc83ad1ca0438cbc44"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article107747-0013",
+        "titre_fiche": "Les jours fériés et les ponts",
+        "section_titre": "Les modalités de récupération des heures perdues",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts",
+        "url_citation": "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts#:~:text=Il%20appartient%20%C3%A0%20un%20accord%20collectif%20d%27entreprise%20ou",
+        "date_maj": "2025-07-03",
+        "texte": "Il appartient à un accord collectif d'entreprise ou d'établissement ou, à défaut, à une convention ou un accord de branche de fixer les modalités de récupération des heures perdues.\nÀ défaut d'accord, les dispositions suivantes sont applicables :\n- Les heures perdues ne sont récupérables que dans les douze mois précédant ou suivant leur perte ;\n- Les heures de récupération ne peuvent être réparties uniformément sur toute l'année. Elles ne peuvent augmenter la durée du travail de l'établissement ou de la partie d'établissement de plus d'une heure par jour, ni de plus de huit heures par semaine.",
+        "articles": []
+      },
+      "sha256_texte": "7106834d447c21c2c52a00f4d8aeb31321eb0a0854d13b0751d068583086fa96"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article108282-0049",
+        "titre_fiche": "Le contrat à durée déterminée (CDD)",
+        "section_titre": "Dans quelles conditions le contrat peut-il être rompu ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+        "url_citation": "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd#:~:text=A%20l%27initiative%20du%20salari%C3%A9%20qui%20justifie%20d%27une%20embauche",
+        "date_maj": "2026-08-24",
+        "texte": "- A l'initiative du salarié qui justifie d'une embauche en contrat à durée indéterminée. Le salarié doit alors respecter un préavis d'une durée égale à 1 jour par semaine compte tenu de la durée totale du CDD (incluant, le cas échéant, son ou ses deux renouvellements) ou - s'agissant d'un CDD sans terme précis - de la durée du contrat effectuée. Dans tous les cas, le préavis ne peut excéder 2 semaines. Toutefois, avec l'accord de l'employeur, le salarié peut être dispensé de préavis ;\n- Accord conclu entre l'employeur et le salarié ;\n- Force majeure, c'est-à-dire un événement exceptionnel, imprévisible et insurmontable qui rend impossible l'exécution du contrat de travail (des difficultés économiques ou la liquidation judiciaire de l'entreprise ne constituent pas, pour l'employeur, des situations de force majeure) ;\n- Inaptitude constatée par le médecin du travail. Cette rupture ne peut intervenir qu'à l'issue de la procédure prévue par le Code du travail, notamment ses articles L. 1226-10 et L. 1226-11 lorsque l'inaptitude est d'origine professionnelle et L. 1226-4 lorsque l'inaptitude n'est pas d'origine professionnelle. En outre, si le salarié est un salarié protégé, elle ne peut intervenir qu'après autorisation de l'inspecteur du travail. À noter que, selon un avis rendu par la Cour de cassation le 21 octobre 2013 « la procédure de rupture d'un contrat de travail à durée déterminée pour inaptitude du salarié, constatée par le médecin du travail, telle que prévue à l'article L. 1243-1 du Code du travail, ne doit pas donner lieu à une convocation à un entretien préalable » ;",
+        "articles": [
+          "LEGIARTI000006900978",
+          "LEGIARTI000025560071",
+          "LEGIARTI000029946319",
+          "LEGIARTI000035653215"
+        ]
+      },
+      "sha256_texte": "b0611936d00e31388873d8e121c43f03e9b55a169c9a8c7cee42ffcbb45d6b7c"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article108282-0054",
+        "titre_fiche": "Le contrat à durée déterminée (CDD)",
+        "section_titre": "Quelle est la situation lorsque le salarié refuse, au terme du CDD, une proposition de CDI ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+        "url_citation": "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd#:~:text=Droit%20%C3%A0%20l%27indemnit%C3%A9%20de%20fin%20de%20contrat%20%28ou",
+        "date_maj": "2026-08-24",
+        "texte": "Droit à l'indemnité de fin de contrat (ou indemnité de précarité) Indépendamment des dispositions mentionnées ci-dessus, on rappelle que l'indemnité de fin de contrat n'est pas due lorsque le salarié refuse d'accepter la conclusion d'un contrat de travail à durée indéterminée pour occuper le même emploi ou un emploi similaire, assorti d'une rémunération au moins équivalente. Pour éviter toute contestation ultérieure, il est nécessaire que cette proposition de CDI soit formulée par écrit au salarié avant la survenance du terme du CDD ou immédiatement après.\nCette absence de droit à l’indemnité de précarité s’applique également lorsque la proposition de l'employeur de transformation de CDD en CDI a été faite après que le salarié ait fait savoir qu’il n’avait pas l’intention de renouveler son CDD (en ce sens, voir l’arrêt de la Cour de cassation du 3 juillet 2024). En d’autres termes, dès lors que l'employeur a offert la conclusion d'un CDI avant le terme du CDD, que le salarié a refusée, l’indemnité de précarité n’est pas due.",
+        "articles": []
+      },
+      "sha256_texte": "59e5cf368940333cf128feefa434d380c883fdb5f558268e5590e1d3928b3d2a"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article108383-0018",
+        "titre_fiche": "La rupture conventionnelle du contrat de travail à durée indéterminée",
+        "section_titre": "En quoi consiste l'homologation de la convention ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee",
+        "url_citation": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee#:~:text=Toutefois%2C%20lorsqu%27une%20partie%20indique%20%C3%A0%20l%27autorit%C3%A9%20administrative%20comp%C3%A9tente",
+        "date_maj": "2025-07-10",
+        "texte": "Toutefois, lorsqu'une partie indique à l'autorité administrative compétente ne pas être en mesure d'utiliser ce téléservice, elle peut effectuer sa démarche par le dépôt d'un formulaire auprès de cette autorité (renseignements auprès de la DREETS compétente).\nL'autorité administrative dispose d'un délai d'instruction de 15 jours ouvrables (c'est à dire que sont exclus les dimanches et les jours fériés- voir précisions ci-dessous), à compter de la réception de la demande, pour s'assurer du respect de la liberté de consentement des parties et des conditions prévues par le Code du travail : respect des règles relatives à l'assistance des parties, au droit de rétractation, au montant minimal de l'indemnité spécifique de rupture conventionnelle.\nLe délai d'instruction de la demande par le directeur régional de l'économie, de l'emploi, du travail et des solidarités démarre le lendemain de la réception de la demande. Par application de l'article R. 1231-1 du Code du travail, si ce délai expire un samedi, un dimanche ou un jour férié ou chômé, il est prorogé jusqu'au premier jour ouvrable suivant.\nÀ défaut de notification dans ce délai, l'homologation est réputée acquise (il s'agira donc d'une homologation « tacite » ou « implicite ») et l'autorité administrative est dessaisie.\nLa validité de la convention est subordonnée à son homologation ; en d'autres termes, la convention n'aura aucune validité et ne sera donc d'aucun effet sur le contrat de travail qui continuera alors de s'exécuter dans les conditions habituelles :\n- Si l'homologation est refusée par l'autorité administrative dans le délai de 15 jours ouvrables mentionné ci-dessus dans ce cas, l'une ou l'autre des parties (ou les deux) peut former un recours contre ce refus d'homologation (voir ci-dessous) ;\n- Si l'autorité administrative n'est saisie par aucune des parties de la demande d'homologation de la convention.",
+        "articles": [
+          "LEGIARTI000018537730"
+        ]
+      },
+      "sha256_texte": "ad72ec2cab3bc6fb6cd8cfcd6abe083437b0b9a314bba3d9ef3b35a1c7c2b87e"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200418-0006",
+        "titre_fiche": "La protection de la santé des jeunes travailleurs",
+        "section_titre": "La réglementation du travail concernant les jeunes (web série droit du travail)",
+        "chemin": [
+          "La retranscription textuelle"
+        ],
+        "url": "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs",
+        "url_citation": "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs#:~:text=La%20retranscription%20textuelle",
+        "date_maj": "2023-11-10",
+        "texte": "Ces jeunes peuvent effectuer des travaux réglementés sous la seule réserve de l'avis favorable du médecin du travail.\nPar exemple, les jeunes travailleurs détenant une habilitation électrique peuvent exécuter des opérations sur les installations électriques dans les limites fixées par l'habilitation.\nPour protéger les travailleurs, signalons qu'il existe une procédure de retrait d'affectation des jeunes confrontés à des travaux dangereux.\nUn inspecteur du travail peut en effet décider du retrait de ceux-ci dans une situation les exposant à un danger grave et imminent pour leur vie ou leur santé, sur simple décision administrative.\nNous arrivons au terme de cette vidéo et il y a donc trois points à retenir.\nTout d'abord, les jeunes de moins de 18 ans peuvent travailler dans des entreprises avec différents statuts et sous certaines conditions, ensuite, des dispositions encadrent alors leur durée du travail et le travail de nuit, enfin, des règles précises existent pour protéger les jeunes mineurs des travaux dangereux pour leur santé ou leur sécurité.\nVous avez apprécié ce contenu et la pratique du droit du travail vous intéresse ?\nDécouvrez le métier d'inspecteur du travail.\nUn métier de terrain qui vous permettra de mettre en pratique vos connaissances sur l'ensemble du champ couvert par le Code du travail et bien plus encore.\nÀ très bientôt, pour un nouvel épisode consacré au droit du travail.\nEn savoir plus sur la web série droit du travail",
+        "articles": []
+      },
+      "sha256_texte": "91ea673564e04215270b71f51ccb5e9b6b52113704ff510ee5d596873c275bf7"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200862-0004",
+        "titre_fiche": "La prévention des chutes de hauteur",
+        "section_titre": "Travaux en hauteur sur toiture en matériau fragile",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+        "url_citation": "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur#:~:text=Chaque%20ann%C3%A9e%2C%20de%20nombreux%20cas%20de%20chutes%20de",
+        "date_maj": "2023-09-08",
+        "texte": "Chaque année, de nombreux cas de chutes de hauteur, graves ou mortelles, au travers de toitures fragiles sont recensés. Ces accidents du travail surviennent notamment en raison des toitures constituées de matériaux qui, après vieillissement (UV, intempéries…), ne possèdent plus leurs performances initiales de résistance au choc et au poids (plaque de fibrociment, tôles rouillées, plaques en plastique translucide, skydomes, lanterneaux…).\nLes risques engendrés doivent être évalués et prévenus notamment par la mise en œuvre de protection contre le risque de chute avant toute intervention.\nLa mise en place de garde-corps ou de grilles en sous-face constitue une solution simple pour éviter ces chutes et sauver des vies au travail.\n- Consulter le guide « Attention aux toitures fragiles » de la DREETS Bretagne\n- Voir la fiche « Travaux de couverture en matériaux fragiles : sécuriser le travail en hauteur » du site Prévention BTP\n- Voir la fiche « Chute au travers d'une plaque de fibrociment » du site Prévention BTP\n- Voir notre fiche sur le cas pratique des skydomes\n- Voir l'affiche de la Carsat Alsace-Moselle sur les skydomes\nLors de la construction de l'ossature des bâtiments, les trémies sont sources de risques de chute, notamment les trémies d'escalier. Elles constituent un réel danger, tant au niveau du moyen d’accès qu’au niveau de la trémie elle-même.\nIl est nécessaire de prévoir une protection de la trémie pour circuler et effectuer des travaux autour en toute sécurité. La protection doit être mise en place dès la pose ou le décoffrage du plancher.\nOr, chaque année, on dénombre plusieurs dizaines d’accidents graves ou mortels qui auraient pu être évités si des mesures adaptées avaient été prises, telles que la pose d’un escalier provisoire ou la pose d’un plancher provisoire équipé d’une trappe d’accès pour le personnel et l’approvisionnement des matériaux.",
+        "articles": []
+      },
+      "sha256_texte": "daf66baa9edced86bddbf1744a058d6fb91d95b2da0fd7dfba9a4bdb18eee989"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article200862-0010",
+        "titre_fiche": "La prévention des chutes de hauteur",
+        "section_titre": "Actions spécifiques du quatrième plan santé au travail (PST 2021-2025)",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+        "url_citation": "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur#:~:text=La%20pr%C3%A9vention%20du%20risque%20de%20chutes%20de%20hauteur",
+        "date_maj": "2023-09-08",
+        "texte": "La prévention du risque de chutes de hauteur ainsi que celles de plain-pied reste un des axes prioritaires du 4e plan santé au travail.\nÀ travers l’action 2.2 « Améliorer la prévention des chutes de hauteur et de plain-pied », quatre sous actions visent particulièrement à améliorer la prévention de ce risque :\n- « Mieux connaître les situations de travail et secteurs accidentogènes pour renforcer la prévention » ;\n- « Promouvoir la prévention des chutes de hauteur pour les métiers et les secteurs particulièrement exposés » ;\n- « Améliorer la conception et la réalisation des chantiers en sécurité par l’implication des maîtres d’ouvrage, notamment ceux des maisons individuelles » ;\n- « Renforcer l’efficacité du dispositif de coordination en matière de sécurité et de protection de la santé (SPS) ».\nLes chutes de hauteur font également l’objet d’engagements majeurs dans le Plan pour la prévention des accidents graves et mortels (PATGM) 2022-2025. L’engagement clé n°14 dédié à « Agir sur le risque de chute de hauteur » se décline autour de deux mesures :\n- Mesure 19 : poursuivre et renforcer le programme « Chutes Pros BTP » dédié au risque de chute de hauteur ;\n- Mesure 20 : renforcer la diffusion de préconisations et les interventions des agents du système d’inspection du travail (SIT).",
+        "articles": []
+      },
+      "sha256_texte": "b471ad9d11eae52a698a1769d40a9609a51f7be2b9e76f551aa5b63d2b586284"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374451-0023",
+        "titre_fiche": "Le compte personnel de formation (CPF)",
+        "section_titre": "Qui peut participer à mon projet de formation et comment ?",
+        "chemin": [
+          "À noter :",
+          "Conversion des droits"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf",
+        "url_citation": "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf#:~:text=Conversion%20des%20droits",
+        "date_maj": "2026-04-13",
+        "texte": "Depuis le 1er janvier 2020, les personnes ayant acquis des droits en heures lors d'une activité publique ou en euros lors d'une activité privée, peuvent les convertir pour les mobiliser pour une formation directement dans MonCompteFormation après s’être authentifiées, en fonction de son statut au moment où le salarié en en fait la demande.",
+        "articles": []
+      },
+      "sha256_texte": "d331af13ae4236049cc71c06aa92133e76eccfceebd9386aa562e3c544d2856b"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374459-0003",
+        "titre_fiche": "Le contrat de professionnalisation",
+        "section_titre": "Un contrat de professionnalisation pour qui ?",
+        "chemin": [
+          "Du côté des employeurs"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation",
+        "url_citation": "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation#:~:text=Tous%20les%20employeurs%20de%20droit%20priv%C3%A9%20assujettis%20au",
+        "date_maj": "2025-08-06",
+        "texte": "Tous les employeurs de droit privé assujettis au financement de la formation professionnelle continue, à l'exception de l'État, des collectivités territoriales et de leurs établissements publics à caractère administratif.\nLes établissements publics industriels et commerciaux (par exemple, la RATP, la SNCF, l’Office national des forêts) assujettis au financement de la formation professionnelle continue et les entreprises d’armement maritime peuvent conclure des contrats de professionnalisation.",
+        "articles": []
+      },
+      "sha256_texte": "5bc819ba7524cf13bf95d671042695eb877e49054adb848541d7b3033fef8705"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374463-0001",
+        "titre_fiche": "Le contrat d'apprentissage",
+        "section_titre": "Pour qui ?",
+        "chemin": [
+          "Quels employeurs ?"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+        "url_citation": "https://travail-emploi.gouv.fr/le-contrat-dapprentissage#:~:text=Toute%20entreprise%20du%20secteur%20priv%C3%A9%2C%20y%20compris%20les",
+        "date_maj": "2026-07-02",
+        "texte": "Toute entreprise du secteur privé, y compris les associations. Avant l’entrée en vigueur de la loi du 26 mai 2026 de simplification de la vie économique, citée en référence, l'employeur devait déclarer prendre les mesures nécessaires à l'organisation de l'apprentissage. À ce titre, l'employeur devait notamment garantir que l'équipement de l'entreprise, les techniques utilisées, les conditions de travail, d'hygiène et de sécurité, les compétences professionnelles et pédagogiques du maître d'apprentissage étaient de nature à permettre une formation satisfaisante.\nDepuis le 28 mai 2026, l’article L. 6223-1 du Code du travail prévoyant cette obligation de déclaration est abrogé. Les obligations de l’employeur en matière d’organisation de l’apprentissage et de formation de l’apprenti demeurent toutefois « applicables ».\nÀ noter : Les entreprises de travail temporaire (ETT) peuvent également recruter en contrat d'apprentissage. Il est aussi possible d'avoir recours au contrat d'apprentissage pour l'exercice d'activités saisonnières, sous conditions.\nLe secteur public non industriel et commercial (dont les 3 fonctions publiques). Ce secteur peut également recourir à l’apprentissage dans les conditions précisées par les articles L. 6227-1 à L. 6227-12 et D. 6271-1 à D. 6272-2 du Code du travail. Plus de précisions sur le site du ministère de la Fonction publique.",
+        "articles": [
+          "LEGIARTI000006904036",
+          "LEGIARTI000037385893",
+          "LEGIARTI000038922674",
+          "LEGIARTI000041824939",
+          "LEGIARTI000041824965"
+        ]
+      },
+      "sha256_texte": "6fdb8bd8c61be6bc071e1a2537f3e16378ea4ec04a1cd41b01aa14694fe946a0"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374463-0012",
+        "titre_fiche": "Le contrat d'apprentissage",
+        "section_titre": "Quelles sont les aides financières pour embaucher en contrat d'apprentissage ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+        "url_citation": "https://travail-emploi.gouv.fr/le-contrat-dapprentissage#:~:text=Les%20employeurs%20d%E2%80%99apprentis%20peuvent%20b%C3%A9n%C3%A9ficier%20d%E2%80%99un%20certain%20nombre",
+        "date_maj": "2026-07-02",
+        "texte": "Les employeurs d’apprentis peuvent bénéficier d’un certain nombre d’aides financières :\n- Une aide pour le recrutement d'apprentis ;\n- Une exonération de cotisations sociales. Celle-ci peut être totale ou partielle selon la taille de l’entreprise ou la qualité d’artisan ;\n- Aides en cas d’embauche d’un travailleur handicapé ;\n- Dans la fonction publique, le FIPHFP finance au cas par cas des aides techniques et humaines qui permettent aux employeurs publics de favoriser l’insertion professionnelle et le maintien dans l’emploi des personnes en situation de handicap ;\n- Des déductions fiscales de la taxe d’apprentissage.\nEn savoir plus sur les aides à l'embauche",
+        "articles": []
+      },
+      "sha256_texte": "b27dfa55c505d312cd5dc9b65711ed971e5430dba89aa875a6fd97acf9c7df4b"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374502-0007",
+        "titre_fiche": "Les documents remis aux salariés lors de la rupture du contrat de travail",
+        "section_titre": "Textes de référence",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail#:~:text=Articles%20L.%201234%2D19%2C%20L.%201234%2D20%2C%20D.%201234%2D6%20%C3%A0",
+        "date_maj": "2025-09-03",
+        "texte": "- Articles L. 1234-19, L. 1234-20, D. 1234-6 à D. 1234-8, R. 1234-5-1, R. 1234-9 à R. 1234-12, R. 1238-3 et R. 1238-7 du Code du travail\n- Loi n° 2023-1196 du 18 décembre 2023 pour le plein emploi (JO du 19 ; création de France Travail)",
+        "articles": [
+          "LEGIARTI000006901138",
+          "LEGIARTI000018537466",
+          "LEGIARTI000018537474",
+          "LEGIARTI000018537540",
+          "LEGIARTI000018537550",
+          "LEGIARTI000019071122",
+          "LEGIARTI000029544357",
+          "LEGIARTI000041433069",
+          "LEGIARTI000041455673"
+        ]
+      },
+      "sha256_texte": "9d2c637894c724a15e93d81a252600156d6ba4244d2a11ad2e6f5c52855a5683"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374523-0002",
+        "titre_fiche": "Les conventions de forfait",
+        "section_titre": "Conventions de forfait : objet",
+        "chemin": [
+          "Forfait en jours"
+        ],
+        "url": "https://travail-emploi.gouv.fr/les-conventions-de-forfait",
+        "url_citation": "https://travail-emploi.gouv.fr/les-conventions-de-forfait#:~:text=Le%20dispositif%20du%20forfait%20en%20jours%20%28n%C3%A9cessairement%20sur",
+        "date_maj": "2026-02-02",
+        "texte": "Le dispositif du forfait en jours (nécessairement sur l’année) permet de rémunérer certains salariés sur la base d’un nombre de jours travaillés annuellement, sans décompte du temps de travail. Les salariés disposent d’une grande liberté pour organiser leur emploi du temps.\nEn matière de conventions de forfait, il convient de distinguer les domaines d’ordre public pour lesquels le législateur fixe les règles auxquelles il n’est pas possible de déroger, les domaines qui relèvent de la négociation collective (avec la primauté donnée à l'accord d'entreprise ou d'établissement sur l'accord de branche), et enfin, le cas échéant, les règles dites « supplétives », c’est-à-dire applicables à défaut d’accord collectif.",
+        "articles": []
+      },
+      "sha256_texte": "833165937aef021eb89a5f28a2bb223124a4054d5a469121dd5072e08f7feb2b"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374530-0010",
+        "titre_fiche": "Les congés payés",
+        "section_titre": "Qu'appelle-t-on période de référence ?",
+        "chemin": [
+          "Information des salariés sur les règles conventionnelles applicables dans l’entreprise"
+        ],
+        "url": "https://travail-emploi.gouv.fr/les-conges-payes",
+        "url_citation": "https://travail-emploi.gouv.fr/les-conges-payes#:~:text=La%20place%20laiss%C3%A9e%20%C3%A0%20la%20n%C3%A9gociation%20collective%2C%20et",
+        "date_maj": "2025-09-17",
+        "texte": "La place laissée à la négociation collective, et donc aux conventions et accords collectifs qui, le cas échéant, en résultent, dans la fixation de certaines des modalités de mise en œuvre des congés payés suppose que les salariés puissent être en mesure de prendre connaissance des conventions et accords applicables dans leur entreprise. Pour cela, les dispositions suivantes sont prévues par le Code du travail :\n- les modalités d'information des salariés et des représentants du personnel sur les textes conventionnels sont définies par convention de branche ou accord professionnel ;\n- en l'absence de convention ou d'accord fixant ces modalités, l’employeur est tenu aux obligations suivantes :\n  - donner au salarié au moment de l'embauche une notice l'informant des textes conventionnels applicables dans l'entreprise ou l'établissement ;\n  - tenir un exemplaire à jour de ces textes à la disposition des salariés sur le lieu de travail ;\n  - mettre sur l'intranet, dans les entreprises dotées de ce dernier, un exemplaire à jour des textes.\nPar ailleurs, un avis, communiqué par tout moyen aux salariés, comporte l'intitulé des conventions et des accords applicables dans l'établissement. L'avis précise où les textes sont tenus à la disposition des salariés sur le lieu de travail ainsi que les modalités leur permettant de les consulter pendant leur temps de présence. Les salariés peuvent également se rapprocher des membres de la délégation du personnel au comité social et économique (CSE) ou des représentants syndicaux (délégués syndicaux, etc. ) s’il en existe dans leur entreprise ou de la direction régionale de l’économie, de l’emploi, du travail et des solidarités (DREETS-DDETS) de son territoire. On rappellera enfin que le texte du Code du travail, comme celui de tous les autres codes en vigueur et des principales conventions collectives, est disponible sur le site www.legifrance.gouv.fr.",
+        "articles": []
+      },
+      "sha256_texte": "1862ba026fb3132ec83d101cad43cf64b7760d91ee08635efcab27848a548a4f"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374843-0006",
+        "titre_fiche": "Le job d'été : les formalités et les obligations",
+        "section_titre": "Quelles conditions de travail ?",
+        "chemin": [
+          "Une rémunération minimum"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations",
+        "url_citation": "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations#:~:text=Les%20jeunes%20de%20moins%20de%2018%20ans%20titulaires",
+        "date_maj": "2026-05-28",
+        "texte": "Les jeunes de moins de 18 ans titulaires d’un contrat de travail sont rémunérés au minimum sur la base du SMIC (à compter du 1er juin 2026, le montant du SMIC horaire brut est fixé à 12,31 €, soit 1 867,02 euros bruts mensuels sur la base de la durée légale de 35 heures hebdomadaires) :\n- Minoré de 20 % avant 17 ans ;\n- Minoré de 10 % entre 17 et 18 ans.\nÀ noter : cet abattement est supprimé pour les jeunes travailleurs justifiant de 6 mois de pratique professionnelle dans la branche d'activité dont ils relèvent.\nCertains accords et conventions collectives peuvent prévoir des conditions de rémunération plus favorables pour les salariés âgés de moins de 18 ans.",
+        "articles": []
+      },
+      "sha256_texte": "000c9427c59bbde5d5d8bf289804d070dd592f60efae142d50c212ca5b4c8234"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article374930-0019",
+        "titre_fiche": "Les obligations de l'employeur lors de l'embauche",
+        "section_titre": "Quelles sont les autres obligations à l'égard du salarié ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+        "url_citation": "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche#:~:text=Organiser%20l%27information%20et%20la%20formation%20%C3%A0%20la%20s%C3%A9curit%C3%A9",
+        "date_maj": "2025-05-27",
+        "texte": "- Organiser l'information et la formation à la sécurité du nouvel embauché. Il s'agit de l'informer précisément sur les précautions à prendre afin d'assurer sa propre sécurité et celle des autres. Si le salarié est exposé à des travaux dangereux, sa formation doit être renforcée. L'information doit être donnée d'une manière compréhensible pour chacun ;\n- Communiquer certaines informations aux salariés, soit par voie d’affichage soit par tout moyen (affichage ou autre). Ces informations concernent principalement :\n  - L’horaire de travail des salariés (obligatoirement par affichage) ;\n  - L’adresse, le numéro d’appel de l’inspection du travail et le nom de l'inspecteur compétent, l’adresse et le numéro d’appel du médecin du travail ou du service de santé au travail compétent pour l’établissement et des services de secours d’urgence (obligatoirement par affichage) ;\n  - L’intitulé des conventions et des accords applicables dans l'établissement, le lieu où ces textes sont tenus à la disposition des salariés et les modalités permettant aux salariés de les consulter pendant leur temps de présence (par tout moyen) ;\n  - Le règlement intérieur (par tout moyen) et les textes de loi relatifs à l’égalité de rémunération entre les femmes et les hommes (par tout moyen) ;\n  - Les consignes en cas d’incendie (obligatoirement par affichage) ;\n  - Les coordonnées du service d’accueil téléphonique qui répond aux demandes d’information et de conseil sur les discriminations et sur les conditions de saisine du Défenseur des droits (09 69 39 00 00, coût d’un appel local) (obligatoirement par affichage).\nLutte contre le harcèlement et les discriminations\nLes personnes mentionnées à l'article L. 1152-2 du Code du travail sont informées par tout moyen du texte de l'article 222-33-2 du Code pénal (définition et sanctions pénales du harcèlement moral).",
+        "articles": [
+          "LEGIARTI000026268384"
+        ]
+      },
+      "sha256_texte": "d92104a81e7851ae9cdf989154519a3a49e6a3c7ad2016e97ece2a4c8cd7fc1c"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375123-0009",
+        "titre_fiche": "L'interdiction de fumer et de vapoter dans les lieux de travail",
+        "section_titre": "Quelles sont les sanctions ?",
+        "chemin": [
+          "Sanctions à l'égard des fumeurs"
+        ],
+        "url": "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail#:~:text=Toute%20personne%20fumant%20dans%20un%20lieu%20%C3%A0%20usage",
+        "date_maj": "2025-07-30",
+        "texte": "Toute personne fumant dans un lieu à usage collectif soumis à l'interdiction de fumer, hors de l'emplacement spécifique réservé aux fumeurs, est passible d'une contravention de la 3e classe qui lui fait encourir une amende forfaitaire de 68 €.\nSi dans un délai de 45 jours, le contrevenant n'acquitte pas le montant dû ou n'effectue aucune requête en exonération auprès du service verbalisateur, le montant de l'amende est majoré et passe à 180 €.\nSi la procédure de l'amende forfaitaire n'est pas utilisée, l'amende maximale encourue pour les contraventions de la 3e classe est de 450 €.\nIl est interdit à tous les occupants d'un véhicule de fumer en présence d'un enfant de moins de 18 ans. Le non-respect de cette interdiction est puni de l'amende prévue pour les contraventions de la 4e classe (voir ci-dessous).",
+        "articles": []
+      },
+      "sha256_texte": "071bab5970eb7dfe77f945879242b6cc3976097e7b912f25174e33445d6b2cf4"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375154-0009",
+        "titre_fiche": "Le harcèlement moral",
+        "section_titre": "Quelle est l'étendue de la protection des victimes et des témoins du harcèlement moral ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/le-harcelement-moral",
+        "url_citation": "https://travail-emploi.gouv.fr/le-harcelement-moral#:~:text=Les%20faits%20peuvent%20%C3%AAtre%20constat%C3%A9s%20sur%20proc%C3%A8s%2Dverbal%20par",
+        "date_maj": "2025-07-03",
+        "texte": "Les faits peuvent être constatés sur procès-verbal par les agents de contrôle de l’inspection du travail (inspecteurs et contrôleurs du travail, agents de contrôle assimilés ; (sur ce point, voir les précisions données dans la circulaire DGT du 12 novembre 2012 citée en référence) et sont passibles des sanctions prévues par le Code pénal.",
+        "articles": []
+      },
+      "sha256_texte": "624a5565e39d19763d9248be9b2c7ec3d04f8e23e789452cf3264000882bd4f9"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375384-0016",
+        "titre_fiche": "Les missions et les prérogatives de l’inspection du travail",
+        "section_titre": "Textes de référence",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail",
+        "url_citation": "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail#:~:text=Articles%20L.%201263%2D1%20%C3%A0%20L.%201263%2D7%2C%20L.%208112%2D1",
+        "date_maj": "2025-02-17",
+        "texte": "- Articles L. 1263-1 à L. 1263-7, L. 8112-1 et suivants, R. 8111-1 et suivants du Code du travail\n- Circulaire DGT n° 2012-14 du 12 novembre 2012\n- Décret n° 2020-1257 du 14 octobre 2020 déclarant l'état d'urgence sanitaire (JO du 15)\n- Loi n° 2020-1379 du 14 novembre 2020 autorisant la prorogation de l'état d'urgence sanitaire […] (JO du 15)\n- Ordonnance n° 2020-1402 du 18 novembre 2020 portant adaptation des règles applicables aux juridictions de l'ordre administratif (JO du 19)\n- Loi n° 2021-160 du 15 février 2021 prorogeant l'état d'urgence sanitaire (JO du 16)\n- Décret n° 2020-1545 du 9 décembre 2020 (JO du 10)",
+        "articles": [
+          "LEGIARTI000018520908",
+          "LEGIARTI000030996775",
+          "LEGIARTI000033025020",
+          "LEGIARTI000033025397"
+        ]
+      },
+      "sha256_texte": "c96da289f93ca32762cd7d3b3bc3be91f2d7433d99f7b7b424df5c63471f4bde"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article375531-0000",
+        "titre_fiche": "Les congés pour événements familiaux et le congé de deuil",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil",
+        "url_citation": "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil#:~:text=Naissance%2C%20mariage%2C%20conclusion%20d%E2%80%99un%20PACS%2C%20d%C3%A9c%C3%A8s%20d%E2%80%99un%20proche%E2%80%A6",
+        "date_maj": "2025-10-01",
+        "texte": "Naissance, mariage, conclusion d’un PACS, décès d’un proche… Lorsque ces événements surviennent, le salarié peut s’absenter pendant une durée minimale de 1 à 14 jours, selon les circonstances. A la demande d’absence adressée à l’employeur, doit être jointe une justification (certificat de naissance, de décès…) de l’événement.\nPar ailleurs, un congé de deuil de 8 jours au minimum est également prévu pour le salarié, en cas de décès de son enfant âgé de moins de 25 ans ou d'une personne âgée de moins de 25 ans à sa charge effective et permanente. Ce congé peut être indemnisé par la Sécurité sociale.\nCes congés n'entraînent pas de réduction de la rémunération qui tient compte, le cas échéant, des indemnités versées par la Sécurité sociale, et sont assimilés à du temps de travail effectif pour la détermination de la durée du congé payé annuel.",
+        "articles": []
+      },
+      "sha256_texte": "214cab25001596c7e0a331c6adc3e75e68ebcdf39641c5aae2bb9043775f735a"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376095-0004",
+        "titre_fiche": "Questions-réponses | Le versement du salaire",
+        "section_titre": "La garantie des salaires : c’est quoi ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "url_citation": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire#:~:text=Le%20r%C3%A9gime%20de%20garantie%20des%20salaires%20%28AGS%29%20intervient",
+        "date_maj": "2026-05-28",
+        "texte": "Le régime de garantie des salaires (AGS) intervient si l’entreprise se trouve en procédure collective (sauvegarde, redressement ou liquidation judiciaire) et n’a pas de fonds disponibles pour payer les salaires, préavis ou indemnités. L’AGS, financée par une cotisation obligatoire à la charge des employeurs, garantit ainsi le paiement des sommes dues aux salariés en exécution de leur contrat de travail.\nPour la mise en jeu de l’AGS, un mandataire judiciaire est désigné. C'est lui qui accomplit l'ensemble des démarches pour obtenir le remboursement des créances salariales.\nDésigné par les salariés, un représentant des salariés contrôle le montant des sommes dues et versées aux salariés et sert d’intermédiaire entre ceux-ci et l’administrateur ou le tribunal.\nLe montant des sommes garanties est-il limité ? Oui, et le plafond est variable en fonction de l’ancienneté du contrat du salarié.\nPour en savoir plus, consultez notre fiche sur la garantie en cas de sauvegarde, de redressement ou de liquidation judiciaire.\nVous pouvez également consulter le site de l’AGS.",
+        "articles": []
+      },
+      "sha256_texte": "5c66b851a832878dfa3943ad57c36ac22d68ebf55a968b68ff215cec62eb3064"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376804-0000",
+        "titre_fiche": "La définition du CSE et le cadre de sa mise en place",
+        "section_titre": "Chapô",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+        "url_citation": "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place#:~:text=Le%20comit%C3%A9%20social%20et%20%C3%A9conomique%20%28CSE%29%20est%20mis",
+        "date_maj": "2026-03-30",
+        "texte": "- Le comité social et économique (CSE) est mis en place, selon le cas, au niveau de l'entreprise d’au moins 11 salariés, d'une unité économique et sociale (UES) ou au niveau interentreprises.\n- Des CSE d’établissement et un CSE central d'entreprise sont constitués dans les entreprises d’au moins 50 salariés comportant au moins deux établissements distincts.",
+        "articles": []
+      },
+      "sha256_texte": "4286f3d35e14d28f4bfff3a65c709405cfc57bb12679e49fa280942c05f18888"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376804-0008",
+        "titre_fiche": "La définition du CSE et le cadre de sa mise en place",
+        "section_titre": "Qu'est-ce que le comité social et économique (CSE) ?",
+        "chemin": [],
+        "url": "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+        "url_citation": "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place#:~:text=Dans%20les%20entreprises%20de%20moins%20de%20300%20salari%C3%A9s",
+        "date_maj": "2026-03-30",
+        "texte": "Dans les entreprises de moins de 300 salariés et dans les établissements appartenant à ces entreprises, le délégué syndical est, de droit, représentant syndical au CSE (L. 2143-22). Cette disposition ne trouve toutefois pas à s'appliquer dans les entreprises de moins de 50 salariés dans lesquelles il n'est donc pas possible de désigner un représentant syndical auprès du CSE ; sur cette question, on peut se reporter aux précisions figurant dans l'arrêt de la Cour de cassation du 8 septembre 2021. La Cour a par ailleurs précisé en 2024 qu’un accord collectif dérogatoire stipulant que le délégué syndical est choisi en-dehors des membres du CSE n’a pas pour conséquence de faire exception à la règle.\nDans les entreprises d'au moins 300 salariés, le représentant syndical est choisi parmi les membres du personnel de l'entreprise et doit remplir les conditions d'éligibilité au comité social et économique fixées à l'article L. 2314-19, mais ne doit pas y être élu, titulaire ou suppléant, les pouvoirs attribués par la loi à l’une et à l’autre de ces fonctions étant différents (Cass. Soc. , 11 septembre 2019, n°18-23764). Le seuil de 300 salariés mentionné ci-dessus est réputé franchi lorsque l'effectif de l'entreprise dépasse ce seuil pendant 12 mois consécutifs ; comme le précise la Cour de cassation dans un arrêt du 22 mars 2023, c'est à la date des dernières élections professionnelles que s'apprécient ces conditions d'ouverture du droit pour un syndicat de désigner un représentant au CSE, et non pas à la date de désignation du représentant.\nDans les entreprises d'au moins 501 salariés, le représentant syndical au CSE dispose d'heures de délégation fixées dans les limites précisées par les articles R. 2315-4 et R. 2315-5 du Code du travail et qui peuvent être utilisées dans les conditions mentionnées aux articles L. 2315-7, L. 2315-10 et L. 2315-12 du Code du travail.",
+        "articles": [
+          "LEGIARTI000035651085",
+          "LEGIARTI000035651223",
+          "LEGIARTI000035651234",
+          "LEGIARTI000035651243",
+          "LEGIARTI000035652997",
+          "LEGIARTI000036417719",
+          "LEGIARTI000036417721"
+        ]
+      },
+      "sha256_texte": "383af2882af3f1c5f8cad53b8ac774d814623efa4be704ddb37c235c835971bf"
+    },
+    {
+      "source": {
+        "passage_id": "m2-article376807-0027",
+        "titre_fiche": "Le fonctionnement et les moyens d'actions du CSE",
+        "section_titre": "Comment, et avec quels moyens, le CSE fonctionne-t-il dans les entreprises d'au moins 50 salariés ?",
+        "chemin": [
+          "Réunions avec l'employeur",
+          "Titulaires et suppléants"
+        ],
+        "url": "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+        "url_citation": "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse#:~:text=Le%20suppl%C3%A9ant%20assiste%20aux%20r%C3%A9unions%20du%20CSE%20en",
+        "date_maj": "2025-09-19",
+        "texte": "Le suppléant assiste aux réunions du CSE en l'absence du titulaire. En d'autres termes, si le titulaire est présent à la réunion du comité, son suppléant ne peut être lui-même présent.\nLocal\nL'employeur met à la disposition du CSE un local aménagé et le matériel nécessaire à l'exercice de ses fonctions. Le CSE peut organiser, dans ce local, des réunions d'information, internes au personnel, portant notamment sur des problèmes d'actualité. Le comité peut également inviter des personnalités extérieures, syndicales ou autres, dans les conditions prévues par les articles L. 2142-10 et L. 2142-11 du Code du travail. Ces réunions ont lieu en dehors du temps de travail des participants. Toutefois, les membres de la délégation du personnel du CSE peuvent se réunir sur leur temps de délégation.",
+        "articles": [
+          "LEGIARTI000006901623",
+          "LEGIARTI000006901624"
+        ]
+      },
+      "sha256_texte": "50e72b03c7e81458a1b9d37ae6990a657a121d54b930bcc631445f70cc7c4d85"
+    }
+  ],
+  "revision_preparation": 2,
+  "revision_precedente_commit": "377717f477abd8d85eb80b1f2ee9157692c3a6c7",
+  "nb_fiches": 25,
+  "nb_passages": 30
+}

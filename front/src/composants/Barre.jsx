@@ -2,14 +2,12 @@
 // sur ordinateur ; sur téléphone, menu ouvert par-dessus la conversation, fermé par Échap ou par un toucher à côté.
 
 import { useEffect, useRef } from "react";
+import logoTigre from "../assets/logo-tigre.svg";
 
-export function Logo({ className = "h-[30px] w-[30px]" }) {
-  return (
-    <svg viewBox="0 0 32 32" className={`${className} shrink-0`} aria-hidden="true">
-      <rect width="32" height="32" rx="9" className="fill-accent" />
-      <path d="M10 11h12M10 16h12M10 21h7" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
-    </svg>
-  );
+// logo de l'équipe (#176) : tigre en pixel art, dessiné sur une grille de 32 pixels (docs/charte/logo/tigre.py) ;
+// affiché à 32 px ou à un multiple, pour que chaque pixel du dessin tombe sur des pixels entiers de l'écran
+export function Logo({ className = "h-8 w-8" }) {
+  return <img src={logoTigre} alt="" width="32" height="32" className={`${className} shrink-0`} />;
 }
 
 // éléments activables et visibles d'un conteneur, dans l'ordre de tabulation du document
@@ -21,7 +19,9 @@ const titreRubrique = "mb-2 px-1.5 text-xs font-semibold uppercase tracking-wide
 const elementListe =
   "w-full rounded-[9px] px-2.5 py-[9px] text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent";
 
-export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauChat, exemples, utiliserExemple, occupe }) {
+export default function Barre({
+  ouvert, fermer, chats, actuel, choisir, nouveauChat, exemples, utiliserExemple, occupe, ouvrirConfidentialite,
+}) {
   const premier = useRef(null);
   const panneau = useRef(null);
   // chats de la session qui ont au moins une question, le plus récent en haut ; titre : leur première question
@@ -46,18 +46,14 @@ export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauC
       if (ev.key !== "Tab" || !panneau.current) return;
       const liste = activables(panneau.current);
       if (liste.length === 0) return;
-      const [debut, fin] = [liste[0], liste[liste.length - 1]];
-      const actif = document.activeElement;
-      if (!panneau.current.contains(actif)) {
-        ev.preventDefault();
-        (ev.shiftKey ? fin : debut).focus();
-      } else if (ev.shiftKey && actif === debut) {
-        ev.preventDefault();
-        fin.focus();
-      } else if (!ev.shiftKey && actif === fin) {
-        ev.preventDefault();
-        debut.focus();
-      }
+      // la tabulation est entièrement gérée ici, et non laissée au navigateur hors des bords : avec ses réglages
+      // par défaut, Safari ne passe pas par les boutons, et le focus quittait le panneau pour le document
+      ev.preventDefault();
+      const i = liste.indexOf(document.activeElement);
+      const n = liste.length;
+      // focus hors de la liste (document, panneau lui-même) : premier élément avec Tab, dernier avec Maj+Tab
+      const suivant = i === -1 ? (ev.shiftKey ? n - 1 : 0) : (i + (ev.shiftKey ? n - 1 : 1)) % n;
+      liste[suivant].focus();
     }
     document.addEventListener("keydown", clavier);
     return () => document.removeEventListener("keydown", clavier);
@@ -152,6 +148,14 @@ export default function Barre({ ouvert, fermer, chats, actuel, choisir, nouveauC
             Vos questions restent dans votre navigateur : le modèle qui les analyse s'y exécute, aucune n'est envoyée à
             un serveur.
           </p>
+          <button
+            type="button"
+            onClick={ouvrirConfidentialite}
+            aria-haspopup="dialog"
+            className="px-1 text-left text-[13px] font-medium text-accent-texte underline underline-offset-2 hover:text-encre focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            Confidentialité et mentions légales
+          </button>
           <p className="px-1 font-mono text-[11px] text-gris">
             version {__VERSION__} · construite le {__DATE_CONSTRUCTION__}
           </p>

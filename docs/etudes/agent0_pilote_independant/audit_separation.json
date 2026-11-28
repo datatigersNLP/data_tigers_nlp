@@ -1,0 +1,665 @@
+{
+  "format": "agent0-pilot-separation-audit-v1",
+  "date": "2026-11-09",
+  "statut": "regles_reproduites_lots_prives_non_controles",
+  "dev_reference": "a294d252d1ecc285dfd7df88e43a3ec5df891fe7",
+  "revision_initiale_pr145": "377717f477abd8d85eb80b1f2ee9157692c3a6c7",
+  "portee": "Controle des listes dexclusion et des viviers, pas attestation des donnees effectivement utilisees en entrainement.",
+  "entrees": {
+    "metadonnees_jeu_humain": {
+      "commit_tag": "cdb48c97064de625df61703a9a41e106160e0f50",
+      "chemin": "evaluation/questions/questions_annotees.csv",
+      "sha256": "807498144fec46722ffab045a87c191b6282a86300799976869d4d6c1755fb35",
+      "colonnes_exploitees": [
+        "lot",
+        "type",
+        "url"
+      ],
+      "textes_questions_extraits_exploites": false
+    },
+    "exclusions_encodeur": {
+      "regle": "scripts/adaptation/01_preparer_benchmark.py",
+      "reference_lue_par_code": "origin/feat/44-jeu-questions-annotees",
+      "sha256_csv_constate": "807498144fec46722ffab045a87c191b6282a86300799976869d4d6c1755fb35",
+      "mutable_a_recontroler": true
+    },
+    "sources_corpus": {
+      "git_commit_reference": "a294d252d1ecc285dfd7df88e43a3ec5df891fe7",
+      "sha256_entete": "586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23",
+      "sha256_passages": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d",
+      "sha256_index": "2ec45586ab9aaa578f11e271d0ff077c87c105c5de50dcd839e5e9258475b886",
+      "nb_passages": 4240,
+      "nb_fiches": 261
+    },
+    "code_sha256": {
+      "scripts/adaptation/03_generer_paires_locales.py": "08dc5db2ad91698415b382e3603dd215910ab3421aa384f9509d57b4a404e412",
+      "scripts/adaptation_qwen/separation.py": "3e40a0846baa52563ad4452f00148ac312ab536543a9424dce2f4c4c849c6cde",
+      "scripts/adaptation_qwen/donnees_adaptation.py": "1adb6d655b54dcbe7b1bcfa3dfaeb57294c03bea5a38b4775ffe39c77171b560",
+      "scripts/adaptation/01_preparer_benchmark.py": "f0914710e623aa04d566672fc1acbfc1ebbd3b17494941ce42d24ff221f24711"
+    }
+  },
+  "exclusions": {
+    "qwen": {
+      "nombre": 61,
+      "empreinte_slugs_triees_sans_lf_final": "ba0135f4f3acfc2901a43b90dc0bf521bccf5e83b91bf2cb63e9ff526d498ea7",
+      "urls": [
+        "https://travail-emploi.gouv.fr/5-questions-reponses-sur-la-sante-au-travail",
+        "https://travail-emploi.gouv.fr/5-questionsreponses-sur-la-validation-des-acquis-de-lexperience-vae",
+        "https://travail-emploi.gouv.fr/handicap-le-travail-en-milieu-ordinaire",
+        "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+        "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+        "https://travail-emploi.gouv.fr/la-demission",
+        "https://travail-emploi.gouv.fr/la-duree-legale-du-travail",
+        "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "https://travail-emploi.gouv.fr/la-periode-dessai",
+        "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+        "https://travail-emploi.gouv.fr/la-prevention-des-risques-psychosociaux-rps",
+        "https://travail-emploi.gouv.fr/la-prevention-des-troubles-musculo-squelettiques-tms",
+        "https://travail-emploi.gouv.fr/la-priorite-de-reembauche",
+        "https://travail-emploi.gouv.fr/la-prise-en-charge-des-frais-de-transport-par-lemployeur",
+        "https://travail-emploi.gouv.fr/la-procedure-en-cas-de-licenciement-pour-motif-personnel",
+        "https://travail-emploi.gouv.fr/la-protection-contre-les-discriminations",
+        "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs",
+        "https://travail-emploi.gouv.fr/la-reconnaissance-de-linaptitude-medicale-au-travail-et-ses-consequences",
+        "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee",
+        "https://travail-emploi.gouv.fr/la-sanction-disciplinaire",
+        "https://travail-emploi.gouv.fr/la-sante-au-travail-des-salaries-en-interim-et-cdd",
+        "https://travail-emploi.gouv.fr/lallocation-temporaire-degressive",
+        "https://travail-emploi.gouv.fr/le-bilan-de-competences",
+        "https://travail-emploi.gouv.fr/le-bulletin-de-paie",
+        "https://travail-emploi.gouv.fr/le-compte-epargne-temps-cet",
+        "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf",
+        "https://travail-emploi.gouv.fr/le-conge-parental-deducation",
+        "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+        "https://travail-emploi.gouv.fr/le-conseil-de-prudhommes",
+        "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+        "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-duree-indeterminee-cdi",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-intermittent",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-les-principales-caracteristiques",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire",
+        "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+        "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+        "https://travail-emploi.gouv.fr/le-harcelement-moral",
+        "https://travail-emploi.gouv.fr/le-harcelement-sexuel",
+        "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations",
+        "https://travail-emploi.gouv.fr/le-licenciement-pour-motif-personnel-les-causes-possibles-les-sanctions-applicables",
+        "https://travail-emploi.gouv.fr/le-reglement-interieur",
+        "https://travail-emploi.gouv.fr/le-salaire-fixation-et-paiement",
+        "https://travail-emploi.gouv.fr/le-smic-salaire-minimum-de-croissance",
+        "https://travail-emploi.gouv.fr/le-travail-de-nuit",
+        "https://travail-emploi.gouv.fr/le-travail-du-dimanche",
+        "https://travail-emploi.gouv.fr/le-travail-saisonnier",
+        "https://travail-emploi.gouv.fr/le-travail-temps-partiel-contrat-et-statut-du-salarie",
+        "https://travail-emploi.gouv.fr/lentretien-professionnel",
+        "https://travail-emploi.gouv.fr/les-conges-payes",
+        "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil",
+        "https://travail-emploi.gouv.fr/les-conventions-de-forfait",
+        "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+        "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts",
+        "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail",
+        "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+        "https://travail-emploi.gouv.fr/lindemnisation-legale-des-absences-pour-maladie-ou-accident",
+        "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail",
+        "https://travail-emploi.gouv.fr/offre-demploi-et-embauche-les-droits-du-candidat",
+        "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "https://travail-emploi.gouv.fr/salaries-detaches-vos-droits"
+      ],
+      "controle_cibles_et_contextes": true
+    },
+    "encodeur": {
+      "nombre_urls_non_vides_constate": 66,
+      "empreinte_urls_triees_sans_lf_final": "a8a07b31b9f7f234b1ff518c9002bdea563fb8b2182fdd5b9e2bc6ee6e31b200",
+      "urls": [
+        "https://travail-emploi.gouv.fr/5-questions-reponses-sur-la-sante-au-travail",
+        "https://travail-emploi.gouv.fr/5-questionsreponses-sur-la-validation-des-acquis-de-lexperience-vae",
+        "https://travail-emploi.gouv.fr/adapter-le-poste-dun-salarie-sa-situation",
+        "https://travail-emploi.gouv.fr/chaleur-et-canicule-au-travail-les-precautions-prendre",
+        "https://travail-emploi.gouv.fr/handicap-le-travail-en-milieu-ordinaire",
+        "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+        "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+        "https://travail-emploi.gouv.fr/la-demission",
+        "https://travail-emploi.gouv.fr/la-duree-legale-du-travail",
+        "https://travail-emploi.gouv.fr/la-greve",
+        "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "https://travail-emploi.gouv.fr/la-periode-dessai",
+        "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+        "https://travail-emploi.gouv.fr/la-prevention-des-risques-psychosociaux-rps",
+        "https://travail-emploi.gouv.fr/la-prevention-des-troubles-musculo-squelettiques-tms",
+        "https://travail-emploi.gouv.fr/la-priorite-de-reembauche",
+        "https://travail-emploi.gouv.fr/la-prise-en-charge-des-frais-de-transport-par-lemployeur",
+        "https://travail-emploi.gouv.fr/la-procedure-en-cas-de-licenciement-pour-motif-personnel",
+        "https://travail-emploi.gouv.fr/la-protection-contre-les-discriminations",
+        "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs",
+        "https://travail-emploi.gouv.fr/la-reconnaissance-de-linaptitude-medicale-au-travail-et-ses-consequences",
+        "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee",
+        "https://travail-emploi.gouv.fr/la-sanction-disciplinaire",
+        "https://travail-emploi.gouv.fr/la-sante-au-travail-des-salaries-en-interim-et-cdd",
+        "https://travail-emploi.gouv.fr/lallocation-temporaire-degressive",
+        "https://travail-emploi.gouv.fr/le-bilan-de-competences",
+        "https://travail-emploi.gouv.fr/le-bulletin-de-paie",
+        "https://travail-emploi.gouv.fr/le-compte-epargne-temps-cet",
+        "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf",
+        "https://travail-emploi.gouv.fr/le-conge-parental-deducation",
+        "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+        "https://travail-emploi.gouv.fr/le-conseil-de-prudhommes",
+        "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+        "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-duree-indeterminee-cdi",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-intermittent",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-les-principales-caracteristiques",
+        "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire",
+        "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+        "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+        "https://travail-emploi.gouv.fr/le-harcelement-moral",
+        "https://travail-emploi.gouv.fr/le-harcelement-sexuel",
+        "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations",
+        "https://travail-emploi.gouv.fr/le-licenciement-pour-motif-personnel-les-causes-possibles-les-sanctions-applicables",
+        "https://travail-emploi.gouv.fr/le-reglement-interieur",
+        "https://travail-emploi.gouv.fr/le-salaire-fixation-et-paiement",
+        "https://travail-emploi.gouv.fr/le-smic-salaire-minimum-de-croissance",
+        "https://travail-emploi.gouv.fr/le-travail-de-nuit",
+        "https://travail-emploi.gouv.fr/le-travail-du-dimanche",
+        "https://travail-emploi.gouv.fr/le-travail-saisonnier",
+        "https://travail-emploi.gouv.fr/le-travail-temps-partiel-contrat-et-statut-du-salarie",
+        "https://travail-emploi.gouv.fr/lentretien-professionnel",
+        "https://travail-emploi.gouv.fr/les-conges-payes",
+        "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil",
+        "https://travail-emploi.gouv.fr/les-conventions-de-forfait",
+        "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+        "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts",
+        "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail",
+        "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+        "https://travail-emploi.gouv.fr/les-stages-etudiants-en-milieu-professionnel",
+        "https://travail-emploi.gouv.fr/lindemnisation-legale-des-absences-pour-maladie-ou-accident",
+        "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail",
+        "https://travail-emploi.gouv.fr/offre-demploi-et-embauche-les-droits-du-candidat",
+        "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "https://travail-emploi.gouv.fr/risques-chimiques-fiche-de-donnees-de-securite-et-reglement-reach",
+        "https://travail-emploi.gouv.fr/salaries-detaches-vos-droits"
+      ]
+    },
+    "mise_au_point": [
+      "https://travail-emploi.gouv.fr/la-medaille-dhonneur-du-travail",
+      "https://travail-emploi.gouv.fr/le-conge-sans-solde",
+      "https://travail-emploi.gouv.fr/les-attributions-du-cse-en-matiere-de-sante-de-securite-et-de-conditions-de-travail"
+    ],
+    "vivier_intersection_hors_mise_au_point": [
+      "https://travail-emploi.gouv.fr/5-questions-reponses-sur-la-sante-au-travail",
+      "https://travail-emploi.gouv.fr/5-questionsreponses-sur-la-validation-des-acquis-de-lexperience-vae",
+      "https://travail-emploi.gouv.fr/handicap-le-travail-en-milieu-ordinaire",
+      "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+      "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+      "https://travail-emploi.gouv.fr/la-demission",
+      "https://travail-emploi.gouv.fr/la-duree-legale-du-travail",
+      "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+      "https://travail-emploi.gouv.fr/la-periode-dessai",
+      "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+      "https://travail-emploi.gouv.fr/la-prevention-des-risques-psychosociaux-rps",
+      "https://travail-emploi.gouv.fr/la-prevention-des-troubles-musculo-squelettiques-tms",
+      "https://travail-emploi.gouv.fr/la-priorite-de-reembauche",
+      "https://travail-emploi.gouv.fr/la-prise-en-charge-des-frais-de-transport-par-lemployeur",
+      "https://travail-emploi.gouv.fr/la-procedure-en-cas-de-licenciement-pour-motif-personnel",
+      "https://travail-emploi.gouv.fr/la-protection-contre-les-discriminations",
+      "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs",
+      "https://travail-emploi.gouv.fr/la-reconnaissance-de-linaptitude-medicale-au-travail-et-ses-consequences",
+      "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee",
+      "https://travail-emploi.gouv.fr/la-sanction-disciplinaire",
+      "https://travail-emploi.gouv.fr/la-sante-au-travail-des-salaries-en-interim-et-cdd",
+      "https://travail-emploi.gouv.fr/lallocation-temporaire-degressive",
+      "https://travail-emploi.gouv.fr/le-bilan-de-competences",
+      "https://travail-emploi.gouv.fr/le-bulletin-de-paie",
+      "https://travail-emploi.gouv.fr/le-compte-epargne-temps-cet",
+      "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf",
+      "https://travail-emploi.gouv.fr/le-conge-parental-deducation",
+      "https://travail-emploi.gouv.fr/le-conseil-de-prudhommes",
+      "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+      "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation",
+      "https://travail-emploi.gouv.fr/le-contrat-de-travail-duree-indeterminee-cdi",
+      "https://travail-emploi.gouv.fr/le-contrat-de-travail-intermittent",
+      "https://travail-emploi.gouv.fr/le-contrat-de-travail-les-principales-caracteristiques",
+      "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire",
+      "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+      "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+      "https://travail-emploi.gouv.fr/le-harcelement-moral",
+      "https://travail-emploi.gouv.fr/le-harcelement-sexuel",
+      "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations",
+      "https://travail-emploi.gouv.fr/le-licenciement-pour-motif-personnel-les-causes-possibles-les-sanctions-applicables",
+      "https://travail-emploi.gouv.fr/le-reglement-interieur",
+      "https://travail-emploi.gouv.fr/le-salaire-fixation-et-paiement",
+      "https://travail-emploi.gouv.fr/le-smic-salaire-minimum-de-croissance",
+      "https://travail-emploi.gouv.fr/le-travail-de-nuit",
+      "https://travail-emploi.gouv.fr/le-travail-du-dimanche",
+      "https://travail-emploi.gouv.fr/le-travail-saisonnier",
+      "https://travail-emploi.gouv.fr/le-travail-temps-partiel-contrat-et-statut-du-salarie",
+      "https://travail-emploi.gouv.fr/lentretien-professionnel",
+      "https://travail-emploi.gouv.fr/les-conges-payes",
+      "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil",
+      "https://travail-emploi.gouv.fr/les-conventions-de-forfait",
+      "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+      "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts",
+      "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail",
+      "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+      "https://travail-emploi.gouv.fr/lindemnisation-legale-des-absences-pour-maladie-ou-accident",
+      "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail",
+      "https://travail-emploi.gouv.fr/offre-demploi-et-embauche-les-droits-du-candidat",
+      "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+      "https://travail-emploi.gouv.fr/salaries-detaches-vos-droits"
+    ]
+  },
+  "ecart_documentaire": {
+    "fichier": "scripts/adaptation/README.md",
+    "nombre_annonce": 67,
+    "nombre_urls_non_vides_recalcule": 66,
+    "traitement": "Contradiction signalee, pas de modification de lautre domaine ni dinvention dune 67e URL."
+  },
+  "tirage_initial": {
+    "nb_fiches": 20,
+    "hors_liste_exclusion_qwen": 17,
+    "hors_liste_exclusion_encodeur": 17,
+    "preuves_entrainement_reel": false,
+    "fiches": [
+      {
+        "slot": "PILOTE_PREP_001",
+        "url": "https://travail-emploi.gouv.fr/cadre-general-du-detachement-des-salaries",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_002",
+        "url": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-collective",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_003",
+        "url": "https://travail-emploi.gouv.fr/emplois-domicile-credit-dimpot-et-exoneration-de-charges-patronales",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_004",
+        "url": "https://travail-emploi.gouv.fr/laide-lembauche-dun-jeune-en-contrat-initiative-emploi-cie-jeunes",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_005",
+        "url": "https://travail-emploi.gouv.fr/le-droit-aux-allocations-chomage-du-salarie-demissionnaire",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_006",
+        "url": "https://travail-emploi.gouv.fr/le-cse-dans-les-entreprises-de-11-49-salaries",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_007",
+        "url": "https://travail-emploi.gouv.fr/loi-pacte-et-epargne-salariale-questions-reponses",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_008",
+        "url": "https://travail-emploi.gouv.fr/entreprises-bonnes-pratiques-pour-recruter-sans-discriminer",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_009",
+        "url": "https://travail-emploi.gouv.fr/la-lutte-contre-le-travail-illegal",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_010",
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-aux-xylenes",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_011",
+        "url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_012",
+        "url": "https://travail-emploi.gouv.fr/les-creches-vocation-dinsertion-professionnelle-vip-en-quoi-cela-consiste",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_013",
+        "url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_014",
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-lhydrogene-sulfure",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_015",
+        "url": "https://travail-emploi.gouv.fr/le-fonds-pour-linsertion-des-personnes-handicapees-dans-la-fonction-publique-fiphfp",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_016",
+        "url": "https://travail-emploi.gouv.fr/les-valeurs-limites-dexposition-professionnelle-aux-risques-chimiques",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_017",
+        "url": "https://travail-emploi.gouv.fr/le-conge-dadoption",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_018",
+        "url": "https://travail-emploi.gouv.fr/la-remuneration-du-salarie-en-contrat-duree-determinee",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_019",
+        "url": "https://travail-emploi.gouv.fr/les-risques-lies-au-formaldehyde",
+        "exclue_qwen": false,
+        "exclue_encodeur": false
+      },
+      {
+        "slot": "PILOTE_PREP_020",
+        "url": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      }
+    ]
+  },
+  "tirage_revision_2": {
+    "nb_slots": 25,
+    "nb_fiches": 25,
+    "nb_passages": 30,
+    "fiches_dans_vivier_autorise_qwen": 0,
+    "fiches_dans_vivier_autorise_encodeur": 0,
+    "chevauchement_fiches_test_humain": 25,
+    "fiches": [
+      {
+        "slot": "PILOTE_PREP_001",
+        "categorie": "simple",
+        "url": "https://travail-emploi.gouv.fr/questions-reponses-le-versement-du-salaire",
+        "sources": [
+          "m2-article376095-0004"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_002",
+        "categorie": "simple",
+        "url": "https://travail-emploi.gouv.fr/la-modification-du-contrat-de-travail",
+        "sources": [
+          "m2-article100988-0003"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_003",
+        "categorie": "simple",
+        "url": "https://travail-emploi.gouv.fr/les-documents-remis-aux-salaries-lors-de-la-rupture-du-contrat-de-travail",
+        "sources": [
+          "m2-article374502-0007"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_004",
+        "categorie": "simple",
+        "url": "https://travail-emploi.gouv.fr/le-contrat-de-professionnalisation",
+        "sources": [
+          "m2-article374459-0003"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_005",
+        "categorie": "simple",
+        "url": "https://travail-emploi.gouv.fr/les-conges-payes",
+        "sources": [
+          "m2-article374530-0010"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_006",
+        "categorie": "reformulation",
+        "url": "https://travail-emploi.gouv.fr/les-jours-feries-et-les-ponts",
+        "sources": [
+          "m2-article107747-0013"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_007",
+        "categorie": "reformulation",
+        "url": "https://travail-emploi.gouv.fr/la-rupture-conventionnelle-du-contrat-de-travail-duree-indeterminee",
+        "sources": [
+          "m2-article108383-0018"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_008",
+        "categorie": "reformulation",
+        "url": "https://travail-emploi.gouv.fr/les-conventions-de-forfait",
+        "sources": [
+          "m2-article374523-0002"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_009",
+        "categorie": "reformulation",
+        "url": "https://travail-emploi.gouv.fr/les-missions-et-les-prerogatives-de-linspection-du-travail",
+        "sources": [
+          "m2-article375384-0016"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_010",
+        "categorie": "reformulation",
+        "url": "https://travail-emploi.gouv.fr/la-priorite-de-reembauche",
+        "sources": [
+          "m2-article101105-0000"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_011",
+        "categorie": "multi_passage",
+        "url": "https://travail-emploi.gouv.fr/la-prevention-des-chutes-de-hauteur",
+        "sources": [
+          "m2-article200862-0004",
+          "m2-article200862-0010"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_012",
+        "categorie": "multi_passage",
+        "url": "https://travail-emploi.gouv.fr/la-definition-du-licenciement-pour-motif-economique",
+        "sources": [
+          "m2-article101099-0004",
+          "m2-article101099-0001"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_013",
+        "categorie": "multi_passage",
+        "url": "https://travail-emploi.gouv.fr/la-definition-du-cse-et-cadre-de-mise-en-place",
+        "sources": [
+          "m2-article376804-0000",
+          "m2-article376804-0008"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_014",
+        "categorie": "multi_passage",
+        "url": "https://travail-emploi.gouv.fr/le-contrat-dapprentissage",
+        "sources": [
+          "m2-article374463-0001",
+          "m2-article374463-0012"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_015",
+        "categorie": "multi_passage",
+        "url": "https://travail-emploi.gouv.fr/le-contrat-duree-determinee-cdd",
+        "sources": [
+          "m2-article108282-0054",
+          "m2-article108282-0049"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_016",
+        "categorie": "adversarial",
+        "url": "https://travail-emploi.gouv.fr/les-obligations-de-lemployeur-lors-de-lembauche",
+        "sources": [
+          "m2-article374930-0019"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_017",
+        "categorie": "adversarial",
+        "url": "https://travail-emploi.gouv.fr/le-job-dete-les-formalites-et-les-obligations",
+        "sources": [
+          "m2-article374843-0006"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_018",
+        "categorie": "adversarial",
+        "url": "https://travail-emploi.gouv.fr/le-compte-personnel-de-formation-cpf",
+        "sources": [
+          "m2-article374451-0023"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_019",
+        "categorie": "adversarial",
+        "url": "https://travail-emploi.gouv.fr/le-contrat-de-travail-temporaire",
+        "sources": [
+          "m2-article100982-0028"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_020",
+        "categorie": "adversarial",
+        "url": "https://travail-emploi.gouv.fr/le-fonctionnement-et-les-moyens-dactions-du-cse",
+        "sources": [
+          "m2-article376807-0027"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_021",
+        "categorie": "hors_corpus",
+        "url": "https://travail-emploi.gouv.fr/les-conges-pour-evenements-familiaux-et-le-conge-de-deuil",
+        "sources": [
+          "m2-article375531-0000"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_022",
+        "categorie": "hors_corpus",
+        "url": "https://travail-emploi.gouv.fr/linterdiction-de-fumer-et-de-vapoter-dans-les-lieux-de-travail",
+        "sources": [
+          "m2-article375123-0009"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_023",
+        "categorie": "hors_corpus",
+        "url": "https://travail-emploi.gouv.fr/le-travail-saisonnier",
+        "sources": [
+          "m2-article100986-0005"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_024",
+        "categorie": "hors_corpus",
+        "url": "https://travail-emploi.gouv.fr/la-protection-de-la-sante-des-jeunes-travailleurs",
+        "sources": [
+          "m2-article200418-0006"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      },
+      {
+        "slot": "PILOTE_PREP_025",
+        "categorie": "hors_corpus",
+        "url": "https://travail-emploi.gouv.fr/le-harcelement-moral",
+        "sources": [
+          "m2-article375154-0009"
+        ],
+        "exclue_qwen": true,
+        "exclue_encodeur": true
+      }
+    ],
+    "textes_complets_identiques_vivier_qwen": [],
+    "textes_complets_identiques_vivier_encodeur": [],
+    "limite_comparaison_textes": "Textes complets a octets UTF8 identiques seulement ; aucune preuve dabsence de recopie partielle ou de paraphrase."
+  },
+  "lots_reels": {
+    "statut": "non_recus",
+    "qwen_reference_documentaire": "v2b-20261107, PR130 et issue107",
+    "preuve_complete_hashes_et_passages": false,
+    "candidats_pilote_a_comparer": 0,
+    "controle_avant_generation": "Inventorier sources/contextes/train/valid Qwen et paires encodeur, avec empreintes ; verifier toute fiche et tout passage cible/contexte. Ne pas marquer cette etape verifiee sans les octets ou un rapport complet relu."
+  },
+  "validation_humaine": {
+    "relecteur": null,
+    "date": null,
+    "decision": null
+  },
+  "resultat_final": "Preparation technique soumise a revue ; independance des lots prives et absence de doublons de questions non attestees."
+}

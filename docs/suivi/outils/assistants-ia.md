@@ -5,7 +5,7 @@
 - Nature : assistants conversationnels et de programmation
 - Assignés : toute l'équipe ; prévus : toute l'équipe
 - Coordination : toute l'équipe
-- Période d'utilisation : à compléter
+- Période d'utilisation : (Remy) depuis le 25 septembre 2026 (session 9 du journal)
 - Besoin du projet auquel il répond : expliquer, rédiger, relire du code et des documents, vérifier des données.
 
 ## Versions utilisées
@@ -14,43 +14,63 @@ observation des rubriques suivantes précise l'assistant concerné, par exemple 
 
 | Membre | Assistant | Modèle ou version | Formule (gratuite, payante…) | Usages principaux |
 |---|---|---|---|---|
-| Vaneck | à compléter | à compléter | à compléter | à compléter |
-| Mahé | à compléter | à compléter | à compléter | à compléter |
-| Rémy | à compléter | à compléter | à compléter | à compléter |
-| Jibril | à compléter | à compléter | à compléter | à compléter |
-| Maïmouna | à compléter | à compléter | à compléter | à compléter |
+| Vaneck | Claude Code dans VS Code (2.1.322 au 14/11) | Claude Opus 5.5 | payante | préparation et contrôle du corpus (#27), interface du site du volet A et tests Playwright (#48, #53), démonstration du volet B (#111), relectures de pull requests |
+| Mahé | Claude Code (2.1.306 au 26/10 comme au 22/11) | Claude Opus 5 (8 sessions), puis Claude Opus 5.5 (22 sessions), d'après le journal ; en sous-agents, Claude Opus 5.5, Sonnet 5.5, Fable 5.2 et Haiku 5.5 (sessions 68 et 69) ; fin de la session 73 avec Claude Sonnet 5.5 | payante | audits du dépôt, revues de PR, protocoles et mesures, rédaction des documents, actions GitHub en son nom ; génération et jugement de questions par des sous-agents, sous protocole |
+| Rémy | Google Antigravity | Gemini 3.8 Flash (High) | formule gratuite | métriques et références lexicales (#45, #47), étude d'ajustement contrastif (#49), revues et audits (#109, #115, #120, #124), cadrage des supports J3 (#112) et rapport (#113) |
+| Jibril | ChatGPT / Codex | GPT-6.1 Sol et GPT-6.1 Terra, déclarés par Jibril | ChatGPT Plus | Compréhension du code et des concepts NLP, coordination, documentation, relecture de PR, préparation et vérification de commandes, suivi GitHub. |
+| Jibril | Qwen Coder en local | `qwen2.5-coder:7b-instruct-q4_K_M`, utilisation pour le projet confirmée par Jibril | Utilisation locale ; formule non précisée | Usages détaillés à préciser. |
+| Maïmouna | Claude Code dans VS Code (2.1.322 au 12/11) | Claude Opus 5.5 | payante | compréhension des tâches et du code, relectures de pull requests, vérification de la chaîne RAG, rédaction du journal et des fiches |
 
 ## Mise en place
-- Temps avant le premier résultat utile :
-- Installation et configuration :
-- Prérequis découverts en chemin :
-- Difficultés non expliquées par la documentation :
+- Temps avant le premier résultat utile : (Remy, Antigravity) moins d'une heure lors de la première session sur PIAF et le journal (#30, #34, session 9).
+- Installation et configuration : (Remy, Antigravity) utilisé sous Windows 11 avec accès direct aux fichiers du dépôt et exécution de scripts Python de contrôle.
+- Prérequis découverts en chemin : (Remy, Antigravity) le shell par défaut sous Windows étant PowerShell et non Bash, les commandes contenant des variables `$` ou des blocs heredoc (`<< 'EOF'`) échouent ou sont interprétées prématurément : nécessité de passer par des scripts Python dédiés.
+- Difficultés non expliquées par la documentation : (Remy, Antigravity) compilation PDF documentée en session 35 du journal : `latexmk` échoue sous Windows en l'absence d'interpréteur Perl installé, imposant d'enchaîner directement `python docs/latex/build.py` puis deux passes manuelles de `xelatex -interaction=nonstopmode`.
 
 ## Usage réel
-- Tâche réalisée, ticket ou pull request :
-- Commande, configuration ou scénario :
-- Résultat obtenu :
-- Temps gagné ou perdu, s'il peut être estimé :
+- Tâche réalisée, ticket ou pull request : (Remy, Antigravity) tickets #30, #34, #45, #47, #49, #107, #112 et #113 ; PR #63, #75, #86/#87, #105, #120, #134 et #135.
+- Commande, configuration ou scénario : (Remy, Antigravity) génération des scripts d'évaluation et d'export ONNX (`scripts/adaptation/`), vérification de métriques et de cohérence documentaire par scripts Python, préparation des supports J3 (#112) et des fiches outils (#113).
+- Résultat obtenu : (Remy, Antigravity) production rapide des chaînes de calcul et de revue, mais plusieurs dérives factuelles ont dû être détectées et corrigées par contrôle croisé ou revue humaine : export `q8` initial sans `ActivationSymmetric` (`753/822`) et divergence de tokeniseur corrigés avant gel (sessions 33–34), renumérotation et bilan de la section 4 corrigés en revue de la PR #120 (session 45), perte des accents lors de la consolidation du support J3 (`917cf6c`, PR #134) et affirmations non fondées en première version de la PR #135 (version d'`uv` inexistante sur poste, attribution de #50/PR #78, statut de #49 et version d'Ollama).
+- Temps gagné ou perdu, s'il peut être estimé : non mesuré au moment de l'usage (aucune reconstitution rétrospective).
+- (Mahé, Claude Code) Protocoles et mesures des deux volets (#49, #52, #107, #138, #139, #163, #167, #171, #172), revues de PR et actions GitHub en mon nom, rapport et journal ; jeu de test v2 et paires de la v3-C écrits par des sous-agents, chacun inscrit à un registre avant son lancement (protocole 10, amendement A3).
 
 ## Qualités observées
--
+- (Remy, Antigravity) Accès gratuit permettant à un membre sans abonnement Claude Code d'employer un agent intégré dans l'IDE (divergence documentée dans le préambule du journal d'usage IA et au jalon J2).
+- (Remy, Antigravity) Réactivité élevée pour écrire des scripts de vérification et croiser localement les sources du dépôt (commits, tests unitaires, compilation LaTeX).
+- (Mahé, Claude Code) Il exécute lui-même commandes, tests et mesures : une affirmation se vérifie par une sortie plutôt que sur parole.
+- (Mahé, Claude Code) Ses sous-agents partent d'un contexte neuf : générateurs et juges indépendants, dont le journal se contrôle après coup (consigne exacte, modèle exact, outils utilisés).
 
 ## Défauts et limites observés
 - Cas d'échec, messages d'erreur, limites, dépendances, ce que la documentation ne dit pas :
+  - (Remy, Antigravity) Propension à produire des informations plausibles mais fausses dès lors qu'elles ne sont pas vérifiées par une commande locale ou la lecture des commits/issues (exemple critique lors des fiches de la PR #135 : mention de `uv 0.4.29` alors qu'`uv` est absent du poste, confusion de paternité sur #50/PR #78, ou perte silencieuse des caractères accentués lors d'une réécriture complète sous #134).
+  - (Remy, Antigravity) Scripts shell proposés initialement en syntaxe POSIX/Bash (pipes ou `latexmk`) inutilisables tels quels dans un environnement PowerShell Windows sans adaptation.
+  - (Maïmouna, Claude Code) Il affirme parfois avec assurance des choses fausses, qu'il ne corrige qu'après une question de ma part : une phrase de réponse de Qwen présentée comme inventée alors que son contenu figurait dans trois passages, et le refus d'un lien attribué au site du ministère alors que la coupure venait de ma connexion (journal, section 4, 08/11).
+  - (Maïmouna, Claude Code) Il a ouvert dans l'éditeur le fichier d'annotation complet, lot de test compris, au lieu des seules questions de calibration. J'ai fermé l'onglet sans le lire (journal, section 4, 08/11) : il faut lui indiquer à l'avance les fichiers à ne pas ouvrir.
+  - (Mahé, Claude Code) Affirmations plausibles et fausses jusque dans des documents publiés : 11 des 19 erreurs de mes sessions du 11 au 18 octobre figuraient déjà dans une PR, une revue ou un document (rapport, section 5.5).
+  - (Mahé, Claude Code) Il ne relance pas de lui-même toute la suite de tests après un commit : un test est resté en échec du 21 au 22 novembre (journal, section 4, 22/11).
+  - (Mahé, Claude Code) Son classifieur de sécurité peut refuser une action en mon nom, par exemple l'approbation d'une PR (22/11) : elle reste alors à faire à la main.
 
 ## Comparaison
-- Méthode ou outil utilisé auparavant :
-- Différences observées :
-- Cas où l'ancienne méthode reste préférable :
+- Méthode ou outil utilisé auparavant : (Remy) interface web conversationnelle (copier-coller manuel vers VS Code).
+- Différences observées : (Remy) l'agent exécutant les lectures de fichiers et les tests réduit les erreurs de recopie, mais transfère le risque d'erreur vers la validation des faits générés (dates, versions locales réelles, périmètre exact des tickets).
+- Cas où l'ancienne méthode reste préférable : (Remy) l'édition manuelle directe est plus sûre pour les retouches ciblées sur un texte déjà relu ou la saisie stricte d'une donnée d'environnement vérifiée.
 
 ## Décision
-À compléter : adopté / conservé pour certains usages / abandonné / à réévaluer.
-- Motif :
+- (Mahé, Claude Code) Adopté, à une condition : chaque affirmation est vérifiée par une mesure, un test ou une source primaire avant d'être publiée.
+  - Motif : (Mahé) sans lui, ni le périmètre des deux volets ni les contrôles de chaque mesure n'auraient tenu dans le temps du projet ; ses erreurs, fréquentes, sont rattrapées par la vérification, jamais par la confiance.
+- (Jibril, ChatGPT / Codex) Conservé pour certains usages : l'assistant facilite la compréhension du projet, la préparation de documents, les relectures et le suivi des tâches. Ses propositions et ses actions doivent être vérifiées : il peut confondre des versions ou des statuts, ou fournir une information plausible mais incorrecte. Les décisions, validations humaines et résultats expérimentaux restent sous la responsabilité de l'équipe. Les réponses doivent être confrontées aux fichiers et à l'état actuel du dépôt ; les commandes nécessitent aussi une vérification du dossier et de l'environnement Windows.
+- (Vaneck, Claude Code) Conservé pour certains usages.
+  - Motif : (Vaneck) inefficace sur certaines tâches.
+- (Maïmouna, Claude Code) Conservé pour certains usages.
+  - Motif : (Maïmouna) utile pour comprendre et vérifier, mais il se trompe parfois avec assurance : il faut contrôler à la source.
+- (Remy, Google Antigravity) Conservé pour certains usages : prototypage de scripts d'évaluation et d'export, audits documentaires multi-fichiers, réconciliation des écarts Git et rédactions préparatoires.
+  - Motif : (Remy) La formule gratuite permet un agent intégré dans l'IDE réactif pour manipuler le dépôt sous Windows 11 sans coût d'abonnement. Cependant, sa propension avérée aux hallucinations plausibles (versions locales inventées, attributions de tickets erronées, confusion sur les statuts d'issues) et ses réflexes shell Bash incompatibles avec PowerShell imposent d'exclure toute validation factuelle autonome et de restreindre son emploi à l'assistance sous vérification locale stricte (commandes, tests et sources primaires).
 
 ## À retenir pour le rapport
-- Apport :
-- Principale limite :
-- Ce que la documentation ne dit pas :
+- Apport : (Remy) capacité de prototypage, de vérification et d'audit multi-fichiers accessible sans coût d'abonnement pour l'équipe.
+- Principale limite : (Remy) production récurrente de détails vraisemblables mais faux (versions, attributions, états de tickets) si l'auteur ne vérifie pas chaque fait sur le poste et dans l'historique Git avant publication.
+- Ce que la documentation ne dit pas : (Remy) les erreurs typiques d'un agent sous Windows 11 (réflexes shell Bash vs PowerShell, encodages/accents lors de réécritures complètes) exigent des garde-fous explicites et une relecture humaine indépendante.
 
 ## Preuves
-- Journal d'usage de l'IA (`docs/journal/JOURNAL_USAGE_IA.md`) : chaque usage y est tracé ; cette fiche évalue les assistants dans la durée, sans dupliquer le journal.
+- Journal d'usage de l'IA (`docs/journal/JOURNAL_USAGE_IA.md`) : chaque usage y est tracé (notamment sessions 9, 10, 11, 33 à 35 et 44–45) ; cette fiche évalue les assistants dans la durée, sans dupliquer le journal.
+- PR #134 et PR #135 : corrections post-revue illustrant la détection d'hallucinations factuelles et d'attribution sur la documentation.

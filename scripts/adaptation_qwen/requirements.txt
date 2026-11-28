@@ -1,0 +1,7 @@
+# Essai de faisabilité de l'adaptation (#107) sur Mac Apple Silicon, Python 3.12 ; versions relevées le 23/10/2026.
+mlx==0.32.4
+mlx-metal==0.32.4
+mlx-lm==0.32.2
+transformers==5.20.2
+huggingface-hub==2.3.0
+numpy==2.5.4

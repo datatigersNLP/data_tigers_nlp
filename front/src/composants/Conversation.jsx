@@ -2,11 +2,15 @@
 // exemples), fil de la conversation qui défile seul, champ de saisie fixé en bas. Comportement repris de #48 et #53 :
 // une question posée pendant le chargement est gardée puis envoyée dès que le moteur est prêt ; une question hors du
 // périmètre (seuil d'abstention, #76) est signalée, ses passages restant consultables ; chaque passage porte son score.
+// Depuis #164 : dix passages regroupés par fiche (A2), et un avertissement quand le meilleur passage n'est qu'assez
+// proche de la question (zone grise, A3), sans rien masquer.
 
-import { useEffect, useRef, useState } from "react";
-import Barre from "./Barre.jsx";
-import Passage from "./Passage.jsx";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Barre, { Logo } from "./Barre.jsx";
+import Confidentialite from "./Confidentialite.jsx";
+import Fiche from "./Fiche.jsx";
 import { messageErreur } from "../recherche/useMoteur.js";
+import { regrouperParFiche } from "../recherche/moteur.js";
 
 // revue de #42 : formulée avec « CDI », la question sur la période d'essai ne gardait la bonne fiche en tête qu'avec
 // 0,0002 d'avance (notebook 02, section 11) ; sans le sigle, l'avance est de 0,022
@@ -15,13 +19,16 @@ const EXEMPLES = [
   "Quelle est la durée maximale de la période d'essai ?",
   "Mon employeur peut-il refuser une rupture conventionnelle ?",
 ];
-const NB_RESULTATS = 5;
+// A2 (#164) : dix passages, présentés par fiche ; jusqu'au 15/11/2026, cinq passages présentés un par un
+const NB_RESULTATS = 10;
 // premier chargement : modèle élagué servi par le site (65,7 Mio, #78), taille demandée par le compte rendu du Weekly,
 // et vocabulaire du tokeniseur (4,1 Mio). Mesuré le 14/10/2026 sur le site en ligne, profil vierge : prêt en 23 à 30 s
-// (le serveur compresse le modèle : 45,9 Mio transférés). Avant la #78 : 113 Mio depuis le Hub, 52 à 56 s
+// (le serveur compresse le modèle : 45,9 Mio transférés). Avant la #78 : 113 Mio depuis le Hub, 52 à 56 s. L'encodeur
+// ajusté servi depuis #164 pèse le même poids : 68 925 256 octets, soit 65,7 Mio
 const POIDS_MODELE = "65,7 Mio";
 // périmètre du corpus, affiché comme l'exige le sujet pour A3 : fiches (adresses distinctes) et passages comptés le
-// 17/10/2026 dans front/public/index/passages_m2.json ; instantané daté dans front/public/index/SOURCES.md
+// 17/10/2026 dans front/public/index/passages_m2.json ; instantané daté dans front/public/index/SOURCES.md. Le site
+// lit depuis #164 front/public/index_ajuste/passages_m2.json, copie octet pour octet du même fichier
 const PERIMETRE = { fiches: "261", passages: "4\u00a0240", instantane: "11 sept. 2026" };
 
 // tailles en Mio (2^20 octets), l'unité de l'équipe ; une décimale, pour que la progression reste lisible
@@ -31,20 +38,12 @@ const mio = (octets) =>
 let compteur = 0;
 const nouvelId = () => ++compteur;
 
-function IconeRecherche() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" />
-      <path d="M20 20l-3.5-3.5" />
-    </svg>
-  );
-}
-
+// l'assistant a le visage du logo (#176) : le tigre qui lit les fiches et répond
 function BulleAssistant({ children }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-0.5 hidden h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-accent-clair text-accent sm:flex" aria-hidden="true">
-        <IconeRecherche />
+      <span className="mt-0.5 hidden shrink-0 sm:flex" aria-hidden="true">
+        <Logo />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-3">{children}</div>
     </div>
@@ -99,6 +98,7 @@ function Reponse({ echange, basculer }) {
   // seuil d'abstention (#76) : il repère surtout les saisies sans rapport avec le droit du travail, pas les questions
   // juridiques absentes des fiches ; le message n'en promet pas plus, et les passages restent consultables
   const visibles = !echange.horsPerimetre || echange.afficher;
+  const fiches = regrouperParFiche(echange.resultats);
   return (
     <BulleAssistant>
       {echange.horsPerimetre ? (
@@ -120,17 +120,31 @@ function Reponse({ echange, basculer }) {
           </button>
         </div>
       ) : (
-        <p className="text-[15px] leading-relaxed">
-          J'ai trouvé <strong>{echange.resultats.length} passages</strong> des fiches pratiques qui parlent de votre
-          question. Les voici, du plus proche au moins proche.
-        </p>
+        <>
+          <p className="text-[15px] leading-relaxed">
+            J'ai trouvé <strong>{echange.resultats.length} passages</strong> dans{" "}
+            <strong>
+              {fiches.length} {fiches.length > 1 ? "fiches pratiques" : "fiche pratique"}
+            </strong>{" "}
+            qui parlent de votre question. Les voici par fiche, de la plus proche à la moins proche.
+          </p>
+          {/* zone grise (A3, #164) : meilleur score au-dessus du seuil, mais sous le 25e centile des questions du
+              CDTN ; 96 de leurs 479 formulations, toutes légitimes, y tombent (20 %), d'où un conseil de vérification
+              et non un refus (data/evaluation/notebook03/zone_grise_ajuste.json) */}
+          {echange.zoneGrise && (
+            <p className="rounded-[14px] bg-panneau px-4 py-3 text-sm leading-relaxed text-texte">
+              <span className="font-semibold text-encre">Correspondance moins nette que d'habitude.</span> Vérifiez que
+              ces passages répondent bien à votre question, ou précisez-la en décrivant votre situation.
+            </p>
+          )}
+        </>
       )}
       {visibles && (
         <>
           <ol className="flex flex-col gap-3">
-            {echange.resultats.map((p) => (
-              <li key={p.passage_id}>
-                <Passage passage={p} />
+            {fiches.map((f) => (
+              <li key={f.url ?? f.titre_fiche}>
+                <Fiche fiche={f} />
               </li>
             ))}
           </ol>
@@ -229,7 +243,9 @@ function annonce(echanges, pret) {
   if (e.resultats.length === 0) return "Aucun passage trouvé.";
   if (e.horsPerimetre && !e.afficher)
     return "Votre question semble sortir du périmètre des fiches pratiques. Les passages les plus proches restent consultables.";
-  return `${e.resultats.length} passages trouvés. Premier résultat : ${e.resultats[0].titre_fiche}.`;
+  const n = regrouperParFiche(e.resultats).length;
+  const prudence = e.zoneGrise && !e.horsPerimetre ? " Correspondance moins nette que d'habitude : vérifiez les passages." : "";
+  return `${e.resultats.length} passages trouvés dans ${n} ${n > 1 ? "fiches" : "fiche"}. Première fiche : ${e.resultats[0].titre_fiche}.${prudence}`;
 }
 
 export default function Conversation({ moteur }) {
@@ -238,6 +254,8 @@ export default function Conversation({ moteur }) {
   const [actuel, setActuel] = useState(() => chats[0].id);
   const [question, setQuestion] = useState("");
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [confidentialite, setConfidentialite] = useState(false);
+  const ouvreurConfidentialite = useRef(null);
   const dernier = useRef(null);
   const zoneFil = useRef(null);
   const saisie = useRef(null);
@@ -272,8 +290,8 @@ export default function Conversation({ moteur }) {
 
   async function lancer(id, q) {
     try {
-      const { resultats, duree, horsPerimetre } = await moteur.rechercher(q, NB_RESULTATS);
-      majEchange(id, () => ({ statut: "resultats", resultats, duree, horsPerimetre, afficher: false }));
+      const { resultats, duree, horsPerimetre, zoneGrise } = await moteur.rechercher(q, NB_RESULTATS);
+      majEchange(id, () => ({ statut: "resultats", resultats, duree, horsPerimetre, zoneGrise, afficher: false }));
     } catch {
       majEchange(id, () => ({ statut: "erreur" }));
     }
@@ -343,6 +361,22 @@ export default function Conversation({ moteur }) {
     requestAnimationFrame(() => saisie.current?.focus());
   }
 
+  // ouverte depuis le menu sur téléphone, la fenêtre le ferme d'abord : le panneau gère lui-même la tabulation et Échap
+  function ouvrirConfidentialite(ev) {
+    ouvreurConfidentialite.current = ev.currentTarget;
+    setMenuOuvert(false);
+    setConfidentialite(true);
+  }
+
+  // à la fermeture, le focus revient au bouton qui l'a ouverte ; s'il a disparu avec le menu, au bouton du menu
+  const fermerConfidentialite = useCallback(() => {
+    setConfidentialite(false);
+    requestAnimationFrame(() => {
+      const ouvreur = ouvreurConfidentialite.current;
+      (ouvreur?.getClientRects().length ? ouvreur : boutonMenu.current)?.focus();
+    });
+  }, []);
+
   function utiliserExemple(q) {
     setMenuOuvert(false);
     // le menu se ferme sur téléphone : le focus irait sinon se perdre sur la page
@@ -362,7 +396,9 @@ export default function Conversation({ moteur }) {
         exemples={EXEMPLES}
         utiliserExemple={utiliserExemple}
         occupe={occupe}
+        ouvrirConfidentialite={ouvrirConfidentialite}
       />
+      <Confidentialite ouvert={confidentialite} fermer={fermerConfidentialite} />
 
       {/* menu ouvert sur téléphone : le reste de la page est inerte, ni le focus ni les lecteurs d'écran n'atteignent
           plus la conversation ; la tabulation boucle dans le panneau (Barre.jsx) */}
@@ -397,7 +433,7 @@ export default function Conversation({ moteur }) {
           </button>
         </header>
 
-        {/* annonce courte pour les lecteurs d'écran ; un aria-live sur toute la conversation ferait relire les cinq
+        {/* annonce courte pour les lecteurs d'écran ; un aria-live sur toute la conversation ferait relire les dix
             passages en entier à chaque réponse */}
         <p className="sr-only" role="status">
           {annonce(echanges, pret)}
@@ -503,7 +539,15 @@ export default function Conversation({ moteur }) {
                 <span className="sr-only"> (nouvel onglet)</span>
               </a>
               , instantané SocialGouv du 11 sept. 2026, Licence Ouverte Etalab 2.0. Projet étudiant, non officiel : ne
-              remplace pas un conseil juridique.
+              remplace pas un conseil juridique.{" "}
+              <button
+                type="button"
+                onClick={ouvrirConfidentialite}
+                aria-haspopup="dialog"
+                className="underline underline-offset-2 hover:text-encre focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                Confidentialité et mentions légales
+              </button>
             </p>
           </div>
         </div>

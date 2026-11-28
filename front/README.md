@@ -48,9 +48,15 @@ commit) et la date de construction. Pour vérifier qu'un déploiement a abouti, 
 2. **Settings > Environments > github-pages > Deployment branches and tags** : ajouter `dev`. Par défaut,
    GitHub n'autorise que la branche principale à publier. Ce réglage demande le rôle admin du dépôt.
 
+## Logo et confidentialité
+
+- **Logo** : le tigre de l'équipe (`docs/charte/logo/`), en favicon (`public/favicon.svg`), dans le panneau et comme avatar de l'assistant (`src/assets/logo-tigre.svg`, intégré au paquet JavaScript : aucune requête de plus). Il est toujours affiché à 32 px ou à un multiple.
+- **Confidentialité et mentions légales** (`src/composants/Confidentialite.jsx`, #176) : fenêtre modale ouverte depuis le panneau et depuis la ligne de mentions sous le champ de saisie. Son texte décrit ce que le site fait réellement, vérifié le 21/11 sur le site en ligne : une seule origine contactée, aucune requête après une question, ni cookie ni stockage local, seul le cache `transformers-cache` du modèle. Toute évolution qui change l'un de ces points (police, statistiques, nouveau service) doit mettre ce texte à jour.
+
 ## Vérifications après déploiement
 
 - La page s'ouvre sans être connecté à GitHub, dans une fenêtre de navigation privée.
 - Elle s'affiche encore après une actualisation (F5).
 - Dans les outils de développement (F12), onglet Réseau : aucun fichier en erreur 404.
 - La version affichée en bas du panneau latéral correspond au dernier commit de `dev`.
+- La fenêtre « Confidentialité et mentions légales » s'ouvre depuis le panneau et depuis la ligne de mentions, se ferme par Échap, et l'onglet Réseau ne montre aucune requête vers un autre domaine que `datatigersnlp.github.io`.

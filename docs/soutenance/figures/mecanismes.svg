@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="Bi-encodeur, cross-encodeur et adaptation LoRA" font-family="IBM Plex Sans, Helvetica Neue, Arial, sans-serif">
+<title>Bi-encodeur, cross-encodeur et adaptation LoRA</title>
+<defs><marker id="mecanismes-n" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6472"/></marker><marker id="mecanismes-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2c5d8a"/></marker><marker id="mecanismes-b" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2e6a4f"/></marker><marker id="mecanismes-u" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f3b73"/></marker></defs>
+<text class="b" style="--i:0" x="20" y="22" text-anchor="start" font-size="14" font-weight="600" fill="#2c5d8a" letter-spacing="0.4">BI-ENCODEUR (E5)</text>
+<g class="b" style="--i:0"><rect x="20" y="40" width="120" height="46" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="80.0" y="68.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">question</text></g>
+<g class="b" style="--i:0"><rect x="20" y="130" width="120" height="46" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="80.0" y="158.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">passage</text></g>
+<g class="b" style="--i:1"><rect x="168" y="40" width="120" height="46" rx="6" fill="#e7eef6" stroke="#2c5d8a" stroke-width="1.4"/><text x="228.0" y="68.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">encodeur</text></g>
+<g class="b" style="--i:1"><rect x="168" y="130" width="120" height="46" rx="6" fill="#e7eef6" stroke="#2c5d8a" stroke-width="1.4"/><text x="228.0" y="158.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">encodeur</text></g>
+<g class="b" style="--i:2"><rect x="316" y="40" width="56" height="46" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="344.0" y="68.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">q</text></g>
+<g class="b" style="--i:2"><rect x="316" y="130" width="56" height="46" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="344.0" y="158.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">p</text></g>
+<g class="b" style="--i:3"><rect x="388" y="85" width="46" height="46" rx="6" fill="#e8edf6" stroke="#1f3b73" stroke-width="1.4"/><text x="411.0" y="115.0" text-anchor="middle" font-size="20" font-weight="600" fill="#111827">·</text></g>
+<path class="f" style="--i:2" d="M140,63 H164" fill="none" stroke="#2c5d8a" stroke-width="2" marker-end="url(#mecanismes-a)"/>
+<path class="f" style="--i:2" d="M140,153 H164" fill="none" stroke="#2c5d8a" stroke-width="2" marker-end="url(#mecanismes-a)"/>
+<path class="f" style="--i:2" d="M288,63 H312" fill="none" stroke="#2c5d8a" stroke-width="2" marker-end="url(#mecanismes-a)"/>
+<path class="f" style="--i:2" d="M288,153 H312" fill="none" stroke="#2c5d8a" stroke-width="2" marker-end="url(#mecanismes-a)"/>
+<path class="f" style="--i:2" d="M372,63 H380 V98 H384" fill="none" stroke="#2c5d8a" stroke-width="2" marker-end="url(#mecanismes-a)"/>
+<path class="f" style="--i:2" d="M372,153 H380 V118 H384" fill="none" stroke="#2c5d8a" stroke-width="2" marker-end="url(#mecanismes-a)"/>
+<text class="b" style="--i:4" x="20" y="220" text-anchor="start" font-size="15" font-weight="400" fill="#5b6472" letter-spacing="0.4">p est calculé une fois (index) ;</text>
+<text class="b" style="--i:4" x="20" y="242" text-anchor="start" font-size="15" font-weight="400" fill="#5b6472" letter-spacing="0.4">score = cosinus(q, p)</text>
+<text class="b" style="--i:0" x="470" y="22" text-anchor="start" font-size="14" font-weight="600" fill="#2e6a4f" letter-spacing="0.4">CROSS-ENCODEUR (BGE)</text>
+<g class="b" style="--i:5"><rect x="470" y="85" width="190" height="46" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="565.0" y="113.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">question + passage</text></g>
+<g class="b" style="--i:6"><rect x="690" y="72" width="150" height="72" rx="6" fill="#e6f0ea" stroke="#2e6a4f" stroke-width="1.4"/><text x="765.0" y="103.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">transformeur</text><text x="765.0" y="123.6" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">24 couches</text></g>
+<g class="b" style="--i:7"><rect x="870" y="85" width="80" height="46" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="910.0" y="113.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">score</text></g>
+<path class="f" style="--i:6" d="M660,108 H686" fill="none" stroke="#2e6a4f" stroke-width="2" marker-end="url(#mecanismes-b)"/>
+<path class="f" style="--i:7" d="M840,108 H866" fill="none" stroke="#2e6a4f" stroke-width="2" marker-end="url(#mecanismes-b)"/>
+<text class="b" style="--i:8" x="470" y="220" text-anchor="start" font-size="15" font-weight="400" fill="#5b6472" letter-spacing="0.4">les deux textes sont lus ensemble :</text>
+<text class="b" style="--i:8" x="470" y="242" text-anchor="start" font-size="15" font-weight="400" fill="#5b6472" letter-spacing="0.4">plus précis, un calcul par paire</text>
+<text class="b" style="--i:0" x="990" y="22" text-anchor="start" font-size="14" font-weight="600" fill="#2e6a4f" letter-spacing="0.4">LORA (QWEN)</text>
+<g class="b" style="--i:9"><rect x="990" y="40" width="120" height="56" rx="6" fill="#f3f5f8" stroke="#cfd5dc" stroke-width="1.4"/><text x="1050.0" y="63.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">W gelée</text><text x="1050.0" y="83.6" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, Menlo, monospace" fill="#5b6472">4 bits</text></g>
+<g class="b" style="--i:10"><rect x="990" y="120" width="56" height="46" rx="6" fill="#e6f0ea" stroke="#2e6a4f" stroke-width="1.4"/><text x="1018.0" y="148.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">A</text></g>
+<g class="b" style="--i:10"><rect x="1054" y="120" width="56" height="46" rx="6" fill="#e6f0ea" stroke="#2e6a4f" stroke-width="1.4"/><text x="1082.0" y="148.6" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">B</text></g>
+<g class="b" style="--i:11"><rect x="1140" y="85" width="46" height="46" rx="6" fill="#e8edf6" stroke="#1f3b73" stroke-width="1.4"/><text x="1163.0" y="115.0" text-anchor="middle" font-size="20" font-weight="600" fill="#111827">+</text></g>
+<path class="f" style="--i:11" d="M1110,68 H1126 V98 H1136" fill="none" stroke="#2e6a4f" stroke-width="2" marker-end="url(#mecanismes-b)"/>
+<path class="f" style="--i:11" d="M1110,143 H1126 V118 H1136" fill="none" stroke="#2e6a4f" stroke-width="2" marker-end="url(#mecanismes-b)"/>
+<text class="b" style="--i:12" x="990" y="220" text-anchor="start" font-size="15" font-weight="400" fill="#5b6472" letter-spacing="0.4">rang 8, facteur 20 ;</text>
+<text class="b" style="--i:12" x="990" y="242" text-anchor="start" font-size="15" font-weight="400" fill="#5b6472" letter-spacing="0.4">seuls A et B s'entraînent</text>
+</svg>

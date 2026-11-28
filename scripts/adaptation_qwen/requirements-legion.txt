@@ -1,0 +1,8 @@
+# Versions constatees par Jibril le 26/10/2026 ; environnement .venv-qlora.
+# Installer torch depuis l'index officiel CUDA 12.8 avant ce fichier :
+# python -m pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+transformers==5.20.2
+peft==0.21.2
+accelerate==1.15.0
+bitsandbytes==0.50.2

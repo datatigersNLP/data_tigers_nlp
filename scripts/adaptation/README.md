@@ -22,6 +22,9 @@ Ce dossier contient l'ensemble de la chaîne de traitement permettant d'ajuster 
 
 ## Garantie scientifique d'étanchéité (Zéro Data Leakage)
 
-1. **Exclusion stricte au niveau de la fiche :** Les 67 fiches (URLs et pubIds) associées aux questions du jeu de test et du lot de calibration sont totalement exclues du vivier de passages d'entraînement (1 463 passages exclus sur 4 240, soit 34,5%).
+1. **Exclusion stricte au niveau de la fiche (URLs) :** Les fiches associées aux questions du jeu de test et du lot de calibration sont totalement exclues du vivier de passages d'entraînement :
+   - Lors de l'extraction initiale du 06/10/2026 à 09:44 (`01_preparer_benchmark.py` sur `origin/feat/44-jeu-questions-annotees`, commit `98f4181`), 67 URLs distinctes étaient répertoriées (la question Q018 pointant sur `https://travail-emploi.gouv.fr/les-heures-supplementaires-contreparties`), excluant 1 463 passages sur 4 240 (soit 34,5 % du corpus) dans `exclusions_train.json`.
+   - Au commit `f3490bd` (06/10/2026 à 10:37:40, repris dans `jeu-questions-v1` et `dev`), Q018 a été réaffectée à `https://travail-emploi.gouv.fr/le-bulletin-de-paie` (URL déjà présente pour Q026), ramenant le jeu stabilisé à 66 URLs non vides (1 445 passages exclus).
+   - Les 66 URLs du jeu stabilisé sont strictement incluses dans les 67 URLs exclues de l'entraînement : aucune des fiches du jeu d'évaluation n'apparaît dans les 109 paires d'entraînement générées (`train_paires.jsonl`, SHA-256 `2d377eb6…`). Le filtre d'étanchéité opère exclusivement au niveau des URLs (retrait de la mention « et pubIds »).
 2. **Filtrage lexical Jaccard :** Chaque question générée par Qwen2.5-7B est comparée à l'ensemble des questions du test set ; toute question présentant un score de Jaccard > 0,40 est immédiatement rejetée.
 3. **Tests statistiques appariés :** L'évaluation calcule la valeur *p* exacte par test binomial de McNemar et par la statistique d'Obuchowski (McNemar pour données groupées par fiche) avec le module validé [`metrics.py`](../evaluation/metrics.py).

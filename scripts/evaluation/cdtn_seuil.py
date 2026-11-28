@@ -6,14 +6,20 @@ l'encodeur servi (q8, dans le navigateur), des variantes du CDTN rédigées en q
 variantes des requêtes dont au moins une référence vise une fiche de notre corpus, reconnue par son identifiant
 exact : les autres requêtes renvoient à des sources absentes de notre corpus et feraient baisser le seuil.
 
-Les données du CDTN n'ont pas de licence : elles ne sont jamais versionnées. Le script les lit dans `data/`,
-au commit figé, après contrôle de leur empreinte ; seuls le code et des identifiants de variantes le sont.
+Les données du CDTN sont sous licence Apache-2.0 (`docs/etudes/evaluation/04_cdtn.md`, section 2, corrigée le 14
+octobre). Comme tout fichier de `data/`, elles ne sont jamais versionnées. Le script les lit dans `data/`, au commit
+figé, après contrôle de leur empreinte ; seuls le code et des identifiants de variantes le sont.
 
 Usage, depuis la racine du dépôt :
     python scripts/evaluation/cdtn_seuil.py preparer   # écrit data/evaluation/cdtn/questions_cdtn.json
     (page scripts/evaluation/encodage_navigateur.html?lot=cdtn, résultat dans data/evaluation/cdtn/vecteurs_cdtn.json)
     python scripts/evaluation/cdtn_seuil.py calculer   # écrit data/evaluation/notebook03/seuil_cdtn.json
     python scripts/evaluation/cdtn_seuil.py incertitude   # intervalle du seuil, sans toucher au fichier figé
+Encodeur ajusté (#164), vecteurs data/adaptation/navigateur/vecteurs/vecteurs_cdtn_ajuste.json (encoder_navigateur.py
+--modele ajuste --lot cdtn) ; chaque commande écrit une seule fois et refuse d'écraser :
+    python scripts/evaluation/cdtn_seuil.py calculer_ajuste      # data/evaluation/notebook03/seuil_cdtn_ajuste.json
+    python scripts/evaluation/cdtn_seuil.py incertitude_ajuste   # data/evaluation/cdtn/incertitude_seuil_ajuste.json
+    python scripts/evaluation/cdtn_seuil.py zone_grise_ajuste    # data/evaluation/notebook03/zone_grise_ajuste.json
 """
 
 import hashlib
@@ -188,6 +194,94 @@ def sanity_check():
     return True
 
 
+# Encodeur ajusté (#49, protocole 05, section 5 ; #164) : même règle, vecteurs du navigateur de l'ajusté et index du
+# dossier front/public/index_ajuste/. Écrit dans de nouveaux fichiers, jamais écrasés : le seuil de la base reste figé.
+VECTEURS_AJUSTE = RACINE / "data/adaptation/navigateur/vecteurs/vecteurs_cdtn_ajuste.json"
+SEUIL_AJUSTE = RACINE / "data/evaluation/notebook03/seuil_cdtn_ajuste.json"
+INCERTITUDE_AJUSTE = RACINE / "data/evaluation/cdtn/incertitude_seuil_ajuste.json"
+Q8_AJUSTE = "934a202bee5599fc45c0cb753414a7b2b490605bed84e72f471072e6ee53d047"
+
+
+def scores_ajuste():
+    lot = json.loads(QUESTIONS.read_text(encoding="utf-8"))
+    r = json.loads(VECTEURS_AJUSTE.read_text(encoding="utf-8"))
+    entete = json.loads((RACINE / "front/public/index_ajuste/index_m2.json").read_text(encoding="utf-8"))
+    chemin = RACINE / "front/public/index_ajuste" / entete["index"]["fichier"]
+    if sha256_fichier(chemin) != entete["index"]["sha256"]:
+        raise ValueError("Empreinte de l'index ajusté différente de son en-tête.")
+    if entete["modele"]["origine"]["sha256"] != Q8_AJUSTE:
+        raise ValueError("L'en-tête ne désigne pas l'encodeur ajusté.")
+    attendu = {"modele_local": "ajuste", "sha256_q8": Q8_AJUSTE, "dtype": "q8", "prefixe": PREFIXE_REQUETE,
+               "empreinte_questions": empreinte_lot(lot["questions"]), "identifiants": [q["id"] for q in lot["questions"]]}
+    ecarts = [k for k, v in attendu.items() if r.get(k) != v]
+    if ecarts:
+        raise ValueError(f"Vecteurs du navigateur incohérents avec le lot ou l'encodeur ajusté : {ecarts}")
+    E = np.fromfile(chemin, dtype="<f4").reshape(entete["index"]["nb_vecteurs"], 384)
+    U = np.array(r["vecteurs"], dtype=np.float32)
+    if U.shape != (len(lot["questions"]), 384) or not np.allclose(np.linalg.norm(U, axis=1), 1.0, atol=1e-3) \
+            or not np.allclose(np.linalg.norm(E, axis=1), 1.0, atol=1e-4):
+        raise ValueError("Vecteurs de forme ou de norme inattendue.")
+    return lot, r, entete, (U @ E.T).max(axis=1)
+
+
+def ecrire_une_fois(chemin, contenu):
+    with open(chemin, "x", encoding="utf-8") as f:
+        f.write(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n")
+
+
+def calculer_ajuste():
+    lot, r, entete, scores = scores_ajuste()
+    seuil = float(np.percentile(scores, CENTILE))   # interpolation linéaire, méthode par défaut de NumPy
+    ecrire_une_fois(SEUIL_AJUSTE, {
+        "seuil": seuil, "centile": CENTILE, "interpolation": "linéaire (numpy.percentile par défaut)",
+        "variantes": len(scores), "requetes": len({q["id"].split("-")[0] for q in lot["questions"]}),
+        "regle": "celle de seuil_cdtn.json, avec l'encodeur ajusté servi (q8 élagué) et son index",
+        "source": SOURCE, "empreinte_questions": empreinte_lot(lot["questions"]),
+        "modele": {"depot": entete["modele"]["depot"], "sha256": entete["modele"]["sha256"],
+                   "origine_sha256": entete["modele"]["origine"]["sha256"], "dtype": "q8"},
+        "index_sha256": entete["index"]["sha256"], "navigateur": r.get("navigateur"), "transformers_js": r.get("transformers_js"),
+        "scores": {"min": float(scores.min()), "mediane": float(np.median(scores)), "max": float(scores.max())},
+    })
+    print(f"seuil de l'ajusté = {seuil:.6f} (5e centile de {len(scores)} scores) ; {SEUIL_AJUSTE.relative_to(RACINE)} "
+          f"SHA-256 {sha256_fichier(SEUIL_AJUSTE)}")
+
+
+def incertitude_ajuste():
+    lot, _, _, scores = scores_ajuste()
+    requetes = np.array([q["id"].split("-")[0] for q in lot["questions"]])
+    noms = np.unique(requetes)
+    par_requete = [scores[requetes == x] for x in noms]
+    rng = np.random.default_rng(GRAINE)
+    tirages = np.array([np.percentile(np.concatenate([par_requete[i] for i in rng.integers(0, len(noms), len(noms))]),
+                                      CENTILE) for _ in range(TIRAGES)])
+    fige = json.loads(SEUIL_AJUSTE.read_text(encoding="utf-8"))["seuil"]
+    res = {"seuil_fige": fige, "ic95_requetes": [float(np.percentile(tirages, 2.5)), float(np.percentile(tirages, 97.5))],
+           "requetes": len(noms), "variantes": len(scores), "tirages": TIRAGES, "graine": GRAINE}
+    ecrire_une_fois(INCERTITUDE_AJUSTE, res)
+    print(json.dumps(res, ensure_ascii=False))
+
+
+# Zone grise du site (#164, A3), règle fixée le 15/11 avant toute lecture du lot de test : un avertissement doux, sans
+# masquer les passages, quand le meilleur score est au-dessus du seuil mais sous le 25e centile de la même population.
+CENTILE_ZONE_GRISE = 25
+ZONE_GRISE_AJUSTE = RACINE / "data/evaluation/notebook03/zone_grise_ajuste.json"
+
+
+def zone_grise_ajuste():
+    lot, _, entete, scores = scores_ajuste()
+    borne = float(np.percentile(scores, CENTILE_ZONE_GRISE))
+    ecrire_une_fois(ZONE_GRISE_AJUSTE, {
+        "borne_haute": borne, "centile": CENTILE_ZONE_GRISE, "interpolation": "linéaire (numpy.percentile par défaut)",
+        "regle": "avertissement si seuil <= meilleur score < borne_haute ; refus (hors périmètre) sous le seuil",
+        "seuil": json.loads(SEUIL_AJUSTE.read_text(encoding="utf-8"))["seuil"], "variantes": len(scores),
+        "empreinte_questions": empreinte_lot(lot["questions"]), "index_sha256": entete["index"]["sha256"],
+        "modele_sha256": entete["modele"]["sha256"],
+        "variantes_sous_la_borne": int((scores < borne).sum())})
+    print(f"zone grise de l'ajusté : [seuil ; {borne:.6f}[ (25e centile) ; {ZONE_GRISE_AJUSTE.relative_to(RACINE)} "
+          f"SHA-256 {sha256_fichier(ZONE_GRISE_AJUSTE)}")
+
+
 if __name__ == "__main__":
     assert sanity_check()
-    {"preparer": preparer, "calculer": calculer, "incertitude": incertitude}[sys.argv[1]]()
+    {"preparer": preparer, "calculer": calculer, "incertitude": incertitude, "calculer_ajuste": calculer_ajuste,
+     "incertitude_ajuste": incertitude_ajuste, "zone_grise_ajuste": zone_grise_ajuste}[sys.argv[1]]()

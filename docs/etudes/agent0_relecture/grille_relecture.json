@@ -1,0 +1,465 @@
+{
+  "format": "agent0-human-review-draft-v1",
+  "date_preparation": "2026-10-20",
+  "corpus_reference": {
+    "base_commit": "36bb4e05094dbc68d1975f1d8ea01eac50de166b",
+    "sha256_entete": "586cf190293d206e4b9affd72cd37a23c367d34537b0c831305f66084084ee23",
+    "sha256_passages": "aee5bbdbe401de7506162429912cb5bd54a79132642481a8e7068f12ee99a36d",
+    "nb_passages": 4240,
+    "nb_fiches": 261
+  },
+  "nature": "Support distinct des candidats synthetic-v1 ; aucun verdict humain prérempli.",
+  "originaux_runs_recus": true,
+  "lot_pilote_fige": false,
+  "relectures": [
+    {
+      "run_id": "simple_001",
+      "candidate_id_rapporte": "SYN_simple_001_0001",
+      "fiche": "questions_et_sources.md#simple_001",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "reformulation_001",
+      "candidate_id_rapporte": "SYN_reformulation_001_0001",
+      "fiche": "questions_et_sources.md#reformulation_001",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "multi_passage_002",
+      "candidate_id_rapporte": "SYN_multi_passage_002_0001",
+      "fiche": "questions_et_sources.md#multi_passage_002",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "multi_passage_003",
+      "candidate_id_rapporte": "SYN_multi_passage_003_0001",
+      "fiche": "questions_et_sources.md#multi_passage_003",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "multi_passage_004",
+      "candidate_id_rapporte": "SYN_multi_passage_004_0001",
+      "fiche": "questions_et_sources.md#multi_passage_004",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "multi_passage_006",
+      "candidate_id_rapporte": "SYN_multi_passage_006_0001",
+      "fiche": "questions_et_sources.md#multi_passage_006",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "adversarial_001",
+      "candidate_id_rapporte": "SYN_adversarial_001_0001",
+      "fiche": "questions_et_sources.md#adversarial_001",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "adversarial_002",
+      "candidate_id_rapporte": "SYN_adversarial_002_0001",
+      "fiche": "questions_et_sources.md#adversarial_002",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "adversarial_003",
+      "candidate_id_rapporte": "SYN_adversarial_003_0001",
+      "fiche": "questions_et_sources.md#adversarial_003",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "hors_corpus_001",
+      "candidate_id_rapporte": "SYN_hors_corpus_001_0001",
+      "fiche": "questions_et_sources.md#hors_corpus_001",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "hors_corpus_002",
+      "candidate_id_rapporte": "SYN_hors_corpus_002_0001",
+      "fiche": "questions_et_sources.md#hors_corpus_002",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "hors_corpus_003",
+      "candidate_id_rapporte": "SYN_hors_corpus_003_0001",
+      "fiche": "questions_et_sources.md#hors_corpus_003",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "hors_corpus_004",
+      "candidate_id_rapporte": "SYN_hors_corpus_004_0001",
+      "fiche": "questions_et_sources.md#hors_corpus_004",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "hors_corpus_005",
+      "candidate_id_rapporte": "SYN_hors_corpus_005_0001",
+      "fiche": "questions_et_sources.md#hors_corpus_005",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    },
+    {
+      "run_id": "hors_corpus_006",
+      "candidate_id_rapporte": "SYN_hors_corpus_006_0001",
+      "fiche": "questions_et_sources.md#hors_corpus_006",
+      "formulation_disponible_dans_ce_support": true,
+      "statut_humain_rapporte": "pending",
+      "originaux_et_provenance_verifies": null,
+      "relecteur": null,
+      "date_relecture": null,
+      "decision": null,
+      "answerable_confirmed": null,
+      "expected_points": [],
+      "preuves_verifiees": [],
+      "motif_decision": null,
+      "recherche_corpus": {
+        "empreinte_verifiee": null,
+        "methodes": null,
+        "termes_et_variantes": [],
+        "passages_examined": [],
+        "contre_preuves": [],
+        "limites": null
+      },
+      "doublons_semantiques_examined": [],
+      "verification_technique": {
+        "rapport": "verification_archive.json",
+        "fichiers_recus": true,
+        "structure_et_provenance_declaree_coherentes": true
+      }
+    }
+  ],
+  "archive_reference": {
+    "nom": "agent0_relecture_20261020.zip",
+    "sha256": "e6cb410c6c8cbcdd9fb4f5392cab9fc41a32f74fe48dd3c49b0121326eb76f74",
+    "rapport": "verification_archive.md",
+    "details": "verification_archive.json"
+  },
+  "verification_technique": {
+    "date": "2026-10-20",
+    "fichiers_recus": 93,
+    "selections_conformes": 3,
+    "prompts_reconstruits": 18,
+    "validations_historiques_reproduites": 18,
+    "verdicts_humains_attribues": 0
+  }
+}
